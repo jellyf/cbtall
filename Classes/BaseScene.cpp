@@ -772,7 +772,7 @@ void BaseScene::initHeaderWithInfos()
 	lbLevel->setPosition(vecPos[12]);
 	mLayer->addChild(lbLevel, constant::MAIN_ZORDER_HEADER);
 
-	ui::Scale9Sprite* spHeader = ui::Scale9Sprite::create("header.png");
+	ui::Scale9Sprite* spHeader = ui::Scale9Sprite::create("popup/header.png");
 	spHeader->setAnchorPoint(Vec2(0, 1));
 	spHeader->setContentSize(Size(1120 / scaleScene.y, 115));
 	spHeader->setPosition(0, 700);

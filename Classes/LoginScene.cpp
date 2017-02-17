@@ -141,7 +141,7 @@ void LoginScene::onInit()
 
 	initRegisterNode();
 
-	ui::Scale9Sprite* spHeader = ui::Scale9Sprite::create("footer.png");
+	ui::Scale9Sprite* spHeader = ui::Scale9Sprite::create("popup/footer.png");
 	spHeader->setContentSize(Size(1120 / scaleScene.y, 40 / scaleScene.x));
 	spHeader->setAnchorPoint(Vec2(0, 0));
 	spHeader->setPosition(0, 700);
@@ -149,7 +149,7 @@ void LoginScene::onInit()
 	mLayer->addChild(spHeader);
 	//autoScaleNode(spHeader);
 
-	ui::Scale9Sprite* spFooter = ui::Scale9Sprite::create("footer.png");
+	ui::Scale9Sprite* spFooter = ui::Scale9Sprite::create("popup/footer.png");
 	spFooter->setAnchorPoint(Vec2(0, 0));
 	spFooter->setContentSize(Size(1120 / scaleScene.y, 40 / scaleScene.x));
 	mLayer->addChild(spFooter);

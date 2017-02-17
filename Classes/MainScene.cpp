@@ -34,7 +34,7 @@ void MainScene::onInit()
 	bg->setPosition(560, 350);
 	addChild(bg);
 
-	ui::Scale9Sprite* spFooter = ui::Scale9Sprite::create("footer.png");
+	ui::Scale9Sprite* spFooter = ui::Scale9Sprite::create("popup/footer.png");
 	spFooter->setAnchorPoint(Vec2(0, 0));
 	spFooter->setContentSize(Size(1120 / scaleScene.y, 65));
 	mLayer->addChild(spFooter);
