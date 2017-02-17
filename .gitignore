@@ -4,3 +4,10 @@
 /libs
 /proj.android-studio
 /proj.win32
+/Pods
+*.xcodeproj
+*.xcworkspace
+*.framework
+*.entitlements
+Podfile
+Podfile.lock
