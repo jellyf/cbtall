@@ -772,13 +772,19 @@ void BaseScene::initHeaderWithInfos()
 	lbLevel->setPosition(vecPos[12]);
 	mLayer->addChild(lbLevel, constant::MAIN_ZORDER_HEADER);
 
-	int x = 0;
+	ui::Scale9Sprite* spHeader = ui::Scale9Sprite::create("header.png");
+	spHeader->setAnchorPoint(Vec2(0, 1));
+	spHeader->setContentSize(Size(1120 / scaleScene.y, 115));
+	spHeader->setPosition(0, 700);
+	mLayer->addChild(spHeader);
+
+	/*int x = 0;
 	while (x < 1120) {
 		Sprite* line = Sprite::create("main/line.png");
 		line->setPosition(x, vecPos[13].y);
 		mLayer->addChild(line, constant::MAIN_ZORDER_HEADER);
 		x += line->getContentSize().width;
-	}
+	}*/
 
 	if (Utils::getSingleton().userDataMe.UserID > 0) {
 		onUserDataMeResponse();

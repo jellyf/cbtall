@@ -23,16 +23,21 @@ void MainScene::onInit()
 	vecPos.push_back(Vec2(900, 65));
 	vecPos.push_back(Vec2(1040, 65));
 	vecPos.push_back(Vec2(140, 335));
-	vecPos.push_back(Vec2(426, 335));
-	vecPos.push_back(Vec2(703, 335));
-	vecPos.push_back(Vec2(988, 335));
+	vecPos.push_back(Vec2(420, 335));
+	vecPos.push_back(Vec2(700, 335));
+	vecPos.push_back(Vec2(980, 335));
 	int m = 0;
 
 	initHeaderWithInfos();
 
-	Sprite* bg = Sprite::create("bg.jpg");
+	Sprite* bg = Sprite::create("main/bg.jpg");
 	bg->setPosition(560, 350);
 	addChild(bg);
+
+	ui::Scale9Sprite* spFooter = ui::Scale9Sprite::create("footer.png");
+	spFooter->setAnchorPoint(Vec2(0, 0));
+	spFooter->setContentSize(Size(1120 / scaleScene.y, 65));
+	mLayer->addChild(spFooter);
 
 	ui::Button* btnAgency = ui::Button::create("main/icon_agency.png");
 	btnAgency->setPosition(vecPos[m++]);
@@ -130,27 +135,12 @@ void MainScene::onInit()
 	mLayer->addChild(btnGiftcode);
 	autoScaleNode(btnGiftcode);
 
-	ui::Button* btnNhaTranh = ui::Button::create("main/nhatranh.png", "main/nhatranh.png");
-	btnNhaTranh->setPosition(vecPos[m++]);
-	addTouchEventListener(btnNhaTranh, [=]() {
-		if (isWaiting) return;
-		showWaiting();
-		tmpZoneId = 0;
-		isGoToLobby = true;
-		SFSRequest::getSingleton().Disconnect();
+	ui::Button* btnLoiDai = ui::Button::create("main/loidai.png", "main/loidai.png");
+	btnLoiDai->setPosition(vecPos[m++]);
+	addTouchEventListener(btnLoiDai, [=]() {
+		showPopupNotice(Utils::getSingleton().getStringForKey("feature_coming_soon"), [=]() {});
 	});
-	mLayer->addChild(btnNhaTranh);
-
-	ui::Button* btnDinhLang = ui::Button::create("main/dinhlang.png", "main/dinhlang.png");
-	btnDinhLang->setPosition(vecPos[m++]);
-	addTouchEventListener(btnDinhLang, [=]() {
-		if (isWaiting) return;
-		showWaiting();
-		tmpZoneId = 1;
-		isGoToLobby = true;
-		SFSRequest::getSingleton().Disconnect();
-	});
-	mLayer->addChild(btnDinhLang);
+	mLayer->addChild(btnLoiDai);
 
 	ui::Button* btnPhuChua = ui::Button::create("main/phuchua.png", "main/phuchua.png");
 	btnPhuChua->setPosition(vecPos[m++]);
@@ -163,12 +153,27 @@ void MainScene::onInit()
 	});
 	mLayer->addChild(btnPhuChua);
 
-	ui::Button* btnLoiDai = ui::Button::create("main/loidai.png", "main/loidai.png");
-	btnLoiDai->setPosition(vecPos[m++]);
-	addTouchEventListener(btnLoiDai, [=]() {
-		showPopupNotice(Utils::getSingleton().getStringForKey("feature_coming_soon"), [=]() {});
+	ui::Button* btnDinhLang = ui::Button::create("main/dinhlang.png", "main/dinhlang.png");
+	btnDinhLang->setPosition(vecPos[m++]);
+	addTouchEventListener(btnDinhLang, [=]() {
+		if (isWaiting) return;
+		showWaiting();
+		tmpZoneId = 1;
+		isGoToLobby = true;
+		SFSRequest::getSingleton().Disconnect();
 	});
-	mLayer->addChild(btnLoiDai);
+	mLayer->addChild(btnDinhLang);
+
+	ui::Button* btnNhaTranh = ui::Button::create("main/nhatranh.png", "main/nhatranh.png");
+	btnNhaTranh->setPosition(vecPos[m++]);
+	addTouchEventListener(btnNhaTranh, [=]() {
+		if (isWaiting) return;
+		showWaiting();
+		tmpZoneId = 0;
+		isGoToLobby = true;
+		SFSRequest::getSingleton().Disconnect();
+	});
+	mLayer->addChild(btnNhaTranh);
 
 	/*initPopupCharge();
 	initPopupGuide();

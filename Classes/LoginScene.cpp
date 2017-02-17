@@ -28,10 +28,15 @@ void LoginScene::onInit()
 	bg->setPosition(560, 350);
 	addChild(bg);
 
-	Sprite* spTitle = Sprite::create("login/title.png");
+	/*Sprite* spTitle = Sprite::create("login/title.png");
 	spTitle->setPosition(560, 550);
 	mLayer->addChild(spTitle);
-	autoScaleNode(spTitle);
+	autoScaleNode(spTitle);*/
+
+	Sprite* spTab = Sprite::create("login/tab.png");
+	spTab->setPosition(560, 350);
+	mLayer->addChild(spTab);
+	autoScaleNode(spTab);
 
 	loginNode = Node::create();
 	loginNode->setPosition(560, 350);
@@ -135,6 +140,20 @@ void LoginScene::onInit()
 	loginNode->addChild(btnFB);
 
 	initRegisterNode();
+
+	ui::Scale9Sprite* spHeader = ui::Scale9Sprite::create("footer.png");
+	spHeader->setContentSize(Size(1120 / scaleScene.y, 40 / scaleScene.x));
+	spHeader->setAnchorPoint(Vec2(0, 0));
+	spHeader->setPosition(0, 700);
+	spHeader->setFlippedY(true);
+	mLayer->addChild(spHeader);
+	//autoScaleNode(spHeader);
+
+	ui::Scale9Sprite* spFooter = ui::Scale9Sprite::create("footer.png");
+	spFooter->setAnchorPoint(Vec2(0, 0));
+	spFooter->setContentSize(Size(1120 / scaleScene.y, 40 / scaleScene.x));
+	mLayer->addChild(spFooter);
+	//autoScaleNode(spFooter);
 
 	ui::Button* btnPhone = ui::Button::create("login/btn_phone.png", "login/btn_phone_clicked.png");
 	btnPhone->setPosition(Vec2(45, 40 * scaleScene.x));
