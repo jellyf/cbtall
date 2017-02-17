@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>chat_0</key><string>Chào cả nhà!</string>
+	<key>chat_1</key><string>Chào các bạn, cho xin chân nhé!</string>
+	<key>chat_2</key><string>Xin lỗi! Mình có việc bận. Lúc khác chiến tiếp nhé</string>
+	<key>chat_3</key><string>Hết ván mình nghỉ, hẹn cả nhà lúc khác nhé</string>
+	<key>chat_4</key><string>Hiện tại mình không tiện nói chuyện, các bạn thông cảm</string>
+	<key>chat_5</key><string>Gà to quá! Thịt thôi làng nước ơi</string>
+	<key>chat_6</key><string>Ăn con gà còi thôi mà!</string>
+	<key>chat_7</key><string>Bài đẹp đúng là chỉ để ngắm!</string>
+	<key>chat_8</key><string>Bật gà đi chủ bàn</string>
+	<key>chat_9</key><string>Đánh gà đi cả làng</string>
+	<key>chat_10</key><string>Ôm eo rồi, đen vãi!</string>
+	<key>chat_11</key><string>Bị đè mới đau chứ!</string>
+	<key>chat_12</key><string>Thần tài gõ cửa rồi</string>
+	<key>chat_13</key><string>Đen vãi, làng nước ơi!</string>
+	<key>chat_14</key><string>Đánh nhanh nào</string>
+	<key>chat_15</key><string>Xin lỗi! Đời quá đen</string>
+	<key>chat_16</key><string>Thần rùa xuất hiện haha</string>
+	<key>chat_17</key><string>Từ từ rồi khoai sẽ nhừ</string>
+	<key>chat_18</key><string>Cũng thường thôi bạn hiền</string>
+	<key>chat_19</key><string>Tưởng thế nào haha</string>
+	<key>chat_20</key><string>Môn này nó nghiệt lắm bạn hiền</string>
+	<key>chat_21</key><string>Nhạt mồm, nhạt miệng quá cho chén trà, điếu thuốc nào</string>
+	<key>chat_22</key><string>Làm bi thuốc lào cho tinh thần tỉnh táo nào</string>
+	<key>chat_23</key><string>Tẩy đỏ ah, mình xin!</string>
+	<key>chat_24</key><string>Nhọ quá, chả ù được ván nào</string>
+</dict>
+</plist>

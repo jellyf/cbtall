@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>tutorial_1</key><string>1. Tên đăng ký không được có ký tự đặc biệt(?.!dấu cách,...) và không liên quan đến bộ phận quản lý hay người điều hành(vd:admin, admjn, quanly,...)
+
+2. Mật khẩu và tên tài khoản đăng nhập vào game phải có ít nhất 6 ký tự. Mật khẩu nên có cả chữ và số để bảo mật tốt hơn.
+
+3. Không được sử dụng bất kỳ chương trình, công cụ hay hình thức nào khác để can thiệp vào trò chơi hay làm thay đổi kết quả chơi bình thường (hack, cheat, bots,...). Khi vi phạm BQT có quyền xóa, khóa tài khoản mà không cần thông báo và sự đồng ý của người sử dụng.
+
+4. Tuyệt đối nghiêm cấm mọi hành vi tuyên truyền, chống phá và xuyên tạc chính quyền, thể chế chính trị và các chính sách của nhà nước.
+
+5. Nghiêm cấm việc nhạo báng, xúc phạm người khác dưới bất kỳ hình thức nào (chê bai, kỳ thị tôn giáo, giới tính, sắc tộc, ...).
+
+6. Đối với mọi vi phạm, BQT có quyền khóa, xóa, thay đổi tài khoản, chuyển cho cơ quan chức năng giải quyết theo quy định của pháp luật (nếu cần) mà không cần sự đồng ý của người sử dụng.
+
+7. Trường hợp bất khả kháng như chập điện, hư hỏng phần cứng, phần mềm, thiên tai,... người dùng phải chấp nhận những thiệt hại nếu có.
+
+8. Nghiêm cấm mua bán Xu trong game giữa các thành viên dưới mọi hình thức.
+
+9. Thông tin số điện thoại người dùng nhập vào phục vụ cho mục đích xác minh tài khoản
+
+10. Thông tin cá nhân của khách hàng sẽ được chúng tôi bảo mật, không bán hay trao đổi những thông tin này với bất kỳ một bên thứ ba nào khác.
+
+11. Khi tích vào mục đồng ý với điều khoản tức là bạn đã đọc và hiểu các điều khoản nêu trên và đồng ý bị ràng buộc bởi các điều khoản đó.</string>
+	<key>tutorial_2</key><string>1. Xuông: Ù rộng và không có cước nào.
+
+2. Thông: Nếu ván trước ù và xướng đúng, ván sau cũng ù thì ván sau được hô cước thông (nếu hòa, xướng sai, bỏ ù, ù báo hoặc ù láo thì ván sau không được hô thông). 
+
+3. Thiên ù: Người có cái là người có 20 cây trên bài, nếu có đủ luôn chắn, cạ và ít nhất đáp ứng yêu cầu cơ bản (đủ số chắn và số cạ quy định) thì ù luôn, gọi là Thiên ù. 
+
+4. Địa ù: Phải thỏa mãn 2 điều kiện:
+    • Ù khi chưa qua cửa chì
+    • Ù cây bốc nọc đầu tiên (Cây bốc nọc đầu tiên tức là cây đầu tiên do bất kỳ người nào bốc ra)
+
+5. Chì : Tất cả các trường hợp ù tại Cửa của mình ( bên tay phải) thì gọi là Ù chì, tức là cây để ù hiện lên ở Cửa của  mình. Trong trường hợp khi bốc lên hoặc đánh cây ở cửa chì nhưng bị nhà khác chíu sau đó lại chíu ù cây trả cửa thì không được tính cước Chì 
+
+6. Tôm: Trên bài có Thất Văn, Tam sách, Tam vạn. Nếu có 3 chắn này thì tức là có đôi Tôm. 
+
+7. Lèo: Trên bài có Chi chi, Cửu vạn, Bát sách. Nếu có 3 chắn này thì tức là có đôi Lèo. 
+
+8. Bạch định: Trên bài không có 1 cây đỏ nào, toàn cây đen. 
+
+9. Tám đỏ: Trên bài có 8 cây màu đỏ, 12 cây đen. 
+
+10. Kính tứ Chi: Trên bài có 4 con Chi Chi, còn lại là toàn cây đen. 
+
+11. Thập thành: Bài ù toàn Chắn, không có 1 cạ nào. 
+
+12. Thiên khai: Trên bài có sẵn 4 cây giống hệt nhau (Có thể có 0,1,2,3,4, thậm chí 5 thiên khai khi ù)
+
+13. Có ăn bòn : Trên bài có sẵn 1 chắn nào đó, ví dụ có chắn Tam vạn, nếu ăn được thêm 2 cây Tam vạn nữa để có 2 chắn Tam vạn để dưới chiếu thì gọi là có ăn bòn. Nếu ăn bòn xong mà chưa ù, thì khi ù rồi hô thêm cước có ăn bòn để tính điểm.
+
+14. Ù bòn: Khi bốc được 1 quân mà mình có thể ăn bòn, nhưng lại tròn bài, ù luôn thì là ù bòn (và không được đếm vào số bòn mình ăn)
+
+15. Ù Có Chíu: Trên bài có 3 cây giống y hệt nhau, nếu ai đánh ra hoặc nếu từ nọc lật lên 1 cây y hệt 3 cây này thì có thể chíu nếu thích. Khi ù rồi phải hô là có chíu để tính điểm.
+
+16. Chíu ù: Chíu mà tròn bài, ù luôn thì là chíu ù. Bình thường chỉ được phép ù lá bốc từ nọc lên. Riêng chíu ù thì có thể ù lá người khác đánh/ hoặc trả cửa.
+    • Phân biệt "chíu ù" với "ù có chíu": Nếu chíu rồi ù luôn thì là chíu ù và khi xướng phải xướng là chíu ù, không được tính con chíu đó vào để hô "có chíu".
+
+17. Bạch thủ: 
+    • Nếu tính cả trên bài và dưới chiếu có 5 chắn và 4 cạ, thì coi như là đang đợi ù bạch thủ con lẻ còn lại. Từ nọc lật lên con nào y hệt con lẻ này thì mình sẽ được ù. 
+
+18. Bạch thủ chi: Là ù bạch thủ lá Chi Chi
+    • Nếu ù Bạch thủ Chi mà xướng "Bạch thủ" thì vẫn là xướng sai.
+    • Khi chờ ù lá Chi Chi thì chỉ được phép ù Bạch thủ Chi. Tức, nếu đang có >= 6 chắn, tròn bài lẻ lá Chi mà làng bốc lên Chi thì cũng không được ù (Trường hợp này ta phải "xé chắn" - tức đánh bớt chắn đi để chỉ còn 5 chắn rồi chờ ù Chi, hoặc ta phải đánh Chi đi để chờ ù rộng).
+
+19. Hoa rơi cửa Phật: : Khi bài dưới chiếu (ăn được) có một chắn ngũ Vạn (hình ngôi chùa), người chơi lại ù chì bạch thủ cây Nhị vạn (hình cánh hoa đào).
+
+20. Nhà lầu xe hơi hoa rơi cửa phật: Ăn được chắn ngũ vạn (nhà lầu), ăn được chắn tứ vạn (hình cái xe) và ù chì bạch thủ nhị vạn (hoa đào).
+
+21. Cá lội Sân Đình: : Khi bài dưới chiếu (ăn được) có một chắn ngũ Vạn (hình ngôi chùa),sau đó ù chì bạch thủ bát vạn (hình con cá).
+
+22. Ngư ông bắt cá: Bài trên tay có chắn chi chi (ngư ông), chắn ngũ sách (thuyền),ù chì bạch thủ bát vạn (cá)
+    Chú ý: Chắn chi chi, chắn ngũ sách ăn dưới chiếu không được tính.
+
+23. Cá nhảy đầu thuyền: Khi bài dưới chiếu (ăn được) có một chắn ngũ sách (hình cái thuyền), người chơi lại ù chì bạch thủ cây Bát vạn (hình con cá) 
+
+24. Chùa đổ nát hoa: Khi bài dưới chiếu (ăn được) có một chắn nhị vạn ( hình hoa đào), người chơi lại ù Chì, Bạch Thủ cây Ngũ Vạn (hình ngôi chùa)
+
+25. Thiên ý (Không chắn) : Lên bài không có chắn nào, thế mà sau đó vẫn ù được thì gọi là ù Thiên Ý.
+</string>
+	<key>tutorial_3</key><string>Khi chơi, không được vi phạm các luật sau.
+
+1. Ăn treo tranh: Ăn được thành chắn nhưng lại ăn cạ
+   Vd: Trên tay có cửu vạn, cửu văn, ăn cửu vạn nhưng lại hạ cửu văn xuống chiếu thành cạ [cửu văn, cửu vạn] (đáng nhẽ phải hạ chắn cửu vạn)
+
+2. Ăn chọn cạ: Lấy 1 quân trong cạ sẵn có để ăn cạ
+   Vd: Có cạ [cửu vạn, cửu văn], lấy cửu vạn ăn cửu sách
+
+3. Ăn cạ chuyển chờ: Lấy 1 quân chờ ù để ăn cạ
+   Vd: Đã có >= 5 chắn, chỉ què cửu vạn, không có ba đầu. Lấy cửu vạn ăn cửu văn
+   Chú ý: Nếu đang chờ ù ba đầu cửu, lại lấy cửu vạn ăn cửu văn thì là phạm lỗi treo tranh (hoặc nếu cửu văn là quân bốc từ nọc ra thì là phạm lỗi bỏ ù)
+
+4. Có chắn cấu cạ: Lấy 1 quân trong chắn sẵn có để ăn cạ
+   Vd: Có chắn cửu vạn, không có cửu văn, lấy cửu vạn ăn cửu văn
+
+5. Bỏ chắn ăn chắn: Trước đã bỏ không ăn chắn này, giờ lại đòi ăn
+
+6. Bỏ chắn ăn cạ: Lấy 1 quân - mà trước đó đã bỏ ăn chắn - để ăn cạ
+
+7. Bỏ cạ ăn cạ: Lấy 1 quân - mà trước đó đã bỏ ăn cạ - để ăn cạ.
+
+8. Bỏ chắn đánh chắn: Bỏ không ăn 1 con sau lại đánh đúng con đó
+   Vd: Trước đã bỏ không ăn cửu vạn, nếu sau đó lại:
+   Lấy cửu vạn ăn cửu vạn => lỗi 6
+   Lấy cửu vạn ăn cửu văn => lỗi 7
+   Lấy cửu văn ăn cửu sách => lỗi 8
+   Đánh cửu vạn đi => lỗi 9
+   (Chú ý: Được lấy cửu văn/ sách để ăn chắn - tức được bỏ cạ ăn chắn)
+
+9. Đánh cạ ăn cạ: Đã đánh cả 1 cạ (2 quân) đi thì không được ăn bất kỳ cạ nào nữa
+   Vd: Nếu đã đánh cạ [cửu vạn, văn], sau lại ăn cạ [tam văn, tam sách]
+
+10. Xé cạ ăn cạ: Đã đánh 1 quân, sau không được dùng quân hàng đó để ăn cạ
+    Vd: Đã đánh cửu vạn, sau lại lấy cửu văn ăn cửu sách
+
+11. Đánh 1 quân rồi sau lại ăn đúng quân đó
+
+12. Đánh đôi chắn đi
+    Vd: Đánh cửu vạn, sau lại đánh tiếp 1 quân cửu vạn nữa
+
+13. Ăn 1 con rồi sau lại đánh đúng con đó
+
+14. Ăn cạ rồi lại ăn chắn cùng hàng
+    Vd: Đã lấy cửu văn ăn cửu vạn, sau lại ăn chắn cửu (bất kỳ cửu gì)
+
+15. Đánh cạ khi đẵ ăn cạ
+    Vd: Đã đánh cả tam văn, tam sách đi (đánh cạ), sau đó lại lấy cửu vạn ăn cửu sách (ăn cạ)
+
+16. Ăn cạ đánh con cùng hàng
+    Vd: Đã lấy cửu vạn, ăn cửu văn, sau lại đánh cửu sách đi. 
+  - Với các lỗi vi phạm  song chưa bị hiển thị ra bên ngoài (ăn cạ chuyển chờ, xé cạ ăn cạ, xé chắn ăn cạ…) thì nếu người vi phạm ù đúng hoặc ù sai thì đều bị đền làng bằng tám đỏ đôi lèo (17 điểm) và ván sau nếu ù sẽ không được hô thông. Nếu người không vi phạm lỗi mà ù thì tính như bình thường.
+  - Với các lỗi vi phạm và hiển thị ra bên ngòai (ăn cạ đánh cạ, đánh 1 đôi chắn đi, có chắn cấu cạ, đánh cạ ăn cạ, ăn chọn cạ, bỏ không 1 cây rồi lại ăn đúng cây đó, đánh 1 cây rồi lại ăn đúng cây đó, xé cạ ăn cạ…), thì người vi phạm bị ngồi im và đền làng bằng cước ù nếu có người trong bàn ù đúng. Nếu người ù lại ù sai thì người ù sai đền làng và mọi người trong bàn, kể cả người vi phạm lỗi ăn láo/đánh láo, đều được đền làng
+  Hy hữu:
+   • Người ù lại xướng sai thì (những) người bị bắt báo không phải trả tiền, nhưng tiền người ù xướng sai chỉ được chia cho những người không bị bắt báo.
+   • Có nhiều người bị bắt báo trong 1 ván: Mỗi người đều phải trả cho người ù 1 lượng tiền bằng với trường hợp người ù được hưởng khi không có ai bị báo.
+</string>
+	<key>tutorial_4</key><string>• Mỗi cước được quy định tương ứng với số Điểm và số Dịch
+Khi ù (xướng đúng), dựa vào các cước xướng sẽ tính ra số điểm tổng, nhân tổng này với số tiền cho mỗi điểm sẽ ra số tiền mỗi người thua phải mất cho người ù.
+
+• Điểm tổng được tính như sau:
+   + Nếu chỉ xướng 1 cước thì điểm tổng = Điểm của cước đó.
+   + Nếu xướng nhiều cước thì điểm tổng = Điểm của cước có điểm lớn nhất + tổng số Dịch của các cước còn lại.
+   + Nếu có xướng cước Thập thành
+Điểm tổng luôn được tính = điểm của Thập thành (12) + điểm (chứ không phải dịch!) của các cước có gà (xem bên dưới) + dịch của các cước còn lại (các cước không có gà).
+
+• Điểm và dịch của các cước như sau:
+    Điểm    Dịch    Cước
+    --------------------------------------
+     2                Xuông
+     3        1      Thông
+     3        1      Chì
+     4        1      Thiên ù
+     4        1      Địa ù
+     4        1      Tôm
+     4        1      Thiên khai
+     4        1      Có bòn
+     4        1      Ù bòn
+     4        1      Có chíu
+     4        1      Chíu ù
+     4        1      Bạch thủ
+     5        2      Lèo
+     6        3      Bạch thủ chi
+     7        4      Bạch định
+     8        5      Tám đỏ
+     12      9      Kính Tứ Chi
+     12      9      Thập Thành
+     20      17     Hoa rơi cửa phật
+     30      27     Nhà lầu xe hơi hoa rơi cửa phật
+     20      17     Cá lội sân đình
+     30      27     Ngư ông bắt cá
+     20      17     Cá nhảy đầu thuyền
+     20      17     Chùa đổ nát hoa
+     12      9       Thiên ý (Không chắn)
+
+Nhớ: Lấy Điểm trừ đi 3 thì ra Dịch. Nhưng trừ cước Xuông, còn thì tối thiểu là dịch 1.
+Ví dụ tính điểm: "Chì Thập thành Bạch định" = 12 (điểm Thập thành) + 7 (điểm Bạch định) + 1 (dịch Chì) = 20 điểm.
+Các cước có gà:
+Nếu chơi gà thì điểm tổng được cộng thêm với số gà * số điểm cho mỗi gà (thường là 5 điểm)
+Những (tổ hợp) cước sau được tính có gà:
+  •  Ù bòn bạch thủ
+  •  Ù bòn bạch thủ chi
+  •  Thập thành
+  •  Kính tứ chi
+  •  Bạch định
+  •  Tám đỏ
+  •  Thiên ý
+  •  Bạch thủ chi
+  •  Hoa rơi cửa phật
+  •  Cá lội Sân Đình
+  •  Nhà lầu xe hơi, hoa rơi cửa phật
+  •  Ngư ông bắt cá
+  •  Cá nhảy đầu thuyền
+  •  Chùa đổ nát hoa
+  •  Chì bạch thủ: 2 gà
+  •  Chì bạch thủ chi: 3 gà
+</string>
+</dict>
+</plist>

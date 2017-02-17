@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>login_name</key><string>Tên đăng nhập</string>
+	<key>password</key><string>Mật khẩu</string>
+	<key>retype_password</key><string>Nhập lại mật khẩu</string>
+	<key>remember_password</key><string>Nhớ mật khẩu</string>
+	<key>forgot_password</key><string>Quên mật khẩu?</string>
+	<key>room</key><string>Phòng</string>
+	<key>tie</key><string>Hòa</string>
+	<key>point</key><string>Điểm</string>
+	<key>ready</key><string>Sẵn sàng</string>
+	<key>cancel_ready</key><string>Hủy sẵn sàng</string>
+	<key>table</key><string>Bàn</string>
+	<key>bet</key><string>Cược</string>
+	<key>win</key><string>Ù</string>
+	<key>chicken</key><string>Gà</string>
+	<key>noted</key><string>Chú ý</string>
+	<key>invite</key><string>Mời</string>
+	<key>send</key><string>Gửi</string>
+	<key>quick</key><string>Nhanh</string>
+	<key>slow</key><string>Chậm</string>
+	<key>sound</key><string>Âm thanh</string>
+	<key>win_411</key><string>Ù 4-11</string>
+	<key>win_free</key><string>Ù tự do</string>
+	<key>type_here_to_chat</key><string>Gõ vào đây để chat</string>
+	<key>auto_ready</key><string>Tự động sẵn sàng</string>
+	<key>invite_player</key><string>Mời người chơi</string>
+	<key>invite_content</key><string>%s muốn mời bạn vào bàn %d, cược: %s, thời gian: %d</string>
+	<key>choose_stilt</key><string>Chọn nọc</string>
+	<key>choose_host</key><string>Chọn cái</string>
+	<key>cuoc_ho</key><string>Cước hô</string>
+	<key>cuoc_sai</key><string>Cước sai</string>
+	<key>cuoc_0</key><string>Thông</string>
+	<key>cuoc_1</key><string>Thiên ù</string>
+	<key>cuoc_2</key><string>Địa ù</string>
+	<key>cuoc_3</key><string>Chì</string>
+	<key>cuoc_4</key><string>Bạch thủ</string>
+	<key>cuoc_5</key><string>Bạch thủ chi</string>
+	<key>cuoc_6</key><string>Chíu ù</string>
+	<key>cuoc_7</key><string>Ù bòn</string>
+	<key>cuoc_8</key><string>Thập thành</string>
+	<key>cuoc_9</key><string>Bạch định</string>
+	<key>cuoc_10</key><string>Tám đỏ</string>
+	<key>cuoc_11</key><string>Lèo</string>
+	<key>cuoc_12</key><string>2 Lèo</string>
+	<key>cuoc_13</key><string>3 Lèo</string>
+	<key>cuoc_14</key><string>4 Lèo</string>
+	<key>cuoc_15</key><string>Tôm</string>
+	<key>cuoc_16</key><string>2 Tôm</string>
+	<key>cuoc_17</key><string>3 Tôm</string>
+	<key>cuoc_18</key><string>4 Tôm</string>
+	<key>cuoc_19</key><string>Kính tứ chi</string>
+	<key>cuoc_20</key><string>Thiên khai</string>
+	<key>cuoc_21</key><string>2 Thiên khai</string>
+	<key>cuoc_22</key><string>3 Thiên khai</string>
+	<key>cuoc_23</key><string>4 Thiên khai</string>
+	<key>cuoc_24</key><string>Có ăn bòn</string>
+	<key>cuoc_25</key><string>2 Bòn</string>
+	<key>cuoc_26</key><string>3 Bòn</string>
+	<key>cuoc_27</key><string>4 Bòn</string>
+	<key>cuoc_28</key><string>Có chíu</string>
+	<key>cuoc_29</key><string>2 Chíu</string>
+	<key>cuoc_30</key><string>3 Chíu</string>
+	<key>cuoc_31</key><string>4 Chíu</string>
+	<key>cuoc_32</key><string>Hoa rơi của phật</string>
+	<key>cuoc_33</key><string>Xuông</string>
+	<key>cuoc_34</key><string>Cá lội sân đình</string>
+	<key>cuoc_35</key><string>Cá nhảy đầu thuyền</string>
+	<key>cuoc_36</key><string>Nhà lầu xe hơi - Hoa rơi cửa phật</string>
+	<key>cuoc_37</key><string>Thiên ý</string>
+	<key>cuoc_38</key><string>Chùa đổ nát hoa</string>
+	<key>cuoc_39</key><string>Ngư ông bắt cá</string>
+	<key>nap_the</key><string>Nạp thẻ</string>
+	<key>nap_sms</key><string>Nạp SMS</string>
+	<key>nap_iap</key><string>In-App</string>
+	<key>vnd</key><string>vnđ</string>
+	<key>the</key><string>Thẻ</string>
+	<key>quan</key><string>Quan</string>
+	<key>xu</key><string>Xu</string>
+	<key>noi_quy</key><string>Nội quy</string>
+	<key>cuoc_u</key><string>Cước Ù</string>
+	<key>tinh_loi</key><string>Tính lỗi</string>
+	<key>tinh_diem</key><string>Tính điểm</string>
+	<key>van_dau</key><string>Ván đấu</string>
+	<key>khac</key><string>Khác</string>
+	<key>reject_all_invitation</key><string>Từ chối tất cả mời chơi</string>
+	<key>thang</key><string>Thắng</string>
+	<key>cap_do</key><string>Cấp độ</string>
+	<key>tong</key><string>Tổng</string>
+	<key>lich_su</key><string>Lịch sử</string>
+	<key>kich_hoat</key><string>Kích hoạt</string>
+	<key>so_seri</key><string>Số Seri</string>
+	<key>ma_the</key><string>Mã thẻ</string>
+	<key>nap</key><string>Nạp</string>
+	<key>the_cao</key><string>Thẻ cào</string>
+	<key>vat_pham</key><string>Vật phẩm</string>
+	<key>quay_lai</key><string>Quay lại</string>
+	<key>ma_dt</key><string>Mã ĐT</string>
+	<key>san_pham_doi</key><string>Sản phẩm đổi</string>
+	<key>thoi_gian_doi</key><string>Thời gian đổi</string>
+	<key>thoi_gian_nhan</key><string>Thời gian nhận</string>
+	<key>trang_thai</key><string>Trạng thái</string>
+	<key>thanh_cong</key><string>Thành công</string>
+	<key>dang_duyet</key><string>Đang duyệt</string>
+	<key>ngay</key><string>Ngày</string>
+	<key>thong_tin</key><string>Thông tin</string>
+	<key>tien</key><string>Tiền</string>
+	<key>tien_van</key><string>Tiền ván</string>
+	<key>dat_hang</key><string>Đặt hàng</string>
+	<key>xac_nhan</key><string>Xác nhận</string>
+	<key>hoan_tat</key><string>Hoàn tất</string>
+	<key>huy</key><string>Hủy</string>
+	<key>hoan_tra</key><string>Hoàn trả</string>
+	<key>xac_nhan</key><string>Xác nhận</string>
+	<key>nguoi_gui</key><string>Người gửi</string>
+	<key>cua_hang</key><string>Cửa hàng</string>
+	<key>hay_nhap_tai_khoan</key><string>Vui lòng nhập tài khoản</string>
+	<key>hay_nhap_mat_khau</key><string>Vui lòng nhập mật khẩu</string>
+	<key>bi_day_khoi_ban</key><string>Bạn đã bị đẩy ra khỏi phòng</string>
+	<key>khong_du_tien_vao_ban</key><string>Bàn cược %s. Bạn cần có tối thiểu là %s để vào bàn. Bạn đang có %s</string>
+	<key>khong_du_tien_doi_thuong</key><string>Bạn không đủ tiền để đổi vật phẩm này</string>
+	<key>xac_nhan_mua_vat_pham</key><string>Bạn có chắc chắn muốn đổi vật phẩm %s giá %s Quan</string>
+	<key>nhap_ten_hien_thi</key><string>Vui lòng nhập tên hiển thị</string>
+	<key>nhap_giftcode</key><string>Nhập Giftcode tại đây</string>
+	<key>dang_ky_roi_ban_khi_het_van</key><string>Bạn đã đăng ký rời bàn khi hết ván</string>
+	<key>huy_dang_ky_roi_ban_khi_het_van</key><string>Bạn đã HỦY đăng ký rời bàn khi hết ván</string>
+	<key>bi_day_ra_vi_khong_thao_tac</key><string>Bạn bị đẩy ra khỏi phòng vì không có thao tác</string>
+	<key>bi_thoat_do_khong_san_sang</key><string>Bạn đã bị thoát do không sẵn sàng</string>
+	<key>da_chon_u_roi</key><string> đã chọn ù rồi, vui lòng đợi trong giây lát</string>
+	<key>ban_da_chon_u_roi</key><string>Bạn đã chọn ù rồi, vui lòng đợi trong giây lát</string>
+	<key>van_nay_hoa_roi</key><string>Ván này hòa rồi</string>
+	<key>mat_ket_noi_dang_nhap_lai</key><string>Mất kết nối đến máy chủ, vui lòng đăng nhập lại</string>
+	<key>error_password_must_6_char</key><string>Tài khoản và mật khẩu phải có tối thiểu 6 ký tự, tối đa 16 ký tự, chỉ bao gồm chữ cái và chữ số</string>
+	<key>error_displayname_format</key><string>Tên hiển thị phải có tối thiểu 6 ký tự, tối đa 16 ký tự, chỉ bao gồm chữ cái và chữ số</string>
+	<key>error_email_format</key><string>Email không đúng. Vui lòng nhập lại</string>
+	<key>error_connection</key><string>Không thể kết nối đến máy chủ. Vui lòng thử lại sau ít phút</string>
+	<key>error_retype_password</key><string>Nhập lại mật khẩu không đúng</string>
+	<key>error_unknown</key><string>Có lỗi xảy ra, vui lòng thử lại</string>
+	<key>disconnection_ban</key><string>Tài khoản này đã bị khóa</string>
+	<key>disconnection_idle</key><string>Bạn đã không thao tác quá lâu, vui lòng đăng nhập lại</string>
+	<key>disconnection_kick</key><string>Kết nối đến máy chủ đã bị ngắt, vui lòng đăng nhập lại</string>
+	<key>disconnection_unknown</key><string>Không thể kết nối đến máy chủ, vui lòng đăng nhập lại</string>
+	<key>disconnection_manual</key><string>Mất kết nối đến máy chủ, vui lòng đăng nhập lại</string>
+	<key>disconnection_overlap_login</key><string>Tài khoản của bạn đã bị đăng nhập ở máy khác!</string>
+	<key>connection_failed</key><string>Kết nối đến máy chủ thất bại, vui lòng kiểm tra kết nối mạng và thử lại</string>
+	<key>feature_coming_soon</key><string>Tính năng đang được hoàn thiện và sẽ mở trong thời gian sắp tới</string>
+	<key>notice_update_new_version</key><string>Xin vui lòng cập nhật phiên bản mới nhất</string>
+	<key>open_sms_retake_password</key><string>Vui lòng soạn tin BT MK [uid] gửi 6191 để lấy lại mật khẩu, trong đó [uid] là số ID tài khoản của bạn</string>
+
+</dict>
+</plist>
