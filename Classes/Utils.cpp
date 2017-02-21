@@ -413,10 +413,16 @@ void Utils::reconnect()
 #else
 				SFSRequest::getSingleton().Connect(z.ZoneIp, z.ZonePort);
 #endif
-				break;
+				return;
 			}
 		}
 	}
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+	SFSRequest::getSingleton().Connect(gameConfig.ip_rs, gameConfig.port);
+#else
+	SFSRequest::getSingleton().Connect(gameConfig.host, gameConfig.port);
+#endif
 }
 
 void Utils::reloginZone()

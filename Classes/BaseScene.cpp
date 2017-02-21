@@ -567,7 +567,8 @@ void BaseScene::handleClientDisconnectionReason(std::string reason)
 		reason = "overlap_login";
 	}
 	showPopupNotice(Utils::getSingleton().getStringForKey("disconnection_" + reason), [=]() {
-		if (reason.compare(constant::DISCONNECTION_REASON_UNKNOWN) == 0) {
+		if (reason.compare(constant::DISCONNECTION_REASON_UNKNOWN) == 0
+			|| reason.compare(constant::DISCONNECTION_REASON_IDLE) == 0) {
 			isReconnecting = true;
 			Utils::getSingleton().reconnect();
 			showWaiting();
