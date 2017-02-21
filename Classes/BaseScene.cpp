@@ -555,8 +555,9 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 
 void BaseScene::setMoneyType(int type)
 {
-	moneyBg->setTag(type);
-	chosenBg->setPosition(type == 0 ? 100 : -95, 0);
+	moneyBg0->setTag(type);
+	moneyBg1->setTag(type);
+	chosenBg->setPosition(type == 0 ? 100 : -100, 0);
 	//UserDefault::getInstance()->setBoolForKey(constant::KEY_MONEY_TYPE.c_str(), type == 1);
 }
 
@@ -641,6 +642,7 @@ void BaseScene::initHeaderWithInfos()
 {
 	hasHeader = true;
 	bool isRealMoney = Utils::getSingleton().moneyType == 1;
+	bool isPaymentEnabled = Utils::getSingleton().isPaymentEnabled();
 
 	std::vector<Vec2> vecPos;
 	vecPos.push_back(Vec2(62, 650));
@@ -651,7 +653,7 @@ void BaseScene::initHeaderWithInfos()
 	vecPos.push_back(Vec2(720, 650));
 	vecPos.push_back(Vec2(808, 650));
 	vecPos.push_back(Vec2(904, 650));
-	vecPos.push_back(Vec2(190, 650));
+	vecPos.push_back(Vec2(185, 650));
 	vecPos.push_back(Vec2(386, 650));
 	vecPos.push_back(Vec2(954, 675));
 	vecPos.push_back(Vec2(953, 647));
@@ -668,35 +670,49 @@ void BaseScene::initHeaderWithInfos()
 	autoScaleNode(btnBack);
 
 	Node* moneyNode = Node::create();
-	moneyNode->setPosition(vecPos[1]);
+	moneyNode->setPosition(vecPos[1] - Vec2(isPaymentEnabled ? 0 : 100, 0));
 	mLayer->addChild(moneyNode, constant::MAIN_ZORDER_HEADER);
 	autoScaleNode(moneyNode);
 
-	moneyBg = ui::Button::create("main/money_bg.png");
-	moneyBg->setTag((int)isRealMoney);
-	moneyNode->addChild(moneyBg, 0);
+	moneyBg0 = ui::Button::create("main/money_bg.png");
+	moneyBg0->setTag((int)isRealMoney);
+	moneyBg0->setPosition(Vec2(100, 0));
+	moneyNode->addChild(moneyBg0, 0);
+
+	moneyBg1 = ui::Button::create("main/money_bg.png");
+	moneyBg1->setTag((int)isRealMoney);
+	moneyBg1->setPosition(Vec2(-100, 0));
+	moneyBg1->setVisible(isPaymentEnabled);
+	moneyNode->addChild(moneyBg1, 0);
 
 	chosenBg = Sprite::create("main/chosen_bg.png");
-	chosenBg->setPosition(isRealMoney ? -95 : 100, 0);
+	chosenBg->setPosition(isRealMoney && isPaymentEnabled ? -100 : 100, 0);
 	moneyNode->addChild(chosenBg, 1);
 	
-	moneyBg->setBright(false);
-	addTouchEventListener(moneyBg, [=]() {
-		if (moneyBg->getTag() == 0) {
-			moneyBg->setTag(1);
-			chosenBg->setPosition(-95, 0);
-			onChangeMoneyType(1);
-			//UserDefault::getInstance()->setBoolForKey(constant::KEY_MONEY_TYPE.c_str(), true);
-		} else {
-			moneyBg->setTag(0);
+	moneyBg0->setBright(false);
+	moneyBg1->setBright(false);
+	addTouchEventListener(moneyBg0, [=]() {
+		if (moneyBg0->getTag() == 1) {
+			moneyBg0->setTag(0);
+			moneyBg1->setTag(0);
 			chosenBg->setPosition(100, 0);
 			onChangeMoneyType(0);
 			//UserDefault::getInstance()->setBoolForKey(constant::KEY_MONEY_TYPE.c_str(), false);
 		}
 	});
+	addTouchEventListener(moneyBg1, [=]() {
+		if (moneyBg0->getTag() == 0) {
+			moneyBg0->setTag(1);
+			moneyBg1->setTag(1);
+			chosenBg->setPosition(-100, 0);
+			onChangeMoneyType(1);
+			//UserDefault::getInstance()->setBoolForKey(constant::KEY_MONEY_TYPE.c_str(), true);
+		}
+	});
 
 	Sprite* iconGold = Sprite::create("main/icon_gold.png");
-	iconGold->setPosition(-165, 0);
+	iconGold->setPosition(-170, 0);
+	iconGold->setVisible(isPaymentEnabled);
 	moneyNode->addChild(iconGold, 2);
 
 	Sprite* iconSilver = Sprite::create("main/icon_silver.png");
@@ -705,6 +721,7 @@ void BaseScene::initHeaderWithInfos()
 
 	ui::Button* btnFacebook = ui::Button::create("main/facebook.png");
 	btnFacebook->setPosition(vecPos[14]);
+	btnFacebook->setVisible(isPaymentEnabled);
 	addTouchEventListener(btnFacebook, [=]() {
 		Application::sharedApplication()->openURL(Utils::getSingleton().gameConfig.linkFb);
 	});
@@ -747,6 +764,7 @@ void BaseScene::initHeaderWithInfos()
 	lbGold->setAnchorPoint(Vec2(0, .5f));
 	lbGold->setPosition(vecPos[8] - vecPos[1]);
 	lbGold->setColor(Color3B::YELLOW);
+	lbGold->setVisible(isPaymentEnabled);
 	moneyNode->addChild(lbGold, 2);
 
 	lbSilver = Label::create("0", "fonts/arialbd.ttf", 25);
