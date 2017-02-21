@@ -1567,6 +1567,15 @@ void GameScene::onErrorResponse(unsigned char code, std::string msg)
 		}, false);*/
 		return;
 	}
+	if (code == 42) {
+		isKickForNotEnoughMoney = true;
+		unregisterEventListenner();
+		showPopupNotice(msg, [=]() {
+			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
+			Utils::getSingleton().goToLobbyScene();
+		}, false);
+		return;
+	}
 	showError(msg);
 }
 

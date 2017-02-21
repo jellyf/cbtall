@@ -178,6 +178,7 @@ private:
 	bool hasClickInvite = false;
 	bool hasRegisterOut = false;
 	bool isKickForNotReady = false;
+	bool isKickForNotEnoughMoney = false;
 	bool isPause = false;
 	bool isU411 = false;
 	bool mustGoToLobby = false;
@@ -188,5 +189,6 @@ private:
 	EndMatchMoneyData winMoneyData;
 	std::vector<PlayerData> vecPlayers;
 	std::vector<PlayerData> vecSpectators;
+	//std::string tmpMessage;
 };
 
