@@ -373,3 +373,12 @@ struct ProductData
     std::string Description;
     std::string CurrencySymbol;
 };
+
+struct CofferWinnerData
+{
+	long Uid;
+	long Point;
+	std::string Name;
+	std::string Cuocs;
+	std::string Date;
+};

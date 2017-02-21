@@ -63,6 +63,8 @@ SFSResponse::SFSResponse()
 	mapFunctions[cmd::NEWS] = std::bind(&SFSResponse::onNewsResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::EVENTS] = std::bind(&SFSResponse::onListEventResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::CURRENT_TABLE_RECONNECT] = std::bind(&SFSResponse::onTableReconnectResponse, this, std::placeholders::_1);
+	mapFunctions[cmd::COFFER_MONEY] = std::bind(&SFSResponse::onCofferMoneyResponse, this, std::placeholders::_1);
+	mapFunctions[cmd::COFFER_HISTORY] = std::bind(&SFSResponse::onCofferHistoryResponse, this, std::placeholders::_1);
 }
 
 SFSResponse::~SFSResponse()
@@ -1113,5 +1115,37 @@ void SFSResponse::onTableReconnectResponse(boost::shared_ptr<ISFSObject> isfsObj
 	Utils::getSingleton().tableReconnectData = data;
 	if (EventHandler::getSingleton().onTableReconnectDataSFSResponse != NULL) {
 		EventHandler::getSingleton().onTableReconnectDataSFSResponse(data);
+	}
+}
+
+void SFSResponse::onCofferMoneyResponse(boost::shared_ptr<ISFSObject> isfsObject)
+{
+	long money;
+	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
+	byteArray->ReadInt(money);
+	CCLOG("%ld", money);
+
+	if (EventHandler::getSingleton().onCofferMoneySFSResponse != NULL) {
+		EventHandler::getSingleton().onCofferMoneySFSResponse(money);
+	}
+}
+
+void SFSResponse::onCofferHistoryResponse(boost::shared_ptr<ISFSObject> isfsObject)
+{
+	std::vector<CofferWinnerData> list;
+	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
+	CCLOG("%d", byteArray->Length());
+	while (byteArray->Position() < byteArray->Length()) {
+		CofferWinnerData data;
+		byteArray->ReadInt(data.Uid);
+		byteArray->ReadUTF(data.Name);
+		byteArray->ReadInt(data.Point);
+		byteArray->ReadUTF(data.Cuocs);
+		byteArray->ReadUTF(data.Date);
+		list.push_back(data);
+		CCLOG("%ld %s %ld %s %s", data.Uid, data.Name.c_str(), data.Point, data.Cuocs.c_str(), data.Date.c_str());
+	}
+	if (EventHandler::getSingleton().onCofferHistorySFSResponse != NULL) {
+		EventHandler::getSingleton().onCofferHistorySFSResponse(list);
 	}
 }

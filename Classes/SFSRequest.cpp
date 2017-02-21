@@ -221,6 +221,12 @@ void SFSRequest::RequestPayment(std::string token)
     SFSConnector::getSingleton().SendExtensionRequest(cmd::PAYMENT, parameters);
 }
 
+void SFSRequest::RequestCofferHistory()
+{
+	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+	SFSConnector::getSingleton().SendExtensionRequest(cmd::COFFER_HISTORY, parameters);
+}
+
 void SFSRequest::RequestRegister(std::string username, std::string password, std::string email)
 {
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());

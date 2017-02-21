@@ -46,7 +46,8 @@ public:
 	void RequestUpdateDisplayName(std::string name);
 	void RequestNews(int page);
 	void RequestGiftcode(std::string giftcode);
-    void RequestPayment(std::string token);
+	void RequestPayment(std::string token);
+	void RequestCofferHistory();
 
 	void RequestGameReady();
 	void RequestGameChooseStilt(int stilt);
