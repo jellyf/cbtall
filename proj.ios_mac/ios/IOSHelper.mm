@@ -76,6 +76,11 @@ void IOSHelperCPlus::queryIAPProducts(std::vector<std::string> productIds)
     }
 }
 
+string IOSHelperCPlus::getDeviceId()
+{
+    return [[[[UIDevice currentDevice] identifierForVendor] UUIDString] UTF8String];
+}
+
 @implementation IOSNDKHelper
 
 +(void)OnLoginFacebookCallback:(NSString *)token

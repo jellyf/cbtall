@@ -234,6 +234,7 @@ void SFSRequest::RequestRegister(std::string username, std::string password, std
 	data->WriteUTF(username);
 	data->WriteUTF(password);
 	data->WriteUTF(email);
+	data->WriteUTF(Utils::getSingleton().getDeviceId());
 	parameters->PutByteArray("d", data);
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::REGISTER, parameters);
 }

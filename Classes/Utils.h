@@ -23,6 +23,7 @@ public:
 	std::string getUserCountry();
 	std::string getCurrentSystemTimeString();
 	std::string getPlatformOS();
+	std::string getDeviceId();
 	double getCurrentSystemTimeInSecs();
 	int getCurrentZoneIndex();
 	bool isEmailValid(std::string email);
