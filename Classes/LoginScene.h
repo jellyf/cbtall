@@ -27,7 +27,7 @@ private:
 	void loginNormal();
 	void loginFacebook();
 	void initRegisterNode();
-	void requestGameConfig();
+	void requestGameConfig(bool realConfig);
 	void loadTextureCache();
     
 	int waitingLogin = 0;
@@ -37,6 +37,7 @@ private:
 	bool isReconnecting = false;
 	bool isLogedInZone = false;
 	bool isRequesting = false;
+	bool isRealConfig = true;
 	bool isIPv4 = CC_TARGET_PLATFORM == CC_PLATFORM_IOS;
 
 	cocos2d::Node* loginNode;

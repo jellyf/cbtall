@@ -24,6 +24,8 @@ public:
 	void onMailContentResponse(std::string content);
 	void onNewsDataResponse(std::vector<NewsData> list);
     void onPurchaseSuccess(std::string token);
+	void onCofferMoneyResponse(long money);
+	void onCofferHistoryResponse(std::vector<CofferWinnerData> list);
 protected:
 	virtual void onConnected();
 	virtual void onLoginZoneError(short int code, std::string msg);
@@ -54,6 +56,7 @@ private:
 	cocos2d::Node* nodeWebview;
 
 	cocos2d::Label* lbNewMail;
+	cocos2d::Label* lbCoffer;
 
 	int currentMoneyType = 0;
 	int tmpZoneId = -1;

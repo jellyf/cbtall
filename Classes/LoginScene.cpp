@@ -112,7 +112,7 @@ void LoginScene::onInit()
 	addTouchEventListener(btnLogin, [=]() {
 		if (Utils::getSingleton().gameConfig.phone.length() == 0) {
             waitingLogin = 1;
-			requestGameConfig();
+			requestGameConfig(isRealConfig);
 			return;
 		}
         loginNormal();
@@ -132,7 +132,7 @@ void LoginScene::onInit()
 	addTouchEventListener(btnFB, [=]() {
         if (Utils::getSingleton().gameConfig.phone.length() == 0) {
             waitingLogin = 2;
-            requestGameConfig();
+            requestGameConfig(isRealConfig);
             return;
         }
         loginFacebook();
@@ -186,7 +186,7 @@ void LoginScene::onInit()
 
     SFSRequest::getSingleton().ForceIPv6(false);
 	if (Utils::getSingleton().gameConfig.phone.length() == 0) {
-		requestGameConfig();
+		requestGameConfig(isRealConfig);
 	} else {
 		SFSRequest::getSingleton().Connect();
 	}
@@ -375,6 +375,14 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 			return;
 		}
 
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+		if (isRealConfig && !config.paymentEnabledIOS) {
+			isRealConfig = false;
+			requestGameConfig(false);
+			return;
+		}
+#endif
+
 		string verstr = Application::sharedApplication()->getVersion();
 		int i = verstr.find_last_of('.') + 1;
 		verstr = verstr.substr(i, verstr.length() - i);
@@ -543,7 +551,7 @@ void LoginScene::initRegisterNode()
 	btnRegister->setPosition(Vec2(110, -130));
 	addTouchEventListener(btnRegister, [=]() {
 		if (Utils::getSingleton().gameConfig.phone.length() == 0) {
-			requestGameConfig();
+			requestGameConfig(isRealConfig);
 			return;
 		}
 		if (!Utils::getSingleton().isUsernameValid(tfResUname->getText())
@@ -567,11 +575,14 @@ void LoginScene::initRegisterNode()
 	registerNode->addChild(btnRegister);
 }
 
-void LoginScene::requestGameConfig()
+void LoginScene::requestGameConfig(bool realConfig)
 {
 	showWaiting();
-	//SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", 1);
-	SFSRequest::getSingleton().RequestHttpGet("http://125.212.192.96:8899/configchan.txt", 1);
+	if (realConfig) {
+		SFSRequest::getSingleton().RequestHttpGet("http://125.212.192.96:8899/configchan.txt", 1);
+	} else {
+		SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", 1);
+	}
 }
 
 void LoginScene::loadTextureCache()

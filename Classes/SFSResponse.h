@@ -62,6 +62,8 @@ private:
 	void onNewsResponse(boost::shared_ptr<ISFSObject> isfsObject);
 	void onListEventResponse(boost::shared_ptr<ISFSObject> isfsObject);
 	void onTableReconnectResponse(boost::shared_ptr<ISFSObject> isfsObject);
+	void onCofferMoneyResponse(boost::shared_ptr<ISFSObject> isfsObject);
+	void onCofferHistoryResponse(boost::shared_ptr<ISFSObject> isfsObject);
 
 	map<string, function<void(boost::shared_ptr<ISFSObject>)>> mapFunctions;
 	vector<pair<boost::shared_ptr<string>, boost::shared_ptr<ISFSObject>>> cachedResponses;

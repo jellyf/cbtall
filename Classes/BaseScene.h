@@ -82,7 +82,8 @@ protected:
 	cocos2d::Vec2 scaleScene;
 
 	cocos2d::ui::Scale9Sprite* splash;
-	cocos2d::ui::Button* moneyBg;
+	cocos2d::ui::Button* moneyBg0;
+	cocos2d::ui::Button* moneyBg1;
 	cocos2d::Sprite* chosenBg;
 	cocos2d::Sprite* spWaiting;
 	cocos2d::Sprite* spNetwork;

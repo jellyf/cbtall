@@ -46,6 +46,8 @@ public:
 	std::function<void(std::vector<NewsData>)> onNewsDataSFSResponse = NULL;
 	std::function<void(std::vector<EventData>)> onListEventDataSFSResponse = NULL;
 	std::function<void(TableReconnectData)> onTableReconnectDataSFSResponse = NULL;
+	std::function<void(long)> onCofferMoneySFSResponse = NULL;
+	std::function<void(std::vector<CofferWinnerData>)> onCofferHistorySFSResponse = NULL;
 
 	std::function<void(unsigned char, std::string)> onErrorSFSResponse = NULL;
 	std::function<void(RoomData)> onRoomDataSFSResponse = NULL;

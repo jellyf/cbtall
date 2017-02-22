@@ -164,6 +164,27 @@ std::string Utils::getPlatformOS()
 #endif
 }
 
+std::string Utils::getDeviceId()
+{
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+	return IOSHelperCPlus::getDeviceId();
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+	JniMethodInfo methodInfo;
+	if (!JniHelper::getStaticMethodInfo(methodInfo, "org/cocos2dx/cpp/AppActivity", "getDeviceId", "()Ljava/lang/String;")) {
+		return "unknown";
+	}
+	jstring s = (jstring)methodInfo.env->CallStaticObjectMethod(methodInfo.classID, methodInfo.methodID);
+	methodInfo.env->DeleteLocalRef(methodInfo.classID);
+
+	std::string str = JniHelper::jstring2string(s);
+	return str;
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+	return "win32";
+#else
+	return "unknown";
+#endif
+}
+
 double Utils::getCurrentSystemTimeInSecs()
 {
 	timeval time;
@@ -413,10 +434,16 @@ void Utils::reconnect()
 #else
 				SFSRequest::getSingleton().Connect(z.ZoneIp, z.ZonePort);
 #endif
-				break;
+				return;
 			}
 		}
 	}
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+	SFSRequest::getSingleton().Connect(gameConfig.ip_rs, gameConfig.port);
+#else
+	SFSRequest::getSingleton().Connect(gameConfig.host, gameConfig.port);
+#endif
 }
 
 void Utils::reloginZone()

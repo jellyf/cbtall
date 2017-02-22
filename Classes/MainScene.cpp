@@ -131,9 +131,17 @@ void MainScene::onInit()
 			initPopupGiftcode();
 		}
 		showPopup(popupGiftcode);
+		//SFSRequest::getSingleton().RequestCofferHistory();
 	});
 	mLayer->addChild(btnGiftcode);
 	autoScaleNode(btnGiftcode);
+	
+	lbCoffer = Label::create("123.243", "fonts/arialbd.ttf", 30);
+	lbCoffer->setPosition(btnGiftcode->getPosition() + Vec2(0, 50));
+	lbCoffer->setColor(Color3B::YELLOW);
+	lbCoffer->setVisible(false);
+	mLayer->addChild(lbCoffer);
+	autoScaleNode(lbCoffer);
 
 	ui::Button* btnLoiDai = ui::Button::create("main/loidai.png", "main/loidai.png");
 	btnLoiDai->setPosition(vecPos[m++]);
@@ -254,7 +262,9 @@ void MainScene::registerEventListenner()
 	EventHandler::getSingleton().onMailContentSFSResponse = bind(&MainScene::onMailContentResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onNewsDataSFSResponse = bind(&MainScene::onNewsDataResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onExchangeItemSFSResponse = bind(&MainScene::onExchangeItemResponse, this, placeholders::_1);
-    EventHandler::getSingleton().onPurchaseSuccess = bind(&MainScene::onPurchaseSuccess, this, placeholders::_1);
+	EventHandler::getSingleton().onPurchaseSuccess = bind(&MainScene::onPurchaseSuccess, this, placeholders::_1);
+	EventHandler::getSingleton().onCofferMoneySFSResponse = bind(&MainScene::onCofferMoneyResponse, this, placeholders::_1);
+	EventHandler::getSingleton().onCofferHistorySFSResponse = bind(&MainScene::onCofferHistoryResponse, this, placeholders::_1);
 }
 
 void MainScene::unregisterEventListenner()
@@ -273,6 +283,8 @@ void MainScene::unregisterEventListenner()
 	EventHandler::getSingleton().onNewsDataSFSResponse = NULL;
 	EventHandler::getSingleton().onExchangeItemSFSResponse = NULL;
     EventHandler::getSingleton().onPurchaseSuccess = NULL;
+	EventHandler::getSingleton().onCofferMoneySFSResponse = NULL;
+	EventHandler::getSingleton().onCofferHistorySFSResponse = NULL;
 }
 
 void MainScene::editBoxReturn(cocos2d::ui::EditBox * editBox)
@@ -822,6 +834,16 @@ void MainScene::onPurchaseSuccess(std::string token)
     if(token.length() > 0){
         SFSRequest::getSingleton().RequestPayment(token);
     }
+}
+
+void MainScene::onCofferMoneyResponse(long money)
+{
+	lbCoffer->setString(Utils::getSingleton().formatMoneyWithComma(money));
+}
+
+void MainScene::onCofferHistoryResponse(std::vector<CofferWinnerData> list)
+{
+
 }
 
 void MainScene::onBackScene()

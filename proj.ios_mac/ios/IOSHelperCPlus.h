@@ -28,6 +28,7 @@ public :
     static void logoutFacebook();
     static void purchaseItem(std::string sku);
     static void queryIAPProducts(std::vector<std::string> productIds);
+	static string getDeviceId();
 };
 
 #endif /* IOSHelperCPlus_h */

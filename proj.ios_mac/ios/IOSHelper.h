@@ -10,6 +10,7 @@
 #define IOSHelper_h
 
 #import "IOSHelperCPlus.h"
+#import <UIKit/UIKit.h>
 
 @interface IOSNDKHelper : NSObject
 
