@@ -98,7 +98,7 @@ void BaseScene::onEnter()
 	spNetwork = Sprite::create("wifi0.png");
 	//spNetwork->setAnchorPoint(Vec2(1, 0));
 	//spNetwork->setPosition(1115, 5);
-	spNetwork->setPosition(isPaymentEnabled ? 570 : 630, 650);
+	spNetwork->setPosition(isPaymentEnabled ? 570 : 720, 650);
 	//spNetwork->setVisible(false);
 	mLayer->addChild(spNetwork, constant::GAME_ZORDER_SPLASH - 1);
 	autoScaleNode(spNetwork);
@@ -543,7 +543,7 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 	Label* lbTotal = (Label*)popupUserInfo->getChildByName("lbtotal");
 
 	btnHistory->setVisible(showHistoryIfIsMe && data.UserID == Utils::getSingleton().userDataMe.UserID);
-	btnActive->setVisible(showHistoryIfIsMe && data.UserID == Utils::getSingleton().userDataMe.UserID && !Utils::getSingleton().userDataMe.IsActived);
+	btnActive->setVisible(showHistoryIfIsMe && data.UserID == Utils::getSingleton().userDataMe.UserID && !Utils::getSingleton().userDataMe.IsActived && Utils::getSingleton().isPaymentEnabled());
     btnFB->setVisible(showHistoryIfIsMe && data.UserID == Utils::getSingleton().userDataMe.UserID && Utils::getSingleton().loginType == constant::LOGIN_FACEBOOK);
 	lbName->setString(data.DisplayName);
 	lbQuan->setString(Utils::getSingleton().formatMoneyWithComma(data.MoneyReal));
@@ -644,7 +644,6 @@ void BaseScene::initHeaderWithInfos()
 {
 	hasHeader = true;
 	bool isRealMoney = Utils::getSingleton().moneyType == 1;
-	bool isPaymentEnabled = Utils::getSingleton().isPaymentEnabled();
 
 	std::vector<Vec2> vecPos;
 	vecPos.push_back(Vec2(62, 650));
@@ -672,7 +671,7 @@ void BaseScene::initHeaderWithInfos()
 	autoScaleNode(btnBack);
 
 	Node* moneyNode = Node::create();
-	moneyNode->setPosition(vecPos[1] + Vec2(isPaymentEnabled ? 0 : -180, 0));
+	moneyNode->setPosition(vecPos[1]);
 	mLayer->addChild(moneyNode, constant::MAIN_ZORDER_HEADER);
 	autoScaleNode(moneyNode);
 
@@ -684,11 +683,10 @@ void BaseScene::initHeaderWithInfos()
 	moneyBg1 = ui::Button::create("main/money_bg.png");
 	moneyBg1->setTag((int)isRealMoney);
 	moneyBg1->setPosition(Vec2(-100, 0));
-	moneyBg1->setVisible(isPaymentEnabled);
 	moneyNode->addChild(moneyBg1, 0);
 
 	chosenBg = Sprite::create("main/chosen_bg.png");
-	chosenBg->setPosition(isRealMoney && isPaymentEnabled ? -100 : 100, 0);
+	chosenBg->setPosition(isRealMoney ? -100 : 100, 0);
 	moneyNode->addChild(chosenBg, 1);
 	
 	moneyBg0->setBright(false);
@@ -714,7 +712,6 @@ void BaseScene::initHeaderWithInfos()
 
 	Sprite* iconGold = Sprite::create("main/icon_gold.png");
 	iconGold->setPosition(-170, 0);
-	iconGold->setVisible(isPaymentEnabled);
 	moneyNode->addChild(iconGold, 2);
 
 	Sprite* iconSilver = Sprite::create("main/icon_silver.png");
@@ -723,7 +720,6 @@ void BaseScene::initHeaderWithInfos()
 
 	ui::Button* btnFacebook = ui::Button::create("main/facebook.png");
 	btnFacebook->setPosition(vecPos[14]);
-	btnFacebook->setVisible(isPaymentEnabled);
 	addTouchEventListener(btnFacebook, [=]() {
 		Application::sharedApplication()->openURL(Utils::getSingleton().gameConfig.linkFb);
 	});
@@ -766,7 +762,6 @@ void BaseScene::initHeaderWithInfos()
 	lbGold->setAnchorPoint(Vec2(0, .5f));
 	lbGold->setPosition(vecPos[8] - vecPos[1]);
 	lbGold->setColor(Color3B::YELLOW);
-	lbGold->setVisible(isPaymentEnabled);
 	moneyNode->addChild(lbGold, 2);
 
 	lbSilver = Label::create("0", "fonts/arialbd.ttf", 25);
@@ -803,6 +798,17 @@ void BaseScene::initHeaderWithInfos()
 	if (Utils::getSingleton().userDataMe.UserID > 0) {
 		onUserDataMeResponse();
 	}
+
+	bool isPaymentEnabled = Utils::getSingleton().isPaymentEnabled();
+	if (!isPaymentEnabled) {
+		chosenBg->setPosition(isRealMoney && isPaymentEnabled ? -100 : 100, 0);
+		moneyNode->setPosition(vecPos[1] + Vec2(-180, 0));
+		moneyBg1->setVisible(false);
+		iconGold->setVisible(false);
+		lbGold->setVisible(false);
+		btnFacebook->setVisible(false);
+		btnRank->setVisible(false);
+	}
 }
 
 void BaseScene::onBackScene()
@@ -812,17 +818,18 @@ void BaseScene::onBackScene()
 
 void BaseScene::showPopupHistory()
 {
+	int moneyType = !Utils::getSingleton().isPaymentEnabled();
 	if (popupHistory == nullptr) {
 		initPopupHistory();
 	}
 	showPopup(popupHistory);
-	SFSRequest::getSingleton().RequestPlayHistory(0, 0);
+	SFSRequest::getSingleton().RequestPlayHistory(moneyType, 0);
 
 	ui::Button* btn0 = (ui::Button*)popupHistory->getChildByTag(10);
 	ui::Button* btn1 = (ui::Button*)popupHistory->getChildByTag(11);
 	btn0->loadTextureNormal("popup/box2.png");
 	btn1->loadTextureNormal("popup/box1.png");
-	popupHistory->setTag(0);
+	popupHistory->setTag(moneyType);
 	popupHistory->getChildByName("nodepage")->setTag(1);
 	for (int i = 1; i <= 5; i++) {
 		ui::Button* btn = (ui::Button*)popupHistory->getChildByTag(1000 + i);
@@ -1164,6 +1171,8 @@ void BaseScene::initPopupSettings()
 
 void BaseScene::initPopupUserInfo()
 {
+	bool isPaymentEnabled = Utils::getSingleton().isPaymentEnabled();
+
 	popupUserInfo = Node::create();
 	popupUserInfo->setPosition(560, 350);
 	popupUserInfo->setVisible(false);
@@ -1247,6 +1256,7 @@ void BaseScene::initPopupUserInfo()
 	lbQuan->setAnchorPoint(Vec2(0, .5f));
 	lbQuan->setColor(Color3B::BLACK);
 	lbQuan->setPosition(-70, 40);
+	lbQuan->setVisible(isPaymentEnabled);
 	popupUserInfo->addChild(lbQuan);
 
 	Label* lbQuan1 = Label::create("100,000", "fonts/arial.ttf", 25);
@@ -1254,6 +1264,7 @@ void BaseScene::initPopupUserInfo()
 	lbQuan1->setColor(Color3B::RED);
 	lbQuan1->setPosition(30, 40);
 	lbQuan1->setName("lbquan");
+	lbQuan1->setVisible(isPaymentEnabled);
 	popupUserInfo->addChild(lbQuan1);
 
 	Label* lbXu = Label::create(Utils::getSingleton().getStringForKey("xu"), "fonts/arial.ttf", 25);
@@ -1300,6 +1311,8 @@ void BaseScene::initPopupUserInfo()
 
 void BaseScene::initPopupHistory()
 {
+	bool isPaymentEnabled = Utils::getSingleton().isPaymentEnabled();
+
 	popupHistory = Node::create();
 	popupHistory->setPosition(560, 350);
 	popupHistory->setVisible(false);
@@ -1317,7 +1330,7 @@ void BaseScene::initPopupHistory()
 
 	ui::Scale9Sprite* bgContent = ui::Scale9Sprite::create("popup/box1.png");
 	bgContent->setContentSize(Size(860, 370));
-	bgContent->setPosition(0, -55);
+	bgContent->setPosition(0, isPaymentEnabled ? -55 : -20);
 	popupHistory->addChild(bgContent);
 
 	Sprite* title = Sprite::create("popup/title_lichsu.png");
@@ -1336,7 +1349,7 @@ void BaseScene::initPopupHistory()
 	ui::ScrollView* scroll = ui::ScrollView::create();
 	scroll->setDirection(ui::ScrollView::Direction::VERTICAL);
 	scroll->setBounceEnabled(true);
-	scroll->setPosition(Vec2(-w / 2, -227));
+	scroll->setPosition(Vec2(-w / 2, bgContent->getPositionY() - 172));
 	scroll->setContentSize(Size(w, 300));
 	scroll->setScrollBarEnabled(false);
 	scroll->setName("scroll");
@@ -1351,6 +1364,7 @@ void BaseScene::initPopupHistory()
 		btn->setScale9Enabled(true);
 		btn->setCapInsets(Rect(25, 25, 0, 0));
 		btn->setTag(10 + i);
+		btn->setVisible(isPaymentEnabled);
 		addTouchEventListener(btn, [=]() {
 			ui::Button* btn1 = (ui::Button*)popupHistory->getChildByTag(10 + popupHistory->getTag());
 			btn1->loadTextureNormal("popup/box1.png");
@@ -1386,12 +1400,12 @@ void BaseScene::initPopupHistory()
 	for (int i = 0; i < historyTitles.size(); i++) {
 		Label* lb = Label::create(historyTitles[i], "fonts/aurora.ttf", 30);
 		lb->setColor(Color3B(50, 50, 50));
-		lb->setPosition(posX[i], 98);
+		lb->setPosition(posX[i], bgContent->getPositionY() + 153);
 		popupHistory->addChild(lb);
 	}
 
 	Node* nodeDetail = Node::create();
-	nodeDetail->setPosition(0, -75);
+	nodeDetail->setPosition(0, bgContent->getPositionY() - 20);
 	nodeDetail->setVisible(false);
 	nodeDetail->setName("nodedetail");
 	popupHistory->addChild(nodeDetail);
