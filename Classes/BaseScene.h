@@ -80,6 +80,7 @@ protected:
 	int pingId = 0;
 
 	cocos2d::Vec2 scaleScene;
+	cocos2d::Size winSize;
 
 	cocos2d::ui::Scale9Sprite* splash;
 	cocos2d::ui::Button* moneyBg0;

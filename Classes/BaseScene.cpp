@@ -59,6 +59,8 @@ void BaseScene::onEnter()
 
 	mLayer = Layer::create();
 	addChild(mLayer, 10);
+
+	winSize = Director::sharedDirector()->getWinSize();
 	auto visibleSize = Director::sharedDirector()->getVisibleSize();
 	visibleSize.width = std::ceil(visibleSize.width);
 	visibleSize.height = std::ceil(visibleSize.height);
@@ -98,7 +100,7 @@ void BaseScene::onEnter()
 	spNetwork = Sprite::create("wifi0.png");
 	//spNetwork->setAnchorPoint(Vec2(1, 0));
 	//spNetwork->setPosition(1115, 5);
-	spNetwork->setPosition(isPaymentEnabled ? 570 : 720, 650);
+	spNetwork->setPosition(winSize.width - (isPaymentEnabled ? 240 : 150) * scaleScene.y, 647);
 	//spNetwork->setVisible(false);
 	mLayer->addChild(spNetwork, constant::GAME_ZORDER_SPLASH - 1);
 	autoScaleNode(spNetwork);
@@ -339,6 +341,7 @@ void BaseScene::runEventView(std::vector<EventData> list, int currentPosX)
 			lb->setAnchorPoint(Vec2(0, .5f));
 			lb->setTag(i);
 			nodelb->addChild(lb);
+			autoScaleNode(lb);
 		} else {
 			lb->setVisible(true);
 		}
@@ -646,23 +649,21 @@ void BaseScene::initHeaderWithInfos()
 	bool isRealMoney = Utils::getSingleton().moneyType == 1;
 
 	std::vector<Vec2> vecPos;
-	vecPos.push_back(Vec2(62, 650));
-	vecPos.push_back(Vec2(330, 650));
+	vecPos.push_back(Vec2(55 * scaleScene.y, 650));
+	vecPos.push_back(Vec2(600, 650));
 	vecPos.push_back(Vec2(430, 650));
 	vecPos.push_back(Vec2(165, 650));
 	vecPos.push_back(Vec2(360, 650));
-	vecPos.push_back(Vec2(720, 650));
-	vecPos.push_back(Vec2(808, 650));
-	vecPos.push_back(Vec2(904, 650));
-	vecPos.push_back(Vec2(185, 650));
-	vecPos.push_back(Vec2(386, 650));
-	vecPos.push_back(Vec2(954, 675));
-	vecPos.push_back(Vec2(953, 647));
-	vecPos.push_back(Vec2(953, 624));
-	vecPos.push_back(Vec2(560, 590));
-	vecPos.push_back(Vec2(640, 650));
+	vecPos.push_back(Vec2(winSize.width - 150 * scaleScene.y, 650));
+	vecPos.push_back(Vec2(winSize.width - 55 * scaleScene.y, 650));
+	vecPos.push_back(Vec2(170 * scaleScene.y, 650));
+	vecPos.push_back(Vec2(-147, 0));
+	vecPos.push_back(Vec2(55, 0));
+	vecPos.push_back(Vec2(220 * scaleScene.y, 675));
+	vecPos.push_back(Vec2(220 * scaleScene.y, 647));
+	vecPos.push_back(Vec2(220 * scaleScene.y, 624));
 
-	ui::Button* btnBack = ui::Button::create("main/back.png");
+	ui::Button* btnBack = ui::Button::create("board/btn_back.png", "board/btn_back_clicked.png");
 	btnBack->setPosition(vecPos[0]);
 	addTouchEventListener(btnBack, [=]() {
 		onBackScene();
@@ -718,15 +719,7 @@ void BaseScene::initHeaderWithInfos()
 	iconSilver->setPosition(30, 0);
 	moneyNode->addChild(iconSilver, 2);
 
-	ui::Button* btnFacebook = ui::Button::create("main/facebook.png");
-	btnFacebook->setPosition(vecPos[14]);
-	addTouchEventListener(btnFacebook, [=]() {
-		Application::sharedApplication()->openURL(Utils::getSingleton().gameConfig.linkFb);
-	});
-	mLayer->addChild(btnFacebook, constant::MAIN_ZORDER_HEADER);
-	autoScaleNode(btnFacebook);
-
-	ui::Button* btnRank = ui::Button::create("main/rank.png");
+	ui::Button* btnRank = ui::Button::create("main/btn_rank.png", "main/btn_rank_clicked.png");
 	btnRank->setPosition(vecPos[5]);
 	addTouchEventListener(btnRank, [=]() {
 		if (listRanks.size() == 0) {
@@ -739,7 +732,7 @@ void BaseScene::initHeaderWithInfos()
 	mLayer->addChild(btnRank, constant::MAIN_ZORDER_HEADER);
 	autoScaleNode(btnRank);
 
-	ui::Button* btnSettings = ui::Button::create("main/settings.png");
+	ui::Button* btnSettings = ui::Button::create("board/btn_settings.png", "board/btn_settings_clicked.png");
 	btnSettings->setPosition(vecPos[6]);
 	addTouchEventListener(btnSettings, [=]() {
 		if (popupMainSettings == nullptr) {
@@ -752,6 +745,7 @@ void BaseScene::initHeaderWithInfos()
 
 	ui::Button* btnAvar = ui::Button::create("main/avatar.png");
 	btnAvar->setPosition(vecPos[7]);
+	btnAvar->setScale(.9f);
 	addTouchEventListener(btnAvar, [=]() {
 		showPopupUserInfo(Utils::getSingleton().userDataMe);
 	});
@@ -760,13 +754,13 @@ void BaseScene::initHeaderWithInfos()
 
 	lbGold = Label::create("0", "fonts/arialbd.ttf", 25);
 	lbGold->setAnchorPoint(Vec2(0, .5f));
-	lbGold->setPosition(vecPos[8] - vecPos[1]);
+	lbGold->setPosition(vecPos[8]);
 	lbGold->setColor(Color3B::YELLOW);
 	moneyNode->addChild(lbGold, 2);
 
 	lbSilver = Label::create("0", "fonts/arialbd.ttf", 25);
 	lbSilver->setAnchorPoint(Vec2(0, .5f));
-	lbSilver->setPosition(vecPos[9] - vecPos[1]);
+	lbSilver->setPosition(vecPos[9]);
 	lbSilver->setColor(Color3B(0, 255, 255));
 	moneyNode->addChild(lbSilver, 2);
 
@@ -776,20 +770,23 @@ void BaseScene::initHeaderWithInfos()
 	lbName->setWidth(150);
 	lbName->setHeight(25);
 	mLayer->addChild(lbName, constant::MAIN_ZORDER_HEADER);
+	autoScaleNode(lbName);
 
 	lbId = Label::create("ID: ", "fonts/arialbd.ttf", 23);
 	lbId->setAnchorPoint(Vec2(0, .5f));
 	lbId->setPosition(vecPos[11]);
 	mLayer->addChild(lbId, constant::MAIN_ZORDER_HEADER);
+	autoScaleNode(lbId);
 
 	lbLevel = Label::create("Level: ", "fonts/arialbd.ttf", 23);
 	lbLevel->setAnchorPoint(Vec2(0, .5f));
 	lbLevel->setPosition(vecPos[12]);
 	mLayer->addChild(lbLevel, constant::MAIN_ZORDER_HEADER);
+	autoScaleNode(lbLevel);
 
 	ui::Scale9Sprite* spHeader = ui::Scale9Sprite::create("popup/header.png");
 	spHeader->setAnchorPoint(Vec2(0, 1));
-	spHeader->setContentSize(Size(1120 / scaleScene.y, 115));
+	spHeader->setContentSize(Size(1120 / scaleScene.y, 104));
 	spHeader->setPosition(0, 700);
 	mLayer->addChild(spHeader);
 
@@ -808,11 +805,10 @@ void BaseScene::initHeaderWithInfos()
 	bool isPaymentEnabled = Utils::getSingleton().isPaymentEnabled();
 	if (!isPaymentEnabled) {
 		chosenBg->setPosition(isRealMoney && isPaymentEnabled ? -100 : 100, 0);
-		moneyNode->setPosition(vecPos[1] + Vec2(-180, 0));
+		moneyNode->setPosition(vecPos[1] + Vec2(-145, 0));
 		moneyBg1->setVisible(false);
 		iconGold->setVisible(false);
 		lbGold->setVisible(false);
-		btnFacebook->setVisible(false);
 		btnRank->setVisible(false);
 	}
 }

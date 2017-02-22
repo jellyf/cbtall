@@ -15,17 +15,18 @@ void MainScene::onInit()
 	currentMoneyType = Utils::getSingleton().moneyType;
 
 	std::vector<Vec2> vecPos;
-	vecPos.push_back(Vec2(80, 65));
-	vecPos.push_back(Vec2(240, 65));
-	vecPos.push_back(Vec2(400, 65));
-	vecPos.push_back(Vec2(560, 65));
-	vecPos.push_back(Vec2(730, 65));
-	vecPos.push_back(Vec2(900, 65));
-	vecPos.push_back(Vec2(1040, 65));
-	vecPos.push_back(Vec2(140, 335));
-	vecPos.push_back(Vec2(420, 335));
-	vecPos.push_back(Vec2(700, 335));
-	vecPos.push_back(Vec2(980, 335));
+	vecPos.push_back(Vec2(80, 70));
+	vecPos.push_back(Vec2(80, 210));
+	vecPos.push_back(Vec2(80, 350));
+	vecPos.push_back(Vec2(80, 490));
+	vecPos.push_back(Vec2(1040, 490));
+	vecPos.push_back(Vec2(1040, 350));
+	vecPos.push_back(Vec2(1040, 210));
+	vecPos.push_back(Vec2(1040, 70));
+	vecPos.push_back(Vec2(380, 420));
+	vecPos.push_back(Vec2(740, 420));
+	vecPos.push_back(Vec2(380, 150));
+	vecPos.push_back(Vec2(740, 150));
 	int m = 0;
 
 	initHeaderWithInfos();
@@ -33,11 +34,6 @@ void MainScene::onInit()
 	Sprite* bg = Sprite::create("main/bg.jpg");
 	bg->setPosition(560, 350);
 	addChild(bg);
-
-	ui::Scale9Sprite* spFooter = ui::Scale9Sprite::create("popup/footer.png");
-	spFooter->setAnchorPoint(Vec2(0, 0));
-	spFooter->setContentSize(Size(1120 / scaleScene.y, 65));
-	mLayer->addChild(spFooter);
 
 	ui::Button* btnAgency = ui::Button::create("main/icon_agency.png");
 	btnAgency->setPosition(vecPos[m++]);
@@ -73,7 +69,7 @@ void MainScene::onInit()
     if(paymentEnabled){
         btnCharge->setPosition(vecPos[2]);
     }else{
-		btnCharge->setPosition(vecPos[3]);
+		btnCharge->setPosition(vecPos[7]);
 		btnCharge->setVisible(CC_TARGET_PLATFORM == CC_PLATFORM_IOS);
     }
 
@@ -135,6 +131,15 @@ void MainScene::onInit()
 	});
 	mLayer->addChild(btnGiftcode);
 	autoScaleNode(btnGiftcode);
+
+	ui::Button* btnFacebook = ui::Button::create("main/facebook.png");
+	btnFacebook->setPosition(vecPos[m++]);
+	btnFacebook->setVisible(paymentEnabled);
+	addTouchEventListener(btnFacebook, [=]() {
+		Application::sharedApplication()->openURL(Utils::getSingleton().gameConfig.linkFb);
+	});
+	mLayer->addChild(btnFacebook);
+	autoScaleNode(btnFacebook);
 	
 	lbCoffer = Label::create("123.243", "fonts/arialbd.ttf", 30);
 	lbCoffer->setPosition(btnGiftcode->getPosition() + Vec2(0, 50));
@@ -142,35 +147,6 @@ void MainScene::onInit()
 	lbCoffer->setVisible(false);
 	mLayer->addChild(lbCoffer);
 	autoScaleNode(lbCoffer);
-
-	ui::Button* btnLoiDai = ui::Button::create("main/loidai.png", "main/loidai.png");
-	btnLoiDai->setPosition(vecPos[m++]);
-	addTouchEventListener(btnLoiDai, [=]() {
-		showPopupNotice(Utils::getSingleton().getStringForKey("feature_coming_soon"), [=]() {});
-	});
-	mLayer->addChild(btnLoiDai);
-
-	ui::Button* btnPhuChua = ui::Button::create("main/phuchua.png", "main/phuchua.png");
-	btnPhuChua->setPosition(vecPos[m++]);
-	addTouchEventListener(btnPhuChua, [=]() {
-		if (isWaiting) return;
-		showWaiting();
-		tmpZoneId = 2;
-		isGoToLobby = true;
-		SFSRequest::getSingleton().Disconnect();
-	});
-	mLayer->addChild(btnPhuChua);
-
-	ui::Button* btnDinhLang = ui::Button::create("main/dinhlang.png", "main/dinhlang.png");
-	btnDinhLang->setPosition(vecPos[m++]);
-	addTouchEventListener(btnDinhLang, [=]() {
-		if (isWaiting) return;
-		showWaiting();
-		tmpZoneId = 1;
-		isGoToLobby = true;
-		SFSRequest::getSingleton().Disconnect();
-	});
-	mLayer->addChild(btnDinhLang);
 
 	ui::Button* btnNhaTranh = ui::Button::create("main/nhatranh.png", "main/nhatranh.png");
 	btnNhaTranh->setPosition(vecPos[m++]);
@@ -182,6 +158,39 @@ void MainScene::onInit()
 		SFSRequest::getSingleton().Disconnect();
 	});
 	mLayer->addChild(btnNhaTranh);
+	autoScaleNode(btnNhaTranh);
+
+	ui::Button* btnDinhLang = ui::Button::create("main/dinhlang.png", "main/dinhlang.png");
+	btnDinhLang->setPosition(vecPos[m++]);
+	addTouchEventListener(btnDinhLang, [=]() {
+		if (isWaiting) return;
+		showWaiting();
+		tmpZoneId = 1;
+		isGoToLobby = true;
+		SFSRequest::getSingleton().Disconnect();
+	});
+	mLayer->addChild(btnDinhLang);
+	autoScaleNode(btnDinhLang);
+
+	ui::Button* btnPhuChua = ui::Button::create("main/phuchua.png", "main/phuchua.png");
+	btnPhuChua->setPosition(vecPos[m++]);
+	addTouchEventListener(btnPhuChua, [=]() {
+		if (isWaiting) return;
+		showWaiting();
+		tmpZoneId = 2;
+		isGoToLobby = true;
+		SFSRequest::getSingleton().Disconnect();
+	});
+	mLayer->addChild(btnPhuChua);
+	autoScaleNode(btnPhuChua);
+
+	ui::Button* btnLoiDai = ui::Button::create("main/loidai.png", "main/loidai.png");
+	btnLoiDai->setPosition(vecPos[m++]);
+	addTouchEventListener(btnLoiDai, [=]() {
+		showPopupNotice(Utils::getSingleton().getStringForKey("feature_coming_soon"), [=]() {});
+	});
+	mLayer->addChild(btnLoiDai);
+	autoScaleNode(btnLoiDai);
 
 	/*initPopupCharge();
 	initPopupGuide();
@@ -193,7 +202,7 @@ void MainScene::onInit()
 	initPopupHistory();
 	initPopupDisplayName();
 	initPopupGiftcode();*/
-	initEventView(Vec2(0, 562), Size(1120, 40));
+	initEventView(Vec2(0, 575), Size(1120, 40));
 	//initWebView();
 
 	if (Utils::getSingleton().userDataMe.Name.length() > 0 && Utils::getSingleton().userDataMe.DisplayName.length() == 0) {

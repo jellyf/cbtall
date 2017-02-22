@@ -142,7 +142,7 @@ void LoginScene::onInit()
 	initRegisterNode();
 
 	ui::Scale9Sprite* spHeader = ui::Scale9Sprite::create("popup/footer.png");
-	spHeader->setContentSize(Size(1120 / scaleScene.y, 40 / scaleScene.x));
+	spHeader->setContentSize(Size(1120 / scaleScene.y, 45 / scaleScene.x));
 	spHeader->setAnchorPoint(Vec2(0, 0));
 	spHeader->setPosition(0, 700);
 	spHeader->setFlippedY(true);
@@ -151,12 +151,12 @@ void LoginScene::onInit()
 
 	ui::Scale9Sprite* spFooter = ui::Scale9Sprite::create("popup/footer.png");
 	spFooter->setAnchorPoint(Vec2(0, 0));
-	spFooter->setContentSize(Size(1120 / scaleScene.y, 40 / scaleScene.x));
+	spFooter->setContentSize(Size(1120 / scaleScene.y, 45 / scaleScene.x));
 	mLayer->addChild(spFooter);
 	//autoScaleNode(spFooter);
 
 	ui::Button* btnPhone = ui::Button::create("login/btn_phone.png", "login/btn_phone_clicked.png");
-	btnPhone->setPosition(Vec2(45, 40 * scaleScene.x));
+	btnPhone->setPosition(Vec2(60 * scaleScene.y, 55 * scaleScene.x));
 	addTouchEventListener(btnPhone, [=]() {
 		string phone = Utils::getSingleton().gameConfig.phone;
 		if (phone.length() == 0) return;
@@ -166,13 +166,13 @@ void LoginScene::onInit()
 	autoScaleNode(btnPhone);
 
 	labelPhone = Label::create("01639070707", "fonts/arialbd.ttf",25);
-	labelPhone->setPosition(90, 3);
+	labelPhone->setPosition(110 * scaleScene.y, 10 * scaleScene.x);
 	labelPhone->setAnchorPoint(Vec2(0, 0));
 	mLayer->addChild(labelPhone);
 	autoScaleNode(labelPhone);
 
 	Label* labelVersion = Label::create(string("ver ") + Application::sharedApplication()->getVersion(), "fonts/arial.ttf", 18);
-	labelVersion->setPosition(1085, 3);
+	labelVersion->setPosition(1120 - 10 * scaleScene.y, 3 * scaleScene.x);
 	labelVersion->setAnchorPoint(Vec2(1, 0));
 	mLayer->addChild(labelVersion);
 	autoScaleNode(labelVersion);
@@ -579,7 +579,8 @@ void LoginScene::requestGameConfig(bool realConfig)
 {
 	showWaiting();
 	if (realConfig) {
-		SFSRequest::getSingleton().RequestHttpGet("http://125.212.192.96:8899/configchan.txt", 1);
+		SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", 1);
+		//SFSRequest::getSingleton().RequestHttpGet("http://125.212.192.96:8899/configchan.txt", 1);
 	} else {
 		SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", 1);
 	}

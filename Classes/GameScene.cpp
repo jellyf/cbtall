@@ -121,12 +121,13 @@ void GameScene::onInit()
 	bg->setPosition(560, 350);
 	mLayer->addChild(bg);
 
-	Sprite* centerBg = Sprite::create("game/center" + zone + ".png");
+	//Sprite* centerBg = Sprite::create("game/center" + zone + ".png");
+	Sprite* centerBg = Sprite::create("game/center.png");
 	centerBg->setPosition(560, 350);
 	mLayer->addChild(centerBg);
 	autoScaleNode(centerBg);
 
-	if (zone.compare("VuongPhu") == 0) {
+	/*if (zone.compare("VuongPhu") == 0) {
 		Sprite* dragon1 = Sprite::create("game/dragon.png");
 		dragon1->setPosition(330, 350);
 		mLayer->addChild(dragon1);
@@ -137,7 +138,7 @@ void GameScene::onInit()
 		dragon2->setFlippedX(true);
 		mLayer->addChild(dragon2);
 		autoScaleNode(dragon2);
-	}
+	}*/
 
 	playLayer = Layer::create();
 	mLayer->addChild(playLayer, 10);
@@ -240,7 +241,7 @@ void GameScene::onInit()
 
 	spNetwork->setPosition(topRight + getScaleSceneDistance(Vec2(-325, -50)));
 
-	btnReady = ui::Button::create("board/btn.png", "board/btn_clicked.png");
+	btnReady = ui::Button::create("board/btn_ready.png", "board/btn_ready_clicked.png");
 	btnReady->setPosition(Vec2(560, 350));
 	btnReady->setVisible(false);
 	addTouchEventListener(btnReady, [=]() {
@@ -253,7 +254,7 @@ void GameScene::onInit()
 	mLayer->addChild(btnReady);
 	autoScaleNode(btnReady);
 
-	btnCancelReady = ui::Button::create("board/btn.png", "board/btn_clicked.png");
+	btnCancelReady = ui::Button::create("board/btn_unready.png", "board/btn_unready_clicked.png");
 	btnCancelReady->setContentSize(Size(200, 65));
 	btnCancelReady->setPosition(Vec2(560, 350));
 	btnCancelReady->setScale9Enabled(true);
@@ -477,7 +478,7 @@ void GameScene::onInit()
 	mLayer->addChild(btnDongNoc, constant::GAME_ZORDER_SPLASH + 1);
 	autoScaleNode(btnDongNoc);
 
-	Label* lbBtnReady = Label::createWithTTF(Utils::getSingleton().getStringForKey("ready"), "fonts/UTM AZUKI.ttf", 30);
+	/*Label* lbBtnReady = Label::createWithTTF(Utils::getSingleton().getStringForKey("ready"), "fonts/UTM AZUKI.ttf", 30);
 	lbBtnReady->setPosition(btnReady->getContentSize().width/2, btnReady->getContentSize().height/2);
 	lbBtnReady->setColor(Color3B::YELLOW);
 	lbBtnReady->enableOutline(Color4B::BLACK, 2);
@@ -487,7 +488,7 @@ void GameScene::onInit()
 	lbBtnCancelReady->setPosition(btnCancelReady->getContentSize().width / 2, btnCancelReady->getContentSize().height / 2);
 	lbBtnCancelReady->setColor(Color3B::YELLOW);
 	lbBtnCancelReady->enableOutline(Color4B::BLACK, 2);
-	btnCancelReady->addChild(lbBtnCancelReady);
+	btnCancelReady->addChild(lbBtnCancelReady);*/
 
 	lbNoticeAction = Label::createWithTTF("", "fonts/UTM AZUKI.ttf", 35);
 	lbNoticeAction->setPosition(560, 350);
