@@ -78,7 +78,7 @@ void IOSHelperCPlus::queryIAPProducts(std::vector<std::string> productIds)
 
 string IOSHelperCPlus::getDeviceId()
 {
-    return [[[[UIDevice currentDevice] identifierForVendor] UUIDString] UTF8String];
+    return [[[[[UIDevice currentDevice] identifierForVendor] UUIDString] lowercaseString] UTF8String];
 }
 
 @implementation IOSNDKHelper
