@@ -55,6 +55,7 @@ void BaseScene::onInit()
 void BaseScene::onEnter()
 {
 	Scene::onEnter();
+	bool isPaymentEnabled = Utils::getSingleton().isPaymentEnabled();
 
 	mLayer = Layer::create();
 	addChild(mLayer, 10);
@@ -97,7 +98,7 @@ void BaseScene::onEnter()
 	spNetwork = Sprite::create("wifi0.png");
 	//spNetwork->setAnchorPoint(Vec2(1, 0));
 	//spNetwork->setPosition(1115, 5);
-	spNetwork->setPosition(570, 650);
+	spNetwork->setPosition(isPaymentEnabled ? 570 : 630, 650);
 	//spNetwork->setVisible(false);
 	mLayer->addChild(spNetwork, constant::GAME_ZORDER_SPLASH - 1);
 	autoScaleNode(spNetwork);
@@ -671,7 +672,7 @@ void BaseScene::initHeaderWithInfos()
 	autoScaleNode(btnBack);
 
 	Node* moneyNode = Node::create();
-	moneyNode->setPosition(vecPos[1] - Vec2(isPaymentEnabled ? 0 : 100, 0));
+	moneyNode->setPosition(vecPos[1] + Vec2(isPaymentEnabled ? 0 : -180, 0));
 	mLayer->addChild(moneyNode, constant::MAIN_ZORDER_HEADER);
 	autoScaleNode(moneyNode);
 
