@@ -5,7 +5,7 @@ android {
     buildToolsVersion "24.0.0"
 
     defaultConfig {
-        applicationId "com.chanonline.chanbachthu"
+        applicationId "com.chanonline.kinhtuchi"
         manifestPlaceholders = [onesignal_app_id: "713f32b4-a1ba-42e9-bcc8-8b41dbe71cea", onesignal_google_project_number: "224010319439"]
         minSdkVersion 15
         targetSdkVersion 23

@@ -68,7 +68,7 @@ public class AppActivity extends Cocos2dxActivity {
                 new FacebookCallback<LoginResult>() {
 
                     public void onCancel() {
-                        Log.d("ChanBachThu", "User canceled login facebook");
+                        Log.d("Kinhtuchi", "User canceled login facebook");
                         callbackLoginFacebook("cancel");
                     }
 

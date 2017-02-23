@@ -579,7 +579,8 @@ void LoginScene::requestGameConfig(bool realConfig)
 {
 	showWaiting();
 	if (realConfig) {
-		SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", 1);
+		//SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", 1);
+		SFSRequest::getSingleton().RequestHttpGet("http://125.212.192.96:8899/configchanktc.txt", 1);
 		//SFSRequest::getSingleton().RequestHttpGet("http://125.212.192.96:8899/configchan.txt", 1);
 	} else {
 		SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", 1);
