@@ -1312,6 +1312,7 @@ void MainScene::initPopupCharge()
     }
     scrollStore->setInnerContainerSize(Size(storeWidth, storeSize.height));
 	string strCurrency = " " + Utils::getSingleton().getStringForKey("vnd");
+	bool paymentEnabled = Utils::getSingleton().isPaymentEnabled();
     for (int i = 0; i < products.size(); i++) {
         int index = products[i].Description.find(' ');
         string strValue = products[i].Description.substr(0, index);
@@ -1335,7 +1336,7 @@ void MainScene::initPopupCharge()
         sp->setName("itemimage");
         btn->addChild(sp);
         
-        Sprite* spCoin = Sprite::createWithSpriteFrameName("icon_gold.png");
+        Sprite* spCoin = Sprite::createWithSpriteFrameName(paymentEnabled ? "icon_gold.png" : "icon_silver.png");
         spCoin->setScale(.5f);
         btn->addChild(spCoin);
         
