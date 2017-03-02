@@ -871,6 +871,7 @@ void MainScene::onChangeMoneyType(int type)
 
 void MainScene::initPopupCharge()
 {
+	bool paymentEnabled = Utils::getSingleton().isPaymentEnabled();
 	vector<int> moneys = { 10, 20, 50, 100, 200, 500 };
 
 	popupCharge = Node::create();
@@ -1312,7 +1313,6 @@ void MainScene::initPopupCharge()
     }
     scrollStore->setInnerContainerSize(Size(storeWidth, storeSize.height));
 	string strCurrency = " " + Utils::getSingleton().getStringForKey("vnd");
-	bool paymentEnabled = Utils::getSingleton().isPaymentEnabled();
     for (int i = 0; i < products.size(); i++) {
         int index = products[i].Description.find(' ');
         string strValue = products[i].Description.substr(0, index);
@@ -1357,7 +1357,6 @@ void MainScene::initPopupCharge()
                             + spCoin->getContentSize().width * spCoin->getScale() / 2 + 5, lb1->getPositionY() - 3);
     }
 
-	bool paymentEnabled = Utils::getSingleton().isPaymentEnabled();
     if(!paymentEnabled){
 		rect->setVisible(false);
         nodeCard->setVisible(false);
