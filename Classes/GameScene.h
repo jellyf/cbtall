@@ -65,6 +65,7 @@ private:
 	void initInviteTable();
 	void initSettingsPopup();
 	void initTableInfo();
+	void initCofferEffects();
 
 	void dealCards();
 	void dropWin();
@@ -78,6 +79,7 @@ private:
 	void showSettings();
 	void showError(std::string msg);
 	void showSystemNotice(std::string msg);
+	void showCofferEffects(std::string money);
 	void playSoundAction(unsigned char soundId);
 	void playSoundCuoc(unsigned char cuocId);
 	void changeZOrderAfterFly(cocos2d::Sprite* card, int zorder);
@@ -119,6 +121,8 @@ private:
 	cocos2d::Layer* endLayer;
 	cocos2d::ProgressTimer* progressTimer;
 	cocos2d::ui::Button* btnBack;
+	cocos2d::ui::Button* btnChat;
+	cocos2d::ui::Button* btnSettings;
 	cocos2d::ui::Button* btnReady;
 	cocos2d::ui::Button* btnCancelReady;
 	cocos2d::ui::Button* btnBash;
@@ -133,6 +137,7 @@ private:
 	cocos2d::ui::Button* btnXemNoc;
 	cocos2d::ui::Button* btnDongNoc;
 	cocos2d::ui::Scale9Sprite* gameSplash;
+	cocos2d::ui::Scale9Sprite* cofferSplash;
 	cocos2d::Sprite* hostCard = NULL;
 	cocos2d::Sprite* runningSpCard;
 	cocos2d::Sprite* iconGa;
@@ -157,6 +162,7 @@ private:
 	cocos2d::Node* popupSettings;
 	cocos2d::Node* nodeWebview;
 	cocos2d::Node* nodeStilt;
+	cocos2d::Node* cofferEffect;
 
 	char timeStart;
 	char timeDeal;

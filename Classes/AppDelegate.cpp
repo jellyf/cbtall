@@ -52,11 +52,13 @@ bool AppDelegate::applicationDidFinishLaunching() {
 #endif
         director->setOpenGLView(glview);
     }
-    //director->setDisplayStats(true);
+    director->setDisplayStats(true);
     director->setAnimationInterval(1.0f / 60);
     glview->setDesignResolutionSize(largeResolutionSize.width, largeResolutionSize.height, ResolutionPolicy::NO_BORDER);
 
     register_all_packages();
+
+	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("login.plist");
 
 	SFSConnector* connector = new SFSConnector();
 	SFSRequest* request = new SFSRequest();

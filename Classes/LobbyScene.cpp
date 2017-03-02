@@ -24,7 +24,7 @@ void LobbyScene::onInit()
 	initPopupUserInfo();
 	initPopupHistory();
 
-	Sprite* bg = Sprite::create("lobby/bg.jpg");
+	Sprite* bg = Sprite::create("lobby_bg.jpg");
 	bg->setPosition(560, 350);
 	addChild(bg);
 
@@ -38,7 +38,7 @@ void LobbyScene::onInit()
 		zone = "VuongPhu";
 	}
 	
-	Sprite* spName = Sprite::create("lobby/" + zone + ".png");
+	Sprite* spName = Sprite::createWithSpriteFrameName(zone + ".png");
 	spName->setPosition(130, 530);
 	mLayer->addChild(spName);
 
@@ -247,10 +247,11 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 	}
 	Color3B colorMoney = Utils::getSingleton().moneyType == 1 ? Color3B::YELLOW : Color3B(0, 255, 255);
 	vector<Vec2> ppos;
-	ppos.push_back(Vec2(60, 100));
-	ppos.push_back(Vec2(160, 100));
-	ppos.push_back(Vec2(40, 45));
-	ppos.push_back(Vec2(180, 45));
+	ppos.push_back(Vec2(40, 35));
+	ppos.push_back(Vec2(160, 105));
+	ppos.push_back(Vec2(40, 105));
+	ppos.push_back(Vec2(160, 35));
+	vector<int> prot = { -30, -30, 30, 30 };
 	for (int i = 0; i < data.Size; i++) {
 		ui::Button* btn;
 		bool isNewBtn;
@@ -259,8 +260,8 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 			isNewBtn = false;
 		} else {
 			isNewBtn = true;
-			btn = ui::Button::create("lobby/table_" + zone + ".png");
-			btn->setPosition(Vec2(100 + (i % 4) * 210, height - 100 - (i / 4) * 170));
+			btn = ui::Button::create("table_" + zone + ".png", "", "", ui::Widget::TextureResType::PLIST);
+			btn->setPosition(Vec2(100 + (i % 4) * 210, height - 70 - (i / 4) * 170));
 			btn->setTag(i + 1);
 			btn->setScale(.8f);
 			scrollListTable->addChild(btn);
@@ -282,32 +283,35 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 			}*/
 
 			for (int j = 0; j < 4; j++) {
-				Sprite* sp = Sprite::create("lobby/player" + to_string(j / 2 + 1) + zone + ".png");
+				//Sprite* sp = Sprite::create("lobby/player" + to_string(j / 2 + 1) + zone + ".png");
+				Sprite* sp = Sprite::createWithSpriteFrameName("player" + zone + ".png");
 				sp->setPosition(ppos[j]);
-				sp->setFlipX(j % 2 == 1);
+				sp->setFlipX(j == 3 || j == 1);
+				sp->setFlipY(j == 2 || j == 1);
+				sp->setRotation(prot[j]);
 				sp->setTag(j);
 				btn->addChild(sp);
 			}
 
-			Sprite* spStilt = Sprite::create("lobby/stilt.png");
-			spStilt->setPosition(btn->getContentSize().width / 2 - 2, btn->getContentSize().height / 2 + 15);
+			Sprite* spStilt = Sprite::createWithSpriteFrameName("stilt.png");
+			spStilt->setPosition(btn->getContentSize().width / 2 + 3, btn->getContentSize().height / 2 + 2);
 			btn->addChild(spStilt);
 
-			Sprite* spGa = Sprite::create("lobby/ga_off.png");
-			spGa->setPosition(107, -20);
+			Sprite* spGa = Sprite::createWithSpriteFrameName("ga_off.png");
+			spGa->setPosition(btn->getContentSize().width / 2 - 5, -20);
 			spGa->setName("iconga");
-			spGa->setScale(.8f);
+			//spGa->setScale(.8f);
 			btn->addChild(spGa);
 
 			Label* lbName = Label::create(Utils::getSingleton().getStringForKey("table") + " " + to_string(i + 1), "fonts/arialbd.ttf", 24);
-			lbName->setColor(Color3B(40, 40, 40));
-			lbName->setPosition(0, 0);
+			lbName->setColor(Color3B::WHITE);
+			lbName->setPosition(-10, 0);
 			lbName->setAnchorPoint(Vec2(0, 1));
 			btn->addChild(lbName);
 
 			Label* lbMoney = Label::create("", "fonts/arialbd.ttf", 24);
 			lbMoney->setColor(colorMoney);
-			lbMoney->setPosition(220, 0);
+			lbMoney->setPosition(210, 0);
 			lbMoney->setAnchorPoint(Vec2(1, 1));
 			lbMoney->setName("lbmoney");
 			btn->addChild(lbMoney);
@@ -333,9 +337,14 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 
 		Sprite* spga = (Sprite*)btn->getChildByName("iconga");
 		Label* lbMoney = (Label*)btn->getChildByName("lbmoney");
-		spga->initWithFile("lobby/ga_off.png");
+		spga->initWithSpriteFrameName("ga_off.png");
 		lbMoney->setColor(colorMoney);
 		lbMoney->setString(Utils::getSingleton().formatMoneyWithComma(data.Money));
+		if (data.Money < 1000000L) {
+			lbMoney->setPositionX(210);
+		} else {
+			lbMoney->setPositionX(225);
+		}
 		
 		for (int j = 0; j < 4; j++) {
 			/*Sprite* sp0 = (Sprite*)btn->getChildByTag(j);
@@ -349,7 +358,7 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 
 		for (int k = 0; k < data.ListTable.size(); k++) {
 			if (btn->getTag() == data.ListTable[k].RoomId) {
-				spga->initWithFile(data.ListTable[k].HasPot ? "lobby/ga_on.png" : "lobby/ga_off.png");
+				spga->initWithSpriteFrameName(data.ListTable[k].HasPot ? "ga_on.png" : "ga_off.png");
 				for (int j = 0; j < 4; j++) {
 					/*Sprite* sp0 = (Sprite*)btn->getChildByTag(j);
 					Sprite* sp1 = (Sprite*)btn->getChildByTag(10 + j);
@@ -386,7 +395,7 @@ void LobbyScene::onRoomTypeDataResponse(LobbyListRoomType data)
 	for (int i = 0; i < data.ListRoomType.size(); i++) {
 		ui::Button* btn = (ui::Button*)scrollListRoom->getChildByTag(i);
 		if (btn == nullptr) {
-			btn = ui::Button::create("lobby/btn_" + zone + ".png");
+			btn = ui::Button::create("btn_" + zone + ".png", "", "", ui::Widget::TextureResType::PLIST);
 			btn->setTitleFontName("fonts/arial.ttf");
 			btn->setTitleFontSize(19);
 			btn->setPosition(Vec2(scrollListRoom->getContentSize().width / 2, height - 37 - i * 78));

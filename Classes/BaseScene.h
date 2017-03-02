@@ -30,6 +30,8 @@ public:
 	void onRankWinDataResponse(std::vector<RankWinData> list);
 	void onListEventDataResponse(std::vector<EventData> list);
 	void onPlayLogDataResponse(std::vector<PlayLogData> logs);
+	void onCofferMoneyResponse(long money);
+	void onCofferHistoryResponse(std::vector<CofferWinnerData> list);
 protected:
 	virtual void onConnected();
 	virtual void onConnectionFailed();
@@ -52,14 +54,16 @@ protected:
 	void initPopupSettings();
 	void initPopupUserInfo();
 	void initPopupHistory();
+	void initPopupCoffer();
 	void setMoneyType(int type);
 	void showPopupNotice(std::string msg, std::function<void()> func, bool showBtnClose = true);
 	void showPopupRank(int type);
 	void showPopupRankWin();
 	void showPopupUserInfo(UserData userData, bool showHistoryIfIsMe = true);
 	void showPopupHistory();
+	void showPopupCoffer();
 	void showSplash();
-	void showToast(std::string msg, cocos2d::Vec2 pos, cocos2d::Color3B textColor = cocos2d::Color3B::WHITE, cocos2d::Color3B bgColor = cocos2d::Color3B(80, 80, 80), int bgOpacity = 200);
+	void showToast(std::string tag, std::string msg, cocos2d::Vec2 pos, cocos2d::Color3B textColor = cocos2d::Color3B::WHITE, cocos2d::Color3B bgColor = cocos2d::Color3B(80, 80, 80), int bgOpacity = 200);
 	void showWaiting(int time = 10);
 	void showPopup(cocos2d::Node* popup, bool runEffect = true);
 	void setDisplayName(std::string name);
@@ -95,19 +99,23 @@ protected:
 	cocos2d::Label* lbId;
 	cocos2d::Label* lbLevel;
 	cocos2d::Label* lbNetwork;
+	cocos2d::Label* lbCoffer;
 
 	cocos2d::Node* popupRank;
 	cocos2d::Node* popupMainSettings;
 	cocos2d::Node* popupUserInfo;
 	cocos2d::Node* popupHistory;
+	cocos2d::Node* popupCoffer;
 	cocos2d::Node* eventView;
 
 	std::vector<cocos2d::ui::Button*> buttons;
 	std::vector<cocos2d::ui::Button*> blockedButtons;
 	std::vector<cocos2d::Node*> popups;
 
-	cocos2d::Color3B pageColor1 = cocos2d::Color3B(201, 191, 119);
-	cocos2d::Color3B pageColor2 = cocos2d::Color3B(229, 222, 174);
+	//cocos2d::Color3B pageColor1 = cocos2d::Color3B(201, 191, 119);
+	//cocos2d::Color3B pageColor2 = cocos2d::Color3B(229, 222, 174);
+	cocos2d::Color3B pageColor1 = cocos2d::Color3B(100, 100, 100);
+	cocos2d::Color3B pageColor2 = cocos2d::Color3B(220, 220, 220);
 
 	cocos2d::Vector<Node*> tmps;
 	int tmpIndex;

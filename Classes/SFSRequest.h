@@ -69,7 +69,7 @@ public:
 
 	void RequestHttpGet(std::string url, int tag);
 	void LoadImageFromURL(std::string url, int tag);
-	void LoadTextureFromURL(std::string url);
+	void LoadTextureFromURL(std::string url, std::string tag = "");
 private:
 	void onHttpRequest(cocos2d::network::HttpClient* client, cocos2d::network::HttpResponse* response);
 	void onRequestImgCompleted(cocos2d::network::HttpClient* client, cocos2d::network::HttpResponse* response);

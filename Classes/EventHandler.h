@@ -15,6 +15,7 @@ public:
 
 	std::function<void()> onApplicationDidEnterBackground = NULL;
 	std::function<void()> onApplicationWillEnterForeground = NULL;
+	std::function<void()> onPredownloadTexturesCompleted = NULL;
 
 	std::function<void(std::string)> onLoginFacebook = NULL;
     std::function<void(std::string)> onPurchaseSuccess = NULL;

@@ -16,6 +16,7 @@ public:
     std::string formatMoneyWithComma(long money);
 #endif
     
+	cocos2d::SpriteFrame* getDownloadedTextureAsSpriteFrame(std::string key);
     std::string formatMoneyWithComma(double money);
 	std::string getStringForKey(std::string key);
 	std::string replaceString(std::string str, std::string strSearch, std::string strReplace);
@@ -40,7 +41,7 @@ public:
 	void saveUsernameAndPassword(std::string username, std::string password);
 	void logoutGame();
 	void logoutZone();
-	void LoadTextureFromURL(std::string url, std::function<void(cocos2d::Texture2D*)> func);
+	void LoadTextureFromURL(std::string url, std::function<void(cocos2d::Texture2D*)> func, std::string textureName = "");
 	void onLoadTextureResponse(std::string url, cocos2d::Texture2D* texture);
 	void openSMS(std::string number, std::string text);
 	void openTel(std::string number);
@@ -56,6 +57,8 @@ public:
     void solveCachedPurchases();
     void setIAPProducts(std::vector<ProductData> vecProducts);
     void queryIAPProduct();
+	void preDownloadTextures();
+	void downloadTextureAndCreatePlist(std::string plist, std::string url, std::string textureName = "");
 public:
 	cocos2d::Scene* currentScene;
 	UserData userDataMe;
@@ -73,6 +76,7 @@ public:
 	std::string currentRoomName;
 	std::string currentZoneName;
 	std::string currentZoneIp;
+	long cofferMoney;
 	long currentZonePort;
 	int currentRoomId;
 	int currentLobbyId;

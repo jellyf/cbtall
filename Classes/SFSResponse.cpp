@@ -884,7 +884,7 @@ void SFSResponse::onRankWinResponse(boost::shared_ptr<ISFSObject> isfsObject)
 	unsigned char size;
 	std::vector<RankWinData > list;
 	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
-	byteArray->ReadByte(size);
+	//byteArray->ReadByte(size);
 	while (byteArray->Position() < byteArray->Length()) {
 		RankWinData data;
 		byteArray->ReadInt(data.Uid);
@@ -1055,11 +1055,13 @@ void SFSResponse::onListMailResponse(boost::shared_ptr<ISFSObject> isfsObject)
 void SFSResponse::onMailContentResponse(boost::shared_ptr<ISFSObject> isfsObject)
 {
 	long tmp;
-	std::string content;
+	std::string content = "";
 	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
 	if (byteArray->Length() > 0) {
 		byteArray->ReadInt(tmp);
-		byteArray->ReadUTF(content);
+		if (byteArray->Position() < byteArray->Length()) {
+			byteArray->ReadUTF(content);
+		}
 	}
 	if (EventHandler::getSingleton().onMailContentSFSResponse != NULL) {
 		EventHandler::getSingleton().onMailContentSFSResponse(content);
@@ -1141,8 +1143,9 @@ void SFSResponse::onCofferHistoryResponse(boost::shared_ptr<ISFSObject> isfsObje
 		byteArray->ReadInt(data.Point);
 		byteArray->ReadUTF(data.Cuocs);
 		byteArray->ReadUTF(data.Date);
+		byteArray->ReadDouble(data.Money);
 		list.push_back(data);
-		//CCLOG("%ld %s %ld %s %s", data.Uid, data.Name.c_str(), data.Point, data.Cuocs.c_str(), data.Date.c_str());
+		//CCLOG("%ld %s %ld %s %s %.0f", data.Uid, data.Name.c_str(), data.Point, data.Cuocs.c_str(), data.Date.c_str(), data.Money);
 	}
 	if (EventHandler::getSingleton().onCofferHistorySFSResponse != NULL) {
 		EventHandler::getSingleton().onCofferHistorySFSResponse(list);

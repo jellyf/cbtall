@@ -74,7 +74,7 @@ void BaseScene::onEnter()
 		mLayer->setScaleY(scaleScene.y);
 	}
 
-	splash = ui::Scale9Sprite::create("white.png");
+	splash = ui::Scale9Sprite::createWithSpriteFrameName("white.png");
 	splash->setContentSize(Size(1500, 1000));
 	splash->setPosition(560, 350);
 	splash->setColor(Color3B::BLACK);
@@ -88,19 +88,17 @@ void BaseScene::onEnter()
 	mLayer->addChild(nodeWaiting, constant::ZORDER_POPUP);
 	autoScaleNode(nodeWaiting);
 
-	spWaiting = Sprite::create("loadingicon.png");
+	spWaiting = Sprite::createWithSpriteFrameName("loadingicon.png");
 	nodeWaiting->addChild(spWaiting);
 
 	RotateBy* rotate = RotateBy::create(2, 360);
 	spWaiting->runAction(RepeatForever::create(rotate));
 	spWaiting->pauseSchedulerAndActions();
 
-	initPopupUserInfo();
-
-	spNetwork = Sprite::create("wifi0.png");
+	spNetwork = Sprite::createWithSpriteFrameName("wifi0.png");
 	//spNetwork->setAnchorPoint(Vec2(1, 0));
 	//spNetwork->setPosition(1115, 5);
-	spNetwork->setPosition(winSize.width - (isPaymentEnabled ? 240 : 150) * scaleScene.y, 647);
+	spNetwork->setPosition(winSize.width - (isPaymentEnabled ? 360 : 150) * scaleScene.y, 650);
 	//spNetwork->setVisible(false);
 	mLayer->addChild(spNetwork, constant::GAME_ZORDER_SPLASH - 1);
 	autoScaleNode(spNetwork);
@@ -167,6 +165,8 @@ void BaseScene::registerEventListenner()
 	EventHandler::getSingleton().onListEventDataSFSResponse = std::bind(&BaseScene::onListEventDataResponse, this, std::placeholders::_1);
 	EventHandler::getSingleton().onPlayLogDataSFSResponse = bind(&BaseScene::onPlayLogDataResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onErrorSFSResponse = bind(&BaseScene::onErrorResponse, this, placeholders::_1, placeholders::_2);
+	EventHandler::getSingleton().onCofferMoneySFSResponse = bind(&BaseScene::onCofferMoneyResponse, this, placeholders::_1);
+	EventHandler::getSingleton().onCofferHistorySFSResponse = bind(&BaseScene::onCofferHistoryResponse, this, placeholders::_1);
 }
 
 void BaseScene::unregisterEventListenner()
@@ -181,12 +181,14 @@ void BaseScene::unregisterEventListenner()
 	EventHandler::getSingleton().onListEventDataSFSResponse = NULL;
 	EventHandler::getSingleton().onPlayLogDataSFSResponse = NULL;
 	EventHandler::getSingleton().onErrorSFSResponse = NULL;
+	EventHandler::getSingleton().onCofferMoneySFSResponse = NULL;
+	EventHandler::getSingleton().onCofferHistorySFSResponse = NULL;
 }
 
 bool BaseScene::onTouchBegan(Touch * touch, Event * _event)
 {
-	Point pos = touch->getLocation();
-	pos = popupUserInfo->convertToNodeSpace(pos);
+	/*Point pos = touch->getLocation();
+	pos = mLayer->convertToNodeSpace(pos);
 
 	tmpIndex = -1;
 	int i = 0;
@@ -196,23 +198,23 @@ bool BaseScene::onTouchBegan(Touch * touch, Event * _event)
 			return true;
 		}
 		i++;
-	}
+	}*/
 	return false;
 }
 
 void BaseScene::onTouchMoved(Touch * touch, Event * _event)
 {
-	Point pos = touch->getLocation();
-	pos = popupUserInfo->convertToNodeSpace(pos);
+	/*Point pos = touch->getLocation();
+	pos = mLayer->convertToNodeSpace(pos);
 
 	if (tmpIndex > -1)
-		tmps.at(tmpIndex)->setPosition(pos);
+		tmps.at(tmpIndex)->setPosition(pos);*/
 }
 
 void BaseScene::onTouchEnded(Touch * touch, Event * _event)
 {
-	if (tmpIndex > -1)
-		CCLOG("%d %d, %d", tmpIndex, (int)tmps.at(tmpIndex)->getPosition().x, (int)tmps.at(tmpIndex)->getPosition().y);
+	/*if (tmpIndex > -1)
+		CCLOG("%d %d, %d", tmpIndex, (int)tmps.at(tmpIndex)->getPosition().x, (int)tmps.at(tmpIndex)->getPosition().y);*/
 }
 
 void BaseScene::onApplicationDidEnterBackground()
@@ -386,8 +388,10 @@ void BaseScene::showPopupRank(int type)
 	}
 	ui::Button* btn = (ui::Button*)popupRank->getChildByTag(type);
 	ui::Button* btn1 = (ui::Button*)popupRank->getChildByTag(popupRank->getTag());
-	btn1->loadTextureNormal("popup/box1.png");
-	btn->loadTextureNormal("popup/box2.png");
+	btn1->loadTextureNormal("empty.png", ui::Widget::TextureResType::PLIST);
+	btn->loadTextureNormal("btn_light.png", ui::Widget::TextureResType::PLIST);
+	btn1->setTitleColor(Color3B::WHITE);
+	btn->setTitleColor(Color3B::BLACK);
 	popupRank->setTag(type);
 
 	if (type == 2) {
@@ -402,29 +406,31 @@ void BaseScene::showPopupRank(int type)
 	int height = listRanks[type].size() * 55;
 	int width = scroll->getContentSize().width;
 	scroll->setInnerContainerSize(Size(width, height));
+	vector<Color3B> colors = { Color3B::RED, Color3B(255, 102, 0), Color3B(255, 153, 51) };
+	//vector<Color3B> colors = { Color3B::YELLOW, Color3B(255, 255, 102), Color3B(255, 255, 153) };
 	for (int i = 0; i < listRanks[type].size(); i++) {
-		Node* node = popupRank->getChildByTag(10 + i);
+		Node* node = scroll->getChildByTag(i);
 		if (node == nullptr) {
 			node = Node::create();
 			node->setPosition(scroll->getContentSize().width / 2, height - 30 - i * 55);
-			node->setTag(10 + i);
+			node->setTag(i);
 			scroll->addChild(node);
 
-			ui::Scale9Sprite* nbg = ui::Scale9Sprite::create("popup/box1.png");
+			ui::Scale9Sprite* nbg = ui::Scale9Sprite::createWithSpriteFrameName("empty.png");
 			nbg->setContentSize(Size(width, 65));
 			node->addChild(nbg);
 
-			Label* lb1 = Label::create(to_string(i + 1), "fonts/guanine.ttf", 25);
+			Label* lb1 = Label::create(to_string(i + 1), "fonts/aristote.ttf", 25);
 			lb1->setAnchorPoint(Vec2(0, .5f));
-			lb1->setColor(Color3B(50, 50, 50));
+			lb1->setColor(i < 3 ? colors[i] : Color3B::WHITE);
 			lb1->setPosition(-width / 2 + 70, 5);
 			lb1->setTag(1);
 			node->addChild(lb1);
 
 			Label* lb2 = Label::create(listRanks[type][i].Name, "fonts/arialbd.ttf", 25);
 			lb2->setAnchorPoint(Vec2(0, .5f));
-			lb2->setColor(Color3B(50, 50, 50));
-			lb2->setPosition(-width / 2 + 150, 0);
+			lb2->setColor(i < 3 ? colors[i] : Color3B::WHITE);
+			lb2->setPosition(-width / 2 + 220, 0);
 			lb2->setWidth(400);
 			lb2->setHeight(30);
 			lb2->setTag(2);
@@ -432,8 +438,8 @@ void BaseScene::showPopupRank(int type)
 
 			Label* lb3 = Label::create(Utils::getSingleton().formatMoneyWithComma(listRanks[type][i].Money), "fonts/arialbd.ttf", 25);
 			lb3->setAnchorPoint(Vec2(1, .5f));
-			lb3->setColor(Color3B(153, 76, 0));
-			lb3->setPosition(width / 2 - 50, 0);
+			lb3->setColor(type == 0 ? Color3B::YELLOW : Color3B(0, 255, 255));
+			lb3->setPosition(width / 2 - 80, 0);
 			lb3->setTag(3);
 			node->addChild(lb3);
 		} else {
@@ -442,11 +448,12 @@ void BaseScene::showPopupRank(int type)
 			Label* lb3 = (Label*)node->getChildByTag(3);
 			lb2->setString(listRanks[type][i].Name);
 			lb3->setString(Utils::getSingleton().formatMoneyWithComma(listRanks[type][i].Money));
+			lb3->setColor(type == 0 ? Color3B::YELLOW : Color3B(0, 255, 255));
 		}
 	}
-	int i = 20;
+	int i = listRanks[type].size();
 	Node* n;
-	while ((n = popupRank->getChildByTag(10 + i)) != nullptr) {
+	while ((n = scroll->getChildByTag(i++)) != nullptr) {
 		n->setVisible(false);
 	}
 }
@@ -457,9 +464,9 @@ void BaseScene::showPopupRankWin()
 	for (int i = 0; i < 20; i++) {
 		RankWinData data;
 		data.Uid = 1000 + rand() % 10000;
-		data.Name = "stormus" + to_string(data.Uid);
+		data.Name = rand() % 2 == 0 ? "STORMUSSSSSSKASFHJW" : ("stormussssss" + to_string(data.Uid));
 		data.Point = rand() % 60;
-		data.Cuoc = "Nha lau xe hoi Hoa roi cua phat Ca nhay dau thuyen ngu ong bat ca Chua do nat hoa";
+		data.Cuoc = "Nha lau xe hoi Hoa roi cua phat Ca nhay dau a a a thuyen ngu ong bat ca";
 		data.Date = "05/01/2016";
 		listRankWin.push_back(data);
 	}*/
@@ -471,68 +478,83 @@ void BaseScene::showPopupRankWin()
 	int height = listRankWin.size() * 75;
 	int width = scrollWin->getContentSize().width;
 	scrollWin->setInnerContainerSize(Size(width, height));
+	vector<Color3B> colors = { Color3B::RED, Color3B(255, 102, 0), Color3B(255, 153, 51) };
 	for (int i = 0; i < listRankWin.size(); i++) {
-		Node* node = popupRank->getChildByTag(10 + i);
+		Label* lb2;
+		Node* node = scrollWin->getChildByTag(i);
 		if (node == nullptr) {
 			node = Node::create();
 			node->setPosition(scrollWin->getContentSize().width / 2, height - 40 - i * 75);
-			node->setTag(10 + i);
+			node->setTag(i);
 			scrollWin->addChild(node);
 
-			ui::Scale9Sprite* nbg = ui::Scale9Sprite::create("popup/box1.png");
+			ui::Scale9Sprite* nbg = ui::Scale9Sprite::createWithSpriteFrameName("empty.png");
 			nbg->setContentSize(Size(width, 85));
 			node->addChild(nbg);
 
-			Label* lb1 = Label::create(to_string(i + 1), "fonts/guanine.ttf", 25);
+			Label* lb1 = Label::create(to_string(i + 1), "fonts/aristote.ttf", 25);
 			lb1->setAnchorPoint(Vec2(0, .5f));
-			lb1->setColor(Color3B(50, 50, 50));
-			lb1->setPosition(-width / 2 + 70, 5);
+			lb1->setColor(i < 3 ? colors[i] : Color3B::WHITE);
+			lb1->setPosition(-width / 2 + 10, 5);
 			lb1->setTag(1);
 			node->addChild(lb1);
 
-			Label* lb2 = Label::create(listRankWin[i].Name, "fonts/arial.ttf", 20);
+			lb2 = Label::create(listRankWin[i].Name, "fonts/arialbd.ttf", 22);
 			lb2->setAnchorPoint(Vec2(0, .5f));
-			lb2->setColor(Color3B(50, 50, 50));
-			lb2->setPosition(-width / 2 + 150, 10);
-			lb2->setWidth(400);
-			lb2->setHeight(30);
+			lb2->setColor(i < 3 ? colors[i] : Color3B::WHITE);
+			lb2->setPosition(-width / 2 + 70, 0);
+			//lb2->setWidth(400);
+			//lb2->setHeight(30);
 			lb2->setTag(2);
 			node->addChild(lb2);
 
-			Label* lb3 = Label::create(listRankWin[i].Cuoc, "fonts/guanine.ttf", 20);
+			Label* lb3 = Label::create(listRankWin[i].Cuoc, "fonts/arialbd.ttf", 22);
 			lb3->setAnchorPoint(Vec2(0, .5f));
-			lb3->setColor(Color3B::RED);
-			lb3->setPosition(-width / 2 + 150, -10);
-			lb3->setWidth(600);
-			lb3->setHeight(30);
+			lb3->setColor(Color3B(255, 255, 102));
+			lb3->setPosition(-width / 2 + 300, 0);
+			lb3->setWidth(450);
+			//lb3->setHeight(30);
 			lb3->setTag(3);
 			node->addChild(lb3);
 
-			Label* lb4 = Label::create(Utils::getSingleton().formatMoneyWithComma(listRankWin[i].Point), "fonts/arialbd.ttf", 25);
+			Label* lb4 = Label::create(Utils::getSingleton().formatMoneyWithComma(listRankWin[i].Point), "fonts/arialbd.ttf", 22);
 			lb4->setAnchorPoint(Vec2(1, .5f));
-			lb4->setColor(Color3B::RED);
-			lb4->setPosition(width / 2 - 50, 0);
+			lb4->setColor(Color3B(102, 255, 51));
+			lb4->setPosition(width / 2 - 30, 0);
 			lb4->setTag(4);
 			node->addChild(lb4);
 		} else {
 			node->setVisible(true);
-			Label* lb2 = (Label*)node->getChildByTag(2);
+			lb2 = (Label*)node->getChildByTag(2);
 			Label* lb3 = (Label*)node->getChildByTag(3);
 			Label* lb4 = (Label*)node->getChildByTag(4);
 			lb2->setString(listRankWin[i].Name);
 			lb3->setString(listRankWin[i].Cuoc);
 			lb4->setString(Utils::getSingleton().formatMoneyWithComma(listRankWin[i].Point));
 		}
+
+		string strName = listRankWin[i].Name;
+		/*if (strName.length() > 14) {
+			strName = strName.substr(0, 14);
+		}*/
+		lb2->setString(strName);
+		while (lb2->getContentSize().width > 200) {
+			strName = strName.substr(0, strName.length() - 1);
+			lb2->setString(strName);
+		}
 	}
-	int i = 20;
+	int i = listRankWin.size();
 	Node* n;
-	while ((n = popupRank->getChildByTag(10 + i)) != nullptr) {
+	while ((n = scrollWin->getChildByTag(i++)) != nullptr) {
 		n->setVisible(false);
 	}
 }
 
 void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 {
+	if (popupUserInfo == nullptr) {
+		initPopupUserInfo();
+	}
 	showPopup(popupUserInfo);
 	Node* btnHistory = popupUserInfo->getChildByName("btnhistory");
 	Node* btnActive = popupUserInfo->getChildByName("btnactive");
@@ -547,7 +569,7 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 
 	btnHistory->setVisible(showHistoryIfIsMe && data.UserID == Utils::getSingleton().userDataMe.UserID);
 	btnActive->setVisible(showHistoryIfIsMe && data.UserID == Utils::getSingleton().userDataMe.UserID && !Utils::getSingleton().userDataMe.IsActived && Utils::getSingleton().isPaymentEnabled());
-    btnFB->setVisible(showHistoryIfIsMe && data.UserID == Utils::getSingleton().userDataMe.UserID && Utils::getSingleton().loginType == constant::LOGIN_FACEBOOK);
+	btnFB->setVisible(showHistoryIfIsMe && data.UserID == Utils::getSingleton().userDataMe.UserID && Utils::getSingleton().loginType == constant::LOGIN_FACEBOOK);
 	lbName->setString(data.DisplayName);
 	lbQuan->setString(Utils::getSingleton().formatMoneyWithComma(data.MoneyReal));
 	lbXu->setString(Utils::getSingleton().formatMoneyWithComma(data.MoneyFree));
@@ -649,21 +671,22 @@ void BaseScene::initHeaderWithInfos()
 	bool isRealMoney = Utils::getSingleton().moneyType == 1;
 
 	std::vector<Vec2> vecPos;
-	vecPos.push_back(Vec2(55 * scaleScene.y, 650));
-	vecPos.push_back(Vec2(600, 650));
+	vecPos.push_back(Vec2(50 * scaleScene.y, 650));
+	vecPos.push_back(Vec2(515, 650));
 	vecPos.push_back(Vec2(430, 650));
 	vecPos.push_back(Vec2(165, 650));
 	vecPos.push_back(Vec2(360, 650));
-	vecPos.push_back(Vec2(winSize.width - 150 * scaleScene.y, 650));
-	vecPos.push_back(Vec2(winSize.width - 55 * scaleScene.y, 650));
-	vecPos.push_back(Vec2(170 * scaleScene.y, 650));
+	vecPos.push_back(Vec2(winSize.width - 145 * scaleScene.y, 650));
+	vecPos.push_back(Vec2(winSize.width - 50 * scaleScene.y, 650));
+	vecPos.push_back(Vec2(145 * scaleScene.y, 650));
 	vecPos.push_back(Vec2(-147, 0));
 	vecPos.push_back(Vec2(55, 0));
-	vecPos.push_back(Vec2(220 * scaleScene.y, 675));
-	vecPos.push_back(Vec2(220 * scaleScene.y, 647));
-	vecPos.push_back(Vec2(220 * scaleScene.y, 624));
+	vecPos.push_back(Vec2(190 * scaleScene.y, 675));
+	vecPos.push_back(Vec2(190 * scaleScene.y, 647));
+	vecPos.push_back(Vec2(190 * scaleScene.y, 624));
+	vecPos.push_back(Vec2(winSize.width - 260 * scaleScene.y, 645));
 
-	ui::Button* btnBack = ui::Button::create("board/btn_back.png", "board/btn_back_clicked.png");
+	ui::Button* btnBack = ui::Button::create("btn_back.png", "btn_back_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnBack->setPosition(vecPos[0]);
 	addTouchEventListener(btnBack, [=]() {
 		onBackScene();
@@ -676,17 +699,17 @@ void BaseScene::initHeaderWithInfos()
 	mLayer->addChild(moneyNode, constant::MAIN_ZORDER_HEADER);
 	autoScaleNode(moneyNode);
 
-	moneyBg0 = ui::Button::create("main/money_bg.png");
+	moneyBg0 = ui::Button::create("money_bg.png", "money_bg.png", "", ui::Widget::TextureResType::PLIST);
 	moneyBg0->setTag((int)isRealMoney);
 	moneyBg0->setPosition(Vec2(100, 0));
 	moneyNode->addChild(moneyBg0, 0);
 
-	moneyBg1 = ui::Button::create("main/money_bg.png");
+	moneyBg1 = ui::Button::create("money_bg.png", "money_bg.png", "", ui::Widget::TextureResType::PLIST);
 	moneyBg1->setTag((int)isRealMoney);
 	moneyBg1->setPosition(Vec2(-100, 0));
 	moneyNode->addChild(moneyBg1, 0);
 
-	chosenBg = Sprite::create("main/chosen_bg.png");
+	chosenBg = Sprite::createWithSpriteFrameName("chosen_bg.png");
 	chosenBg->setPosition(isRealMoney ? -100 : 100, 0);
 	moneyNode->addChild(chosenBg, 1);
 	
@@ -711,15 +734,15 @@ void BaseScene::initHeaderWithInfos()
 		}
 	});
 
-	Sprite* iconGold = Sprite::create("main/icon_gold.png");
+	Sprite* iconGold = Sprite::createWithSpriteFrameName("icon_gold.png");
 	iconGold->setPosition(-170, 0);
 	moneyNode->addChild(iconGold, 2);
 
-	Sprite* iconSilver = Sprite::create("main/icon_silver.png");
+	Sprite* iconSilver = Sprite::createWithSpriteFrameName("icon_silver.png");
 	iconSilver->setPosition(30, 0);
 	moneyNode->addChild(iconSilver, 2);
 
-	ui::Button* btnRank = ui::Button::create("main/btn_rank.png", "main/btn_rank_clicked.png");
+	ui::Button* btnRank = ui::Button::create("btn_rank.png", "btn_rank_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnRank->setPosition(vecPos[5]);
 	addTouchEventListener(btnRank, [=]() {
 		if (listRanks.size() == 0) {
@@ -732,7 +755,7 @@ void BaseScene::initHeaderWithInfos()
 	mLayer->addChild(btnRank, constant::MAIN_ZORDER_HEADER);
 	autoScaleNode(btnRank);
 
-	ui::Button* btnSettings = ui::Button::create("board/btn_settings.png", "board/btn_settings_clicked.png");
+	ui::Button* btnSettings = ui::Button::create("btn_settings.png", "btn_settings_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnSettings->setPosition(vecPos[6]);
 	addTouchEventListener(btnSettings, [=]() {
 		if (popupMainSettings == nullptr) {
@@ -743,7 +766,7 @@ void BaseScene::initHeaderWithInfos()
 	mLayer->addChild(btnSettings, constant::MAIN_ZORDER_HEADER);
 	autoScaleNode(btnSettings);
 
-	ui::Button* btnAvar = ui::Button::create("main/avatar.png");
+	ui::Button* btnAvar = ui::Button::create("avatar.png", "avatar.png", "", ui::Widget::TextureResType::PLIST);
 	btnAvar->setPosition(vecPos[7]);
 	btnAvar->setScale(.9f);
 	addTouchEventListener(btnAvar, [=]() {
@@ -784,7 +807,28 @@ void BaseScene::initHeaderWithInfos()
 	mLayer->addChild(lbLevel, constant::MAIN_ZORDER_HEADER);
 	autoScaleNode(lbLevel);
 
-	ui::Scale9Sprite* spHeader = ui::Scale9Sprite::create("popup/header.png");
+	ui::Button* btnCoffer = ui::Button::create("coffer.png", "coffer.png", "", ui::Widget::TextureResType::PLIST);
+	btnCoffer->setPosition(vecPos[13]);
+	addTouchEventListener(btnCoffer, [=]() {
+		showPopupCoffer();
+	});
+	mLayer->addChild(btnCoffer, constant::MAIN_ZORDER_HEADER);
+	autoScaleNode(btnCoffer);
+
+	lbCoffer = Label::create(Utils::getSingleton().formatMoneyWithComma(Utils::getSingleton().cofferMoney), "fonts/arialbd.ttf", 20);
+	lbCoffer->setPosition(btnCoffer->getContentSize().width / 2, 15);
+	lbCoffer->setColor(Color3B::YELLOW);
+	btnCoffer->addChild(lbCoffer);
+
+	Sprite* lightPoint = Sprite::createWithSpriteFrameName("light_point.png");
+	lightPoint->setPosition(btnCoffer->getContentSize().width / 2, btnCoffer->getContentSize().height / 2);
+	btnCoffer->addChild(lightPoint, - 1);
+
+	ScaleTo* scale1 = ScaleTo::create(2, .7f);
+	ScaleTo* scale2 = ScaleTo::create(2, 1);
+	lightPoint->runAction(RepeatForever::create(Sequence::createWithTwoActions(scale1, scale2)));
+
+	ui::Scale9Sprite* spHeader = ui::Scale9Sprite::createWithSpriteFrameName("header.png");
 	spHeader->setAnchorPoint(Vec2(0, 1));
 	spHeader->setContentSize(Size(1120 / scaleScene.y, 104));
 	spHeader->setPosition(0, 700);
@@ -805,11 +849,13 @@ void BaseScene::initHeaderWithInfos()
 	bool isPaymentEnabled = Utils::getSingleton().isPaymentEnabled();
 	if (!isPaymentEnabled) {
 		chosenBg->setPosition(isRealMoney && isPaymentEnabled ? -100 : 100, 0);
-		moneyNode->setPosition(vecPos[1] + Vec2(-145, 0));
+		moneyNode->setPosition(vecPos[1] + Vec2(-60, 0));
 		moneyBg1->setVisible(false);
 		iconGold->setVisible(false);
 		lbGold->setVisible(false);
 		btnRank->setVisible(false);
+		btnCoffer->setVisible(false);
+		lbCoffer->setVisible(false);
 	}
 }
 
@@ -829,8 +875,10 @@ void BaseScene::showPopupHistory()
 
 	ui::Button* btn0 = (ui::Button*)popupHistory->getChildByTag(10);
 	ui::Button* btn1 = (ui::Button*)popupHistory->getChildByTag(11);
-	btn0->loadTextureNormal("popup/box2.png");
-	btn1->loadTextureNormal("popup/box1.png");
+	btn1->loadTextureNormal("empty.png", ui::Widget::TextureResType::PLIST);
+	btn0->loadTextureNormal("btn_light.png", ui::Widget::TextureResType::PLIST);
+	btn1->setTitleColor(Color3B::WHITE);
+	btn0->setTitleColor(Color3B::BLACK);
 	popupHistory->setTag(moneyType);
 	popupHistory->getChildByName("nodepage")->setTag(1);
 	for (int i = 1; i <= 5; i++) {
@@ -841,6 +889,20 @@ void BaseScene::showPopupHistory()
 		} else {
 			btn->setColor(pageColor1);
 		}
+	}
+}
+
+void BaseScene::showPopupCoffer()
+{
+	if (popupCoffer == nullptr) {
+		initPopupCoffer();
+	}
+	showPopup(popupCoffer);
+
+	Node* nodeHistory = popupCoffer->getChildByName("nodehistory");
+	ui::ScrollView* scrollHistory = (ui::ScrollView*)nodeHistory->getChildByName("scrollhistory");
+	if (scrollHistory->getChildrenCount() == 0) {
+		SFSRequest::getSingleton().RequestCofferHistory();
 	}
 }
 
@@ -907,7 +969,7 @@ void BaseScene::initEventView(Vec2 pos, Size size)
 	eventView->setVisible(false);
 	mLayer->addChild(eventView, constant::GAME_ZORDER_BUTTON);
 
-	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("white.png");
+	ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("white.png");
 	bg->setAnchorPoint(Vec2(0, .5f));
 	bg->setColor(Color3B::BLACK);
 	bg->setContentSize(size);
@@ -929,11 +991,13 @@ void BaseScene::initEventView(Vec2 pos, Size size)
 	scroll->addChild(nodelb);
 }
 
-void BaseScene::showToast(std::string msg, Vec2 pos, Color3B textColor, Color3B bgColor, int bgOpacity)
+void BaseScene::showToast(std::string tag, ::string msg, Vec2 pos, Color3B textColor, Color3B bgColor, int bgOpacity)
 {
+	mLayer->removeChildByName(tag);
 	Node* nodeChat = Node::create();
 	nodeChat->setPosition(pos);
 	nodeChat->setScale(0);
+	nodeChat->setName(tag);
 	mLayer->addChild(nodeChat, constant::GAME_ZORDER_BUTTON);
 
 	cocos2d::ValueMap plist = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/chat.xml");
@@ -945,16 +1009,10 @@ void BaseScene::showToast(std::string msg, Vec2 pos, Color3B textColor, Color3B 
 	lb->setSystemFontName("Arial");
 	lb->setSystemFontSize(25);
 	lb->setColor(textColor);
-	if (lb->getWidth() > 500) {
-		lb->setWidth(500);
-	}
-	if (lb->getHeight() > 50) {
-		lb->setHeight(50);
-	}
 	nodeChat->addChild(lb, 2);
 
 	Size sizeContent = lb->getContentSize();
-	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("popup/box5.png");
+	ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("box5.png");
 	bg->setContentSize(sizeContent + Size(20, 10));
 	bg->setColor(bgColor);
 	bg->setOpacity(bgOpacity);
@@ -994,31 +1052,31 @@ Node* BaseScene::createPopupNotice()
 	mLayer->addChild(popupNotice, constant::ZORDER_POPUP_NOTICE);
 	autoScaleNode(popupNotice);
 
-	Sprite* bg = Sprite::create("popup/bg.png");
+	Sprite* bg = Sprite::createWithSpriteFrameName("popup_bg.png");
 	popupNotice->addChild(bg);
 
-	Sprite* title = Sprite::create("popup/title_thongbao.png");
-	title->setPosition(0, 180);
-	title->setScale(.8f);
+	Sprite* title = Sprite::createWithSpriteFrameName("title_thongbao.png");
+	title->setPosition(0, 170);
+	//title->setScale(.8f);
 	popupNotice->addChild(title);
 
 	Label* lb = Label::create();
-	lb->setColor(Color3B::BLACK);
+	lb->setColor(Color3B::WHITE);
 	lb->setSystemFontSize(30);
 	lb->setWidth(600);
 	lb->setName("lbcontent");
 	lb->setAlignment(TextHAlignment::CENTER);
 	popupNotice->addChild(lb);
 
-	ui::Button* btnok = ui::Button::create("popup/btn_submit.png", "popup/btn_submit_clicked.png");
-	btnok->setPosition(Vec2(0, -190));
+	ui::Button* btnok = ui::Button::create("btn_submit.png", "btn_submit_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnok->setPosition(Vec2(0, -170));
 	btnok->setName("btnsubmit");
 	addTouchEventListener(btnok, [=]() {});
 	popupNotice->addChild(btnok);
 
-	ui::Button* btndong = ui::Button::create("popup/btn_dong.png", "popup/btn_dong_clicked.png");
-	btndong->setPosition(Vec2(290, 170));
-	btndong->setScale(.7f);
+	ui::Button* btndong = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btndong->setPosition(Vec2(310, 170));
+	btndong->setScale(.8f);
 	btndong->setName("btnclose");
 	addTouchEventListener(btndong, [=]() {
 		hidePopup(popupNotice);
@@ -1042,31 +1100,40 @@ void BaseScene::initPopupRank()
 	mLayer->addChild(popupRank, constant::ZORDER_POPUP);
 	autoScaleNode(popupRank);
 
-	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("popup/bg.png");
+	/*ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("popup_bg.png");
 	bg->setInsetBottom(0);
 	bg->setInsetTop(0);
 	bg->setInsetLeft(100);
 	bg->setInsetRight(100);
 	bg->setContentSize(Size(1000, 700));
+	popupRank->addChild(bg);*/
+
+	Sprite* bg = Sprite::create("popup_bg1.png");
 	popupRank->addChild(bg);
 
-	Sprite* title = Sprite::create("popup/title_bangxephang.png");
-	title->setPosition(0, 250);
+	Size size = Size(860, 466);
+	Size scrollSize = size - Size(20, 20);
+	DrawNode* rect = DrawNode::create();
+	rect->drawRect(Vec2(-size.width / 2, -size.height / 2), Vec2(size.width / 2, size.height / 2), Color4F::BLACK);
+	rect->setPosition(55, -25);
+	popupRank->addChild(rect);
+
+	Sprite* title = Sprite::createWithSpriteFrameName("title_bangxephang.png");
+	title->setPosition(0, bg->getContentSize().height / 2 - 5);
 	popupRank->addChild(title);
 
-	ui::Button* btnClose = ui::Button::create("popup/btn_dong.png", "popup/btn_dong_clicked.png");
-	btnClose->setPosition(Vec2(390, 250));
+	ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnClose->setPosition(Vec2(bg->getContentSize().width / 2 - 10, bg->getContentSize().height / 2 - 5));
 	addTouchEventListener(btnClose, [=]() {
 		hidePopup(popupRank);
 	});
 	popupRank->addChild(btnClose);
 
-	int w = 850;
 	ui::ScrollView* scroll = ui::ScrollView::create();
 	scroll->setDirection(ui::ScrollView::Direction::VERTICAL);
 	scroll->setBounceEnabled(true);
-	scroll->setPosition(Vec2(-w / 2, -227));
-	scroll->setContentSize(Size(w, 350));
+	scroll->setPosition(Vec2(-scrollSize.width / 2, -scrollSize.height / 2) + rect->getPosition());
+	scroll->setContentSize(scrollSize);
 	scroll->setScrollBarEnabled(false);
 	scroll->setName("scroll");
 	popupRank->addChild(scroll);
@@ -1074,32 +1141,39 @@ void BaseScene::initPopupRank()
 	ui::ScrollView* scrollWin = ui::ScrollView::create();
 	scrollWin->setDirection(ui::ScrollView::Direction::VERTICAL);
 	scrollWin->setBounceEnabled(true);
-	scrollWin->setPosition(Vec2(-w / 2, -227));
-	scrollWin->setContentSize(Size(w, 350));
+	scrollWin->setPosition(Vec2(-scrollSize.width / 2, -scrollSize.height / 2) + rect->getPosition());
+	scrollWin->setContentSize(scrollSize);
 	scrollWin->setScrollBarEnabled(false);
 	scrollWin->setName("scrollwin");
 	popupRank->addChild(scrollWin);
 
 	vector<string> texts = { "quan", "xu", "win" };
-	int x = -315;
+	int x = -440;
+	int y = 180;
 	for (int i = 0; i < texts.size(); i++) {
-		ui::Button* btn = ui::Button::create(i == 0 ? "popup/box2.png" : "popup/box1.png");
-		btn->setContentSize(Size(210, 70));
-		btn->setPosition(Vec2(x, 160));
+		string strBtn = i == 0 ? "btn_light.png" : "empty.png";
+		ui::Button* btn = ui::Button::create(strBtn, strBtn, strBtn, ui::Widget::TextureResType::PLIST);
+		btn->setTitleText(Utils::getSingleton().getStringForKey(texts[i]));
+		btn->setTitleFontName("fonts/aristote.ttf");
+		btn->setTitleFontSize(30);
+		btn->setTitleColor(i == 0 ? Color3B::BLACK : Color3B::WHITE);
+		btn->setContentSize(Size(205, 50));
+		btn->setPosition(Vec2(x, y));
 		btn->setScale9Enabled(true);
-		btn->setCapInsets(Rect(25, 25, 0, 0));
+		//btn->setCapInsets(Rect(0, 0, 0, 0));
 		btn->setTag(i);
 		addTouchEventListener(btn, [=]() {
 			showPopupRank(btn->getTag());
 		});
 		popupRank->addChild(btn);
 
-		Label* lb = Label::create(Utils::getSingleton().getStringForKey(texts[i]), "fonts/guanine.ttf", 30);
+		/*Label* lb = Label::create(Utils::getSingleton().getStringForKey(texts[i]), "fonts/guanine.ttf", 30);
 		lb->setPosition(btn->getContentSize().width / 2, btn->getContentSize().height / 2 + 5);
 		lb->setColor(Color3B::BLACK);
-		btn->addChild(lb);
+		btn->addChild(lb);*/
 
-		x += 210;
+		//x += 210;
+		y -= 70;
 	}
 }
 
@@ -1111,12 +1185,12 @@ void BaseScene::initPopupSettings()
 	mLayer->addChild(popupMainSettings, constant::ZORDER_POPUP);
 	autoScaleNode(popupMainSettings);
 
-	Sprite* bg = Sprite::create("popup/bg.png");
+	Sprite* bg = Sprite::createWithSpriteFrameName("popup_bg.png");
 	popupMainSettings->addChild(bg);
 
-	Sprite* title = Sprite::create("popup/title_caidat.png");
-	title->setPosition(0, 180);
-	title->setScale(.8f);
+	Sprite* title = Sprite::createWithSpriteFrameName("title_caidat.png");
+	title->setPosition(0, 170);
+	//title->setScale(.8f);
 	popupMainSettings->addChild(title);
 
 	vector<Vec2> vecPos;
@@ -1127,8 +1201,8 @@ void BaseScene::initPopupSettings()
 	vector<ui::CheckBox*> cbs;
 	for (int i = 0; i < 2; i++) {
 		ui::CheckBox* checkbox = ui::CheckBox::create();
-		checkbox->loadTextureBackGround("popup/box.png");
-		checkbox->loadTextureFrontCross("popup/check.png");
+		checkbox->loadTextureBackGround("box0.png", ui::Widget::TextureResType::PLIST);
+		checkbox->loadTextureFrontCross("check.png", ui::Widget::TextureResType::PLIST);
 		checkbox->setPosition(vecPos[i]);
 		checkbox->setSelected(false);
 		checkbox->setTag(i);
@@ -1140,7 +1214,7 @@ void BaseScene::initPopupSettings()
 		lb->setSystemFontSize(30);
 		lb->setPosition(vecPos[i] + Vec2(40, 0));
 		lb->setAnchorPoint(Vec2(0, .5f));
-		lb->setColor(Color3B::BLACK);
+		lb->setColor(Color3B::WHITE);
 		popupMainSettings->addChild(lb);
 		lbs.push_back(lb);
 	}
@@ -1151,8 +1225,8 @@ void BaseScene::initPopupSettings()
 	lbs[0]->setString(Utils::getSingleton().getStringForKey("sound"));
 	lbs[1]->setString(Utils::getSingleton().getStringForKey("reject_all_invitation"));
 
-	ui::Button* btnOK = ui::Button::create("popup/btn_submit.png", "popup/btn_submit_clicked.png");
-	btnOK->setPosition(Vec2(0, -190));
+	ui::Button* btnOK = ui::Button::create("btn_submit.png", "btn_submit_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnOK->setPosition(Vec2(0, -170));
 	addTouchEventListener(btnOK, [=]() {
 		hidePopup(popupMainSettings);
 		Utils::getSingleton().SoundEnabled = cbs[0]->isSelected();
@@ -1162,9 +1236,9 @@ void BaseScene::initPopupSettings()
 	});
 	popupMainSettings->addChild(btnOK);
 
-	ui::Button* btnClose = ui::Button::create("popup/btn_dong.png", "popup/btn_dong_clicked.png");
-	btnClose->setPosition(Vec2(290, 170));
-	btnClose->setScale(.7f);
+	ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnClose->setPosition(Vec2(310, 170));
+	btnClose->setScale(.8f);
 	addTouchEventListener(btnClose, [=]() {
 		hidePopup(popupMainSettings);
 	});
@@ -1181,51 +1255,53 @@ void BaseScene::initPopupUserInfo()
 	mLayer->addChild(popupUserInfo, constant::ZORDER_POPUP);
 	autoScaleNode(popupUserInfo);
 
-	Sprite* bg = Sprite::create("popup/bg.png");
+	Sprite* bg = Sprite::createWithSpriteFrameName("popup_bg.png");
 	popupUserInfo->addChild(bg);
 
-	Sprite* title = Sprite::create("popup/title_thongtin.png");
-	title->setPosition(0, 180);
-	title->setScale(.8f);
+	Sprite* title = Sprite::createWithSpriteFrameName("title_thongtin.png");
+	title->setPosition(0, 170);
+	//title->setScale(.8f);
 	popupUserInfo->addChild(title);
 
-	ui::Button* btnClose = ui::Button::create("popup/btn_dong.png", "popup/btn_dong_clicked.png");
-	btnClose->setPosition(Vec2(290, 170));
-	btnClose->setScale(.7f);
+	ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnClose->setPosition(Vec2(310, 170));
+	btnClose->setScale(.8f);
 	addTouchEventListener(btnClose, [=]() {
 		hidePopup(popupUserInfo);
 	});
 	popupUserInfo->addChild(btnClose);
 
-	Sprite* avatar = Sprite::create("board/avatar_default.png");
-	avatar->setPosition(-186, 23);
+	Sprite* avatar = Sprite::createWithSpriteFrameName("avatar_default.png");
+	avatar->setPosition(-186, 33);
 	avatar->setScale(1.5f);
 	avatar->setName("avatar");
 	popupUserInfo->addChild(avatar);
 
-	ui::Button* btnHistory = ui::Button::create("popup/btn_small_invite.png");
-	btnHistory->setTitleText(Utils::getSingleton().getStringForKey("lich_su"));
-	btnHistory->setTitleFontName("fonts/arial.ttf");
-	btnHistory->setTitleFontSize(25);
-	btnHistory->setTitleColor(Color3B::BLACK);
-	btnHistory->setPosition(Vec2(-186, -80));
-	btnHistory->setContentSize(Size(150, 50));
-	btnHistory->setScale9Enabled(true);
+	ui::Button* btnHistory = ui::Button::create("btn_lichsu.png", "btn_lichsu_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	//btnHistory->setTitleText(Utils::getSingleton().getStringForKey("lich_su"));
+	//btnHistory->setTitleFontName("fonts/arial.ttf");
+	//btnHistory->setTitleFontSize(25);
+	//btnHistory->setTitleColor(Color3B::BLACK);
+	btnHistory->setPosition(Vec2(-186, -70));
+	//btnHistory->setContentSize(Size(150, 50));
+	//btnHistory->setScale9Enabled(true);
 	btnHistory->setName("btnhistory");
+	btnHistory->setScale(.8f);
 	addTouchEventListener(btnHistory, [=]() {
 		showPopupHistory();
 	});
 	popupUserInfo->addChild(btnHistory);
 
-	ui::Button* btnActive = ui::Button::create("popup/btn_small_invite.png");
-	btnActive->setTitleText(Utils::getSingleton().getStringForKey("kich_hoat"));
-	btnActive->setTitleFontName("fonts/arial.ttf");
-	btnActive->setTitleFontSize(25);
-	btnActive->setTitleColor(Color3B::BLACK);
-	btnActive->setPosition(Vec2(-186, -135));
-	btnActive->setContentSize(Size(150, 50));
-	btnActive->setScale9Enabled(true);
+	ui::Button* btnActive = ui::Button::create("btn_kichhoat.png", "btn_kickhoat_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	//btnActive->setTitleText(Utils::getSingleton().getStringForKey("kich_hoat"));
+	//btnActive->setTitleFontName("fonts/arial.ttf");
+	//btnActive->setTitleFontSize(25);
+	//btnActive->setTitleColor(Color3B::BLACK);
+	btnActive->setPosition(Vec2(-186, -125));
+	//btnActive->setContentSize(Size(150, 50));
+	//btnActive->setScale9Enabled(true);
 	btnActive->setName("btnactive");
+	btnActive->setScale(.8f);
 	addTouchEventListener(btnActive, [=]() {
 		string str = Utils::getSingleton().gameConfig.smsKH;
 		int index = str.find_last_of(' ');
@@ -1236,8 +1312,8 @@ void BaseScene::initPopupUserInfo()
 	});
 	popupUserInfo->addChild(btnActive);
 
-    ui::Button* btnLogoutFb = ui::Button::create("main/btn_logout_fb.png", "main/btn_logout_fb_clicked.png");
-    btnLogoutFb->setPosition(Vec2(186, -135));
+    ui::Button* btnLogoutFb = ui::Button::create("btn_logout_fb.png", "btn_logout_fb_clicked.png", "", ui::Widget::TextureResType::PLIST);
+    btnLogoutFb->setPosition(Vec2(186, -125));
     btnLogoutFb->setName("btnlogoutfb");
     btnLogoutFb->setScale(.8f);
     addTouchEventListener(btnLogoutFb, [=]() {
@@ -1249,64 +1325,64 @@ void BaseScene::initPopupUserInfo()
 
 	Label* lbName = Label::create("Stormus", "fonts/arialbd.ttf", 25);
 	lbName->setAnchorPoint(Vec2(0, .5f));
-	lbName->setColor(Color3B::BLACK);
-	lbName->setPosition(-70, 80);
+	lbName->setColor(Color3B::WHITE);
+	lbName->setPosition(-70, 90);
 	lbName->setName("lbname");
 	popupUserInfo->addChild(lbName);
 
 	Label* lbQuan = Label::create(Utils::getSingleton().getStringForKey("quan"), "fonts/arial.ttf", 25);
 	lbQuan->setAnchorPoint(Vec2(0, .5f));
-	lbQuan->setColor(Color3B::BLACK);
-	lbQuan->setPosition(-70, 40);
+	lbQuan->setColor(Color3B::WHITE);
+	lbQuan->setPosition(-70, 50);
 	lbQuan->setVisible(isPaymentEnabled);
 	popupUserInfo->addChild(lbQuan);
 
 	Label* lbQuan1 = Label::create("100,000", "fonts/arial.ttf", 25);
 	lbQuan1->setAnchorPoint(Vec2(0, .5f));
 	lbQuan1->setColor(Color3B::RED);
-	lbQuan1->setPosition(30, 40);
+	lbQuan1->setPosition(30, 50);
 	lbQuan1->setName("lbquan");
 	lbQuan1->setVisible(isPaymentEnabled);
 	popupUserInfo->addChild(lbQuan1);
 
 	Label* lbXu = Label::create(Utils::getSingleton().getStringForKey("xu"), "fonts/arial.ttf", 25);
 	lbXu->setAnchorPoint(Vec2(0, .5f));
-	lbXu->setColor(Color3B::BLACK);
-	lbXu->setPosition(-70, 0);
+	lbXu->setColor(Color3B::WHITE);
+	lbXu->setPosition(-70, 10);
 	popupUserInfo->addChild(lbXu);
 
 	Label* lbXu1 = Label::create("100,000", "fonts/arial.ttf", 25);
 	lbXu1->setAnchorPoint(Vec2(0, .5f));
 	lbXu1->setColor(Color3B(0, 255, 255));
-	lbXu1->setPosition(30, 0);
+	lbXu1->setPosition(30, 10);
 	lbXu1->setName("lbxu");
 	popupUserInfo->addChild(lbXu1);
 
 	Label* lbId = Label::create("ID: 847558", "fonts/arial.ttf", 25);
 	lbId->setAnchorPoint(Vec2(0, .5f));
-	lbId->setColor(Color3B::BLACK);
-	lbId->setPosition(-70, -40);
+	lbId->setColor(Color3B::WHITE);
+	lbId->setPosition(-70, -30);
 	lbId->setName("lbid");
 	popupUserInfo->addChild(lbId);
 	
 	Label* lbLevel = Label::create(Utils::getSingleton().getStringForKey("cap_do") + ": 10", "fonts/arial.ttf", 25);
 	lbLevel->setAnchorPoint(Vec2(0, .5f));
-	lbLevel->setColor(Color3B::BLACK);
-	lbLevel->setPosition(-70, -80);
+	lbLevel->setColor(Color3B::WHITE);
+	lbLevel->setPosition(-70, -70);
 	lbLevel->setName("lblevel");
 	popupUserInfo->addChild(lbLevel);
 
 	Label* lbWin = Label::create(Utils::getSingleton().getStringForKey("thang") + ": 12", "fonts/arial.ttf", 25);
 	lbWin->setAnchorPoint(Vec2(0, .5f));
-	lbWin->setColor(Color3B::BLACK);
-	lbWin->setPosition(115, -40);
+	lbWin->setColor(Color3B::WHITE);
+	lbWin->setPosition(115, -30);
 	lbWin->setName("lbwin");
 	popupUserInfo->addChild(lbWin);
 
 	Label* lbTotal = Label::create(Utils::getSingleton().getStringForKey("tong") + ": 20", "fonts/arial.ttf", 25);
 	lbTotal->setAnchorPoint(Vec2(0, .5f));
-	lbTotal->setColor(Color3B::BLACK);
-	lbTotal->setPosition(115, -80);
+	lbTotal->setColor(Color3B::WHITE);
+	lbTotal->setPosition(115, -70);
 	lbTotal->setName("lbtotal");
 	popupUserInfo->addChild(lbTotal);
 }
@@ -1322,55 +1398,71 @@ void BaseScene::initPopupHistory()
 	mLayer->addChild(popupHistory, constant::ZORDER_POPUP);
 	autoScaleNode(popupHistory);
 
-	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("popup/bg.png");
+	/*ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("popup_bg.png");
 	bg->setInsetBottom(0);
 	bg->setInsetTop(0);
 	bg->setInsetLeft(100);
 	bg->setInsetRight(100);
 	bg->setContentSize(Size(1000, 700));
+	popupHistory->addChild(bg);*/
+
+	Sprite* bg = Sprite::create("popup_bg1.png");
 	popupHistory->addChild(bg);
 
-	ui::Scale9Sprite* bgContent = ui::Scale9Sprite::create("popup/box1.png");
-	bgContent->setContentSize(Size(860, 370));
-	bgContent->setPosition(0, isPaymentEnabled ? -55 : -20);
+	ui::Scale9Sprite* bgContent = ui::Scale9Sprite::createWithSpriteFrameName("empty.png");
+	bgContent->setContentSize(Size(860, 446));
+	bgContent->setPosition(isPaymentEnabled ? 55 : 0, -10);
 	popupHistory->addChild(bgContent);
 
-	Sprite* title = Sprite::create("popup/title_lichsu.png");
-	title->setPosition(0, 250);
+	Size size = bgContent->getContentSize();
+	DrawNode* rect = DrawNode::create();
+	rect->drawRect(Vec2(-size.width / 2, -size.height / 2), Vec2(size.width / 2, size.height / 2), Color4F::BLACK);
+	rect->setPosition(bgContent->getPosition());
+	popupHistory->addChild(rect);
+
+	Sprite* title = Sprite::createWithSpriteFrameName("title_lichsu.png");
+	title->setPosition(0, bg->getContentSize().height / 2 - 5);
 	title->setName("sptitle");
 	popupHistory->addChild(title);
 
-	ui::Button* btnClose = ui::Button::create("popup/btn_dong.png", "popup/btn_dong_clicked.png");
-	btnClose->setPosition(Vec2(390, 250));
+	ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnClose->setPosition(Vec2(bg->getContentSize().width / 2 - 10, bg->getContentSize().height / 2 - 5));
 	addTouchEventListener(btnClose, [=]() {
 		hidePopup(popupHistory);
 	});
 	popupHistory->addChild(btnClose);
 
-	int w = 850;
 	ui::ScrollView* scroll = ui::ScrollView::create();
 	scroll->setDirection(ui::ScrollView::Direction::VERTICAL);
 	scroll->setBounceEnabled(true);
-	scroll->setPosition(Vec2(-w / 2, bgContent->getPositionY() - 172));
-	scroll->setContentSize(Size(w, 300));
+	scroll->setPosition(Vec2(-size.width / 2 + 5, -size.height / 2 + 5) + bgContent->getPosition());
+	scroll->setContentSize(Size(size.width - 10, size.height - 50));
 	scroll->setScrollBarEnabled(false);
 	scroll->setName("scroll");
 	popupHistory->addChild(scroll);
 
 	vector<string> texts = { "quan" , "xu" };
-	int x = -315;
+	int x = -450;
+	int y = 180;
 	for (int i = 0; i < texts.size(); i++) {
-		ui::Button* btn = ui::Button::create(i == 0 ? "popup/box2.png" : "popup/box1.png");
-		btn->setContentSize(Size(210, 70));
-		btn->setPosition(Vec2(x, 160));
+		ui::Button* btn = ui::Button::create(i == 0 ? "btn_light.png" : "empty.png", "", "", ui::Widget::TextureResType::PLIST);
+		btn->setTitleText(Utils::getSingleton().getStringForKey(texts[i]));
+		btn->setTitleFontName("fonts/aristote.ttf");
+		btn->setTitleFontSize(30);
+		btn->setTitleColor(i == 0 ? Color3B::BLACK : Color3B::WHITE);
+		btn->setContentSize(Size(205, 50));
+		btn->setPosition(Vec2(x, y));
 		btn->setScale9Enabled(true);
-		btn->setCapInsets(Rect(25, 25, 0, 0));
+		//btn->setCapInsets(Rect(25, 25, 0, 0));
 		btn->setTag(10 + i);
 		btn->setVisible(isPaymentEnabled);
 		addTouchEventListener(btn, [=]() {
+			if (popupHistory->getTag() == i) return;
 			ui::Button* btn1 = (ui::Button*)popupHistory->getChildByTag(10 + popupHistory->getTag());
-			btn1->loadTextureNormal("popup/box1.png");
-			btn->loadTextureNormal("popup/box2.png");
+			btn1->loadTextureNormal("empty.png", ui::Widget::TextureResType::PLIST);
+			btn->loadTextureNormal("btn_light.png", ui::Widget::TextureResType::PLIST);
+			btn1->setTitleColor(Color3B::WHITE);
+			btn->setTitleColor(Color3B::BLACK);
 			popupHistory->setTag(i);
 			SFSRequest::getSingleton().RequestPlayHistory(i, 0);
 
@@ -1387,33 +1479,44 @@ void BaseScene::initPopupHistory()
 		});
 		popupHistory->addChild(btn);
 
-		Label* lb = Label::create(Utils::getSingleton().getStringForKey(texts[i]), "fonts/guanine.ttf", 30);
+		/*Label* lb = Label::create(Utils::getSingleton().getStringForKey(texts[i]), "fonts/guanine.ttf", 30);
 		lb->setPosition(btn->getContentSize().width / 2, btn->getContentSize().height / 2 + 5);
 		lb->setColor(Color3B::BLACK);
-		btn->addChild(lb);
+		btn->addChild(lb);*/
 
-		x += 210;
+		//x += 210;
+		y -= 70;
 	}
-
-	vector<int> posX = { -390, -300, -80, 160, 290, 380 };
+	
+	int py = bgContent->getPositionY() + size.height / 2 - 20;
+	int px = bgContent->getPositionX() - size.width / 2 + 40;
+	vector<int> posX = { px, px + 90, px + 330, px + 550, px + 680, px + 770 };
 	vector<int> widths = { 50, 100, 320, 210, 150, 60 };
 	vector<string> historyTitles = { "STT", Utils::getSingleton().getStringForKey("ngay"), Utils::getSingleton().getStringForKey("thong_tin"),
 		Utils::getSingleton().getStringForKey("tien_van"), Utils::getSingleton().getStringForKey("tien"), "ID" };
 	for (int i = 0; i < historyTitles.size(); i++) {
 		Label* lb = Label::create(historyTitles[i], "fonts/aurora.ttf", 30);
-		lb->setColor(Color3B(50, 50, 50));
-		lb->setPosition(posX[i], bgContent->getPositionY() + 153);
+		lb->setColor(Color3B::WHITE);
+		lb->setPosition(posX[i], py);
 		popupHistory->addChild(lb);
 	}
 
 	Node* nodeDetail = Node::create();
-	nodeDetail->setPosition(0, bgContent->getPositionY() - 20);
+	nodeDetail->setPosition(scroll->getPosition() + Vec2(size.width / 2 - 5, size.height / 2 - 25));
 	nodeDetail->setVisible(false);
 	nodeDetail->setName("nodedetail");
 	popupHistory->addChild(nodeDetail);
 
-	ui::Scale9Sprite* bgDetail = ui::Scale9Sprite::create("popup/box1.png");
-	bgDetail->setContentSize(Size(860, 326));
+	/*ui::Scale9Sprite* bgDetail = ui::Scale9Sprite::createWithSpriteFrameName("box1.png");
+	bgDetail->setContentSize(size - Size(0, 50));
+	nodeDetail->addChild(bgDetail);*/
+
+	ui::Scale9Sprite* bgDetail = ui::Scale9Sprite::createWithSpriteFrameName("popup_bg.png");
+	bgDetail->setInsetBottom(320);
+	bgDetail->setInsetTop(30);
+	bgDetail->setInsetLeft(300);
+	bgDetail->setInsetRight(30);
+	bgDetail->setContentSize(size - Size(-10, 30));
 	nodeDetail->addChild(bgDetail);
 
 	for (int i = 0; i < posX.size(); i++) {
@@ -1421,38 +1524,156 @@ void BaseScene::initPopupHistory()
 		lbDetail->setWidth(widths[i]);
 		lbDetail->setAnchorPoint(Vec2(.5f, 1));
 		lbDetail->setHorizontalAlignment(TextHAlignment::CENTER);
-		lbDetail->setPosition(posX[i], bgDetail->getContentSize().height / 2 - 20);
+		lbDetail->setPosition(posX[i] - 55, bgDetail->getContentSize().height / 2 - 15);
 		lbDetail->setTag(i);
-		lbDetail->setColor(Color3B(50, 50, 50));
+		lbDetail->setColor(Color3B::WHITE);
 		nodeDetail->addChild(lbDetail);
 	}
 
-	ui::Button* btnCloseDetail = ui::Button::create("popup/btn_dong.png");
-	btnCloseDetail->setPosition(Vec2(bgDetail->getContentSize().width / 2 - 50, -bgDetail->getContentSize().height / 2 + 50));
+	ui::Button* btnCloseDetail = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnCloseDetail->setPosition(Vec2(bgDetail->getContentSize().width / 2 - 45, -bgDetail->getContentSize().height / 2 + 45));
 	btnCloseDetail->setScale(.7f);
 	addTouchEventListener(btnCloseDetail, [=]() {
 		nodeDetail->setVisible(false);
 	});
 	nodeDetail->addChild(btnCloseDetail);
 
-	addBtnChoosePage(-100, -260, popupHistory, [=](int page) {
+	addBtnChoosePage(0, -257, popupHistory, [=](int page) {
 		int type = popupHistory->getTag();
 		SFSRequest::getSingleton().RequestPlayHistory(type, page - 1);
 		//onPlayLogDataResponse(vector<PlayLogData>());
 	});
 }
 
+void BaseScene::initPopupCoffer()
+{
+	popupCoffer = Node::create();
+	popupCoffer->setPosition(560, 350);
+	popupCoffer->setVisible(false);
+	popupCoffer->setTag(0);
+	mLayer->addChild(popupCoffer, constant::ZORDER_POPUP);
+
+	/*ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("popup_bg.png");
+	bg->setInsetBottom(0);
+	bg->setInsetTop(0);
+	bg->setInsetLeft(100);
+	bg->setInsetRight(100);
+	bg->setContentSize(Size(1000, 700));
+	popupCoffer->addChild(bg);*/
+
+	Sprite* bg = Sprite::create("popup_bg1.png");
+	popupCoffer->addChild(bg);
+
+	Size size = Size(780, 466);
+	Size scrollSize = size - Size(20, 20);
+	DrawNode* rect = DrawNode::create();
+	rect->drawRect(Vec2(-size.width / 2, -size.height / 2), Vec2(size.width / 2, size.height / 2), Color4F::BLACK);
+	rect->setPosition(95, -25);
+	popupCoffer->addChild(rect);
+
+	Sprite* title = Sprite::createWithSpriteFrameName("title_huvang.png");
+	title->setPosition(0, bg->getContentSize().height / 2 - 5);
+	popupCoffer->addChild(title);
+
+	ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnClose->setPosition(Vec2(bg->getContentSize().width / 2 - 10, bg->getContentSize().height / 2 - 5));
+	addTouchEventListener(btnClose, [=]() {
+		hidePopup(popupCoffer);
+	});
+	popupCoffer->addChild(btnClose);
+
+	Node* nodeGuide = Node::create();
+	nodeGuide->setName("nodeguide");
+	nodeGuide->setTag(0);
+	popupCoffer->addChild(nodeGuide);
+
+	Node* nodeHistory = Node::create();
+	nodeHistory->setName("nodehistory");
+	nodeHistory->setTag(1);
+	nodeHistory->setVisible(false);
+	popupCoffer->addChild(nodeHistory);
+
+	vector<string> texts = { "huong_dan" , "lich_su_no" };
+	int x = -400;
+	int y = 180;
+	for (int i = 0; i < texts.size(); i++) {
+		ui::Button* btn = ui::Button::create(i == 0 ? "btn_light.png" : "empty.png", "", "", ui::Widget::TextureResType::PLIST);
+		btn->setTitleText(Utils::getSingleton().getStringForKey(texts[i]));
+		btn->setTitleFontName("fonts/aristote.ttf");
+		btn->setTitleFontSize(25);
+		btn->setTitleColor(i == 0 ? Color3B::BLACK : Color3B::WHITE);
+		btn->setContentSize(Size(255, 50));
+		btn->setPosition(Vec2(x, y));
+		btn->setScale9Enabled(true);
+		//btn->setCapInsets(Rect(25, 25, 0, 0));
+		btn->setTag(10 + i);
+		addTouchEventListener(btn, [=]() {
+			if (popupCoffer->getTag() == i) return;
+			popupCoffer->getChildByTag(i)->setVisible(true);
+			popupCoffer->getChildByTag(1 - i)->setVisible(false);
+			ui::Button* btn1 = (ui::Button*)popupCoffer->getChildByTag(10 + popupCoffer->getTag());
+			btn1->loadTextureNormal("empty.png", ui::Widget::TextureResType::PLIST);
+			btn->loadTextureNormal("btn_light.png", ui::Widget::TextureResType::PLIST);
+			btn1->setTitleColor(Color3B::WHITE);
+			btn->setTitleColor(Color3B::BLACK);
+			popupCoffer->setTag(i);
+		});
+		popupCoffer->addChild(btn);
+		//x += 210;
+		y -= 70;
+	}
+
+	//Node guide
+	/*ui::Scale9Sprite* bgScrollGuide = ui::Scale9Sprite::createWithSpriteFrameName("box1.png");
+	bgScrollGuide->setContentSize(size);
+	bgScrollGuide->setPosition(95, -25);
+	nodeGuide->addChild(bgScrollGuide);*/
+
+	ui::ScrollView* scrollGuide = ui::ScrollView::create();
+	scrollGuide->setDirection(ui::ScrollView::Direction::VERTICAL);
+	scrollGuide->setBounceEnabled(true);
+	scrollGuide->setPosition(Vec2(-scrollSize.width / 2, -scrollSize.height / 2) + rect->getPosition());
+	scrollGuide->setContentSize(scrollSize);
+	scrollGuide->setScrollBarEnabled(false);
+	nodeGuide->addChild(scrollGuide);
+
+	cocos2d::ValueMap plist = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/tutorials.xml");
+	Label* lb = Label::create(plist["tutorial_4"].asString(), "fonts/arial.ttf", 20);
+	lb->setAnchorPoint(Vec2(0, 1));
+	lb->setColor(Color3B::WHITE);
+	lb->setName("lbcontent");
+	lb->setWidth(scrollSize.width);
+	scrollGuide->addChild(lb);
+
+	int height = lb->getContentSize().height;
+	if (height < scrollGuide->getContentSize().height) {
+		height = scrollGuide->getContentSize().height;
+	}
+	lb->setPosition(0, height);
+	scrollGuide->setInnerContainerSize(Size(scrollSize.width, height));
+
+	//Node history
+	ui::ScrollView* scrollHistory = ui::ScrollView::create();
+	scrollHistory->setDirection(ui::ScrollView::Direction::VERTICAL);
+	scrollHistory->setBounceEnabled(true);
+	scrollHistory->setPosition(Vec2(-scrollSize.width / 2, -scrollSize.height / 2) + rect->getPosition());
+	scrollHistory->setContentSize(scrollSize);
+	scrollHistory->setScrollBarEnabled(false);
+	scrollHistory->setName("scrollhistory");
+	nodeHistory->addChild(scrollHistory);
+}
+
 void BaseScene::onPingPong(long timems)
 {
 	pingId++;
 	if (timems < 150) {
-		spNetwork->initWithFile("wifi0.png");
+		spNetwork->initWithSpriteFrameName("wifi0.png");
 	} else if (timems < 500) {
-		spNetwork->initWithFile("wifi1.png");
+		spNetwork->initWithSpriteFrameName("wifi1.png");
 	} else if (timems < 1000) {
-		spNetwork->initWithFile("wifi2.png");
+		spNetwork->initWithSpriteFrameName("wifi2.png");
 	} else {
-		spNetwork->initWithFile("wifi3.png");
+		spNetwork->initWithSpriteFrameName("wifi3.png");
 	}
 	//spNetwork->setAnchorPoint(Vec2(1, 0));
 	//lbNetwork->setString(to_string(timems) + "ms");
@@ -1506,7 +1727,7 @@ void BaseScene::onPlayLogDataResponse(std::vector<PlayLogData> logs)
 	logs.push_back(data);
 	}*/
 
-	vector<int> posX = { -390, -300, -80, 160, 290, 380 };
+	vector<int> posX = { -390, -300, -60, 160, 290, 380 };
 	vector<int> widths = { 50, 100, 320, 210, 150, 60 };
 	ui::ScrollView* scroll = (ui::ScrollView*)popupHistory->getChildByName("scroll");
 	int height = logs.size() * 60;
@@ -1537,12 +1758,12 @@ void BaseScene::onPlayLogDataResponse(std::vector<PlayLogData> logs)
 				lbDetail->setHorizontalAlignment(TextHAlignment::CENTER);
 				lbDetail->setPosition(posX[j] + scroll->getContentSize().width / 2, height - 5 - i * 60);
 				lbDetail->setTag(i * 7 + j);
-				lbDetail->setColor(Color3B(50, 50, 50));
+				lbDetail->setColor(Color3B::WHITE);
 				scroll->addChild(lbDetail);
 				lbs.push_back(lbDetail);
 			}
 
-			btn = ui::Button::create("popup/box1.png");
+			btn = ui::Button::create("white.png", "", "", ui::Widget::TextureResType::PLIST);
 			btn->setContentSize(Size(scroll->getContentSize().width, lbs[0]->getHeight()));
 			btn->setPosition(Vec2(scroll->getContentSize().width / 2, height - 5 - i * 60));
 			btn->setAnchorPoint(Vec2(.5f, 1));
@@ -1573,6 +1794,122 @@ void BaseScene::onPlayLogDataResponse(std::vector<PlayLogData> logs)
 	}
 }
 
+void BaseScene::onCofferMoneyResponse(long money)
+{
+	Utils::getSingleton().cofferMoney = money;
+	if (lbCoffer != nullptr) {
+		lbCoffer->setString(Utils::getSingleton().formatMoneyWithComma(money));
+	}
+}
+
+void BaseScene::onCofferHistoryResponse(std::vector<CofferWinnerData> list)
+{
+	/*list.clear();
+	int numb = 10 + rand() % 20;
+	for (int i = 0; i < numb; i++) {
+		CofferWinnerData data;
+		data.Uid = 1000 + rand() % 10000;
+		data.Name = rand() % 2 == 0 ? "STORMUSQWERTYUIO" : ("stormusssss" + to_string(data.Uid));
+		data.Point = rand() % 60;
+		data.Cuocs = rand() % 2 == 0 ? "Nha lau xe hoi Hoa roi cua phat Ca ca nhay dau thuyen ngu ong bat ca" : "Nha lau xe hoi Hoa roi cua phat";
+		data.Date = "05/01/2016 19::00:00";
+		data.Money = 10000L * (rand() % 10000);
+		list.push_back(data);
+	}*/
+	
+	Node* nodeHistory = popupCoffer->getChildByName("nodehistory");
+	ui::ScrollView* scroll = (ui::ScrollView*)nodeHistory->getChildByName("scrollhistory");
+	int height = list.size() * 75;
+	int width = scroll->getContentSize().width;
+	if (height < scroll->getContentSize().height) {
+		height = scroll->getContentSize().height;
+	}
+	scroll->setInnerContainerSize(Size(width, height));
+	for (int i = 0; i < list.size(); i++) {
+		Label* lb2;
+		Node* node = scroll->getChildByTag(i);
+		if (node == nullptr) {
+			node = Node::create();
+			node->setPosition(scroll->getContentSize().width / 2, height - 40 - i * 75);
+			node->setTag(i);
+			scroll->addChild(node);
+
+			ui::Scale9Sprite* nbg = ui::Scale9Sprite::createWithSpriteFrameName("empty.png");
+			nbg->setContentSize(Size(width, 85));
+			node->addChild(nbg);
+
+			Label* lb1 = Label::create(list[i].Date, "fonts/arialbd.ttf", 20);
+			lb1->setAnchorPoint(Vec2(0, .5f));
+			lb1->setColor(Color3B::WHITE);
+			lb1->setPosition(-width / 2 + 20, 0);
+			lb1->setWidth(100);
+			lb1->setTag(1);
+			lb1->setVisible(false);
+			node->addChild(lb1);
+
+			lb2 = Label::create(list[i].Name, "fonts/arialbd.ttf", 22);
+			//lb2->setAnchorPoint(Vec2(0, .5f));
+			lb2->setColor(Color3B::WHITE);
+			//lb2->setPosition(-width / 2 + 150, 10);
+			lb2->setPosition(-width / 2 + 80, 0);
+			//lb2->setWidth(400);
+			//lb2->setHeight(25);
+			lb2->setTag(2);
+			node->addChild(lb2);
+
+			Label* lb3 = Label::create(list[i].Cuocs, "fonts/arialbd.ttf", 22);
+			//lb3->setAnchorPoint(Vec2(0, .5f));
+			lb3->setHorizontalAlignment(TextHAlignment::CENTER);
+			lb3->setColor(Color3B(255, 255, 102));
+			lb3->setPosition(-10, 0);
+			lb3->setWidth(380);
+			//lb3->setHeight(50);
+			lb3->setTag(3);
+			node->addChild(lb3);
+
+			Label* lb4 = Label::create(Utils::getSingleton().formatMoneyWithComma(list[i].Point), "fonts/arialbd.ttf", 22);
+			//lb4->setAnchorPoint(Vec2(1, .5f));
+			lb4->setColor(Color3B(102, 255, 51));
+			lb4->setPosition(width / 2 - 30, 0);
+			lb4->setTag(4);
+			node->addChild(lb4);
+
+			Label* lb5 = Label::create(Utils::getSingleton().formatMoneyWithComma(list[i].Money), "fonts/arialbd.ttf", 22);
+			//lb5->setAnchorPoint(Vec2(1, .5f));
+			lb5->setColor(Color3B::YELLOW);
+			lb5->setPosition(width / 2 - 120, 0);
+			lb5->setTag(5);
+			node->addChild(lb5);
+		} else {
+			node->setVisible(true);
+			node->setPositionY(height - 40 - i * 75);
+			Label* lb1 = (Label*)node->getChildByTag(1);
+			lb2 = (Label*)node->getChildByTag(2);
+			Label* lb3 = (Label*)node->getChildByTag(3);
+			Label* lb4 = (Label*)node->getChildByTag(4);
+			lb1->setString(list[i].Date);
+			lb2->setString(list[i].Name);
+			lb3->setString(list[i].Cuocs);
+			lb4->setString(Utils::getSingleton().formatMoneyWithComma(list[i].Point));
+		}
+
+		string strName = list[i].Name;
+		if (strName.length() > 14) {
+			strName = strName.substr(0, 14);
+		}
+		lb2->setString(strName);
+		while (lb2->getContentSize().width > 170) {
+			strName = strName.substr(0, strName.length() - 1);
+			lb2->setString(strName);
+		}
+	}
+	int i = list.size();
+	Node* n;
+	while ((n = scroll->getChildByTag(i++)) != nullptr) {
+		n->setVisible(false);
+	}
+}
+
 void BaseScene::addBtnChoosePage(int x, int y, cocos2d::Node * node, std::function<void(int)> funcPage)
 {
 	Node* nodePage = Node::create();
@@ -1580,15 +1917,15 @@ void BaseScene::addBtnChoosePage(int x, int y, cocos2d::Node * node, std::functi
 	nodePage->setName("nodepage");
 	node->addChild(nodePage);
 
-	int x1 = -100;
+	int x1 = x - 100;
 	for (int i = 1; i <= 5; i++) {
-		ui::Button* btn = ui::Button::create("popup/box5.png");
+		ui::Button* btn = ui::Button::create("box5.png", "", "", ui::Widget::TextureResType::PLIST);
 		btn->setTitleFontName("fonts/arial.ttf");
 		btn->setTitleFontSize(20);
 		btn->setTitleText(to_string(i));
 		btn->setTitleColor(Color3B::BLACK);
 		btn->setContentSize(Size(40, 40));
-		btn->setPosition(Vec2(x1, -260));
+		btn->setPosition(Vec2(x1, y));
 		btn->setScale9Enabled(true);
 		btn->setColor(i == 1 ? pageColor2 : pageColor1);
 		btn->setTag(1000 + i);
@@ -1605,13 +1942,13 @@ void BaseScene::addBtnChoosePage(int x, int y, cocos2d::Node * node, std::functi
 		x1 += 50;
 	}
 
-	ui::Button* btnPre = ui::Button::create("popup/box5.png");
+	ui::Button* btnPre = ui::Button::create("box5.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnPre->setTitleFontName("fonts/arial.ttf");
 	btnPre->setTitleFontSize(20);
 	btnPre->setTitleText("<<");
 	btnPre->setTitleColor(Color3B::BLACK);
 	btnPre->setContentSize(Size(60, 40));
-	btnPre->setPosition(Vec2(-160, -260));
+	btnPre->setPosition(Vec2(x - 160, y));
 	btnPre->setScale9Enabled(true);
 	btnPre->setColor(pageColor1);
 	addTouchEventListener(btnPre, [=]() {
@@ -1629,13 +1966,13 @@ void BaseScene::addBtnChoosePage(int x, int y, cocos2d::Node * node, std::functi
 	});
 	node->addChild(btnPre);
 
-	ui::Button* btnNext = ui::Button::create("popup/box5.png");
+	ui::Button* btnNext = ui::Button::create("box5.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnNext->setTitleFontName("fonts/arial.ttf");
 	btnNext->setTitleFontSize(20);
 	btnNext->setTitleText(">>");
 	btnNext->setTitleColor(Color3B::BLACK);
 	btnNext->setContentSize(Size(60, 40));
-	btnNext->setPosition(Vec2(160, -260));
+	btnNext->setPosition(Vec2(x + 160, y));
 	btnNext->setScale9Enabled(true);
 	btnNext->setColor(pageColor1);
 	addTouchEventListener(btnNext, [=]() {

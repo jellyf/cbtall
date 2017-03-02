@@ -8,13 +8,13 @@ bool UserNode::init()
 		return false;
 	}
 
-	Sprite* bg = Sprite::create("board/bg_avatar.png");
+	Sprite* bg = Sprite::createWithSpriteFrameName("bg_avatar.png");
 	addChild(bg);
 
-	Sprite* avatar = Sprite::create("board/avatar_default.png");
+	Sprite* avatar = Sprite::createWithSpriteFrameName("avatar_default.png");
 	addChild(avatar);
 
-	Sprite* mask = Sprite::create("board/mask_avar.png");
+	Sprite* mask = Sprite::createWithSpriteFrameName("mask_avar.png");
 	addChild(mask);
 
 	lbName = Label::createWithTTF("Stormus", "fonts/arial.ttf", 20);
@@ -52,7 +52,7 @@ void UserNode::setPlayerName(std::string name)
 	}
 	lbName->setString(name);
 	while (lbName->getContentSize().width > 110) {
-		name = name = name.substr(0, name.length() - 1);
+		name = name.substr(0, name.length() - 1);
 		lbName->setString(name);
 	}
 }

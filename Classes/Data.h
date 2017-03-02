@@ -378,6 +378,7 @@ struct CofferWinnerData
 {
 	long Uid;
 	long Point;
+	double Money;
 	std::string Name;
 	std::string Cuocs;
 	std::string Date;

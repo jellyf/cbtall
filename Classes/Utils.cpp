@@ -26,12 +26,15 @@ Utils& Utils::getSingleton(void)
 
 Utils::Utils()
 {
+	cofferMoney = 0;
 	moneyType = -1;
 	isRunningEvent = false;
 	currentEventPosX = constant::EVENT_START_POSX;
 	userDataMe.UserID = 0;
 	viLang = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/vi.xml");
 	SFSRequest::getSingleton().onLoadTextureResponse = std::bind(&Utils::onLoadTextureResponse, this, std::placeholders::_1, std::placeholders::_2);
+
+	preDownloadTextures();
     
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
     IOSHelperCPlus::setLoginFBCallback([=](std::string token){
@@ -77,6 +80,13 @@ string Utils::formatMoneyWithComma(long lmoney) {
     return ret;
 }
 #endif
+
+cocos2d::SpriteFrame* Utils::getDownloadedTextureAsSpriteFrame(std::string key)
+{
+	Texture2D* texture = TextureCache::getInstance()->getTextureForKey(key);
+	Size size = texture->getContentSize();
+	return SpriteFrame::createWithTexture(texture, Rect(0, 0, size.width, size.height));
+}
 
 string Utils::formatMoneyWithComma(double money) {
 	stringstream ss;
@@ -262,8 +272,10 @@ bool Utils::isPaymentEnabled()
 {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 	return Utils::getSingleton().gameConfig.paymentEnabledIOS;
-#else
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 	return Utils::getSingleton().gameConfig.paymentEnabled;
+#else
+	return true;
 #endif
 }
 
@@ -336,7 +348,7 @@ void Utils::logoutZone()
 	lobbyListRoomType.ListRoomType.clear();
 }
 
-void Utils::LoadTextureFromURL(std::string url, std::function<void(cocos2d::Texture2D*)> func)
+void Utils::LoadTextureFromURL(std::string url, std::function<void(cocos2d::Texture2D*)> func, std::string textureName)
 {
 	if (textures[url] != nullptr) {
 		func(textures[url]);
@@ -536,4 +548,34 @@ void Utils::queryIAPProduct()
 		products[i].CurrencySymbol = "vnd";
 	}
 #endif
+}
+
+void Utils::preDownloadTextures()
+{
+	TextureCache::sharedTextureCache()->addImageAsync("test.png", [=](Texture2D* texture) {
+		string str1 = FileUtils::getInstance()->getStringFromFile("menu1.plist");
+		SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str1, texture);
+		string str2 = FileUtils::getInstance()->getStringFromFile("menu2.plist");
+		SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str2, texture);
+	});
+	string host = "http://125.212.192.96:8899/ktc/main_kinhtuchi/";
+	//downloadTextureAndCreatePlist("menu1.plist", host + "menu1.png");
+	//downloadTextureAndCreatePlist("menu2.plist", host + "menu2.png");
+
+	string str1 = FileUtils::getInstance()->getStringFromFile("menu1.plist");
+	Utils::getSingleton().LoadTextureFromURL(host + "menu1.png", [=](Texture2D* texture) {
+		SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str1, texture);
+		string str2 = FileUtils::getInstance()->getStringFromFile("menu2.plist");
+		Utils::getSingleton().LoadTextureFromURL(host + "menu2.png", [=](Texture2D* texture) {
+			SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str2, texture);
+		});
+	});
+}
+
+void Utils::downloadTextureAndCreatePlist(std::string plist, std::string url, std::string textureName)
+{
+	string str = FileUtils::getInstance()->getStringFromFile(plist);
+	Utils::getSingleton().LoadTextureFromURL(url, [=](Texture2D* texture) {
+		SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str, texture);
+	}, textureName);
 }

@@ -445,10 +445,11 @@ void SFSRequest::LoadImageFromURL(std::string url, int tag)
 	request->release();
 }
 
-void SFSRequest::LoadTextureFromURL(std::string url)
+void SFSRequest::LoadTextureFromURL(std::string url, std::string tag)
 {
 	cocos2d::network::HttpRequest* request = new (std::nothrow) cocos2d::network::HttpRequest();
 	request->setUrl(url);
+	request->setTag(tag);
 	request->setRequestType(cocos2d::network::HttpRequest::Type::POST);
 	request->setResponseCallback(this, httpresponse_selector(SFSRequest::onRequestTextureCompleted));
 	cocos2d::network::HttpClient::getInstance()->send(request);
@@ -556,11 +557,15 @@ void SFSRequest::onRequestTextureCompleted(cocos2d::network::HttpClient * client
 		const char* file_char = buffer->data();
 		cocos2d::Image * image = new  cocos2d::Image();
 		image->initWithImageData(reinterpret_cast<const unsigned char*>(&(buffer->front())), buffer->size());
-		cocos2d::Texture2D * texture = new  cocos2d::Texture2D();
-		texture->initWithImage(image);
 
 		//CCLOG("onHttpRequestCompleted height %d", image->getHeight());
-		std::string url = response->getHttpRequest()->getUrl();
+		string key = response->getHttpRequest()->getTag();
+		string url = response->getHttpRequest()->getUrl();
+		if (key.length() == 0) {
+			int index = url.find_last_of('/');
+			key = url.substr(index + 1, url.length());
+		}
+		cocos2d::Texture2D * texture = cocos2d::TextureCache::sharedTextureCache()->addImage(image, key);
 		if (SFSRequest::getSingleton().onLoadTextureResponse != NULL) {
 			SFSRequest::getSingleton().onLoadTextureResponse(url, texture);
 		}

@@ -24,8 +24,6 @@ public:
 	void onMailContentResponse(std::string content);
 	void onNewsDataResponse(std::vector<NewsData> list);
     void onPurchaseSuccess(std::string token);
-	void onCofferMoneyResponse(long money);
-	void onCofferHistoryResponse(std::vector<CofferWinnerData> list);
 protected:
 	virtual void onConnected();
 	virtual void onLoginZoneError(short int code, std::string msg);
@@ -45,6 +43,7 @@ private:
 	void showPopupMail();
 	void showPopupNews();
 	void showWebView(std::string url);
+	void checkProviderToCharge();
 
 	cocos2d::Node* popupShop;
 	cocos2d::Node* popupMail;
@@ -56,7 +55,6 @@ private:
 	cocos2d::Node* nodeWebview;
 
 	cocos2d::Label* lbNewMail;
-	cocos2d::Label* lbCoffer;
 
 	int currentMoneyType = 0;
 	int tmpZoneId = -1;

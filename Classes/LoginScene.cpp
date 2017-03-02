@@ -24,7 +24,7 @@ void LoginScene::onInit()
 	UserDefault::getInstance()->setBoolForKey(constant::KEY_SOUND.c_str(), Utils::getSingleton().SoundEnabled);
 	UserDefault::getInstance()->setBoolForKey(constant::KEY_INVITATION.c_str(), Utils::getSingleton().IgnoreInvitation);
 
-	Sprite* bg = Sprite::create("bg.jpg");
+	Sprite* bg = Sprite::create("login_bg.jpg");
 	bg->setPosition(560, 350);
 	addChild(bg);
 
@@ -33,7 +33,7 @@ void LoginScene::onInit()
 	mLayer->addChild(spTitle);
 	autoScaleNode(spTitle);*/
 
-	Sprite* spTab = Sprite::create("login/tab.png");
+	Sprite* spTab = Sprite::createWithSpriteFrameName("tab.png");
 	spTab->setPosition(560, 350);
 	mLayer->addChild(spTab);
 	autoScaleNode(spTab);
@@ -43,7 +43,7 @@ void LoginScene::onInit()
 	mLayer->addChild(loginNode);
 	autoScaleNode(loginNode);
 
-	tfUsername = ui::EditBox::create(Size(440, 55), "login/box.png");
+	tfUsername = ui::EditBox::create(Size(440, 55), "box0.png", ui::Widget::TextureResType::PLIST);
 	tfUsername->setPosition(Vec2(0, 80));
 	tfUsername->setFontName("Arial");
 	tfUsername->setFontSize(25);
@@ -58,7 +58,7 @@ void LoginScene::onInit()
 	tfUsername->setDelegate(this);
 	loginNode->addChild(tfUsername);
 
-	tfPassword = ui::EditBox::create(Size(440, 55), "login/box.png");
+	tfPassword = ui::EditBox::create(Size(440, 55), "box0.png", ui::Widget::TextureResType::PLIST);
 	tfPassword->setPosition(Vec2(0, 10));
 	tfPassword->setFontName("Arial");
 	tfPassword->setFontSize(25);
@@ -74,8 +74,8 @@ void LoginScene::onInit()
 	loginNode->addChild(tfPassword);
 
 	ui::CheckBox* checkbox = ui::CheckBox::create();
-	checkbox->loadTextureBackGround("popup/box.png");
-	checkbox->loadTextureFrontCross("popup/check.png");
+	checkbox->loadTextureBackGround("box.png", ui::Widget::TextureResType::PLIST);
+	checkbox->loadTextureFrontCross("check.png", ui::Widget::TextureResType::PLIST);
 	checkbox->setPosition(Vec2(-195, -50));
 	checkbox->setSelected(true);
 	loginNode->addChild(checkbox);
@@ -91,7 +91,7 @@ void LoginScene::onInit()
 	lb2->setPosition(145, -50);
 	loginNode->addChild(lb2);
 
-	ui::Button* btnForgotPass = ui::Button::create("white.png", "white.png");
+	ui::Button* btnForgotPass = ui::Button::create("white.png", "white.png", "", ui::Widget::TextureResType::PLIST);
 	btnForgotPass->setContentSize(lb2->getContentSize() + Size(40, 20));
 	btnForgotPass->setPosition(lb2->getPosition());
 	btnForgotPass->setScale9Enabled(true);
@@ -107,7 +107,7 @@ void LoginScene::onInit()
 	});
 	loginNode->addChild(btnForgotPass);
 
-	ui::Button* btnLogin = ui::Button::create("login/btn_login.png", "login/btn_login_clicked.png");
+	ui::Button* btnLogin = ui::Button::create("btn_login.png", "btn_login_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnLogin->setPosition(Vec2(-110, -115));
 	addTouchEventListener(btnLogin, [=]() {
 		if (Utils::getSingleton().gameConfig.phone.length() == 0) {
@@ -119,7 +119,7 @@ void LoginScene::onInit()
 	});
 	loginNode->addChild(btnLogin);
 
-	ui::Button* btnRegister = ui::Button::create("login/btn_register.png", "login/btn_register_clicked.png");
+	ui::Button* btnRegister = ui::Button::create("btn_register.png", "btn_register_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnRegister->setPosition(Vec2(110, -115));
 	addTouchEventListener(btnRegister, [=]() {
 		loginNode->setVisible(false);
@@ -127,7 +127,7 @@ void LoginScene::onInit()
 	});
 	loginNode->addChild(btnRegister);
 
-	ui::Button* btnFB = ui::Button::create("login/btn_fb.png", "login/btn_fb_clicked.png");
+	ui::Button* btnFB = ui::Button::create("btn_fb.png", "btn_fb_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnFB->setPosition(Vec2(0, -195));
 	addTouchEventListener(btnFB, [=]() {
         if (Utils::getSingleton().gameConfig.phone.length() == 0) {
@@ -141,7 +141,7 @@ void LoginScene::onInit()
 
 	initRegisterNode();
 
-	ui::Scale9Sprite* spHeader = ui::Scale9Sprite::create("popup/footer.png");
+	ui::Scale9Sprite* spHeader = ui::Scale9Sprite::createWithSpriteFrameName("footer.png");
 	spHeader->setContentSize(Size(1120 / scaleScene.y, 45 / scaleScene.x));
 	spHeader->setAnchorPoint(Vec2(0, 0));
 	spHeader->setPosition(0, 700);
@@ -149,13 +149,13 @@ void LoginScene::onInit()
 	mLayer->addChild(spHeader);
 	//autoScaleNode(spHeader);
 
-	ui::Scale9Sprite* spFooter = ui::Scale9Sprite::create("popup/footer.png");
+	ui::Scale9Sprite* spFooter = ui::Scale9Sprite::createWithSpriteFrameName("footer.png");
 	spFooter->setAnchorPoint(Vec2(0, 0));
 	spFooter->setContentSize(Size(1120 / scaleScene.y, 45 / scaleScene.x));
 	mLayer->addChild(spFooter);
 	//autoScaleNode(spFooter);
 
-	ui::Button* btnPhone = ui::Button::create("login/btn_phone.png", "login/btn_phone_clicked.png");
+	ui::Button* btnPhone = ui::Button::create("btn_phone.png", "btn_phone_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnPhone->setPosition(Vec2(60 * scaleScene.y, 55 * scaleScene.x));
 	addTouchEventListener(btnPhone, [=]() {
 		string phone = Utils::getSingleton().gameConfig.phone;
@@ -426,7 +426,7 @@ void LoginScene::onHttpResponseFailed()
 {
 	if (currentConfigLink == 0) {
 		currentConfigLink = 1;
-		SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", 1);
+		SFSRequest::getSingleton().RequestHttpGet("http://giaitriso.com.vn/configchanktc.txt", 1);
 	} else {
 		hideWaiting();
 		showPopupNotice(Utils::getSingleton().getStringForKey("error_connection"), [=]() {});
@@ -479,7 +479,7 @@ void LoginScene::initRegisterNode()
 	mLayer->addChild(registerNode);
 	autoScaleNode(registerNode);
 
-	tfResUname = ui::EditBox::create(Size(440, 55), "login/box.png");
+	tfResUname = ui::EditBox::create(Size(440, 55), "box0.png", ui::Widget::TextureResType::PLIST);
 	tfResUname->setPosition(Vec2(0, 80));
 	tfResUname->setFontName("Arial");
 	tfResUname->setFontSize(25);
@@ -494,7 +494,7 @@ void LoginScene::initRegisterNode()
 	tfResUname->setDelegate(this);
 	registerNode->addChild(tfResUname);
 
-	tfResPass = ui::EditBox::create(Size(440, 55), "login/box.png");
+	tfResPass = ui::EditBox::create(Size(440, 55), "box0.png", ui::Widget::TextureResType::PLIST);
 	tfResPass->setPosition(Vec2(0, 10));
 	tfResPass->setFontName("Arial");
 	tfResPass->setFontSize(25);
@@ -509,7 +509,7 @@ void LoginScene::initRegisterNode()
 	tfResPass->setDelegate(this);
 	registerNode->addChild(tfResPass);
 
-	tfResPassAgain = ui::EditBox::create(Size(440, 55), "login/box.png");
+	tfResPassAgain = ui::EditBox::create(Size(440, 55), "box0.png", ui::Widget::TextureResType::PLIST);
 	tfResPassAgain->setPosition(Vec2(0, -60));
 	tfResPassAgain->setFontName("Arial");
 	tfResPassAgain->setFontSize(25);
@@ -539,7 +539,7 @@ void LoginScene::initRegisterNode()
 	tfResEmail->setDelegate(this);
 	registerNode->addChild(tfResEmail);*/
 
-	ui::Button* btnBack = ui::Button::create("login/btn_back.png", "login/btn_back_clicked.png");
+	ui::Button* btnBack = ui::Button::create("btn_turn_back.png", "btn_turn_back_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnBack->setPosition(Vec2(-110, -130));
 	addTouchEventListener(btnBack, [=]() {
 		loginNode->setVisible(true);
@@ -547,7 +547,7 @@ void LoginScene::initRegisterNode()
 	});
 	registerNode->addChild(btnBack);
 
-	ui::Button* btnRegister = ui::Button::create("login/btn_register.png", "login/btn_register_clicked.png");
+	ui::Button* btnRegister = ui::Button::create("btn_register.png", "btn_register_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnRegister->setPosition(Vec2(110, -130));
 	addTouchEventListener(btnRegister, [=]() {
 		if (Utils::getSingleton().gameConfig.phone.length() == 0) {
@@ -589,14 +589,21 @@ void LoginScene::requestGameConfig(bool realConfig)
 
 void LoginScene::loadTextureCache()
 {
-	TextureCache::sharedTextureCache()->addImage("loadingicon.png");
-	//TextureCache::sharedTextureCache()->addImage("popup/bg.png");
-	//TextureCache::sharedTextureCache()->addImage("popup/bg1.png");
-	TextureCache::sharedTextureCache()->addImage("popup/title_thongbao.png");
-	TextureCache::sharedTextureCache()->addImage("popup/btn_submit.png");
-	TextureCache::sharedTextureCache()->addImage("popup/btn_submit_clicked.png");
-	TextureCache::sharedTextureCache()->addImage("main/nhatranh.png");
-	TextureCache::sharedTextureCache()->addImage("main/dinhlang.png");
-	TextureCache::sharedTextureCache()->addImage("main/phuchua.png");
-	TextureCache::sharedTextureCache()->addImage("main/loidai.png");
+	//TextureCache::sharedTextureCache()->addImage("loadingicon.png");
+	////TextureCache::sharedTextureCache()->addImage("popup/bg.png");
+	////TextureCache::sharedTextureCache()->addImage("popup/bg1.png");
+	//TextureCache::sharedTextureCache()->addImage("popup/title_thongbao.png");
+	//TextureCache::sharedTextureCache()->addImage("popup/btn_submit.png");
+	//TextureCache::sharedTextureCache()->addImage("popup/btn_submit_clicked.png");
+	//TextureCache::sharedTextureCache()->addImage("main/nhatranh.png");
+	//TextureCache::sharedTextureCache()->addImage("main/dinhlang.png");
+	//TextureCache::sharedTextureCache()->addImage("main/phuchua.png");
+	//TextureCache::sharedTextureCache()->addImage("main/loidai.png");
+
+	TextureCache::sharedTextureCache()->addImageAsync("game.png", [=](Texture2D* texture) {
+		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("game.plist");
+	});
+	TextureCache::sharedTextureCache()->addImageAsync("buttons.png", [=](Texture2D* texture) {
+		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("buttons.plist");
+	});
 }
