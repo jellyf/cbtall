@@ -174,7 +174,11 @@ void SFSResponse::onUserDataMeResponse(boost::shared_ptr<ISFSObject> isfsObject)
 {
 	getUserDataFromSFSObject(isfsObject, Utils::getSingleton().userDataMe);
 	if (Utils::getSingleton().moneyType == -1) {
-		Utils::getSingleton().moneyType = Utils::getSingleton().userDataMe.MoneyType;
+		if (Utils::getSingleton().isPaymentEnabled()) {
+			Utils::getSingleton().moneyType = Utils::getSingleton().userDataMe.MoneyType;
+		} else {
+			Utils::getSingleton().moneyType = 0;
+		}
 	}
 	if (EventHandler::getSingleton().onUserDataMeSFSResponse != NULL) {
 		EventHandler::getSingleton().onUserDataMeSFSResponse();
