@@ -378,8 +378,8 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 		if (isRealConfig && !config.paymentEnabledIOS) {
 			isRealConfig = false;
-			requestGameConfig(false);
-			return;
+			//requestGameConfig(false);
+			//return;
 		}
 #endif
 
