@@ -1707,7 +1707,7 @@ void BaseScene::onRankWinDataResponse(std::vector<RankWinData> list)
 
 void BaseScene::onListEventDataResponse(std::vector<EventData> list)
 {
-	if (eventView == nullptr || !Utils::getSingleton().gameConfig.paymentEnabled) return;
+	if (eventView == nullptr || !Utils::getSingleton().isPaymentEnabled()) return;
 	eventView->setTag(0);
 	runEventView(list);
 }
