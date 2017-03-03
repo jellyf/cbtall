@@ -403,8 +403,10 @@ void LobbyScene::onRoomTypeDataResponse(LobbyListRoomType data)
 			addTouchEventListener(btn, [=]() {
 				if (currentRoomType == btn->getTag()) return;
 				ui::Button* lastBtn = (ui::Button*)scrollListRoom->getChildByTag(currentRoomType);
-				lastBtn->setColor(Color3B::GRAY);
-				btn->setColor(Color3B::WHITE);
+				//lastBtn->setColor(Color3B::GRAY);
+				//btn->setColor(Color3B::WHITE);
+				lastBtn->loadTextureNormal("btn_" + zone + "1.png", ui::Widget::TextureResType::PLIST);
+				btn->loadTextureNormal("btn_" + zone + ".png", ui::Widget::TextureResType::PLIST);
 				currentRoomType = i;
 				Utils::getSingleton().currentLobbyId = data.ListRoomType[i].Id;
 				Utils::getSingleton().currentLobbyName = data.ListRoomType[i].Name;
@@ -417,10 +419,12 @@ void LobbyScene::onRoomTypeDataResponse(LobbyListRoomType data)
 		}
 		btn->setTitleText(data.ListRoomType[i].Description);
 		if (data.ListRoomType[i].Name.compare(currentRoom) != 0) {
-			btn->setColor(Color3B::GRAY);
+			//btn->setColor(Color3B::GRAY);
+			btn->loadTextureNormal("btn_" + zone + "1.png", ui::Widget::TextureResType::PLIST);
 		} else {
 			currentRoomType = i;
-			btn->setColor(Color3B::WHITE);
+			//btn->setColor(Color3B::WHITE);
+			btn->loadTextureNormal("btn_" + zone + ".png", ui::Widget::TextureResType::PLIST);
 			Utils::getSingleton().currentLobbyId = data.ListRoomType[i].Id;
 			Utils::getSingleton().currentLobbyName = data.ListRoomType[i].Name;
 		}
