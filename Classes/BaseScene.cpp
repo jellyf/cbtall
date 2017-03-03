@@ -685,6 +685,7 @@ void BaseScene::initHeaderWithInfos()
 	vecPos.push_back(Vec2(190 * scaleScene.y, 647));
 	vecPos.push_back(Vec2(190 * scaleScene.y, 624));
 	vecPos.push_back(Vec2(winSize.width - 260 * scaleScene.y, 645));
+	vecPos.push_back(Vec2(720, 647));
 
 	ui::Button* btnBack = ui::Button::create("btn_back.png", "btn_back_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnBack->setPosition(vecPos[0]);
@@ -741,6 +742,18 @@ void BaseScene::initHeaderWithInfos()
 	Sprite* iconSilver = Sprite::createWithSpriteFrameName("icon_silver.png");
 	iconSilver->setPosition(30, 0);
 	moneyNode->addChild(iconSilver, 2);
+
+	ui::Button* btnIAP = ui::Button::create("icon_charge.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnIAP->setPosition(vecPos[14]);
+	btnIAP->setScale(.8f);
+	addTouchEventListener(btnIAP, [=]() {
+		if (popupIAP == nullptr) {
+			initPopupIAP();
+		}
+		showPopup(popupIAP);
+	});
+	mLayer->addChild(btnIAP, constant::MAIN_ZORDER_HEADER);
+	autoScaleNode(btnIAP);
 
 	ui::Button* btnRank = ui::Button::create("btn_rank.png", "btn_rank_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnRank->setPosition(vecPos[5]);
@@ -857,6 +870,7 @@ void BaseScene::initHeaderWithInfos()
 		btnCoffer->setVisible(false);
 		lbCoffer->setVisible(false);
 	}
+	btnIAP->setVisible(!isPaymentEnabled);
 }
 
 void BaseScene::onBackScene()
@@ -1661,6 +1675,105 @@ void BaseScene::initPopupCoffer()
 	scrollHistory->setScrollBarEnabled(false);
 	scrollHistory->setName("scrollhistory");
 	nodeHistory->addChild(scrollHistory);
+}
+
+void BaseScene::initPopupIAP()
+{
+	popupIAP = Node::create();
+	popupIAP->setPosition(560, 350);
+	popupIAP->setVisible(false);
+	popupIAP->setTag(0);
+	mLayer->addChild(popupIAP, constant::ZORDER_POPUP);
+	//autoScaleNode(popupCharge);
+
+	Sprite* bg = Sprite::create("popup_bg1.png");
+	popupIAP->addChild(bg);
+
+	Size size = Size(810, 466);
+	DrawNode* rect = DrawNode::create();
+	rect->drawRect(Vec2(-size.width / 2, -size.height / 2), Vec2(size.width / 2, size.height / 2), Color4F::BLACK);
+	rect->setPosition(80, -25);
+	popupIAP->addChild(rect);
+
+	Sprite* title = Sprite::createWithSpriteFrameName("title_naptien.png");
+	title->setPosition(0, bg->getContentSize().height / 2 - 5);
+	popupIAP->addChild(title);
+
+	ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnClose->setPosition(Vec2(bg->getContentSize().width / 2 - 10, bg->getContentSize().height / 2 - 5));
+	addTouchEventListener(btnClose, [=]() {
+		hidePopup(popupIAP);
+	});
+	popupIAP->addChild(btnClose);
+
+	Node* nodeStore = Node::create();
+	nodeStore->setName("nodestore");
+	nodeStore->setVisible(false);
+	nodeStore->setTag(102);
+	nodeStore->setPosition(80, 0);
+	popupIAP->addChild(nodeStore);
+
+	vector<ProductData> products = Utils::getSingleton().products;
+	Size storeSize = Size(720, 220);
+
+	ui::ScrollView* scrollStore = ui::ScrollView::create();
+	scrollStore->setDirection(ui::ScrollView::Direction::HORIZONTAL);
+	scrollStore->setBounceEnabled(true);
+	scrollStore->setPosition(Vec2(-storeSize.width / 2, -storeSize.height / 2));
+	scrollStore->setContentSize(storeSize);
+	scrollStore->setScrollBarEnabled(false);
+	scrollStore->setName("scrollstore");
+	nodeStore->addChild(scrollStore);
+
+	int storeWidth = products.size() * 240;
+	if (storeWidth < storeSize.width) {
+		storeWidth = storeSize.width;
+	}
+	scrollStore->setInnerContainerSize(Size(storeWidth, storeSize.height));
+	string strCurrency = " " + Utils::getSingleton().getStringForKey("vnd");
+	for (int i = 0; i < products.size(); i++) {
+		int index = products[i].Description.find(' ');
+		string strValue = products[i].Description.substr(0, index);
+		string strCost = Utils::getSingleton().formatMoneyWithComma(products[i].Price) + strCurrency;
+		string strId = products[i].Id;
+
+		ui::Button* btn = ui::Button::create("box_shop.png", "", "", ui::Widget::TextureResType::PLIST);
+		btn->setPosition(Vec2(120 + i * 240, storeSize.height / 2));
+		btn->setContentSize(Size(182, 150));
+		btn->setScale9Enabled(true);
+		btn->setBright(false);
+		btn->setTag(i);
+		addTouchEventListener(btn, [=]() {
+			showWaiting(300);
+			Utils::getSingleton().purchaseItem(strId);
+		});
+		scrollStore->addChild(btn);
+
+		Sprite* sp = Sprite::createWithSpriteFrameName("icon_money.png");
+		sp->setPosition(btn->getContentSize().width / 2, btn->getContentSize().height / 2 + 15);
+		sp->setName("itemimage");
+		btn->addChild(sp);
+
+		Sprite* spCoin = Sprite::createWithSpriteFrameName("icon_silver.png");
+		spCoin->setScale(.5f);
+		btn->addChild(spCoin);
+
+		Label* lb1 = Label::create(strValue, "fonts/guanine.ttf", 20);
+		lb1->setPosition(btn->getContentSize().width / 2 - spCoin->getContentSize().width * spCoin->getScale() / 2, btn->getContentSize().height / 2 - 55);
+		lb1->setColor(Color3B::YELLOW);
+		btn->addChild(lb1);
+
+		Label* lb2 = Label::create(strCost, "fonts/guanine.ttf", 20);
+		lb2->setWidth(175);
+		lb2->setHeight(30);
+		lb2->setPosition(btn->getContentSize().width / 2, btn->getContentSize().height / 2 - 90);
+		lb2->setColor(Color3B::WHITE);
+		lb2->setHorizontalAlignment(TextHAlignment::CENTER);
+		btn->addChild(lb2);
+
+		spCoin->setPosition(lb1->getPositionX() + lb1->getContentSize().width / 2
+			+ spCoin->getContentSize().width * spCoin->getScale() / 2 + 5, lb1->getPositionY() - 3);
+	}
 }
 
 void BaseScene::onPingPong(long timems)

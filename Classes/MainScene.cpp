@@ -58,6 +58,7 @@ void MainScene::onInit()
 
 	ui::Button* btnCharge = ui::Button::create("icon_charge.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnCharge->setPosition(vecPos[m++]);
+	btnCharge->setVisible(paymentEnabled);
 	addTouchEventListener(btnCharge, [=]() {
 		if (popupCharge == nullptr) {
 			initPopupCharge();
@@ -66,12 +67,12 @@ void MainScene::onInit()
 	});
 	mLayer->addChild(btnCharge);
 	autoScaleNode(btnCharge);
-    if(paymentEnabled){
+    /*if(paymentEnabled){
         btnCharge->setPosition(vecPos[2]);
     }else{
 		btnCharge->setPosition(vecPos[7]);
 		btnCharge->setVisible(CC_TARGET_PLATFORM == CC_PLATFORM_IOS);
-    }
+    }*/
 
 	ui::Button* btnShop = ui::Button::create("icon_shop.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnShop->setPosition(vecPos[m++]);

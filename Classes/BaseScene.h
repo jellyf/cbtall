@@ -55,6 +55,7 @@ protected:
 	void initPopupUserInfo();
 	void initPopupHistory();
 	void initPopupCoffer();
+	void initPopupIAP();
 	void setMoneyType(int type);
 	void showPopupNotice(std::string msg, std::function<void()> func, bool showBtnClose = true);
 	void showPopupRank(int type);
@@ -106,6 +107,7 @@ protected:
 	cocos2d::Node* popupUserInfo;
 	cocos2d::Node* popupHistory;
 	cocos2d::Node* popupCoffer;
+	cocos2d::Node* popupIAP;
 	cocos2d::Node* eventView;
 
 	std::vector<cocos2d::ui::Button*> buttons;
