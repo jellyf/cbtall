@@ -56,6 +56,7 @@ protected:
 	void initPopupHistory();
 	void initPopupCoffer();
 	void initPopupIAP();
+	void initCofferView(cocos2d::Vec2 pos, int zorder, float scale = 1.0f);
 	void setMoneyType(int type);
 	void showPopupNotice(std::string msg, std::function<void()> func, bool showBtnClose = true);
 	void showPopupRank(int type);

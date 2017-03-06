@@ -16,6 +16,7 @@ void GameScene::onInit()
 	BaseScene::onInit();
 
 	UserDefault::getInstance()->setBoolForKey(constant::KEY_AUTO_READY.c_str(), false);
+	bool paymentEnabled = Utils::getSingleton().isPaymentEnabled();
 
 	state = NONE;
 	myServerSlot = -1;
@@ -152,22 +153,8 @@ void GameScene::onInit()
 	endLayer->setPositionY(700 * (scaleScene.x - 1) / 4);
 
 	Vec2 topLeft = Vec2(0, winSize.height);
-	btnBack = ui::Button::create("btn_back.png", "btn_back_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnBack->setPosition(topLeft + getScaleSceneDistance(Vec2(50, -50)));
-	addTouchEventListener(btnBack, [=]() {
-		if (state == NONE || state == READY || myServerSlot < 0) {
-			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
-			Utils::getSingleton().goToLobbyScene();
-			experimental::AudioEngine::stopAll();
-		} else {
-			hasRegisterOut = !hasRegisterOut;
-			showSystemNotice(Utils::getSingleton().getStringForKey((hasRegisterOut ? "" : "huy_") + string("dang_ky_roi_ban_khi_het_van")));
-		}
-	});
-	mLayer->addChild(btnBack, constant::GAME_ZORDER_BUTTON);
-	autoScaleNode(btnBack);
-
 	Vec2 topRight = Vec2(winSize.width, winSize.height);
+
 	btnSettings = ui::Button::create("btn_settings.png", "btn_settings_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnSettings->setPosition(topRight + getScaleSceneDistance(Vec2(-50, -50)));
 	addTouchEventListener(btnSettings, [=]() {
@@ -219,18 +206,65 @@ void GameScene::onInit()
 	});
 	mLayer->addChild(btnSettings, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(btnSettings);
+	vecMenuBtns.push_back(btnSettings);
 
 	btnChat = ui::Button::create("btn_chat.png", "btn_chat_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnChat->setPosition(topRight + getScaleSceneDistance(Vec2(-145, -50)));// Vec2(975, 650));
+	btnChat->setPosition(topRight + getScaleSceneDistance(Vec2(-50, -50)));// Vec2(975, 650));
 	addTouchEventListener(btnChat, [=]() {
 		//if (gameSplash->isVisible()) return;
 		showPopup(tableChat);
 	});
 	mLayer->addChild(btnChat, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(btnChat);
+	vecMenuBtns.push_back(btnChat);
+
+	btnBack = ui::Button::create("btn_exit.png", "btn_exit_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnBack->setPosition(topRight + getScaleSceneDistance(Vec2(-50, -50)));
+	addTouchEventListener(btnBack, [=]() {
+		if (state == NONE || state == READY || myServerSlot < 0) {
+			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
+			Utils::getSingleton().goToLobbyScene();
+			experimental::AudioEngine::stopAll();
+		} else {
+			hasRegisterOut = !hasRegisterOut;
+			showSystemNotice(Utils::getSingleton().getStringForKey((hasRegisterOut ? "" : "huy_") + string("dang_ky_roi_ban_khi_het_van")));
+		}
+	});
+	mLayer->addChild(btnBack, constant::GAME_ZORDER_BUTTON);
+	autoScaleNode(btnBack);
+	vecMenuBtns.push_back(btnBack);
+
+	btnBag = ui::Button::create("btn_bag.png", "btn_bag_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnBag->setPosition(topRight + getScaleSceneDistance(Vec2(-50, -50)));
+	btnBag->setVisible(false);
+	addTouchEventListener(btnBag, [=]() {
+
+	});
+	mLayer->addChild(btnBag, constant::GAME_ZORDER_BUTTON);
+	autoScaleNode(btnBag);
+	vecMenuBtns.push_back(btnBag);
+
+	btnUp = ui::Button::create("btn_up.png", "btn_up_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnUp->setPosition(topRight + getScaleSceneDistance(Vec2(-50, -50)));
+	btnUp->setVisible(false);
+	addTouchEventListener(btnUp, [=]() {
+		hideMenuButtons();
+	});
+	mLayer->addChild(btnUp, constant::GAME_ZORDER_BUTTON);
+	autoScaleNode(btnUp);
+
+	btnDown = ui::Button::create("btn_down.png", "btn_down_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnDown->setPosition(topRight + getScaleSceneDistance(Vec2(-50, -50)));
+	addTouchEventListener(btnDown, [=]() {
+		showMenuButtons();
+	});
+	mLayer->addChild(btnDown, constant::GAME_ZORDER_BUTTON);
+	autoScaleNode(btnDown);
+
+	initCofferView(topRight + getScaleSceneDistance(Vec2(-150, -50)), constant::GAME_ZORDER_BUTTON, .8f);
 
 	iconGa = Sprite::createWithSpriteFrameName("btn_ga_on.png");
-	iconGa->setPosition(topRight + getScaleSceneDistance(Vec2(-245, -50)));// 880, 650);
+	iconGa->setPosition(topLeft + getScaleSceneDistance(Vec2(260, -50)));// 880, 650);
 	mLayer->addChild(iconGa, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(iconGa);
 
@@ -239,7 +273,7 @@ void GameScene::onInit()
 	mLayer->addChild(lbMoneyGa, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(lbMoneyGa);
 
-	spNetwork->setPosition(topRight + getScaleSceneDistance(Vec2(-325, -50)));
+	spNetwork->setPosition(topRight + getScaleSceneDistance(Vec2(paymentEnabled ? -240 : -150, -50)));
 
 	btnReady = ui::Button::create("btn_ready.png", "btn_ready_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnReady->setPosition(Vec2(560, 350));
@@ -775,6 +809,7 @@ void GameScene::registerEventListenner()
 	EventHandler::getSingleton().onGameUserReconnectDataSFSResponse = std::bind(&GameScene::onGameUserReconnectDataResponse, this, std::placeholders::_1);
 	EventHandler::getSingleton().onLobbyTableSFSResponse = std::bind(&GameScene::onLobbyListTableResponse, this, std::placeholders::_1);
 	EventHandler::getSingleton().onCofferMoneySFSResponse = bind(&GameScene::onCofferMoneyResponse, this, placeholders::_1);
+	EventHandler::getSingleton().onCofferHistorySFSResponse = bind(&GameScene::onCofferHistoryResponse, this, placeholders::_1);
 }
 
 void GameScene::unregisterEventListenner()
@@ -813,6 +848,7 @@ void GameScene::unregisterEventListenner()
 	EventHandler::getSingleton().onGameUserReconnectDataSFSResponse = NULL;
 	EventHandler::getSingleton().onLobbyTableSFSResponse = NULL;
 	EventHandler::getSingleton().onCofferMoneySFSResponse = NULL;
+	EventHandler::getSingleton().onCofferHistorySFSResponse = NULL;
 }
 
 void GameScene::editBoxReturn(cocos2d::ui::EditBox * editBox)
@@ -1473,6 +1509,32 @@ void GameScene::showCofferEffects(std::string money)
 	cofferSplash->setVisible(true);
 }
 
+void GameScene::showMenuButtons()
+{
+	if (vecMenuBtns[vecMenuBtns.size() - 1]->getNumberOfRunningActions() > 0) return;
+	btnUp->setVisible(true);
+	btnDown->setVisible(false);
+	Vec2 pos = Vec2(winSize.width, winSize.height) + getScaleSceneDistance(Vec2(-50, -50));
+	int i = 1;
+	for (Node* n : vecMenuBtns) {
+		MoveTo* move = MoveTo::create(.2f, pos + Vec2(0, -90 * i++));
+		n->runAction(move);
+	}
+}
+
+void GameScene::hideMenuButtons()
+{
+	if (vecMenuBtns[vecMenuBtns.size() - 1]->getNumberOfRunningActions() > 0) return;
+	btnUp->setVisible(false);
+	btnDown->setVisible(true);
+	Vec2 pos = Vec2(winSize.width, winSize.height) + getScaleSceneDistance(Vec2(-50, -50));
+	int i = 1;
+	for (Node* n : vecMenuBtns) {
+		MoveTo* move = MoveTo::create(.2f, pos);
+		n->runAction(move);
+	}
+}
+
 void GameScene::playSoundAction(unsigned char soundId)
 {
 	if (!Utils::getSingleton().SoundEnabled || soundId > vecSoundActions.size()) {
@@ -1550,9 +1612,11 @@ void GameScene::onConnectionLost(std::string reason)
 {
 	experimental::AudioEngine::stopAll();
 	mustGoToLobby = myServerSlot < 0 || state == NONE || state == READY;
-	btnBack->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
-	btnChat->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
-	btnSettings->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
+	btnUp->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
+	btnDown->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
+	for (Node* n : vecMenuBtns) {
+		n->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
+	}
 	handleClientDisconnectionReason(reason);
 }
 
@@ -1564,9 +1628,11 @@ void GameScene::onUserDataResponse(UserData data)
 void GameScene::onUserExitRoom(long sfsUId)
 {
 	if (sfsUId == sfsIdMe) {
-		btnBack->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
-		btnChat->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
-		btnSettings->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
+		btnUp->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
+		btnDown->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
+		for (Node* n : vecMenuBtns) {
+			n->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
+		}
 		if (isKickForNotReady) {
 			showPopupNotice(Utils::getSingleton().getStringForKey("bi_thoat_do_khong_san_sang"), [=]() {
 				SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
@@ -1749,9 +1815,11 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 	gameSplash->setVisible(false);
 	progressTimer->stopAllActions();
 	progressTimer->setVisible(false);
-	btnBack->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
-	btnChat->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
-	btnSettings->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
+	btnUp->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
+	btnDown->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
+	for (Node* n : vecMenuBtns) {
+		n->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
+	}
 	spHandCards.clear();
 	chosenCuocs.clear();
 	chosenCuocNumbs.clear();
@@ -2593,9 +2661,11 @@ void GameScene::onCrestResponse(CrestResponseData data)
 	progressTimer->setVisible(false);
 	progressTimer->stopAllActions();
 	lbCrestTime->pauseSchedulerAndActions();
-	btnBack->setLocalZOrder(constant::ZORDER_POPUP);
-	btnChat->setLocalZOrder(constant::ZORDER_POPUP);
-	btnSettings->setLocalZOrder(constant::ZORDER_POPUP);
+	btnUp->setLocalZOrder(constant::ZORDER_POPUP);
+	btnDown->setLocalZOrder(constant::ZORDER_POPUP);
+	for (Node* n : vecMenuBtns) {
+		n->setLocalZOrder(constant::ZORDER_POPUP);
+	}
 
 	string strwin = vecUsers[userIndexs[data.UId]]->getPlayerName() + " " + Utils::getSingleton().getStringForKey("win") + ": ";
 	for (unsigned char c : data.CuocHo) {
@@ -2678,9 +2748,11 @@ void GameScene::onEndMatch(EndMatchData data)
 	if (data.WinId == sfsIdMe) {
 		tableCrest->setVisible(true);
 	} else {
-		btnBack->setLocalZOrder(constant::ZORDER_POPUP);
-		btnChat->setLocalZOrder(constant::ZORDER_POPUP);
-		btnSettings->setLocalZOrder(constant::ZORDER_POPUP);
+		btnUp->setLocalZOrder(constant::ZORDER_POPUP);
+		btnDown->setLocalZOrder(constant::ZORDER_POPUP);
+		for (Node* n : vecMenuBtns) {
+			n->setLocalZOrder(constant::ZORDER_POPUP);
+		}
 	}
 	playSoundAction(data.SoundId);
 }
@@ -3548,7 +3620,7 @@ void GameScene::initSettingsPopup()
 void GameScene::initTableInfo()
 {
 	tableInfo = Node::create();
-	tableInfo->setPosition(Vec2(0, 700) + getScaleSceneDistance(Vec2(195, -50)));
+	tableInfo->setPosition(Vec2(0, 700) + getScaleSceneDistance(Vec2(105, -50)));
 	mLayer->addChild(tableInfo, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(tableInfo);
 

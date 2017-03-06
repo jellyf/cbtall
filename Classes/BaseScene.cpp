@@ -820,26 +820,7 @@ void BaseScene::initHeaderWithInfos()
 	mLayer->addChild(lbLevel, constant::MAIN_ZORDER_HEADER);
 	autoScaleNode(lbLevel);
 
-	ui::Button* btnCoffer = ui::Button::create("coffer.png", "coffer.png", "", ui::Widget::TextureResType::PLIST);
-	btnCoffer->setPosition(vecPos[13]);
-	addTouchEventListener(btnCoffer, [=]() {
-		showPopupCoffer();
-	});
-	mLayer->addChild(btnCoffer, constant::MAIN_ZORDER_HEADER);
-	autoScaleNode(btnCoffer);
-
-	lbCoffer = Label::create(Utils::getSingleton().formatMoneyWithComma(Utils::getSingleton().cofferMoney), "fonts/arialbd.ttf", 20);
-	lbCoffer->setPosition(btnCoffer->getContentSize().width / 2, 15);
-	lbCoffer->setColor(Color3B::YELLOW);
-	btnCoffer->addChild(lbCoffer);
-
-	Sprite* lightPoint = Sprite::createWithSpriteFrameName("light_point.png");
-	lightPoint->setPosition(btnCoffer->getContentSize().width / 2, btnCoffer->getContentSize().height / 2);
-	btnCoffer->addChild(lightPoint, - 1);
-
-	ScaleTo* scale1 = ScaleTo::create(2, .7f);
-	ScaleTo* scale2 = ScaleTo::create(2, 1);
-	lightPoint->runAction(RepeatForever::create(Sequence::createWithTwoActions(scale1, scale2)));
+	initCofferView(vecPos[13], constant::MAIN_ZORDER_HEADER);
 
 	ui::Scale9Sprite* spHeader = ui::Scale9Sprite::createWithSpriteFrameName("header.png");
 	spHeader->setAnchorPoint(Vec2(0, 1));
@@ -867,7 +848,6 @@ void BaseScene::initHeaderWithInfos()
 		iconGold->setVisible(false);
 		lbGold->setVisible(false);
 		btnRank->setVisible(false);
-		btnCoffer->setVisible(false);
 		lbCoffer->setVisible(false);
 	}
 	btnIAP->setVisible(!isPaymentEnabled);
@@ -1690,10 +1670,10 @@ void BaseScene::initPopupIAP()
 	popupIAP->addChild(bg);
 
 	Size size = Size(810, 466);
-	DrawNode* rect = DrawNode::create();
+	/*DrawNode* rect = DrawNode::create();
 	rect->drawRect(Vec2(-size.width / 2, -size.height / 2), Vec2(size.width / 2, size.height / 2), Color4F::BLACK);
 	rect->setPosition(80, -25);
-	popupIAP->addChild(rect);
+	popupIAP->addChild(rect);*/
 
 	Sprite* title = Sprite::createWithSpriteFrameName("title_naptien.png");
 	title->setPosition(0, bg->getContentSize().height / 2 - 5);
@@ -1708,13 +1688,12 @@ void BaseScene::initPopupIAP()
 
 	Node* nodeStore = Node::create();
 	nodeStore->setName("nodestore");
-	nodeStore->setVisible(false);
 	nodeStore->setTag(102);
-	nodeStore->setPosition(80, 0);
+	//nodeStore->setPosition(80, 0);
 	popupIAP->addChild(nodeStore);
 
 	vector<ProductData> products = Utils::getSingleton().products;
-	Size storeSize = Size(720, 220);
+	Size storeSize = Size(780, 260);
 
 	ui::ScrollView* scrollStore = ui::ScrollView::create();
 	scrollStore->setDirection(ui::ScrollView::Direction::HORIZONTAL);
@@ -1738,8 +1717,8 @@ void BaseScene::initPopupIAP()
 		string strId = products[i].Id;
 
 		ui::Button* btn = ui::Button::create("box_shop.png", "", "", ui::Widget::TextureResType::PLIST);
-		btn->setPosition(Vec2(120 + i * 240, storeSize.height / 2));
-		btn->setContentSize(Size(182, 150));
+		btn->setPosition(Vec2(120 + i * 260, storeSize.height / 2));
+		btn->setContentSize(Size(200, 180));
 		btn->setScale9Enabled(true);
 		btn->setBright(false);
 		btn->setTag(i);
@@ -1759,14 +1738,14 @@ void BaseScene::initPopupIAP()
 		btn->addChild(spCoin);
 
 		Label* lb1 = Label::create(strValue, "fonts/guanine.ttf", 20);
-		lb1->setPosition(btn->getContentSize().width / 2 - spCoin->getContentSize().width * spCoin->getScale() / 2, btn->getContentSize().height / 2 - 55);
+		lb1->setPosition(btn->getContentSize().width / 2 - spCoin->getContentSize().width * spCoin->getScale() / 2, btn->getContentSize().height / 2 - 70);
 		lb1->setColor(Color3B::YELLOW);
 		btn->addChild(lb1);
 
 		Label* lb2 = Label::create(strCost, "fonts/guanine.ttf", 20);
 		lb2->setWidth(175);
 		lb2->setHeight(30);
-		lb2->setPosition(btn->getContentSize().width / 2, btn->getContentSize().height / 2 - 90);
+		lb2->setPosition(btn->getContentSize().width / 2, btn->getContentSize().height / 2 - 105);
 		lb2->setColor(Color3B::WHITE);
 		lb2->setHorizontalAlignment(TextHAlignment::CENTER);
 		btn->addChild(lb2);
@@ -1774,6 +1753,33 @@ void BaseScene::initPopupIAP()
 		spCoin->setPosition(lb1->getPositionX() + lb1->getContentSize().width / 2
 			+ spCoin->getContentSize().width * spCoin->getScale() / 2 + 5, lb1->getPositionY() - 3);
 	}
+}
+
+void BaseScene::initCofferView(Vec2 pos, int zorder, float scale)
+{
+	bool isPaymentEnabled = Utils::getSingleton().isPaymentEnabled();
+	ui::Button* btnCoffer = ui::Button::create("coffer.png", "coffer.png", "", ui::Widget::TextureResType::PLIST);
+	btnCoffer->setPosition(pos);
+	btnCoffer->setScale(scale);
+	btnCoffer->setVisible(isPaymentEnabled);
+	addTouchEventListener(btnCoffer, [=]() {
+		showPopupCoffer();
+	});
+	mLayer->addChild(btnCoffer, zorder);
+	autoScaleNode(btnCoffer);
+
+	lbCoffer = Label::create(Utils::getSingleton().formatMoneyWithComma(Utils::getSingleton().cofferMoney), "fonts/arialbd.ttf", 20);
+	lbCoffer->setPosition(btnCoffer->getContentSize().width / 2, 15);
+	lbCoffer->setColor(Color3B::YELLOW);
+	btnCoffer->addChild(lbCoffer);
+
+	Sprite* lightPoint = Sprite::createWithSpriteFrameName("light_point.png");
+	lightPoint->setPosition(btnCoffer->getContentSize().width / 2, btnCoffer->getContentSize().height / 2);
+	btnCoffer->addChild(lightPoint, -1);
+
+	ScaleTo* scale1 = ScaleTo::create(2, .7f);
+	ScaleTo* scale2 = ScaleTo::create(2, 1);
+	lightPoint->runAction(RepeatForever::create(Sequence::createWithTwoActions(scale1, scale2)));
 }
 
 void BaseScene::onPingPong(long timems)

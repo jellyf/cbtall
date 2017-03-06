@@ -80,6 +80,8 @@ private:
 	void showError(std::string msg);
 	void showSystemNotice(std::string msg);
 	void showCofferEffects(std::string money);
+	void showMenuButtons();
+	void hideMenuButtons();
 	void playSoundAction(unsigned char soundId);
 	void playSoundCuoc(unsigned char cuocId);
 	void changeZOrderAfterFly(cocos2d::Sprite* card, int zorder);
@@ -112,6 +114,7 @@ private:
 	std::vector<cocos2d::Sprite*> spInvites;
 	std::vector<cocos2d::Sprite*> runningCards;
 	std::vector<cocos2d::ui::Button*> vecCrests;
+	std::vector<cocos2d::ui::Button*> vecMenuBtns;
 	std::vector<char> tableCardNumb;
 	std::vector<char> maxTableCardNumb;
 	std::vector<char> chosenCuocs;
@@ -120,6 +123,9 @@ private:
 	cocos2d::Layer* playLayer;
 	cocos2d::Layer* endLayer;
 	cocos2d::ProgressTimer* progressTimer;
+	cocos2d::ui::Button* btnUp;
+	cocos2d::ui::Button* btnDown;
+	cocos2d::ui::Button* btnBag;
 	cocos2d::ui::Button* btnBack;
 	cocos2d::ui::Button* btnChat;
 	cocos2d::ui::Button* btnSettings;
