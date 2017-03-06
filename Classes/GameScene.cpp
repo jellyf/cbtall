@@ -1522,7 +1522,7 @@ void GameScene::showMenuButtons()
 	int i = 1;
 	for (ui::Button* n : vecMenuBtns) {
 		n->setTouchEnabled(true);
-		MoveTo* move = MoveTo::create(.2f, pos + getScaleSceneDistance(Vec2(0, -90 * i++)))                                                                                                                                                                                                                                   ;
+		MoveTo* move = MoveTo::create(.2f, pos + getScaleSceneDistance(Vec2(0, -90 * i++)));
 		n->runAction(move);
 	}
 }
