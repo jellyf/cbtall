@@ -1635,7 +1635,7 @@ void BaseScene::initPopupCoffer()
 	nodeGuide->addChild(scrollGuide);
 
 	cocos2d::ValueMap plist = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/tutorials.xml");
-	Label* lb = Label::create(plist["tutorial_4"].asString(), "fonts/arial.ttf", 20);
+	Label* lb = Label::create(plist["tutorial_5"].asString(), "fonts/arial.ttf", 20);
 	lb->setAnchorPoint(Vec2(0, 1));
 	lb->setColor(Color3B::WHITE);
 	lb->setName("lbcontent");
