@@ -477,6 +477,9 @@ void BaseScene::showPopupRankWin()
 	scrollWin->setVisible(true);
 	int height = listRankWin.size() * 75;
 	int width = scrollWin->getContentSize().width;
+	if (height < scrollWin->getContentSize().height) {
+		height = scrollWin->getContentSize().height;
+	}
 	scrollWin->setInnerContainerSize(Size(width, height));
 	vector<Color3B> colors = { Color3B::RED, Color3B(255, 102, 0), Color3B(255, 153, 51) };
 	for (int i = 0; i < listRankWin.size(); i++) {
