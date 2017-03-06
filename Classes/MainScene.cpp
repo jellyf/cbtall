@@ -1297,7 +1297,7 @@ void MainScene::initPopupCharge()
     
     //Nap CH
     vector<ProductData> products = Utils::getSingleton().products;
-    Size storeSize = Size(720, 220);
+    Size storeSize = Size(780, 260);
     
     ui::ScrollView* scrollStore = ui::ScrollView::create();
     scrollStore->setDirection(ui::ScrollView::Direction::HORIZONTAL);
@@ -1321,8 +1321,8 @@ void MainScene::initPopupCharge()
         string strId = products[i].Id;
         
         ui::Button* btn = ui::Button::create("box_shop.png", "", "", ui::Widget::TextureResType::PLIST);
-        btn->setPosition(Vec2(120 + i * 240, storeSize.height/2));
-        btn->setContentSize(Size(182, 150));
+        btn->setPosition(Vec2(120 + i * 260, storeSize.height/2));
+        btn->setContentSize(Size(200, 180));
         btn->setScale9Enabled(true);
         btn->setBright(false);
         btn->setTag(i);
@@ -1342,14 +1342,14 @@ void MainScene::initPopupCharge()
         btn->addChild(spCoin);
         
         Label* lb1 = Label::create(strValue, "fonts/guanine.ttf", 20);
-        lb1->setPosition(btn->getContentSize().width / 2 - spCoin->getContentSize().width * spCoin->getScale() / 2, btn->getContentSize().height / 2 - 55);
+        lb1->setPosition(btn->getContentSize().width / 2 - spCoin->getContentSize().width * spCoin->getScale() / 2, btn->getContentSize().height / 2 - 70);
         lb1->setColor(Color3B::YELLOW);
         btn->addChild(lb1);
         
         Label* lb2 = Label::create(strCost, "fonts/guanine.ttf", 20);
         lb2->setWidth(175);
         lb2->setHeight(30);
-        lb2->setPosition(btn->getContentSize().width / 2, btn->getContentSize().height / 2 - 90);
+        lb2->setPosition(btn->getContentSize().width / 2, btn->getContentSize().height / 2 - 105);
         lb2->setColor(Color3B::WHITE);
         lb2->setHorizontalAlignment(TextHAlignment::CENTER);
         btn->addChild(lb2);
