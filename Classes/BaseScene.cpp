@@ -1720,7 +1720,7 @@ void BaseScene::initPopupIAP()
 		string strId = products[i].Id;
 
 		ui::Button* btn = ui::Button::create("box_shop.png", "", "", ui::Widget::TextureResType::PLIST);
-		btn->setPosition(Vec2(120 + i * 260, storeSize.height / 2));
+		btn->setPosition(Vec2(130 + i * 260, storeSize.height / 2));
 		btn->setContentSize(Size(200, 180));
 		btn->setScale9Enabled(true);
 		btn->setBright(false);
