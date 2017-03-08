@@ -2995,6 +2995,9 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 	for (int i = 0; i < 4; i++) {
 		runningCards.push_back(NULL);
 	}
+	for (Node* n : spInvites) {
+		n->setVisible(false);
+	}
 	int num = 0;
 	for (int i = 0; i < 4; i++) {
 		int index = -1;
@@ -3006,7 +3009,6 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 				}
 				userIndexs[player.Info.SfsUserId] = index;
 				userIndexs2[player.Info.UserID] = index;
-				spInvites[index]->setVisible(false);
 				vecUsers[index]->setVisible(true);
 				vecUsers[index]->setAlpha(255);
 				vecUsers[index]->setPlayerName(player.Info.DisplayName);
