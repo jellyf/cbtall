@@ -1521,7 +1521,7 @@ void BaseScene::initPopupHistory()
 		lbDetail->setWidth(widths[i]);
 		lbDetail->setAnchorPoint(Vec2(.5f, 1));
 		lbDetail->setHorizontalAlignment(TextHAlignment::CENTER);
-		lbDetail->setPosition(posX[i] - 55, bgDetail->getContentSize().height / 2 - 15);
+        lbDetail->setPosition(posX[i] - (isPaymentEnabled ? 55 : 0), bgDetail->getContentSize().height / 2 - 15);
 		lbDetail->setTag(i);
 		lbDetail->setColor(Color3B::WHITE);
 		nodeDetail->addChild(lbDetail);
