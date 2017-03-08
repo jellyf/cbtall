@@ -273,7 +273,7 @@ void GameScene::onInit()
 	autoScaleNode(iconGa);
 
 	lbMoneyGa = Label::create("", "fonts/arial.ttf", 20);
-	lbMoneyGa->setPosition(topRight + getScaleSceneDistance(Vec2(-240, -90)));// 880, 610);
+	lbMoneyGa->setPosition(topLeft + getScaleSceneDistance(Vec2(260, -90)));// 880, 610);
 	mLayer->addChild(lbMoneyGa, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(lbMoneyGa);
 
