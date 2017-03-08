@@ -205,7 +205,7 @@ void GameScene::onInit()
 		});
 		runAction(Sequence::create(delay, func, nullptr));*/
 	});
-	mLayer->addChild(btnSettings, constant::GAME_ZORDER_BUTTON - 1);
+	mLayer->addChild(btnSettings, constant::ZORDER_POPUP - 2);
 	autoScaleNode(btnSettings);
 	vecMenuBtns.push_back(btnSettings);
 
@@ -216,7 +216,7 @@ void GameScene::onInit()
 		//if (gameSplash->isVisible()) return;
 		showPopup(tableChat);
 	});
-	mLayer->addChild(btnChat, constant::GAME_ZORDER_BUTTON - 2);
+	mLayer->addChild(btnChat, constant::ZORDER_POPUP - 3);
 	autoScaleNode(btnChat);
 	vecMenuBtns.push_back(btnChat);
 
@@ -233,7 +233,7 @@ void GameScene::onInit()
 			showSystemNotice(Utils::getSingleton().getStringForKey((hasRegisterOut ? "" : "huy_") + string("dang_ky_roi_ban_khi_het_van")));
 		}
 	});
-	mLayer->addChild(btnBack, constant::GAME_ZORDER_BUTTON - 3);
+	mLayer->addChild(btnBack, constant::ZORDER_POPUP - 4);
 	autoScaleNode(btnBack);
 	vecMenuBtns.push_back(btnBack);
 
@@ -244,7 +244,7 @@ void GameScene::onInit()
 	addTouchEventListener(btnBag, [=]() {
 
 	});
-	mLayer->addChild(btnBag, constant::GAME_ZORDER_BUTTON - 4);
+	mLayer->addChild(btnBag, constant::ZORDER_POPUP - 5);
 	autoScaleNode(btnBag);
 	vecMenuBtns.push_back(btnBag);
 
@@ -254,7 +254,7 @@ void GameScene::onInit()
 	addTouchEventListener(btnUp, [=]() {
 		hideMenuButtons();
 	});
-	mLayer->addChild(btnUp, constant::GAME_ZORDER_BUTTON);
+	mLayer->addChild(btnUp, constant::ZORDER_POPUP - 1);
 	autoScaleNode(btnUp);
 
 	btnDown = ui::Button::create("btn_down.png", "btn_down_clicked.png", "", ui::Widget::TextureResType::PLIST);
@@ -262,7 +262,7 @@ void GameScene::onInit()
 	addTouchEventListener(btnDown, [=]() {
 		showMenuButtons();
 	});
-	mLayer->addChild(btnDown, constant::GAME_ZORDER_BUTTON);
+	mLayer->addChild(btnDown, constant::ZORDER_POPUP - 1);
 	autoScaleNode(btnDown);
 
 	initCofferView(topRight + getScaleSceneDistance(Vec2(-150, -50)), constant::GAME_ZORDER_BUTTON, .8f);
@@ -1618,12 +1618,12 @@ void GameScene::onConnectionLost(std::string reason)
 {
 	experimental::AudioEngine::stopAll();
 	mustGoToLobby = myServerSlot < 0 || state == NONE || state == READY;
-	btnUp->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
+	/*btnUp->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
 	btnDown->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
 	int i = 1;
 	for (Node* n : vecMenuBtns) {
 		n->setLocalZOrder(constant::GAME_ZORDER_BUTTON - i++);
-	}
+	}*/
 	handleClientDisconnectionReason(reason);
 }
 
@@ -1635,12 +1635,12 @@ void GameScene::onUserDataResponse(UserData data)
 void GameScene::onUserExitRoom(long sfsUId)
 {
 	if (sfsUId == sfsIdMe) {
-		btnUp->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
+		/*btnUp->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
 		btnDown->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
 		int i = 1;
 		for (Node* n : vecMenuBtns) {
 			n->setLocalZOrder(constant::GAME_ZORDER_BUTTON - i++);
-		}
+		}*/
 		if (isKickForNotReady) {
 			showPopupNotice(Utils::getSingleton().getStringForKey("bi_thoat_do_khong_san_sang"), [=]() {
 				SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
@@ -1823,12 +1823,12 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 	gameSplash->setVisible(false);
 	progressTimer->stopAllActions();
 	progressTimer->setVisible(false);
-	btnUp->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
+	/*btnUp->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
 	btnDown->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
 	int i = 1;
 	for (Node* n : vecMenuBtns) {
 		n->setLocalZOrder(constant::GAME_ZORDER_BUTTON - i++);
-	}
+	}*/
 	spHandCards.clear();
 	chosenCuocs.clear();
 	chosenCuocNumbs.clear();
@@ -2670,12 +2670,12 @@ void GameScene::onCrestResponse(CrestResponseData data)
 	progressTimer->setVisible(false);
 	progressTimer->stopAllActions();
 	lbCrestTime->pauseSchedulerAndActions();
-	btnUp->setLocalZOrder(constant::ZORDER_POPUP);
+	/*btnUp->setLocalZOrder(constant::ZORDER_POPUP);
 	btnDown->setLocalZOrder(constant::ZORDER_POPUP);
 	int i = 1;
 	for (Node* n : vecMenuBtns) {
 		n->setLocalZOrder(constant::ZORDER_POPUP - i++);
-	}
+	}*/
 
 	string strwin = vecUsers[userIndexs[data.UId]]->getPlayerName() + " " + Utils::getSingleton().getStringForKey("win") + ": ";
 	for (unsigned char c : data.CuocHo) {
@@ -2758,12 +2758,12 @@ void GameScene::onEndMatch(EndMatchData data)
 	if (data.WinId == sfsIdMe) {
 		tableCrest->setVisible(true);
 	} else {
-		btnUp->setLocalZOrder(constant::ZORDER_POPUP);
+		/*btnUp->setLocalZOrder(constant::ZORDER_POPUP);
 		btnDown->setLocalZOrder(constant::ZORDER_POPUP);
 		int i = 1;
 		for (Node* n : vecMenuBtns) {
 			n->setLocalZOrder(constant::ZORDER_POPUP - i++);
-		}
+		}*/
 	}
 	playSoundAction(data.SoundId);
 }
