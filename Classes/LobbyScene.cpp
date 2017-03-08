@@ -68,8 +68,8 @@ void LobbyScene::onInit()
 	lbId->setString(strId);
 	lbLevel->setString(strLevel);
 
-	initEventView(Vec2(270, 575), Size(850, 40));
-	//initEventView(Vec2(0, 575), Size(Director::sharedDirector()->getVisibleSize().width, 40));
+	//initEventView(Vec2(270, 575), Size(850, 40));
+	initEventView(Vec2(0, 575), Size(winSize.width, 40));
 
 	if (Utils::getSingleton().lobbyListRoomType.ListRoomType.size() > 0) {
 		onRoomTypeDataResponse(Utils::getSingleton().lobbyListRoomType);
@@ -266,6 +266,7 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 			btn->setScale(.8f);
 			scrollListTable->addChild(btn);
 			vecTables.push_back(btn);
+			autoScaleNode(btn);
 
 			/*int x = 50;
 			for (int j = 0; j < 4; j++) {
@@ -414,6 +415,7 @@ void LobbyScene::onRoomTypeDataResponse(LobbyListRoomType data)
 				showWaiting();
 			});
 			scrollListRoom->addChild(btn);
+			autoScaleNode(btn);
 		} else {
 			btn->setVisible(true);
 		}
