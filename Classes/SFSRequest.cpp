@@ -511,6 +511,9 @@ void SFSRequest::onRequestImgCompleted(cocos2d::network::HttpClient * client, co
 	{
 		//CCLOG("onHttpRequestCompleted - Response failed");
 		//CCLOG("onHttpRequestCompleted - Error buffer: %s", response->getErrorBuffer());
+		string tag = response->getHttpRequest()->getTag();
+		string url = response->getHttpRequest()->getUrl();
+		SFSRequest::getSingleton().LoadImageFromURL(url, atoi(tag.c_str()));
 		return;
 	}
 	//CCLOG("onHttpRequestCompleted - Response code: %s", response->getResponseDataString());
@@ -544,10 +547,13 @@ void SFSRequest::onRequestTextureCompleted(cocos2d::network::HttpClient * client
 
 	//CCLOG("onHttpRequestCompleted - Response code: %lu", response->getResponseCode());
 
+	string tag = response->getHttpRequest()->getTag();
+	string url = response->getHttpRequest()->getUrl();
 	if (!response->isSucceed())
 	{
 		//CCLOG("onHttpRequestCompleted - Response failed");
 		//CCLOG("onHttpRequestCompleted - Error buffer: %s", response->getErrorBuffer());
+		SFSRequest::getSingleton().LoadTextureFromURL(url, tag);
 		return;
 	}
 	//CCLOG("onHttpRequestCompleted - Response code: %s", response->getResponseDataString());
@@ -559,13 +565,11 @@ void SFSRequest::onRequestTextureCompleted(cocos2d::network::HttpClient * client
 		image->initWithImageData(reinterpret_cast<const unsigned char*>(&(buffer->front())), buffer->size());
 
 		//CCLOG("onHttpRequestCompleted height %d", image->getHeight());
-		string key = response->getHttpRequest()->getTag();
-		string url = response->getHttpRequest()->getUrl();
-		if (key.length() == 0) {
+		if (tag.length() == 0) {
 			int index = url.find_last_of('/');
-			key = url.substr(index + 1, url.length());
+			tag = url.substr(index + 1, url.length());
 		}
-		cocos2d::Texture2D * texture = cocos2d::TextureCache::sharedTextureCache()->addImage(image, key);
+		cocos2d::Texture2D * texture = cocos2d::TextureCache::sharedTextureCache()->addImage(image, tag);
 		if (SFSRequest::getSingleton().onLoadTextureResponse != NULL) {
 			SFSRequest::getSingleton().onLoadTextureResponse(url, texture);
 		}
