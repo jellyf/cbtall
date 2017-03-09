@@ -42,6 +42,7 @@ private:
 
 	cocos2d::Node* loginNode;
 	cocos2d::Node* registerNode;
+	cocos2d::ui::Button* btnPhone;
 	cocos2d::ui::EditBox* tfUsername;
 	cocos2d::ui::EditBox* tfPassword;
 	cocos2d::ui::EditBox* tfResUname;
