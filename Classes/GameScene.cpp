@@ -1489,6 +1489,7 @@ void GameScene::showSystemNotice(std::string msg)
 
 void GameScene::showCofferEffects(std::string money)
 {
+	if (!Utils::getSingleton().ispmE()) return;
 	Label* lb = (Label*)cofferEffect->getChildByName("lbmoney");
 	Sprite* spLight = (Sprite*)cofferEffect->getChildByName("splight");
 	lb->setString(money);
