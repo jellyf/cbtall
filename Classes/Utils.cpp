@@ -29,6 +29,8 @@ Utils::Utils()
 	cofferMoney = 0;
 	moneyType = -1;
 	isRunningEvent = false;
+	gameConfig.paymentEnabled = false;
+	gameConfig.paymentEnabledIOS = false;
 	currentEventPosX = constant::EVENT_START_POSX;
 	userDataMe.UserID = 0;
 	viLang = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/vi.xml");
@@ -271,9 +273,9 @@ bool Utils::isDisplayNameValid(std::string displayname)
 bool Utils::isPaymentEnabled()
 {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-	return Utils::getSingleton().gameConfig.paymentEnabledIOS;
+	return gameConfig.paymentEnabledIOS;
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-	return Utils::getSingleton().gameConfig.paymentEnabled;
+	return gameConfig.paymentEnabled;
 #else
 	return true;
 #endif
@@ -558,7 +560,7 @@ void Utils::preDownloadTextures()
 		string str2 = FileUtils::getInstance()->getStringFromFile("menu2.plist");
 		SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str2, texture);
 	});
-	string host = "http://125.212.192.96:8899/ktc/main_kinhtuchi/";
+	string host = "http://115.84.179.242/main_kinhtuchi/";
 	//downloadTextureAndCreatePlist("menu1.plist", host + "menu1.png");
 	//downloadTextureAndCreatePlist("menu2.plist", host + "menu2.png");
 

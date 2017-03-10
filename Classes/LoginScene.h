@@ -38,6 +38,7 @@ private:
 	bool isLogedInZone = false;
 	bool isRequesting = false;
 	bool isRealConfig = true;
+	bool isFirstLoadConfig = true;
 	bool isIPv4 = CC_TARGET_PLATFORM == CC_PLATFORM_IOS;
 
 	cocos2d::Node* loginNode;

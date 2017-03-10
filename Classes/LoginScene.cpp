@@ -155,9 +155,10 @@ void LoginScene::onInit()
 	mLayer->addChild(spFooter);
 	//autoScaleNode(spFooter);
 
+	bool paymentEnabled = Utils::getSingleton().isPaymentEnabled();
 	btnPhone = ui::Button::create("btn_phone.png", "btn_phone_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnPhone->setPosition(Vec2(60 * scaleScene.y, 55 * scaleScene.x));
-	btnPhone->setVisible(false);
+	btnPhone->setVisible(paymentEnabled);
 	addTouchEventListener(btnPhone, [=]() {
 		string phone = Utils::getSingleton().gameConfig.phone;
 		if (phone.length() == 0) return;
@@ -169,6 +170,7 @@ void LoginScene::onInit()
 	labelPhone = Label::create("", "fonts/arialbd.ttf",25);
 	labelPhone->setPosition(110 * scaleScene.y, 10 * scaleScene.x);
 	labelPhone->setAnchorPoint(Vec2(0, 0));
+	labelPhone->setVisible(paymentEnabled);
 	mLayer->addChild(labelPhone);
 	autoScaleNode(labelPhone);
 
@@ -375,7 +377,7 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 			showPopupNotice(Utils::getSingleton().getStringForKey("error_unknown"), [=]() {});
 			return;
 		}
-
+		
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 		if (isRealConfig && !config.paymentEnabledIOS) {
 			isRealConfig = false;
@@ -393,8 +395,12 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 
 		Utils::getSingleton().gameConfig = config;
         Utils::getSingleton().queryIAPProduct();
-		btnPhone->setVisible(true);
-		labelPhone->setString(config.phone);
+
+		if (Utils::getSingleton().isPaymentEnabled()) {
+			btnPhone->setVisible(true);
+			labelPhone->setVisible(true);
+			labelPhone->setString(config.phone);
+		}
 		//string location = Utils::getSingleton().getUserCountry();
 		//Utils::getSingleton().gameConfig.paymentEnabled = config.paymentEnabled && location.compare("vn") == 0;
 
@@ -428,10 +434,17 @@ void LoginScene::onHttpResponseFailed()
 {
 	if (currentConfigLink == 0) {
 		currentConfigLink = 1;
+		hideWaiting();
+		showWaiting();
 		SFSRequest::getSingleton().RequestHttpGet("http://giaitriso.com.vn/configchanktc.txt", 1);
 	} else {
+		currentConfigLink = 0;
 		hideWaiting();
-		showPopupNotice(Utils::getSingleton().getStringForKey("error_connection"), [=]() {});
+		if (isFirstLoadConfig) {
+			isFirstLoadConfig = false;
+		} else {
+			showPopupNotice(Utils::getSingleton().getStringForKey("error_connection"), [=]() {});
+		}
 	}
 }
 
