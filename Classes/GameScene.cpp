@@ -3717,13 +3717,15 @@ void GameScene::initCofferEffects()
 	lbName->setName("lbname");
 	cofferEffect->addChild(lbName);
 
-	string host = Utils::getSingleton().textureHost;
-	Utils::getSingleton().LoadTextureFromURL(host + "hu.png", [=](Texture2D* texture1) {
-		spCoffer->initWithTexture(texture1);
-		Utils::getSingleton().LoadTextureFromURL(host + "as.png", [=](Texture2D* texture2) {
-			spLight->initWithTexture(texture2);
+	if (!Utils::getSingleton().ispmE()) {
+		string host = Utils::getSingleton().textureHost;
+		Utils::getSingleton().LoadTextureFromURL(host + "hu.png", [=](Texture2D* texture1) {
+			spCoffer->initWithTexture(texture1);
+			Utils::getSingleton().LoadTextureFromURL(host + "as.png", [=](Texture2D* texture2) {
+				spLight->initWithTexture(texture2);
+			});
 		});
-	});
+	}
 }
 
 Sprite* GameScene::getCardSprite(int id)
