@@ -28,15 +28,22 @@ Utils::Utils()
 {
 	cofferMoney = 0;
 	moneyType = -1;
-	isRunningEvent = false;
-	gameConfig.paymentEnabled = false;
-	gameConfig.paymentEnabledIOS = false;
-	currentEventPosX = constant::EVENT_START_POSX;
 	userDataMe.UserID = 0;
+	downloadedPlistTexture = 0;
+	isRunningEvent = false;
+	gameConfig.pmE = false;
+	gameConfig.pmEIOS = false;
+	currentEventPosX = constant::EVENT_START_POSX;
+	textureHost = "http://115.84.179.242/main_kinhtuchi/";
 	viLang = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/vi.xml");
 	SFSRequest::getSingleton().onLoadTextureResponse = std::bind(&Utils::onLoadTextureResponse, this, std::placeholders::_1, std::placeholders::_2);
 
-	preDownloadTextures();
+	TextureCache::sharedTextureCache()->addImageAsync("test.png", [=](Texture2D* texture) {
+		string str1 = FileUtils::getInstance()->getStringFromFile("menu1.plist");
+		SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str1, texture);
+		string str2 = FileUtils::getInstance()->getStringFromFile("menu2.plist");
+		SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str2, texture);
+	});
     
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
     IOSHelperCPlus::setLoginFBCallback([=](std::string token){
@@ -270,14 +277,14 @@ bool Utils::isDisplayNameValid(std::string displayname)
 	return true;
 }
 
-bool Utils::isPaymentEnabled()
+bool Utils::ispmE()
 {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-	return gameConfig.paymentEnabledIOS;
+	return gameConfig.pmEIOS;
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-	return gameConfig.paymentEnabled;
+	return gameConfig.pmE;
 #else
-	return true;
+	return false;
 #endif
 }
 
@@ -552,32 +559,41 @@ void Utils::queryIAPProduct()
 #endif
 }
 
-void Utils::preDownloadTextures()
+void Utils::downloadPlistTextures()
 {
-	TextureCache::sharedTextureCache()->addImageAsync("test.png", [=](Texture2D* texture) {
+	if (downloadedPlistTexture == 0) {
 		string str1 = FileUtils::getInstance()->getStringFromFile("menu1.plist");
-		SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str1, texture);
-		string str2 = FileUtils::getInstance()->getStringFromFile("menu2.plist");
-		SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str2, texture);
-	});
-	string host = "http://115.84.179.242/main_kinhtuchi/";
-	//downloadTextureAndCreatePlist("menu1.plist", host + "menu1.png");
-	//downloadTextureAndCreatePlist("menu2.plist", host + "menu2.png");
+		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu1.png", [=](Texture2D* texture1) {
+			SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str1, texture1);
+			downloadedPlistTexture = 1;
+			if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
+				EventHandler::getSingleton().onDownloadedPlistTexture(downloadedPlistTexture);
+			}
+			string str2 = FileUtils::getInstance()->getStringFromFile("menu2.plist");
+			Utils::getSingleton().LoadTextureFromURL(textureHost + "menu2.png", [=](Texture2D* texture2) {
+				SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str2, texture2);
+				downloadedPlistTexture = 2;
+				if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
+					EventHandler::getSingleton().onDownloadedPlistTexture(downloadedPlistTexture);
+				}
 
-	string str1 = FileUtils::getInstance()->getStringFromFile("menu1.plist");
-	Utils::getSingleton().LoadTextureFromURL(host + "menu1.png", [=](Texture2D* texture) {
-		SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str1, texture);
-		string str2 = FileUtils::getInstance()->getStringFromFile("menu2.plist");
-		Utils::getSingleton().LoadTextureFromURL(host + "menu2.png", [=](Texture2D* texture) {
-			SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str2, texture);
+				Utils::getSingleton().LoadTextureFromURL(textureHost + "hu.png", [=](Texture2D* texture3) {
+					Utils::getSingleton().LoadTextureFromURL(textureHost + "as.png", [=](Texture2D* texture4) {});
+				});
+			});
 		});
-	});
-}
-
-void Utils::downloadTextureAndCreatePlist(std::string plist, std::string url, std::string textureName)
-{
-	string str = FileUtils::getInstance()->getStringFromFile(plist);
-	Utils::getSingleton().LoadTextureFromURL(url, [=](Texture2D* texture) {
-		SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str, texture);
-	}, textureName);
+	} else if (downloadedPlistTexture == 1) {
+		string str2 = FileUtils::getInstance()->getStringFromFile("menu2.plist");
+		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu2.png", [=](Texture2D* texture) {
+			SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str2, texture);
+			downloadedPlistTexture = 2;
+			if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
+				EventHandler::getSingleton().onDownloadedPlistTexture(downloadedPlistTexture);
+			}
+		});
+	} else {
+		if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
+			EventHandler::getSingleton().onDownloadedPlistTexture(downloadedPlistTexture);
+		}
+	}
 }

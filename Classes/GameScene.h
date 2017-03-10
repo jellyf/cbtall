@@ -169,6 +169,8 @@ private:
 	cocos2d::Node* nodeWebview;
 	cocos2d::Node* nodeStilt;
 	cocos2d::Node* cofferEffect;
+	cocos2d::Texture2D* textureHu;
+	cocos2d::Texture2D* textureLight;
 
 	char timeStart;
 	char timeDeal;

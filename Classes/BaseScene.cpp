@@ -55,7 +55,8 @@ void BaseScene::onInit()
 void BaseScene::onEnter()
 {
 	Scene::onEnter();
-	bool isPaymentEnabled = Utils::getSingleton().isPaymentEnabled();
+	bool ispmE = Utils::getSingleton().ispmE();
+	isPopupReady = Utils::getSingleton().downloadedPlistTexture >= 2 || !Utils::getSingleton().ispmE();
 
 	mLayer = Layer::create();
 	addChild(mLayer, 10);
@@ -98,7 +99,7 @@ void BaseScene::onEnter()
 	spNetwork = Sprite::createWithSpriteFrameName("wifi0.png");
 	//spNetwork->setAnchorPoint(Vec2(1, 0));
 	//spNetwork->setPosition(1115, 5);
-	spNetwork->setPosition(winSize.width - (isPaymentEnabled ? 360 : 150) * scaleScene.y, 650);
+	spNetwork->setPosition(winSize.width - (ispmE ? 360 : 240) * scaleScene.y, 650);
 	//spNetwork->setVisible(false);
 	mLayer->addChild(spNetwork, constant::GAME_ZORDER_SPLASH - 1);
 	autoScaleNode(spNetwork);
@@ -167,6 +168,7 @@ void BaseScene::registerEventListenner()
 	EventHandler::getSingleton().onErrorSFSResponse = bind(&BaseScene::onErrorResponse, this, placeholders::_1, placeholders::_2);
 	EventHandler::getSingleton().onCofferMoneySFSResponse = bind(&BaseScene::onCofferMoneyResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onCofferHistorySFSResponse = bind(&BaseScene::onCofferHistoryResponse, this, placeholders::_1);
+	EventHandler::getSingleton().onDownloadedPlistTexture = bind(&BaseScene::onDownloadedPlistTexture, this, placeholders::_1);
 }
 
 void BaseScene::unregisterEventListenner()
@@ -183,6 +185,7 @@ void BaseScene::unregisterEventListenner()
 	EventHandler::getSingleton().onErrorSFSResponse = NULL;
 	EventHandler::getSingleton().onCofferMoneySFSResponse = NULL;
 	EventHandler::getSingleton().onCofferHistorySFSResponse = NULL;
+	EventHandler::getSingleton().onDownloadedPlistTexture = NULL;
 }
 
 bool BaseScene::onTouchBegan(Touch * touch, Event * _event)
@@ -571,7 +574,7 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 	Label* lbTotal = (Label*)popupUserInfo->getChildByName("lbtotal");
 
 	btnHistory->setVisible(showHistoryIfIsMe && data.UserID == Utils::getSingleton().userDataMe.UserID);
-	btnActive->setVisible(showHistoryIfIsMe && data.UserID == Utils::getSingleton().userDataMe.UserID && !Utils::getSingleton().userDataMe.IsActived && Utils::getSingleton().isPaymentEnabled());
+	btnActive->setVisible(showHistoryIfIsMe && data.UserID == Utils::getSingleton().userDataMe.UserID && !Utils::getSingleton().userDataMe.IsActived && Utils::getSingleton().ispmE());
 	btnFB->setVisible(showHistoryIfIsMe && data.UserID == Utils::getSingleton().userDataMe.UserID && Utils::getSingleton().loginType == constant::LOGIN_FACEBOOK);
 	lbName->setString(data.DisplayName);
 	lbQuan->setString(Utils::getSingleton().formatMoneyWithComma(data.MoneyReal));
@@ -672,6 +675,7 @@ void BaseScene::initHeaderWithInfos()
 {
 	hasHeader = true;
 	bool isRealMoney = Utils::getSingleton().moneyType == 1;
+	bool ispmE = Utils::getSingleton().ispmE();
 
 	std::vector<Vec2> vecPos;
 	vecPos.push_back(Vec2(50 * scaleScene.y, 650));
@@ -746,7 +750,7 @@ void BaseScene::initHeaderWithInfos()
 	iconSilver->setPosition(30, 0);
 	moneyNode->addChild(iconSilver, 2);
 
-	ui::Button* btnIAP = ui::Button::create("icon_charge.png", "", "", ui::Widget::TextureResType::PLIST);
+	/*ui::Button* btnIAP = ui::Button::create("icon_charge.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnIAP->setPosition(vecPos[14]);
 	btnIAP->setScale(.8f);
 	addTouchEventListener(btnIAP, [=]() {
@@ -756,7 +760,7 @@ void BaseScene::initHeaderWithInfos()
 		showPopup(popupIAP);
 	});
 	mLayer->addChild(btnIAP, constant::MAIN_ZORDER_HEADER);
-	autoScaleNode(btnIAP);
+	autoScaleNode(btnIAP);*/
 
 	ui::Button* btnRank = ui::Button::create("btn_rank.png", "btn_rank_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnRank->setPosition(vecPos[5]);
@@ -765,7 +769,7 @@ void BaseScene::initHeaderWithInfos()
 			SFSRequest::getSingleton().RequestRank();
 			SFSRequest::getSingleton().RequestRankWin();
 		} else {
-			showPopupRank(0);
+			showPopupRank(ispmE ? 0 : 1);
 		}
 	});
 	mLayer->addChild(btnRank, constant::MAIN_ZORDER_HEADER);
@@ -843,17 +847,15 @@ void BaseScene::initHeaderWithInfos()
 		onUserDataMeResponse();
 	}
 
-	bool isPaymentEnabled = Utils::getSingleton().isPaymentEnabled();
-	if (!isPaymentEnabled) {
-		chosenBg->setPosition(isRealMoney && isPaymentEnabled ? -100 : 100, 0);
+	if (!ispmE) {
+		chosenBg->setPosition(isRealMoney && ispmE ? -100 : 100, 0);
 		moneyNode->setPosition(vecPos[1] + Vec2(-60, 0));
 		moneyBg1->setVisible(false);
 		iconGold->setVisible(false);
 		lbGold->setVisible(false);
-		btnRank->setVisible(false);
 		lbCoffer->setVisible(false);
 	}
-	btnIAP->setVisible(!isPaymentEnabled);
+	//btnIAP->setVisible(!ispmE);
 }
 
 void BaseScene::onBackScene()
@@ -863,7 +865,7 @@ void BaseScene::onBackScene()
 
 void BaseScene::showPopupHistory()
 {
-	int moneyType = !Utils::getSingleton().isPaymentEnabled();
+	int moneyType = !Utils::getSingleton().ispmE();
 	if (popupHistory == nullptr) {
 		initPopupHistory();
 	}
@@ -1031,6 +1033,43 @@ void BaseScene::showToast(std::string tag, ::string msg, Vec2 pos, Color3B textC
 	nodeChat->runAction(Sequence::create(DelayTime::create(3), RemoveSelf::create(), nullptr));
 }
 
+cocos2d::Node * BaseScene::createPopup(std::string stitle, bool isBig, bool isHidden)
+{
+	if (isHidden && !isPopupReady) {
+		showWaiting();
+		return nullptr;
+	}
+
+	Node* popup = Node::create();
+	popup->setPosition(560, 350);
+	popup->setVisible(false);
+	mLayer->addChild(popup, constant::ZORDER_POPUP);
+	//autoScaleNode(popup);
+
+	Sprite* bg = isBig ? Sprite::create("popup_bg1.png") : Sprite::createWithSpriteFrameName("popup_bg.png");
+	bg->setName("spbg");
+	popup->addChild(bg);
+
+	Sprite* bgTitle = Sprite::createWithSpriteFrameName("title_bg.png");
+	bgTitle->setPosition(0, bg->getContentSize().height / 2 - 5);
+	bgTitle->setName("spbgtitle");
+	popup->addChild(bgTitle);
+
+	Sprite* title = Sprite::createWithSpriteFrameName(stitle);
+	title->setPosition(0, bg->getContentSize().height / 2 - 5);
+	title->setName("sptitle");
+	popup->addChild(title);
+
+	ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnClose->setPosition(Vec2(bg->getContentSize().width / 2 - 10, bg->getContentSize().height / 2 - 5));
+	addTouchEventListener(btnClose, [=]() {
+		hidePopup(popup);
+	});
+	popup->addChild(btnClose);
+
+	return popup;
+}
+
 Node* BaseScene::createPopupNotice()
 {
 	Node* popupNotice = nullptr;
@@ -1090,12 +1129,17 @@ cocos2d::Vec2 BaseScene::getScaleSmoothly(float scale)
 
 void BaseScene::initPopupRank()
 {
-	popupRank = Node::create();
+	bool pmE = Utils::getSingleton().ispmE();
+	popupRank = createPopup("title_bangxephang.png", true, true);
+	if (!popupRank) return;
+	popupRank->setTag(pmE ? 0 : 1);
+
+	/*popupRank = Node::create();
 	popupRank->setPosition(560, 350);
 	popupRank->setVisible(false);
 	popupRank->setTag(0);
 	mLayer->addChild(popupRank, constant::ZORDER_POPUP);
-	autoScaleNode(popupRank);
+	autoScaleNode(popupRank);*/
 
 	/*ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("popup_bg.png");
 	bg->setInsetBottom(0);
@@ -1105,8 +1149,8 @@ void BaseScene::initPopupRank()
 	bg->setContentSize(Size(1000, 700));
 	popupRank->addChild(bg);*/
 
-	Sprite* bg = Sprite::create("popup_bg1.png");
-	popupRank->addChild(bg);
+	/*Sprite* bg = Sprite::create("popup_bg1.png");
+	popupRank->addChild(bg);*/
 
 	Size size = Size(860, 466);
 	Size scrollSize = size - Size(20, 20);
@@ -1115,16 +1159,16 @@ void BaseScene::initPopupRank()
 	rect->setPosition(55, -25);
 	popupRank->addChild(rect);
 
-	Sprite* title = Sprite::createWithSpriteFrameName("title_bangxephang.png");
+	/*Sprite* title = Sprite::createWithSpriteFrameName("title_bangxephang.png");
 	title->setPosition(0, bg->getContentSize().height / 2 - 5);
-	popupRank->addChild(title);
+	popupRank->addChild(title);*/
 
-	ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	/*ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnClose->setPosition(Vec2(bg->getContentSize().width / 2 - 10, bg->getContentSize().height / 2 - 5));
 	addTouchEventListener(btnClose, [=]() {
 		hidePopup(popupRank);
 	});
-	popupRank->addChild(btnClose);
+	popupRank->addChild(btnClose);*/
 
 	ui::ScrollView* scroll = ui::ScrollView::create();
 	scroll->setDirection(ui::ScrollView::Direction::VERTICAL);
@@ -1147,7 +1191,7 @@ void BaseScene::initPopupRank()
 	vector<string> texts = { "quan", "xu", "win" };
 	int x = -440;
 	int y = 180;
-	for (int i = 0; i < texts.size(); i++) {
+	for (int i = pmE ? 0 : 1; i < texts.size(); i++) {
 		string strBtn = i == 0 ? "btn_light.png" : "empty.png";
 		ui::Button* btn = ui::Button::create(strBtn, strBtn, strBtn, ui::Widget::TextureResType::PLIST);
 		btn->setTitleText(Utils::getSingleton().getStringForKey(texts[i]));
@@ -1176,19 +1220,21 @@ void BaseScene::initPopupRank()
 
 void BaseScene::initPopupSettings()
 {
-	popupMainSettings = Node::create();
-	popupMainSettings->setPosition(560, 350);
-	popupMainSettings->setVisible(false);
-	mLayer->addChild(popupMainSettings, constant::ZORDER_POPUP);
-	autoScaleNode(popupMainSettings);
+	popupMainSettings = createPopup("title_caidat.png", false, false);
 
-	Sprite* bg = Sprite::createWithSpriteFrameName("popup_bg.png");
-	popupMainSettings->addChild(bg);
+	//popupMainSettings = Node::create();
+	//popupMainSettings->setPosition(560, 350);
+	//popupMainSettings->setVisible(false);
+	//mLayer->addChild(popupMainSettings, constant::ZORDER_POPUP);
+	//autoScaleNode(popupMainSettings);
 
-	Sprite* title = Sprite::createWithSpriteFrameName("title_caidat.png");
-	title->setPosition(0, 170);
-	//title->setScale(.8f);
-	popupMainSettings->addChild(title);
+	//Sprite* bg = Sprite::createWithSpriteFrameName("popup_bg.png");
+	//popupMainSettings->addChild(bg);
+
+	//Sprite* title = Sprite::createWithSpriteFrameName("title_caidat.png");
+	//title->setPosition(0, 170);
+	////title->setScale(.8f);
+	//popupMainSettings->addChild(title);
 
 	vector<Vec2> vecPos;
 	vecPos.push_back(Vec2(-180, 50));
@@ -1233,40 +1279,42 @@ void BaseScene::initPopupSettings()
 	});
 	popupMainSettings->addChild(btnOK);
 
-	ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	/*ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnClose->setPosition(Vec2(310, 170));
 	btnClose->setScale(.8f);
 	addTouchEventListener(btnClose, [=]() {
 		hidePopup(popupMainSettings);
 	});
-	popupMainSettings->addChild(btnClose);
+	popupMainSettings->addChild(btnClose);*/
 }
 
 void BaseScene::initPopupUserInfo()
 {
-	bool isPaymentEnabled = Utils::getSingleton().isPaymentEnabled();
+	bool ispmE = Utils::getSingleton().ispmE();
 
-	popupUserInfo = Node::create();
-	popupUserInfo->setPosition(560, 350);
-	popupUserInfo->setVisible(false);
-	mLayer->addChild(popupUserInfo, constant::ZORDER_POPUP);
-	autoScaleNode(popupUserInfo);
+	popupUserInfo = createPopup("title_thongtin.png", false, false);
 
-	Sprite* bg = Sprite::createWithSpriteFrameName("popup_bg.png");
-	popupUserInfo->addChild(bg);
+	//popupUserInfo = Node::create();
+	//popupUserInfo->setPosition(560, 350);
+	//popupUserInfo->setVisible(false);
+	//mLayer->addChild(popupUserInfo, constant::ZORDER_POPUP);
+	//autoScaleNode(popupUserInfo);
 
-	Sprite* title = Sprite::createWithSpriteFrameName("title_thongtin.png");
-	title->setPosition(0, 170);
-	//title->setScale(.8f);
-	popupUserInfo->addChild(title);
+	//Sprite* bg = Sprite::createWithSpriteFrameName("popup_bg.png");
+	//popupUserInfo->addChild(bg);
 
-	ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnClose->setPosition(Vec2(310, 170));
-	btnClose->setScale(.8f);
-	addTouchEventListener(btnClose, [=]() {
-		hidePopup(popupUserInfo);
-	});
-	popupUserInfo->addChild(btnClose);
+	//Sprite* title = Sprite::createWithSpriteFrameName("title_thongtin.png");
+	//title->setPosition(0, 170);
+	////title->setScale(.8f);
+	//popupUserInfo->addChild(title);
+
+	//ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	//btnClose->setPosition(Vec2(310, 170));
+	//btnClose->setScale(.8f);
+	//addTouchEventListener(btnClose, [=]() {
+	//	hidePopup(popupUserInfo);
+	//});
+	//popupUserInfo->addChild(btnClose);
 
 	Sprite* avatar = Sprite::createWithSpriteFrameName("avatar_default.png");
 	avatar->setPosition(-186, 33);
@@ -1331,7 +1379,7 @@ void BaseScene::initPopupUserInfo()
 	lbQuan->setAnchorPoint(Vec2(0, .5f));
 	lbQuan->setColor(Color3B::WHITE);
 	lbQuan->setPosition(-70, 50);
-	lbQuan->setVisible(isPaymentEnabled);
+	lbQuan->setVisible(ispmE);
 	popupUserInfo->addChild(lbQuan);
 
 	Label* lbQuan1 = Label::create("100,000", "fonts/arial.ttf", 25);
@@ -1339,7 +1387,7 @@ void BaseScene::initPopupUserInfo()
 	lbQuan1->setColor(Color3B::RED);
 	lbQuan1->setPosition(30, 50);
 	lbQuan1->setName("lbquan");
-	lbQuan1->setVisible(isPaymentEnabled);
+	lbQuan1->setVisible(ispmE);
 	popupUserInfo->addChild(lbQuan1);
 
 	Label* lbXu = Label::create(Utils::getSingleton().getStringForKey("xu"), "fonts/arial.ttf", 25);
@@ -1386,36 +1434,20 @@ void BaseScene::initPopupUserInfo()
 
 void BaseScene::initPopupHistory()
 {
-	bool isPaymentEnabled = Utils::getSingleton().isPaymentEnabled();
+	bool ispmE = Utils::getSingleton().ispmE();
 
-	popupHistory = Node::create();
+	popupHistory = createPopup("title_lichsu.png", true, false);
+	popupHistory->setTag(0);
+
+	/*popupHistory = Node::create();
 	popupHistory->setPosition(560, 350);
 	popupHistory->setVisible(false);
 	popupHistory->setTag(0);
 	mLayer->addChild(popupHistory, constant::ZORDER_POPUP);
 	autoScaleNode(popupHistory);
 
-	/*ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("popup_bg.png");
-	bg->setInsetBottom(0);
-	bg->setInsetTop(0);
-	bg->setInsetLeft(100);
-	bg->setInsetRight(100);
-	bg->setContentSize(Size(1000, 700));
-	popupHistory->addChild(bg);*/
-
 	Sprite* bg = Sprite::create("popup_bg1.png");
 	popupHistory->addChild(bg);
-
-	ui::Scale9Sprite* bgContent = ui::Scale9Sprite::createWithSpriteFrameName("empty.png");
-	bgContent->setContentSize(Size(860, 446));
-	bgContent->setPosition(isPaymentEnabled ? 55 : 0, -10);
-	popupHistory->addChild(bgContent);
-
-	Size size = bgContent->getContentSize();
-	DrawNode* rect = DrawNode::create();
-	rect->drawRect(Vec2(-size.width / 2, -size.height / 2), Vec2(size.width / 2, size.height / 2), Color4F::BLACK);
-	rect->setPosition(bgContent->getPosition());
-	popupHistory->addChild(rect);
 
 	Sprite* title = Sprite::createWithSpriteFrameName("title_lichsu.png");
 	title->setPosition(0, bg->getContentSize().height / 2 - 5);
@@ -1427,7 +1459,26 @@ void BaseScene::initPopupHistory()
 	addTouchEventListener(btnClose, [=]() {
 		hidePopup(popupHistory);
 	});
-	popupHistory->addChild(btnClose);
+	popupHistory->addChild(btnClose);*/
+
+	/*ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("popup_bg.png");
+	bg->setInsetBottom(0);
+	bg->setInsetTop(0);
+	bg->setInsetLeft(100);
+	bg->setInsetRight(100);
+	bg->setContentSize(Size(1000, 700));
+	popupHistory->addChild(bg);*/
+
+	ui::Scale9Sprite* bgContent = ui::Scale9Sprite::createWithSpriteFrameName("empty.png");
+	bgContent->setContentSize(Size(860, 446));
+	bgContent->setPosition(ispmE ? 55 : 0, -10);
+	popupHistory->addChild(bgContent);
+
+	Size size = bgContent->getContentSize();
+	DrawNode* rect = DrawNode::create();
+	rect->drawRect(Vec2(-size.width / 2, -size.height / 2), Vec2(size.width / 2, size.height / 2), Color4F::BLACK);
+	rect->setPosition(bgContent->getPosition());
+	popupHistory->addChild(rect);
 
 	ui::ScrollView* scroll = ui::ScrollView::create();
 	scroll->setDirection(ui::ScrollView::Direction::VERTICAL);
@@ -1452,7 +1503,7 @@ void BaseScene::initPopupHistory()
 		btn->setScale9Enabled(true);
 		//btn->setCapInsets(Rect(25, 25, 0, 0));
 		btn->setTag(10 + i);
-		btn->setVisible(isPaymentEnabled);
+		btn->setVisible(ispmE);
 		addTouchEventListener(btn, [=]() {
 			if (popupHistory->getTag() == i) return;
 			ui::Button* btn1 = (ui::Button*)popupHistory->getChildByTag(10 + popupHistory->getTag());
@@ -1521,7 +1572,7 @@ void BaseScene::initPopupHistory()
 		lbDetail->setWidth(widths[i]);
 		lbDetail->setAnchorPoint(Vec2(.5f, 1));
 		lbDetail->setHorizontalAlignment(TextHAlignment::CENTER);
-        lbDetail->setPosition(posX[i] - (isPaymentEnabled ? 55 : 0), bgDetail->getContentSize().height / 2 - 15);
+        lbDetail->setPosition(posX[i] - (ispmE ? 55 : 0), bgDetail->getContentSize().height / 2 - 15);
 		lbDetail->setTag(i);
 		lbDetail->setColor(Color3B::WHITE);
 		nodeDetail->addChild(lbDetail);
@@ -1544,11 +1595,15 @@ void BaseScene::initPopupHistory()
 
 void BaseScene::initPopupCoffer()
 {
-	popupCoffer = Node::create();
+	popupCoffer = createPopup("title_huvang.png", true, true);
+	if (!popupCoffer) return;
+	popupCoffer->setTag(0);
+
+	/*popupCoffer = Node::create();
 	popupCoffer->setPosition(560, 350);
 	popupCoffer->setVisible(false);
 	popupCoffer->setTag(0);
-	mLayer->addChild(popupCoffer, constant::ZORDER_POPUP);
+	mLayer->addChild(popupCoffer, constant::ZORDER_POPUP);*/
 
 	/*ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("popup_bg.png");
 	bg->setInsetBottom(0);
@@ -1558,8 +1613,8 @@ void BaseScene::initPopupCoffer()
 	bg->setContentSize(Size(1000, 700));
 	popupCoffer->addChild(bg);*/
 
-	Sprite* bg = Sprite::create("popup_bg1.png");
-	popupCoffer->addChild(bg);
+	/*Sprite* bg = Sprite::create("popup_bg1.png");
+	popupCoffer->addChild(bg);*/
 
 	Size size = Size(780, 466);
 	Size scrollSize = size - Size(20, 20);
@@ -1568,16 +1623,16 @@ void BaseScene::initPopupCoffer()
 	rect->setPosition(95, -25);
 	popupCoffer->addChild(rect);
 
-	Sprite* title = Sprite::createWithSpriteFrameName("title_huvang.png");
+	/*Sprite* title = Sprite::createWithSpriteFrameName("title_huvang.png");
 	title->setPosition(0, bg->getContentSize().height / 2 - 5);
-	popupCoffer->addChild(title);
+	popupCoffer->addChild(title);*/
 
-	ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	/*ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnClose->setPosition(Vec2(bg->getContentSize().width / 2 - 10, bg->getContentSize().height / 2 - 5));
 	addTouchEventListener(btnClose, [=]() {
 		hidePopup(popupCoffer);
 	});
-	popupCoffer->addChild(btnClose);
+	popupCoffer->addChild(btnClose);*/
 
 	Node* nodeGuide = Node::create();
 	nodeGuide->setName("nodeguide");
@@ -1662,32 +1717,34 @@ void BaseScene::initPopupCoffer()
 
 void BaseScene::initPopupIAP()
 {
-	popupIAP = Node::create();
-	popupIAP->setPosition(560, 350);
-	popupIAP->setVisible(false);
-	popupIAP->setTag(0);
-	mLayer->addChild(popupIAP, constant::ZORDER_POPUP);
-	//autoScaleNode(popupCharge);
+	popupIAP = createPopup("title_naptien.png", true, false);
 
-	Sprite* bg = Sprite::create("popup_bg1.png");
-	popupIAP->addChild(bg);
+	//popupIAP = Node::create();
+	//popupIAP->setPosition(560, 350);
+	//popupIAP->setVisible(false);
+	//popupIAP->setTag(0);
+	//mLayer->addChild(popupIAP, constant::ZORDER_POPUP);
+	////autoScaleNode(popupCharge);
+
+	//Sprite* bg = Sprite::create("popup_bg1.png");
+	//popupIAP->addChild(bg);
+
+	//Sprite* title = Sprite::createWithSpriteFrameName("title_naptien.png");
+	//title->setPosition(0, bg->getContentSize().height / 2 - 5);
+	//popupIAP->addChild(title);
+
+	//ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	//btnClose->setPosition(Vec2(bg->getContentSize().width / 2 - 10, bg->getContentSize().height / 2 - 5));
+	//addTouchEventListener(btnClose, [=]() {
+	//	hidePopup(popupIAP);
+	//});
+	//popupIAP->addChild(btnClose);
 
 	Size size = Size(810, 466);
 	/*DrawNode* rect = DrawNode::create();
 	rect->drawRect(Vec2(-size.width / 2, -size.height / 2), Vec2(size.width / 2, size.height / 2), Color4F::BLACK);
 	rect->setPosition(80, -25);
 	popupIAP->addChild(rect);*/
-
-	Sprite* title = Sprite::createWithSpriteFrameName("title_naptien.png");
-	title->setPosition(0, bg->getContentSize().height / 2 - 5);
-	popupIAP->addChild(title);
-
-	ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnClose->setPosition(Vec2(bg->getContentSize().width / 2 - 10, bg->getContentSize().height / 2 - 5));
-	addTouchEventListener(btnClose, [=]() {
-		hidePopup(popupIAP);
-	});
-	popupIAP->addChild(btnClose);
 
 	Node* nodeStore = Node::create();
 	nodeStore->setName("nodestore");
@@ -1760,11 +1817,11 @@ void BaseScene::initPopupIAP()
 
 void BaseScene::initCofferView(Vec2 pos, int zorder, float scale)
 {
-	bool isPaymentEnabled = Utils::getSingleton().isPaymentEnabled();
+	bool ispmE = Utils::getSingleton().ispmE();
 	ui::Button* btnCoffer = ui::Button::create("coffer.png", "coffer.png", "", ui::Widget::TextureResType::PLIST);
 	btnCoffer->setPosition(pos);
 	btnCoffer->setScale(scale);
-	btnCoffer->setVisible(isPaymentEnabled);
+	btnCoffer->setVisible(ispmE);
 	addTouchEventListener(btnCoffer, [=]() {
 		showPopupCoffer();
 	});
@@ -1818,8 +1875,9 @@ void BaseScene::onUserDataMeResponse()
 
 void BaseScene::onRankDataResponse(std::vector<std::vector<RankData>> list)
 {
+	bool ispmE = Utils::getSingleton().ispmE();
 	this->listRanks = list;
-	showPopupRank(0);
+	showPopupRank(ispmE ? 0 : 1);
 }
 
 void BaseScene::onRankWinDataResponse(std::vector<RankWinData> list)
@@ -1829,7 +1887,7 @@ void BaseScene::onRankWinDataResponse(std::vector<RankWinData> list)
 
 void BaseScene::onListEventDataResponse(std::vector<EventData> list)
 {
-	if (eventView == nullptr || !Utils::getSingleton().isPaymentEnabled()) return;
+	if (eventView == nullptr || !Utils::getSingleton().ispmE()) return;
 	eventView->setTag(0);
 	runEventView(list);
 }
@@ -2030,6 +2088,11 @@ void BaseScene::onCofferHistoryResponse(std::vector<CofferWinnerData> list)
 	while ((n = scroll->getChildByTag(i++)) != nullptr) {
 		n->setVisible(false);
 	}
+}
+
+void BaseScene::onDownloadedPlistTexture(int numb)
+{
+	isPopupReady = numb >= 2;
 }
 
 void BaseScene::addBtnChoosePage(int x, int y, cocos2d::Node * node, std::function<void(int)> funcPage)

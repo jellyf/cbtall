@@ -15,6 +15,7 @@ public:
 	virtual void update(float delta);
 	virtual void registerEventListenner();
 	virtual void unregisterEventListenner();
+	virtual void onDownloadedPlistTexture(int numb);
 
 	CC_SYNTHESIZE(bool, mIsTouch, IsTouch);
 	virtual bool onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* _event);
@@ -76,6 +77,7 @@ protected:
 	void setSplashZOrder(int zorder);
 	void autoScaleNode(cocos2d::Node* node);
 
+	cocos2d::Node* createPopup(std::string stitle, bool isBig, bool isHidden);
 	cocos2d::Node* createPopupNotice();
 	cocos2d::Vec2 getScaleSmoothly(float scale);
 
@@ -83,6 +85,7 @@ protected:
 	bool isOverlapLogin = false;
 	bool hasHeader = false;
 	bool isWaiting = false;
+	bool isPopupReady = false;
 	int pingId = 0;
 
 	cocos2d::Vec2 scaleScene;

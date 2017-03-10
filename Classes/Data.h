@@ -248,8 +248,8 @@ struct PlayingTableData
 
 struct GameConfig
 {
-	bool paymentEnabled;
-	bool paymentEnabledIOS;
+	bool pmE;
+	bool pmEIOS;
 	bool canUpdate;
 	int port;
 	int websocket;

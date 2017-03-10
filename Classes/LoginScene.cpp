@@ -23,6 +23,8 @@ void LoginScene::onInit()
 	Utils::getSingleton().IgnoreInvitation = UserDefault::getInstance()->getBoolForKey(constant::KEY_INVITATION.c_str(), false);
 	UserDefault::getInstance()->setBoolForKey(constant::KEY_SOUND.c_str(), Utils::getSingleton().SoundEnabled);
 	UserDefault::getInstance()->setBoolForKey(constant::KEY_INVITATION.c_str(), Utils::getSingleton().IgnoreInvitation);
+	isReadyToMain = Utils::getSingleton().downloadedPlistTexture != 0;
+	bool ispmE = Utils::getSingleton().ispmE();
 
 	Sprite* bg = Sprite::create("login_bg.jpg");
 	bg->setPosition(560, 350);
@@ -86,19 +88,23 @@ void LoginScene::onInit()
 	lb1->setPosition(-105, -50);
 	loginNode->addChild(lb1);
 
-	Label* lb2 = Label::createWithTTF("", "fonts/arialbd.ttf", 20);
-	lb2->setString(Utils::getSingleton().getStringForKey("forgot_password"));
-	lb2->setPosition(145, -50);
-	loginNode->addChild(lb2);
+	lbBtnForgotPass = Label::createWithTTF("", "fonts/arialbd.ttf", 20);
+	lbBtnForgotPass->setString(Utils::getSingleton().getStringForKey("forgot_password"));
+	lbBtnForgotPass->setPosition(145, -50);
+	lbBtnForgotPass->setVisible(ispmE);
+	loginNode->addChild(lbBtnForgotPass);
 
-	ui::Button* btnForgotPass = ui::Button::create("white.png", "white.png", "", ui::Widget::TextureResType::PLIST);
-	btnForgotPass->setContentSize(lb2->getContentSize() + Size(40, 20));
-	btnForgotPass->setPosition(lb2->getPosition());
+	btnForgotPass = ui::Button::create("white.png", "white.png", "", ui::Widget::TextureResType::PLIST);
+	btnForgotPass->setContentSize(lbBtnForgotPass->getContentSize() + Size(40, 20));
+	btnForgotPass->setPosition(lbBtnForgotPass->getPosition());
 	btnForgotPass->setScale9Enabled(true);
 	btnForgotPass->setOpacity(0);
+	btnForgotPass->setVisible(ispmE);
 	addTouchEventListener(btnForgotPass, [=]() {
-		showPopupNotice(Utils::getSingleton().getStringForKey("open_sms_retake_password"), [=]() {
-			string str = Utils::getSingleton().gameConfig.smsMK;
+		string str = Utils::getSingleton().gameConfig.smsMK;
+		string strMsg = Utils::getSingleton().getStringForKey("open_sms_retake_password");
+		strMsg = Utils::getSingleton().replaceString(strMsg, "sms", str);
+		showPopupNotice(strMsg, [=]() {
 			int i = str.find_last_of(' ');
 			string number = str.substr(i + 1, str.length() - i - 1);
 			string content = str.substr(0, i);
@@ -155,10 +161,10 @@ void LoginScene::onInit()
 	mLayer->addChild(spFooter);
 	//autoScaleNode(spFooter);
 
-	bool paymentEnabled = Utils::getSingleton().isPaymentEnabled();
-	btnPhone = ui::Button::create("btn_phone.png", "btn_phone_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	bool isImgReady = Utils::getSingleton().downloadedPlistTexture;
+	btnPhone = ui::Button::create(isImgReady ? "btn_phone.png" : "empty.png", isImgReady ? "btn_phone_clicked.png" : "empty.png", "", ui::Widget::TextureResType::PLIST);
 	btnPhone->setPosition(Vec2(60 * scaleScene.y, 55 * scaleScene.x));
-	btnPhone->setVisible(paymentEnabled);
+	btnPhone->setVisible(ispmE);
 	addTouchEventListener(btnPhone, [=]() {
 		string phone = Utils::getSingleton().gameConfig.phone;
 		if (phone.length() == 0) return;
@@ -170,7 +176,7 @@ void LoginScene::onInit()
 	labelPhone = Label::create("", "fonts/arialbd.ttf",25);
 	labelPhone->setPosition(110 * scaleScene.y, 10 * scaleScene.x);
 	labelPhone->setAnchorPoint(Vec2(0, 0));
-	labelPhone->setVisible(paymentEnabled);
+	labelPhone->setVisible(false);
 	mLayer->addChild(labelPhone);
 	autoScaleNode(labelPhone);
 
@@ -297,7 +303,7 @@ void LoginScene::onConfigZoneReceived()
 		isReconnecting = true;
 		return;
 	} else {
-		Utils::getSingleton().goToMainScene();
+		updateStateToGoToMain(1);
 	}
 }
 
@@ -354,8 +360,8 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	if (tag == 1) {
 		GameConfig config;
 		try {
-			config.paymentEnabled = d["payment"].GetBool();
-			config.paymentEnabledIOS = d["paymentIOS"].GetBool();
+			config.pmE = d["payment"].GetBool();
+			config.pmEIOS = d["paymentIOS"].GetBool();
 			config.zone = d["name"].GetString();
 			config.host = d["host"].GetString();
 			config.port = d["port"].GetInt();
@@ -379,7 +385,7 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 		}
 		
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-		if (isRealConfig && !config.paymentEnabledIOS) {
+		if (isRealConfig && !config.pmEIOS) {
 			isRealConfig = false;
 			//requestGameConfig(false);
 			//return;
@@ -390,19 +396,19 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 		int i = verstr.find_last_of('.') + 1;
 		verstr = verstr.substr(i, verstr.length() - i);
 		int nver = atoi(verstr.c_str());
-		config.paymentEnabled &= config.version > nver;
-		config.paymentEnabledIOS &= config.versionIOS > nver;
+		config.pmE &= config.version > nver;
+		config.pmEIOS &= config.versionIOS > nver;
 
 		Utils::getSingleton().gameConfig = config;
         Utils::getSingleton().queryIAPProduct();
 
-		if (Utils::getSingleton().isPaymentEnabled()) {
-			btnPhone->setVisible(true);
-			labelPhone->setVisible(true);
-			labelPhone->setString(config.phone);
+		if (Utils::getSingleton().ispmE()) {
+			btnForgotPass->setVisible(true);
+			lbBtnForgotPass->setVisible(true);
+			Utils::getSingleton().downloadPlistTextures();
 		}
 		//string location = Utils::getSingleton().getUserCountry();
-		//Utils::getSingleton().gameConfig.paymentEnabled = config.paymentEnabled && location.compare("vn") == 0;
+		//Utils::getSingleton().gameConfig.pmE = config.pmE && location.compare("vn") == 0;
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 		if (config.canUpdate && nver < config.versionIOS - 1) {
@@ -436,7 +442,7 @@ void LoginScene::onHttpResponseFailed()
 		currentConfigLink = 1;
 		hideWaiting();
 		showWaiting();
-		SFSRequest::getSingleton().RequestHttpGet("http://giaitriso.com.vn/configchanktc.txt", 1);
+		SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configchanktc.txt", 1);
 	} else {
 		currentConfigLink = 0;
 		hideWaiting();
@@ -451,6 +457,18 @@ void LoginScene::onHttpResponseFailed()
 void LoginScene::onTableDataResponse(LobbyListTable data)
 {
 	Utils::getSingleton().goToLobbyScene();
+}
+
+void LoginScene::onDownloadedPlistTexture(int numb)
+{
+	BaseScene::onDownloadedPlistTexture(numb);
+	btnPhone->loadTextures("btn_phone.png", "btn_phone_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnPhone->setVisible(true);
+	//labelPhone->setVisible(true);
+	labelPhone->setString(Utils::getSingleton().gameConfig.phone);
+	if (numb == 1) {
+		updateStateToGoToMain(numb);
+	}
 }
 
 void LoginScene::onKeyBack()
@@ -594,31 +612,27 @@ void LoginScene::requestGameConfig(bool realConfig)
 {
 	showWaiting();
 	if (realConfig) {
-		//SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", 1);
-		SFSRequest::getSingleton().RequestHttpGet("http://125.212.192.96:8899/configchanktc.txt", 1);
-		//SFSRequest::getSingleton().RequestHttpGet("http://125.212.192.96:8899/configchan.txt", 1);
+		SFSRequest::getSingleton().RequestHttpGet("http://115.84.179.242/configchanktc.txt", 1);
 	} else {
-		SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", 1);
+		SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configchanktc.txt", 1);
 	}
 }
 
 void LoginScene::loadTextureCache()
 {
-	//TextureCache::sharedTextureCache()->addImage("loadingicon.png");
-	////TextureCache::sharedTextureCache()->addImage("popup/bg.png");
-	////TextureCache::sharedTextureCache()->addImage("popup/bg1.png");
-	//TextureCache::sharedTextureCache()->addImage("popup/title_thongbao.png");
-	//TextureCache::sharedTextureCache()->addImage("popup/btn_submit.png");
-	//TextureCache::sharedTextureCache()->addImage("popup/btn_submit_clicked.png");
-	//TextureCache::sharedTextureCache()->addImage("main/nhatranh.png");
-	//TextureCache::sharedTextureCache()->addImage("main/dinhlang.png");
-	//TextureCache::sharedTextureCache()->addImage("main/phuchua.png");
-	//TextureCache::sharedTextureCache()->addImage("main/loidai.png");
-
 	TextureCache::sharedTextureCache()->addImageAsync("game.png", [=](Texture2D* texture) {
 		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("game.plist");
 	});
 	TextureCache::sharedTextureCache()->addImageAsync("buttons.png", [=](Texture2D* texture) {
 		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("buttons.plist");
 	});
+}
+
+void LoginScene::updateStateToGoToMain(int state)
+{
+	if (isReadyToMain || !Utils::getSingleton().ispmE()) {
+		Utils::getSingleton().goToMainScene();
+	} else {
+		isReadyToMain = true;
+	}
 }

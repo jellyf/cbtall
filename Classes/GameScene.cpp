@@ -16,7 +16,7 @@ void GameScene::onInit()
 	BaseScene::onInit();
 
 	UserDefault::getInstance()->setBoolForKey(constant::KEY_AUTO_READY.c_str(), false);
-	bool paymentEnabled = Utils::getSingleton().isPaymentEnabled();
+	bool pmE = Utils::getSingleton().ispmE();
 
 	state = NONE;
 	myServerSlot = -1;
@@ -277,7 +277,7 @@ void GameScene::onInit()
 	mLayer->addChild(lbMoneyGa, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(lbMoneyGa);
 
-	spNetwork->setPosition(topRight + getScaleSceneDistance(Vec2(paymentEnabled ? -240 : -150, -50)));
+	spNetwork->setPosition(topRight + getScaleSceneDistance(Vec2(pmE ? -240 : -150, -50)));
 
 	btnReady = ui::Button::create("btn_ready.png", "btn_ready_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnReady->setPosition(Vec2(560, 350));
@@ -3497,6 +3497,11 @@ void GameScene::initInviteTable()
 	bg->setContentSize(Size(750, 550));
 	tableInvite->addChild(bg);
 
+	Sprite* bgTitle = Sprite::createWithSpriteFrameName("title_bg.png");
+	bgTitle->setPosition(0, bg->getContentSize().height / 2 - 5);
+	bgTitle->setName("spbgtitle");
+	tableInvite->addChild(bgTitle);
+
 	Sprite* title = Sprite::createWithSpriteFrameName("title_moichoi.png");
 	title->setPosition(0, bg->getContentSize().height / 2 - 5);
 	title->setScale(.8f);
@@ -3541,6 +3546,11 @@ void GameScene::initSettingsPopup()
 	Sprite* bg = Sprite::createWithSpriteFrameName("popup_bg.png");
 	bg->setScale(scale.x, scale.y);
 	popupSettings->addChild(bg);
+
+	Sprite* bgTitle = Sprite::createWithSpriteFrameName("title_bg.png");
+	bgTitle->setPosition(0, (bg->getContentSize().height / 2 - 5) * scale.y);
+	bgTitle->setName("spbgtitle");
+	popupSettings->addChild(bgTitle);
 
 	Sprite* title = Sprite::createWithSpriteFrameName("title_caidat.png");
 	title->setPosition(0, 205);
@@ -3684,13 +3694,13 @@ void GameScene::initCofferEffects()
 	cofferEffect->setVisible(false);
 	mLayer->addChild(cofferEffect, constant::ZORDER_COFFER + 1);
 
-	Sprite* spLight = Sprite::createWithSpriteFrameName("as.png");
+	Sprite* spLight = Sprite::create();
 	spLight->setName("splight");
 	cofferEffect->addChild(spLight);
 	spLight->runAction(RepeatForever::create(RotateBy::create(1, 90)));
 	spLight->pauseSchedulerAndActions();
 
-	Sprite* spCoffer = Sprite::createWithSpriteFrameName("hu.png");
+	Sprite* spCoffer = Sprite::create();
 	cofferEffect->addChild(spCoffer);
 
 	Label* lbMoney = Label::create("123.456", "fonts/arialbd.ttf", 50);
@@ -3705,6 +3715,14 @@ void GameScene::initCofferEffects()
 	lbName->setPosition(0, -210);
 	lbName->setName("lbname");
 	cofferEffect->addChild(lbName);
+
+	string host = Utils::getSingleton().textureHost;
+	Utils::getSingleton().LoadTextureFromURL(host + "hu.png", [=](Texture2D* texture1) {
+		spCoffer->initWithTexture(texture1);
+		Utils::getSingleton().LoadTextureFromURL(host + "as.png", [=](Texture2D* texture2) {
+			spLight->initWithTexture(texture2);
+		});
+	});
 }
 
 Sprite* GameScene::getCardSprite(int id)

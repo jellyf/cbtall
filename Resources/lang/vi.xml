@@ -149,7 +149,7 @@
 	<key>connection_failed</key><string>Kết nối đến máy chủ thất bại, vui lòng kiểm tra kết nối mạng và thử lại</string>
 	<key>feature_coming_soon</key><string>Tính năng đang được hoàn thiện và sẽ mở trong thời gian sắp tới</string>
 	<key>notice_update_new_version</key><string>Xin vui lòng cập nhật phiên bản mới nhất</string>
-	<key>open_sms_retake_password</key><string>Vui lòng soạn tin BT MK [uid] gửi 6191 để lấy lại mật khẩu, trong đó [uid] là số ID tài khoản của bạn</string>
+	<key>open_sms_retake_password</key><string>Vui lòng soạn tin [sms] để lấy lại mật khẩu, trong đó [uid] là số ID tài khoản của bạn</string>
 
 </dict>
 </plist>

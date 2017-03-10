@@ -10,6 +10,7 @@ public:
 	virtual void registerEventListenner();
 	virtual void unregisterEventListenner();
 	virtual void editBoxReturn(cocos2d::ui::EditBox* editBox);
+	virtual void onDownloadedPlistTexture(int numb);
 
 	void onConfigZoneReceived();
 	void onConnectionLost(std::string reason);
@@ -60,6 +61,8 @@ private:
 	int tmpZoneId = -1;
 	bool isBackToLogin = false;
 	bool isGoToLobby = false;
+	bool isWaitPopupNews = false;
+	bool isWaitPopupMail = false;
 	std::string tmpDisplayName;
 	std::vector<ShopItemData> listItems;
 	std::map<std::string, cocos2d::Texture2D*> textures;

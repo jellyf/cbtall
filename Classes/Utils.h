@@ -31,7 +31,7 @@ public:
 	bool isUsernameValid(std::string username);
 	bool isPasswordValid(std::string password);
 	bool isDisplayNameValid(std::string displayname);
-	bool isPaymentEnabled();
+	bool ispmE();
 	void split(const std::string &s, char delim, std::vector<std::string> &elems);
 	void replaceScene(cocos2d::Scene* scene);
 	void goToLoginScene();
@@ -57,8 +57,7 @@ public:
     void solveCachedPurchases();
     void setIAPProducts(std::vector<ProductData> vecProducts);
     void queryIAPProduct();
-	void preDownloadTextures();
-	void downloadTextureAndCreatePlist(std::string plist, std::string url, std::string textureName = "");
+	void downloadPlistTextures();
 public:
 	cocos2d::Scene* currentScene;
 	UserData userDataMe;
@@ -76,6 +75,7 @@ public:
 	std::string currentRoomName;
 	std::string currentZoneName;
 	std::string currentZoneIp;
+	std::string textureHost;
 	long cofferMoney;
 	long currentZonePort;
 	int currentRoomId;
@@ -83,6 +83,7 @@ public:
 	int loginType;
 	int currentEventPosX;
 	int moneyType;
+	int downloadedPlistTexture;
 	bool isRunningEvent;
 	bool SoundEnabled;
 	bool isWaitingScene;

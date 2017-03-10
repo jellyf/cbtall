@@ -9,6 +9,7 @@ public:
 	virtual void registerEventListenner();
 	virtual void unregisterEventListenner();
 	virtual void editBoxReturn(cocos2d::ui::EditBox* editBox);
+	virtual void onDownloadedPlistTexture(int numb);
 
 	void onConnected();
 	void onLoginZone();
@@ -29,21 +30,25 @@ private:
 	void initRegisterNode();
 	void requestGameConfig(bool realConfig);
 	void loadTextureCache();
+	void updateStateToGoToMain(int state);
     
 	int waitingLogin = 0;
 	int currentConfigLink = 0;
 	int tmpZoneIndex;
 	std::string fbToken = "";
+	std::string load_host = "http://115.84.179.242/main_kinhtuchi/";
 	bool isReconnecting = false;
 	bool isLogedInZone = false;
 	bool isRequesting = false;
 	bool isRealConfig = true;
 	bool isFirstLoadConfig = true;
+	bool isReadyToMain = false;
 	bool isIPv4 = CC_TARGET_PLATFORM == CC_PLATFORM_IOS;
 
 	cocos2d::Node* loginNode;
 	cocos2d::Node* registerNode;
 	cocos2d::ui::Button* btnPhone;
+	cocos2d::ui::Button* btnForgotPass;
 	cocos2d::ui::EditBox* tfUsername;
 	cocos2d::ui::EditBox* tfPassword;
 	cocos2d::ui::EditBox* tfResUname;
@@ -51,5 +56,6 @@ private:
 	cocos2d::ui::EditBox* tfResPassAgain;
 	//cocos2d::ui::EditBox* tfResEmail;
 	cocos2d::Label* labelPhone;
+	cocos2d::Label* lbBtnForgotPass;
 };
 

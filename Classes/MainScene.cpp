@@ -11,7 +11,7 @@ using namespace std;
 void MainScene::onInit()
 {
 	BaseScene::onInit();
-	bool paymentEnabled = Utils::getSingleton().isPaymentEnabled();
+	bool pmE = Utils::getSingleton().ispmE();
 	currentMoneyType = Utils::getSingleton().moneyType;
 
 	std::vector<Vec2> vecPos;
@@ -36,8 +36,8 @@ void MainScene::onInit()
 	addChild(bg);
 
 	ui::Button* btnAgency = ui::Button::create("icon_agency.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnAgency->setPosition(vecPos[m++]);
-	btnAgency->setVisible(paymentEnabled);
+	btnAgency->setPosition(vecPos[0]);
+	btnAgency->setVisible(pmE);
 	addTouchEventListener(btnAgency, [=]() {
 		showPopupNotice(Utils::getSingleton().getStringForKey("feature_coming_soon"), [=]() {});
 	});
@@ -45,8 +45,7 @@ void MainScene::onInit()
 	autoScaleNode(btnAgency);
 
 	ui::Button* btnGuide = ui::Button::create("icon_guide.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnGuide->setPosition(vecPos[m++]);
-	btnGuide->setVisible(paymentEnabled);
+	btnGuide->setPosition(vecPos[1]);
 	addTouchEventListener(btnGuide, [=]() {
 		if (popupGuide == nullptr) {
 			initPopupGuide();
@@ -57,17 +56,23 @@ void MainScene::onInit()
 	autoScaleNode(btnGuide);
 
 	ui::Button* btnCharge = ui::Button::create("icon_charge.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnCharge->setPosition(vecPos[m++]);
-	btnCharge->setVisible(paymentEnabled);
+	btnCharge->setPosition(vecPos[2]);
 	addTouchEventListener(btnCharge, [=]() {
-		if (popupCharge == nullptr) {
-			initPopupCharge();
+		if (pmE) {
+			if (popupCharge == nullptr) {
+				initPopupCharge();
+			}
+			showPopup(popupCharge);
+		} else {
+			if (popupIAP == nullptr) {
+				initPopupIAP();
+			}
+			showPopup(popupIAP);
 		}
-		showPopup(popupCharge);
 	});
 	mLayer->addChild(btnCharge);
 	autoScaleNode(btnCharge);
-    /*if(paymentEnabled){
+    /*if(pmE){
         btnCharge->setPosition(vecPos[2]);
     }else{
 		btnCharge->setPosition(vecPos[7]);
@@ -75,8 +80,8 @@ void MainScene::onInit()
     }*/
 
 	ui::Button* btnShop = ui::Button::create("icon_shop.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnShop->setPosition(vecPos[m++]);
-	btnShop->setVisible(paymentEnabled);
+	btnShop->setPosition(vecPos[3]);
+	btnShop->setVisible(pmE);
 	addTouchEventListener(btnShop, [=]() {
 		if (popupShop == nullptr) {
 			initPopupShop();
@@ -90,8 +95,7 @@ void MainScene::onInit()
 	autoScaleNode(btnShop);
 
 	ui::Button* btnNews = ui::Button::create("icon_news.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnNews->setPosition(vecPos[m++]);
-	btnNews->setVisible(paymentEnabled);
+	btnNews->setPosition(pmE ? vecPos[4] : vecPos[5]);
 	addTouchEventListener(btnNews, [=]() {
 		showPopupNews();
 		/*cocos2d::ValueMap plist = cocos2d::FileUtils::getInstance()->getValueMapFromFile("configs.xml");
@@ -102,8 +106,7 @@ void MainScene::onInit()
 	autoScaleNode(btnNews);
 
 	ui::Button* btnMail = ui::Button::create("icon_mail.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnMail->setPosition(vecPos[m++]);
-	btnMail->setVisible(paymentEnabled);
+	btnMail->setPosition(pmE ? vecPos[5] : vecPos[6]);
 	addTouchEventListener(btnMail, [=]() {
 		showPopupMail();
 	});
@@ -121,8 +124,8 @@ void MainScene::onInit()
 	circleNewMail->addChild(lbNewMail);
 
 	ui::Button* btnGiftcode = ui::Button::create("icon_giftcode.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnGiftcode->setPosition(vecPos[m++]);
-	btnGiftcode->setVisible(paymentEnabled);
+	btnGiftcode->setPosition(vecPos[6]);
+	btnGiftcode->setVisible(pmE);
 	addTouchEventListener(btnGiftcode, [=]() {
 		if (popupGiftcode == nullptr) {
 			initPopupGiftcode();
@@ -134,8 +137,8 @@ void MainScene::onInit()
 	autoScaleNode(btnGiftcode);
 
 	ui::Button* btnFacebook = ui::Button::create("facebook.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnFacebook->setPosition(vecPos[m++]);
-	btnFacebook->setVisible(paymentEnabled);
+	btnFacebook->setPosition(vecPos[7]);
+	btnFacebook->setVisible(pmE);
 	addTouchEventListener(btnFacebook, [=]() {
 		Application::sharedApplication()->openURL(Utils::getSingleton().gameConfig.linkFb);
 	});
@@ -143,7 +146,7 @@ void MainScene::onInit()
 	autoScaleNode(btnFacebook);
 
 	ui::Button* btnNhaTranh = ui::Button::create("nha_tranh.png", "nha_tranh.png", "", ui::Widget::TextureResType::PLIST);
-	btnNhaTranh->setPosition(vecPos[m++]);
+	btnNhaTranh->setPosition(vecPos[8]);
 	addTouchEventListener(btnNhaTranh, [=]() {
 		if (isWaiting) return;
 		showWaiting();
@@ -155,7 +158,7 @@ void MainScene::onInit()
 	autoScaleNode(btnNhaTranh);
 
 	ui::Button* btnDinhLang = ui::Button::create("dinhlang.png", "dinhlang.png", "", ui::Widget::TextureResType::PLIST);
-	btnDinhLang->setPosition(vecPos[m++]);
+	btnDinhLang->setPosition(vecPos[9]);
 	addTouchEventListener(btnDinhLang, [=]() {
 		if (isWaiting) return;
 		showWaiting();
@@ -167,7 +170,7 @@ void MainScene::onInit()
 	autoScaleNode(btnDinhLang);
 
 	ui::Button* btnPhuChua = ui::Button::create("phuchua.png", "phuchua.png", "", ui::Widget::TextureResType::PLIST);
-	btnPhuChua->setPosition(vecPos[m++]);
+	btnPhuChua->setPosition(vecPos[10]);
 	addTouchEventListener(btnPhuChua, [=]() {
 		if (isWaiting) return;
 		showWaiting();
@@ -179,7 +182,7 @@ void MainScene::onInit()
 	autoScaleNode(btnPhuChua);
 
 	ui::Button* btnLoiDai = ui::Button::create("loidai.png", "loidai.png", "", ui::Widget::TextureResType::PLIST);
-	btnLoiDai->setPosition(vecPos[m++]);
+	btnLoiDai->setPosition(vecPos[11]);
 	addTouchEventListener(btnLoiDai, [=]() {
 		showPopupNotice(Utils::getSingleton().getStringForKey("feature_coming_soon"), [=]() {});
 	});
@@ -212,8 +215,6 @@ void MainScene::onInit()
     Utils::getSingleton().solveCachedPurchases();
 
 	//for (int i = 1; i <= 4; i++) {
-	//	//http://125.212.192.96:8899/ktc/main_kinhtuchi/
-	//	string host = "http://125.212.192.96:8899/cbt/NhaMang/";
 	//	string name1 = "provider" + to_string(i);
 	//	string name2 = name1 + "_dark";
 	//	Utils::getSingleton().LoadTextureFromURL(host + name1 + ".png", [=](Texture2D* texture) {
@@ -285,7 +286,7 @@ void MainScene::unregisterEventListenner()
 	EventHandler::getSingleton().onMailContentSFSResponse = NULL;
 	EventHandler::getSingleton().onNewsDataSFSResponse = NULL;
 	EventHandler::getSingleton().onExchangeItemSFSResponse = NULL;
-    EventHandler::getSingleton().onPurchaseSuccess = NULL;
+	EventHandler::getSingleton().onPurchaseSuccess = NULL;
 }
 
 void MainScene::editBoxReturn(cocos2d::ui::EditBox * editBox)
@@ -671,7 +672,7 @@ void MainScene::onExchangeItemResponse(std::string msg)
 
 void MainScene::onNewMailResponse(unsigned char count)
 {
-	if (count > 0 && Utils::getSingleton().isPaymentEnabled()) {
+	if (count > 0) {
 		lbNewMail->setString(to_string((int)count));
 		lbNewMail->getParent()->setVisible(true);
 	} else {
@@ -690,6 +691,12 @@ void MainScene::onListMailDataResponse(std::vector<MailData> list)
 		data.Sender = "Stormus";
 		list.push_back(data);
 	}*/
+
+	if (isWaitPopupMail) {
+		isWaitPopupMail = false;
+		hideWaiting();
+		showPopup(popupMail);
+	}
 
 	vector<int> posX = { -390, -290, 0, 340 };
 	vector<int> widths = { 50, 100, 420, 120 };
@@ -779,6 +786,11 @@ void MainScene::onNewsDataResponse(std::vector<NewsData> list)
 		data.Date = "02/12/2016";
 		list.push_back(data);
 	}*/
+	if (isWaitPopupNews) {
+		isWaitPopupNews = false;
+		showPopup(popupNews);
+		hideWaiting();
+	}
 
 	ui::ScrollView* scrollTitle = (ui::ScrollView*)popupNews->getChildByName("scrolltitle");
 	ui::ScrollView* scrollContent = (ui::ScrollView*)popupNews->getChildByName("scrollcontent");
@@ -856,6 +868,12 @@ void MainScene::onPurchaseSuccess(std::string token)
     }
 }
 
+void MainScene::onDownloadedPlistTexture(int numb)
+{
+	BaseScene::onDownloadedPlistTexture(numb);
+	hideWaiting();
+}
+
 void MainScene::onBackScene()
 {
 	showWaiting();
@@ -872,15 +890,19 @@ void MainScene::onChangeMoneyType(int type)
 
 void MainScene::initPopupCharge()
 {
-	bool paymentEnabled = Utils::getSingleton().isPaymentEnabled();
+	bool pmE = Utils::getSingleton().ispmE();
 	vector<int> moneys = { 10, 20, 50, 100, 200, 500 };
 
-	popupCharge = Node::create();
-	popupCharge->setPosition(560, 350);
-	popupCharge->setVisible(false);
+	popupCharge = createPopup("title_naptien.png", true, true);
+	if (!popupCharge) return;
 	popupCharge->setTag(0);
-	mLayer->addChild(popupCharge, constant::ZORDER_POPUP);
-	//autoScaleNode(popupCharge);
+
+	//popupCharge = Node::create();
+	//popupCharge->setPosition(560, 350);
+	//popupCharge->setVisible(false);
+	//popupCharge->setTag(0);
+	//mLayer->addChild(popupCharge, constant::ZORDER_POPUP);
+	////autoScaleNode(popupCharge);
 
 	/*ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("popup_bg.png");
 	bg->setInsetBottom(0);
@@ -890,8 +912,8 @@ void MainScene::initPopupCharge()
 	bg->setContentSize(Size(1000, 700));
 	popupCharge->addChild(bg);*/
 
-	Sprite* bg = Sprite::create("popup_bg1.png");
-	popupCharge->addChild(bg);
+	/*Sprite* bg = Sprite::create("popup_bg1.png");
+	popupCharge->addChild(bg);*/
 
 	Size size = Size(810, 466);
 	DrawNode* rect = DrawNode::create();
@@ -899,16 +921,16 @@ void MainScene::initPopupCharge()
 	rect->setPosition(80, -25);
 	popupCharge->addChild(rect);
 
-	Sprite* title = Sprite::createWithSpriteFrameName("title_naptien.png");
+	/*Sprite* title = Sprite::createWithSpriteFrameName("title_naptien.png");
 	title->setPosition(0, bg->getContentSize().height / 2 - 5);
-	popupCharge->addChild(title);
+	popupCharge->addChild(title);*/
 
-	ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	/*ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnClose->setPosition(Vec2(bg->getContentSize().width / 2 - 10, bg->getContentSize().height / 2 - 5));
 	addTouchEventListener(btnClose, [=]() {
 		hidePopup(popupCharge);
 	});
-	popupCharge->addChild(btnClose);
+	popupCharge->addChild(btnClose);*/
 
 	Node* nodeCard = Node::create();
 	nodeCard->setName("nodecard");
@@ -1337,7 +1359,7 @@ void MainScene::initPopupCharge()
         sp->setName("itemimage");
         btn->addChild(sp);
         
-        Sprite* spCoin = Sprite::createWithSpriteFrameName(paymentEnabled ? "icon_gold.png" : "icon_silver.png");
+        Sprite* spCoin = Sprite::createWithSpriteFrameName(pmE ? "icon_gold.png" : "icon_silver.png");
         spCoin->setScale(.5f);
         btn->addChild(spCoin);
         
@@ -1358,7 +1380,7 @@ void MainScene::initPopupCharge()
                             + spCoin->getContentSize().width * spCoin->getScale() / 2 + 5, lb1->getPositionY() - 3);
     }
 
-    if(!paymentEnabled){
+    if(!pmE){
 		rect->setVisible(false);
         nodeCard->setVisible(false);
         nodeStore->setVisible(true);
@@ -1378,23 +1400,9 @@ void MainScene::initPopupCharge()
 
 void MainScene::initPopupGuide()
 {
-	popupGuide = Node::create();
-	popupGuide->setPosition(560, 350);
-	popupGuide->setVisible(false);
+	popupGuide = createPopup("title_huongdan.png", true, true);
+	if (!popupGuide) return;
 	popupGuide->setTag(0);
-	mLayer->addChild(popupGuide, constant::ZORDER_POPUP);
-	//autoScaleNode(popupGuide);
-
-	/*ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("popup_bg.png");
-	bg->setInsetBottom(0);
-	bg->setInsetTop(0);
-	bg->setInsetLeft(100);
-	bg->setInsetRight(100);
-	bg->setContentSize(Size(1000, 700));
-	popupGuide->addChild(bg);*/
-
-	Sprite* bg = Sprite::create("popup_bg1.png");
-	popupGuide->addChild(bg);
 
 	Size size = Size(780, 466);
 	Size scrollSize = size - Size(20, 20);
@@ -1402,17 +1410,6 @@ void MainScene::initPopupGuide()
 	rect->drawRect(Vec2(-size.width / 2, -size.height / 2), Vec2(size.width / 2, size.height / 2), Color4F::BLACK);
 	rect->setPosition(95, -25);
 	popupGuide->addChild(rect);
-
-	Sprite* title = Sprite::createWithSpriteFrameName("title_huongdan.png");
-	title->setPosition(0, 280);
-	popupGuide->addChild(title);
-
-	ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnClose->setPosition(Vec2(510, 280));
-	addTouchEventListener(btnClose, [=]() {
-		hidePopup(popupGuide);
-	});
-	popupGuide->addChild(btnClose);
 
 	/*int w = 800;
 	ui::Scale9Sprite* bgScroll = ui::Scale9Sprite::createWithSpriteFrameName("box1.png");
@@ -1485,11 +1482,14 @@ void MainScene::initPopupGuide()
 
 void MainScene::initPopupMail()
 {
-	popupMail = Node::create();
-	popupMail->setPosition(560, 350);
-	popupMail->setVisible(false);
-	mLayer->addChild(popupMail, constant::ZORDER_POPUP);
-	//autoScaleNode(popupMail);
+	popupMail = createPopup("title_hopthu.png", true, true);
+	if (!popupMail) return;
+
+	//popupMail = Node::create();
+	//popupMail->setPosition(560, 350);
+	//popupMail->setVisible(false);
+	//mLayer->addChild(popupMail, constant::ZORDER_POPUP);
+	////autoScaleNode(popupMail);
 
 	/*ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("popup_bg.png");
 	bg->setInsetBottom(0);
@@ -1499,8 +1499,8 @@ void MainScene::initPopupMail()
 	bg->setContentSize(Size(1000, 700));
 	popupMail->addChild(bg);*/
 
-	Sprite* bg = Sprite::create("popup_bg1.png");
-	popupMail->addChild(bg);
+	/*Sprite* bg = Sprite::create("popup_bg1.png");
+	popupMail->addChild(bg);*/
 
 	ui::Scale9Sprite* bgContent = ui::Scale9Sprite::createWithSpriteFrameName("empty.png");
 	bgContent->setContentSize(Size(860, 460));
@@ -1513,17 +1513,17 @@ void MainScene::initPopupMail()
 	rect->setPosition(bgContent->getPosition());
 	popupMail->addChild(rect);
 
-	Sprite* title = Sprite::createWithSpriteFrameName("title_hopthu.png");
+	/*Sprite* title = Sprite::createWithSpriteFrameName("title_hopthu.png");
 	title->setPosition(0, bg->getContentSize().height / 2 - 5);
 	title->setName("sptitle");
-	popupMail->addChild(title);
+	popupMail->addChild(title);*/
 
-	ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	/*ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnClose->setPosition(Vec2(bg->getContentSize().width / 2 - 10, bg->getContentSize().height / 2 - 5));
 	addTouchEventListener(btnClose, [=]() {
 		hidePopup(popupMail);
 	});
-	popupMail->addChild(btnClose);
+	popupMail->addChild(btnClose);*/
 
 	ui::ScrollView* scroll = ui::ScrollView::create();
 	scroll->setDirection(ui::ScrollView::Direction::VERTICAL);
@@ -1591,12 +1591,16 @@ void MainScene::initPopupMail()
 
 void MainScene::initPopupNews()
 {
-	popupNews = Node::create();
-	popupNews->setPosition(560, 350);
-	popupNews->setVisible(false);
+	popupNews = createPopup("title_tintuc.png", true, true);
+	if (!popupNews) return;
 	popupNews->setTag(1);
-	mLayer->addChild(popupNews, constant::ZORDER_POPUP);
-	//autoScaleNode(popupNews);
+
+	//popupNews = Node::create();
+	//popupNews->setPosition(560, 350);
+	//popupNews->setVisible(false);
+	//popupNews->setTag(1);
+	//mLayer->addChild(popupNews, constant::ZORDER_POPUP);
+	////autoScaleNode(popupNews);
 
 	/*ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("popup_bg.png");
 	bg->setInsetBottom(0);
@@ -1606,8 +1610,8 @@ void MainScene::initPopupNews()
 	bg->setContentSize(Size(1000, 700));
 	popupNews->addChild(bg);*/
 
-	Sprite* bg = Sprite::create("popup_bg1.png");
-	popupNews->addChild(bg);
+	/*Sprite* bg = Sprite::create("popup_bg1.png");
+	popupNews->addChild(bg);*/
 
 	Size size = Size(780, 436);
 	Size scrollSize = size - Size(20, 20);
@@ -1622,17 +1626,17 @@ void MainScene::initPopupNews()
 	bgContent->setOpacity(200);
 	popupNews->addChild(bgContent);*/
 
-	Sprite* title = Sprite::createWithSpriteFrameName("title_tintuc.png");
+	/*Sprite* title = Sprite::createWithSpriteFrameName("title_tintuc.png");
 	title->setPosition(0, 280);
 	title->setName("sptitle");
-	popupNews->addChild(title);
+	popupNews->addChild(title);*/
 
-	ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	/*ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnClose->setPosition(Vec2(510, 280));
 	addTouchEventListener(btnClose, [=]() {
 		hidePopup(popupNews);
 	});
-	popupNews->addChild(btnClose);
+	popupNews->addChild(btnClose);*/
 
 	ui::ScrollView* scrollContent = ui::ScrollView::create();
 	scrollContent->setDirection(ui::ScrollView::Direction::VERTICAL);
@@ -1669,12 +1673,16 @@ void MainScene::initPopupNews()
 
 void MainScene::initPopupShop()
 {
-	popupShop = Node::create();
-	popupShop->setPosition(560, 350);
-	popupShop->setVisible(false);
+	popupShop = createPopup("title_cuahang.png", true, true);
+	if (!popupShop) return;
 	popupShop->setTag(0);
-	mLayer->addChild(popupShop, constant::ZORDER_POPUP);
-	//autoScaleNode(popupShop);
+
+	//popupShop = Node::create();
+	//popupShop->setPosition(560, 350);
+	//popupShop->setVisible(false);
+	//popupShop->setTag(0);
+	//mLayer->addChild(popupShop, constant::ZORDER_POPUP);
+	////autoScaleNode(popupShop);
 
 	/*ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("popup_bg.png");
 	bg->setInsetBottom(0);
@@ -1684,8 +1692,8 @@ void MainScene::initPopupShop()
 	bg->setContentSize(Size(1000, 700));
 	popupShop->addChild(bg);*/
 
-	Sprite* bg = Sprite::create("popup_bg1.png");
-	popupShop->addChild(bg);
+	/*Sprite* bg = Sprite::create("popup_bg1.png");
+	popupShop->addChild(bg);*/
 
 	ui::Scale9Sprite* bgContent = ui::Scale9Sprite::createWithSpriteFrameName("empty.png");
 	bgContent->setContentSize(Size(810, 446));
@@ -1700,17 +1708,17 @@ void MainScene::initPopupShop()
 	rect->setPosition(bgContent->getPosition());
 	popupShop->addChild(rect);
 
-	Sprite* title = Sprite::createWithSpriteFrameName("title_cuahang.png");
+	/*Sprite* title = Sprite::createWithSpriteFrameName("title_cuahang.png");
 	title->setPosition(0, bg->getContentSize().height / 2 - 5);
 	title->setName("sptitle");
-	popupShop->addChild(title);
+	popupShop->addChild(title);*/
 
-	ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	/*ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnClose->setPosition(Vec2(bg->getContentSize().width / 2 - 10, bg->getContentSize().height / 2 - 10));
 	addTouchEventListener(btnClose, [=]() {
 		hidePopup(popupShop);
 	});
-	popupShop->addChild(btnClose);
+	popupShop->addChild(btnClose);*/
 
 	Node* nodeCard = Node::create();
 	nodeCard->setTag(10);
@@ -1840,11 +1848,14 @@ void MainScene::initWebView()
 
 void MainScene::initPopupGiftcode()
 {
-	popupGiftcode = Node::create();
-	popupGiftcode->setPosition(560, 350);
-	popupGiftcode->setVisible(false);
-	mLayer->addChild(popupGiftcode, constant::ZORDER_POPUP);
-	//autoScaleNode(popupGiftcode);
+	popupGiftcode = createPopup("title_giftcode.png", false, true);
+	if (!popupGiftcode) return;
+
+	//popupGiftcode = Node::create();
+	//popupGiftcode->setPosition(560, 350);
+	//popupGiftcode->setVisible(false);
+	//mLayer->addChild(popupGiftcode, constant::ZORDER_POPUP);
+	////autoScaleNode(popupGiftcode);
 
 	/*ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("popup_bg.png");
 	bg->setInsetBottom(0);
@@ -1855,13 +1866,13 @@ void MainScene::initPopupGiftcode()
 	bg->setScale(.8f);
 	popupGiftcode->addChild(bg);*/
 
-	Sprite* bg = Sprite::createWithSpriteFrameName("popup_bg.png");
+	/*Sprite* bg = Sprite::createWithSpriteFrameName("popup_bg.png");
 	popupGiftcode->addChild(bg);
 
 	Sprite* title = Sprite::createWithSpriteFrameName("title_giftcode.png");
 	title->setPosition(0, bg->getContentSize().height / 2 - 5);
 	title->setScale(.8f);
-	popupGiftcode->addChild(title);
+	popupGiftcode->addChild(title);*/
 
 	ui::EditBox* tfGiftcode = ui::EditBox::create(Size(340, 55), "box.png", ui::Widget::TextureResType::PLIST);
 	tfGiftcode->setPosition(Vec2(0, -20));
@@ -1879,6 +1890,7 @@ void MainScene::initPopupGiftcode()
 	lb->setPosition(0, 60);
 	popupGiftcode->addChild(lb);
 
+	Sprite* bg = (Sprite*)popupGiftcode->getChildByName("spbg");
 	ui::Button* btnSubmit = ui::Button::create("btn_submit.png", "btn_submit_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnSubmit->setPosition(Vec2(0, -bg->getContentSize().height / 2 + 5));
 	addTouchEventListener(btnSubmit, [=]() {
@@ -1891,13 +1903,13 @@ void MainScene::initPopupGiftcode()
 	});
 	popupGiftcode->addChild(btnSubmit);
 
-	ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	/*ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnClose->setPosition(Vec2(bg->getContentSize().width / 2 - 5, bg->getContentSize().height / 2 - 5));
 	btnClose->setScale(.8f);
 	addTouchEventListener(btnClose, [=]() {
 		hidePopup(popupGiftcode);
 	});
-	popupGiftcode->addChild(btnClose);
+	popupGiftcode->addChild(btnClose);*/
 }
 
 void MainScene::initPopupDisplayName()
@@ -1950,12 +1962,15 @@ void MainScene::showPopupMail()
 {
 	if (popupMail == nullptr) {
 		initPopupMail();
+		showWaiting();
+		isWaitPopupMail = true;
+		SFSRequest::getSingleton().RequestListMail(1);
+		return;
 	}
 	showPopup(popupMail);
-	SFSRequest::getSingleton().RequestListMail(1);
 	lbNewMail->getParent()->setVisible(false);
 
-	popupMail->getChildByName("nodepage")->setTag(1);
+	/*popupMail->getChildByName("nodepage")->setTag(1);
 	for (int i = 1; i <= 5; i++) {
 		ui::Button* btn = (ui::Button*)popupMail->getChildByTag(1000 + i);
 		btn->setTitleText(to_string(i));
@@ -1964,18 +1979,22 @@ void MainScene::showPopupMail()
 		} else {
 			btn->setColor(pageColor1);
 		}
-	}
+	}*/
 }
 
 void MainScene::showPopupNews()
 {
 	if (popupNews == nullptr) {
 		initPopupNews();
+		showWaiting();
+		isWaitPopupNews = true;
+		SFSRequest::getSingleton().RequestNews(0);
+		return;
+	} else {
+		showPopup(popupNews);
 	}
-	showPopup(popupNews);
-	SFSRequest::getSingleton().RequestNews(0);
 
-	ui::ScrollView* scrollTitle = (ui::ScrollView*)popupNews->getChildByName("scrolltitle");
+	/*ui::ScrollView* scrollTitle = (ui::ScrollView*)popupNews->getChildByName("scrolltitle");
 	ui::ScrollView* scrollContent = (ui::ScrollView*)popupNews->getChildByName("scrollcontent");
 	Label* lbContent = (Label*)scrollContent->getChildByName("lbcontent");
 	lbContent->setString("");
@@ -1994,7 +2013,7 @@ void MainScene::showPopupNews()
 		} else {
 			btn->setColor(pageColor1);
 		}
-	}
+	}*/
 }
 
 void MainScene::showWebView(std::string url)
