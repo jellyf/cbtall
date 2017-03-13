@@ -1394,7 +1394,7 @@ void MainScene::initPopupCharge()
 		}
     }
 	if (CC_TARGET_PLATFORM != CC_PLATFORM_IOS) {
-		//popupCharge->getChildByTag(12)->setVisible(false);
+		popupCharge->getChildByTag(12)->setVisible(false);
 	}
 }
 

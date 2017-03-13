@@ -3717,7 +3717,10 @@ void GameScene::initCofferEffects()
 	lbName->setName("lbname");
 	cofferEffect->addChild(lbName);
 
-	if (!Utils::getSingleton().ispmE()) {
+	if (CC_TARGET_PLATFORM != CC_PLATFORM_IOS) {
+		spCoffer->initWithFile("hu.png");
+		spLight->initWithFile("as.png");
+	} else if (Utils::getSingleton().ispmE()) {
 		string host = Utils::getSingleton().textureHost;
 		Utils::getSingleton().LoadTextureFromURL(host + "hu.png", [=](Texture2D* texture1) {
 			spCoffer->initWithTexture(texture1);

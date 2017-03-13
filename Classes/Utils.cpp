@@ -561,6 +561,7 @@ void Utils::queryIAPProduct()
 
 void Utils::downloadPlistTextures()
 {
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 	if (downloadedPlistTexture == 0) {
 		string str1 = FileUtils::getInstance()->getStringFromFile("menu1.plist");
 		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu1.png", [=](Texture2D* texture1) {
@@ -596,4 +597,20 @@ void Utils::downloadPlistTextures()
 			EventHandler::getSingleton().onDownloadedPlistTexture(downloadedPlistTexture);
 		}
 	}
+#else
+	TextureCache::sharedTextureCache()->addImageAsync("menu1.png", [=](Texture2D* texture) {
+		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("menu1.plist");
+		downloadedPlistTexture = 1;
+		if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
+			EventHandler::getSingleton().onDownloadedPlistTexture(downloadedPlistTexture);
+		}
+		TextureCache::sharedTextureCache()->addImageAsync("menu2.png", [=](Texture2D* texture) {
+			SpriteFrameCache::getInstance()->addSpriteFramesWithFile("menu2.plist");
+			downloadedPlistTexture = 2;
+			if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
+				EventHandler::getSingleton().onDownloadedPlistTexture(downloadedPlistTexture);
+			}
+		});
+	});
+#endif
 }
