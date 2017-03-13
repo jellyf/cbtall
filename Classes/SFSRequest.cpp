@@ -474,7 +474,7 @@ void SFSRequest::onHttpRequest(cocos2d::network::HttpClient * client, cocos2d::n
 	CCLOG("SFSRequest::onHttpRequest: %s", statusString);*/
 
 	// A connection failure
-	if (!response->isSucceed() || statusCode == 404)
+	if (!response->isSucceed() || statusCode != 200)
 	{
 		CCLOG("SFSRequest::onHttpRequest: Failed");
 		//CCLOG("error buffer: %s", response->getErrorBuffer());
