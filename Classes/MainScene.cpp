@@ -57,6 +57,7 @@ void MainScene::onInit()
 
 	ui::Button* btnCharge = ui::Button::create("icon_charge.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnCharge->setPosition(vecPos[2]);
+	btnCharge->setVisible(pmE || CC_TARGET_PLATFORM == CC_PLATFORM_IOS);
 	addTouchEventListener(btnCharge, [=]() {
 		if (pmE) {
 			if (popupCharge == nullptr) {
@@ -958,6 +959,9 @@ void MainScene::initPopupCharge()
 	nodes.push_back(nodeSms);
 	nodes.push_back(nodeStore);
 
+	ui::EditBox* tfSeri = ui::EditBox::create(Size(350, 55), "box.png", ui::Widget::TextureResType::PLIST);
+	ui::EditBox* tfCode = ui::EditBox::create(Size(350, 55), "box.png", ui::Widget::TextureResType::PLIST);
+
 	int x = -420;
 	int y = 180;
 	vector<string> texts = { "nap_the", "nap_sms", "nap_iap" };
@@ -1038,10 +1042,14 @@ void MainScene::initPopupCharge()
 		addTouchEventListener(btnProvider, [=]() {
 			if (btnProvider->getTag() == 1) return;
 			int btnIndex;
+			int btnIndexLast;
 			for (int j = 1; j <= strProviders.size(); j++) {
 				string strj = to_string(j);
 				//Sprite* img = (Sprite*)popupCharge->getChildByName("providerimg" + strj);
 				ui::Button* btn = (ui::Button*)popupCharge->getChildByName("btn" + strj);
+				if (btn->getColor() == Color3B::WHITE) {
+					btnIndexLast = j;
+				}
 				if (btn != btnProvider) {
 					btn->setTag(0);
 					btn->setColor(Color3B::GRAY);
@@ -1072,6 +1080,18 @@ void MainScene::initPopupCharge()
 					lbContent->setString(smsStr);
 					lbTarget->setString(smstg);
 				}
+			}
+
+			if (i == 4) {
+				tfCode->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
+				tfSeri->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
+			} else {
+				if (btnIndexLast == 4) {
+					tfCode->setText("");
+					tfSeri->setText("");
+				}
+				tfCode->setInputMode(ui::EditBox::InputMode::NUMERIC);
+				tfSeri->setInputMode(ui::EditBox::InputMode::NUMERIC);
 			}
 		});
 		popupCharge->addChild(btnProvider);
@@ -1146,7 +1166,6 @@ void MainScene::initPopupCharge()
 	lbcode->setPosition(-240, 10);
 	nodeInput->addChild(lbcode);
 
-	ui::EditBox* tfSeri = ui::EditBox::create(Size(350, 55), "box.png", ui::Widget::TextureResType::PLIST);
 	tfSeri->setPosition(Vec2(60, 60));
 	tfSeri->setFontName("Arial");
 	tfSeri->setFontSize(30);
@@ -1154,11 +1173,10 @@ void MainScene::initPopupCharge()
 	tfSeri->setMaxLength(24);
 	tfSeri->setReturnType(ui::EditBox::KeyboardReturnType::DONE);
 	tfSeri->setInputFlag(ui::EditBox::InputFlag::SENSITIVE);
-	tfSeri->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
+	tfSeri->setInputMode(ui::EditBox::InputMode::NUMERIC);
 	tfSeri->setDelegate(this);
 	nodeInput->addChild(tfSeri);
 
-	ui::EditBox* tfCode = ui::EditBox::create(Size(350, 55), "box.png", ui::Widget::TextureResType::PLIST);
 	tfCode->setPosition(Vec2(60, 0));
 	tfCode->setFontName("Arial");
 	tfCode->setFontSize(30);
@@ -1166,7 +1184,7 @@ void MainScene::initPopupCharge()
 	tfCode->setMaxLength(24);
 	tfCode->setReturnType(ui::EditBox::KeyboardReturnType::DONE);
 	tfCode->setInputFlag(ui::EditBox::InputFlag::SENSITIVE);
-	tfCode->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
+	tfCode->setInputMode(ui::EditBox::InputMode::NUMERIC);
 	tfCode->setDelegate(this);
 	nodeInput->addChild(tfCode);
 
@@ -1219,6 +1237,8 @@ void MainScene::initPopupCharge()
 		}
 		string provider = strProviders[providerId];
 		SFSRequest::getSingleton().RequestChargeCard(code, seri, provider);
+		tfCode->setText("");
+		tfSeri->setText("");
 		showWaiting();
 	});
 	nodeInput->addChild(btnCharge);
