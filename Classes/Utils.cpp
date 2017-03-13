@@ -284,7 +284,7 @@ bool Utils::ispmE()
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 	return gameConfig.pmE;
 #else
-	return false;
+	return true;
 #endif
 }
 
