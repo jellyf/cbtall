@@ -469,15 +469,15 @@ void SFSRequest::onHttpRequest(cocos2d::network::HttpClient * client, cocos2d::n
 
 	// Check the HTTP Status Code
 	int statusCode = response->getResponseCode();
-	char statusString[64] = {};
+	/*char statusString[64] = {};
 	sprintf(statusString, "HTTP Status Code: %d, tag = %s", statusCode, response->getHttpRequest()->getTag());
-	//CCLOG("response code: %d", statusCode);
+	CCLOG("SFSRequest::onHttpRequest: %s", statusString);*/
 
 	// A connection failure
-	if (!response->isSucceed())
+	if (!response->isSucceed() || statusCode == 404)
 	{
-		CCLOG("response failed");
-		CCLOG("error buffer: %s", response->getErrorBuffer());
+		CCLOG("SFSRequest::onHttpRequest: Failed");
+		//CCLOG("error buffer: %s", response->getErrorBuffer());
 		if (SFSRequest::getSingleton().onHttpResponseFailed != NULL) {
 			SFSRequest::getSingleton().onHttpResponseFailed();
 		}

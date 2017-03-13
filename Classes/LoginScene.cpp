@@ -356,82 +356,80 @@ void LoginScene::onErrorResponse(unsigned char code, std::string msg)
 void LoginScene::onHttpResponse(int tag, std::string content)
 {
 	rapidjson::Document d;
-	d.Parse<0>(content.c_str());
-	if (tag == 1) {
-		GameConfig config;
-		try {
-			config.pmE = d["payment"].GetBool();
-			config.pmEIOS = d["paymentIOS"].GetBool();
-			config.zone = d["name"].GetString();
-			config.host = d["host"].GetString();
-			config.port = d["port"].GetInt();
-			config.websocket = d["port"].GetInt();
-			config.version = d["version"].GetInt();
-			config.versionIOS = d["versionIOS"].GetInt();
-			config.ip_rs = d["ip_rs"].GetString();
-			config.phone = d["phone"].GetString();
-			config.smsVT = d["smsVT"].GetString();
-			config.smsVNPVMS = d["smsVNPVMS"].GetString();
-			config.smsKH = d["smsKH"].GetString();
-			config.smsMK = d["smsMK"].GetString();
-			config.linkFb = d["fb"].GetString();
-			config.linkAndroid = d["a"].GetString();
-			config.linkIOS = d["i"].GetString();
-			config.canUpdate = d["updatenow"].GetBool();
-			config.inapp = d["inapp"].GetString();
-		} catch (exception e) {
-			showPopupNotice(Utils::getSingleton().getStringForKey("error_unknown"), [=]() {});
-			return;
-		}
+	GameConfig config;
+	try {
+		d.Parse<0>(content.c_str());
+		config.pmE = d["payment"].GetBool();
+		config.pmEIOS = d["paymentIOS"].GetBool();
+		config.zone = d["name"].GetString();
+		config.host = d["host"].GetString();
+		config.port = d["port"].GetInt();
+		config.websocket = d["port"].GetInt();
+		config.version = d["version"].GetInt();
+		config.versionIOS = d["versionIOS"].GetInt();
+		config.ip_rs = d["ip_rs"].GetString();
+		config.phone = d["phone"].GetString();
+		config.smsVT = d["smsVT"].GetString();
+		config.smsVNPVMS = d["smsVNPVMS"].GetString();
+		config.smsKH = d["smsKH"].GetString();
+		config.smsMK = d["smsMK"].GetString();
+		config.linkFb = d["fb"].GetString();
+		config.linkAndroid = d["a"].GetString();
+		config.linkIOS = d["i"].GetString();
+		config.canUpdate = d["updatenow"].GetBool();
+		config.inapp = d["inapp"].GetString();
+	} catch (exception e) {
+		onHttpResponseFailed();
+		return;
+	}
 		
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-		if (isRealConfig && !config.pmEIOS) {
-			isRealConfig = false;
-			//requestGameConfig(false);
-			//return;
-		}
+	if (isRealConfig && !config.pmEIOS) {
+		isRealConfig = false;
+		//requestGameConfig(false);
+		//return;
+	}
 #endif
 
-		string verstr = Application::sharedApplication()->getVersion();
-		int i = verstr.find_last_of('.') + 1;
-		verstr = verstr.substr(i, verstr.length() - i);
-		int nver = atoi(verstr.c_str());
-		config.pmE &= config.version > nver;
-		config.pmEIOS &= config.versionIOS > nver;
+	string verstr = Application::sharedApplication()->getVersion();
+	int i = verstr.find_last_of('.') + 1;
+	verstr = verstr.substr(i, verstr.length() - i);
+	int nver = atoi(verstr.c_str());
+	config.pmE &= config.version > nver;
+	config.pmEIOS &= config.versionIOS > nver;
 
-		Utils::getSingleton().gameConfig = config;
-        Utils::getSingleton().queryIAPProduct();
+	Utils::getSingleton().gameConfig = config;
+    Utils::getSingleton().queryIAPProduct();
 
-		if (Utils::getSingleton().ispmE()) {
-			btnForgotPass->setVisible(true);
-			lbBtnForgotPass->setVisible(true);
-			Utils::getSingleton().downloadPlistTextures();
-		}
-		//string location = Utils::getSingleton().getUserCountry();
-		//Utils::getSingleton().gameConfig.pmE = config.pmE && location.compare("vn") == 0;
+	if (Utils::getSingleton().ispmE()) {
+		btnForgotPass->setVisible(true);
+		lbBtnForgotPass->setVisible(true);
+		Utils::getSingleton().downloadPlistTextures();
+	}
+	//string location = Utils::getSingleton().getUserCountry();
+	//Utils::getSingleton().gameConfig.pmE = config.pmE && location.compare("vn") == 0;
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-		if (config.canUpdate && nver < config.versionIOS - 1) {
-			showPopupNotice(Utils::getSingleton().getStringForKey("notice_update_new_version"), [=]() {
-				Application::sharedApplication()->openURL(config.linkIOS);
-			});
+	if (config.canUpdate && nver < config.versionIOS - 1) {
+		showPopupNotice(Utils::getSingleton().getStringForKey("notice_update_new_version"), [=]() {
+			Application::sharedApplication()->openURL(config.linkIOS);
+		});
 #else
-		if (config.canUpdate && nver < config.version - 1) {
-			showPopupNotice(Utils::getSingleton().getStringForKey("notice_update_new_version"), [=]() {
-				Application::sharedApplication()->openURL(config.linkAndroid);
-			});
+	if (config.canUpdate && nver < config.version - 1) {
+		showPopupNotice(Utils::getSingleton().getStringForKey("notice_update_new_version"), [=]() {
+			Application::sharedApplication()->openURL(config.linkAndroid);
+		});
 #endif
-			SFSRequest::getSingleton().Connect();
-		} else if (waitingLogin > 0) {
-            if(waitingLogin == 1){
-                loginNormal();
-            }else if(waitingLogin == 2){
-                loginFacebook();
-            }
-            waitingLogin = 0;
-		} else {
-			SFSRequest::getSingleton().Connect();
-		}
+		SFSRequest::getSingleton().Connect();
+	} else if (waitingLogin > 0) {
+        if(waitingLogin == 1){
+            loginNormal();
+        }else if(waitingLogin == 2){
+            loginFacebook();
+        }
+        waitingLogin = 0;
+	} else {
+		SFSRequest::getSingleton().Connect();
 	}
 	//hideWaiting();
 }
@@ -441,8 +439,7 @@ void LoginScene::onHttpResponseFailed()
 	if (currentConfigLink == 0) {
 		currentConfigLink = 1;
 		hideWaiting();
-		showWaiting();
-		SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configchanktc.txt", 1);
+		requestGameConfig(false);
 	} else {
 		currentConfigLink = 0;
 		hideWaiting();
