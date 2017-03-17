@@ -8,6 +8,7 @@
 #include "SFSConnector.h"
 #include "EventHandler.h"
 #include "Utils.h"
+#include "Tracker.h"
 
 USING_NS_CC;
 
@@ -65,6 +66,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	SFSResponse* response = new SFSResponse();
 	EventHandler* handler = new EventHandler();
 	Utils* utils = new Utils();
+	Tracker* tracker = new Tracker();
 
 	auto scene = LoginScene::create();
 	//auto scene = GameScene::create();

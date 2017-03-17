@@ -97,6 +97,7 @@ void LobbyScene::registerEventListenner()
 	EventHandler::getSingleton().onLobbyRoomTypeSFSResponse = bind(&LobbyScene::onRoomTypeDataResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onLobbyInviteDataSFSResponse = bind(&LobbyScene::onInviteDataResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onTableReconnectDataSFSResponse = bind(&LobbyScene::onTableReconnectDataResponse, this, placeholders::_1);
+	EventHandler::getSingleton().onPurchaseSuccess = bind(&LobbyScene::onPurchaseSuccess, this, placeholders::_1);
 }
 
 void LobbyScene::unregisterEventListenner()
@@ -110,6 +111,7 @@ void LobbyScene::unregisterEventListenner()
 	EventHandler::getSingleton().onLobbyRoomTypeSFSResponse = NULL;
 	EventHandler::getSingleton().onLobbyInviteDataSFSResponse = NULL;
 	EventHandler::getSingleton().onTableReconnectDataSFSResponse = NULL;
+	EventHandler::getSingleton().onPurchaseSuccess = NULL;
 }
 
 void LobbyScene::onConnected()
@@ -442,6 +444,15 @@ void LobbyScene::onTableReconnectDataResponse(TableReconnectData data)
 {
 	SFSRequest::getSingleton().RequestJoinRoom(data.Room, false);
 	showWaiting();
+}
+
+void LobbyScene::onPurchaseSuccess(std::string token)
+{
+	if (token.length() > 0) {
+		SFSRequest::getSingleton().RequestPayment(token);
+	} else {
+		hideWaiting();
+	}
 }
 
 void LobbyScene::onBackScene()

@@ -18,6 +18,7 @@ public:
 	void onTableDataResponse(LobbyListTable data);
 	void onRoomTypeDataResponse(LobbyListRoomType data);
 	void onTableReconnectDataResponse(TableReconnectData data);
+	void onPurchaseSuccess(std::string token);
 protected:
 	virtual void onConnected();
 	virtual void onLoginZone();

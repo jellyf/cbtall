@@ -4,6 +4,7 @@
 #include "Constant.h"
 #include "Utils.h"
 #include "EventHandler.h"
+#include "Tracker.h"
 
 using namespace cocos2d;
 using namespace std;
@@ -57,7 +58,6 @@ void MainScene::onInit()
 
 	ui::Button* btnCharge = ui::Button::create("icon_charge.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnCharge->setPosition(vecPos[2]);
-	btnCharge->setVisible(pmE || CC_TARGET_PLATFORM == CC_PLATFORM_IOS);
 	addTouchEventListener(btnCharge, [=]() {
 		if (pmE) {
 			if (popupCharge == nullptr) {
@@ -209,6 +209,11 @@ void MainScene::onInit()
 			initPopupDisplayName();
 		}
 		showPopup(popupDisplayName);
+		if (Utils::getSingleton().loginType == constant::LOGIN_NORMAL) {
+			Tracker::getSingleton().trackRegistration(tracker::REGISTER_METHOD_NORMAL);
+		} else if (Utils::getSingleton().loginType == constant::LOGIN_FACEBOOK) {
+			Tracker::getSingleton().trackRegistration(tracker::REGISTER_METHOD_FACEBOOK);
+		}
 	}
 	if (Utils::getSingleton().isRunningEvent) {
 		runEventView(Utils::getSingleton().events, Utils::getSingleton().currentEventPosX);
@@ -348,6 +353,9 @@ void MainScene::onErrorResponse(unsigned char code, std::string msg)
 		hidePopup(popupDisplayName);
 		setDisplayName(tmpDisplayName);
 		return;
+	}
+	if (code == 32 && msg.find("Quan") == string::npos) {
+		chargingProvider = "";
 	}
 	if (msg.length() == 0) return;
 	showPopupNotice(msg, [=]() {});
@@ -863,10 +871,11 @@ void MainScene::onNewsDataResponse(std::vector<NewsData> list)
 
 void MainScene::onPurchaseSuccess(std::string token)
 {
-    hideWaiting();
     if(token.length() > 0){
         SFSRequest::getSingleton().RequestPayment(token);
-    }
+	} else {
+		hideWaiting();
+	}
 }
 
 void MainScene::onDownloadedPlistTexture(int numb)
@@ -1240,6 +1249,7 @@ void MainScene::initPopupCharge()
 		tfCode->setText("");
 		tfSeri->setText("");
 		showWaiting();
+		chargingProvider = provider;
 	});
 	nodeInput->addChild(btnCharge);
 
@@ -1327,6 +1337,7 @@ void MainScene::initPopupCharge()
 				string smsStr = Utils::getSingleton().replaceString(smsct, "vnd", strMoney);
 				smsStr = Utils::getSingleton().replaceString(smsStr, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
 				Utils::getSingleton().openSMS(smstg, smsStr);
+				Tracker::getSingleton().trackPurchaseSuccess("ClickSMS", strProviders[btnIndex - 1], "VND", moneys[i] * 1000);
 			});
 			itemSms->addChild(btnItemSms);
 
@@ -1414,7 +1425,7 @@ void MainScene::initPopupCharge()
 		}
     }
 	if (CC_TARGET_PLATFORM != CC_PLATFORM_IOS) {
-		popupCharge->getChildByTag(12)->setVisible(false);
+		//popupCharge->getChildByTag(12)->setVisible(false);
 	}
 }
 

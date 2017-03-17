@@ -65,6 +65,7 @@ SFSResponse::SFSResponse()
 	mapFunctions[cmd::CURRENT_TABLE_RECONNECT] = std::bind(&SFSResponse::onTableReconnectResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::COFFER_MONEY] = std::bind(&SFSResponse::onCofferMoneyResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::COFFER_HISTORY] = std::bind(&SFSResponse::onCofferHistoryResponse, this, std::placeholders::_1);
+	mapFunctions[cmd::PAYMENT_ENABLE] = std::bind(&SFSResponse::onPaymentEnableResponse, this, std::placeholders::_1);
 }
 
 SFSResponse::~SFSResponse()
@@ -172,7 +173,9 @@ void SFSResponse::onUserDataResponse(boost::shared_ptr<ISFSObject> isfsObject)
 
 void SFSResponse::onUserDataMeResponse(boost::shared_ptr<ISFSObject> isfsObject)
 {
-	getUserDataFromSFSObject(isfsObject, Utils::getSingleton().userDataMe);
+	UserData newData;
+	getUserDataFromSFSObject(isfsObject, newData);
+	Utils::getSingleton().setUserDataMe(newData);
 	if (Utils::getSingleton().moneyType == -1) {
 		if (Utils::getSingleton().ispmE()) {
 			Utils::getSingleton().moneyType = Utils::getSingleton().userDataMe.MoneyType;
@@ -1154,4 +1157,12 @@ void SFSResponse::onCofferHistoryResponse(boost::shared_ptr<ISFSObject> isfsObje
 	if (EventHandler::getSingleton().onCofferHistorySFSResponse != NULL) {
 		EventHandler::getSingleton().onCofferHistorySFSResponse(list);
 	}
+}
+
+void SFSResponse::onPaymentEnableResponse(boost::shared_ptr<ISFSObject> isfsObject)
+{
+	bool pEnable;
+	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
+	byteArray->ReadBool(pEnable);
+	Utils::getSingleton().setPmEByLogin(pEnable);
 }

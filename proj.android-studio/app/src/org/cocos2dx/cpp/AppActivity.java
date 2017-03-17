@@ -26,11 +26,14 @@
  ****************************************************************************/
 package org.cocos2dx.cpp;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 
 import org.cocos2dx.lib.Cocos2dxActivity;
+import org.json.JSONObject;
 
+import com.android.vending.billing.IInAppBillingService;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -41,26 +44,35 @@ import com.facebook.login.LoginResult;
 import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 import com.onesignal.OneSignal;
 
-import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
 public class AppActivity extends Cocos2dxActivity {
 
-    public static Activity _activity;
+    public static AppActivity _activity;
     private CallbackManager callbackManager;
+    private IInAppBillingService mService;
+    private ServiceConnection mServiceConn;
+    private String lastDeveloperPayload = "";
 
     public static native void callbackLoginFacebook(String token);
+    public static native void callbackPurchaseSuccess(String token);
+    public static native void callbackQueryIAPProduct(Object[] jsonProducts);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Tracker.Init(this);
         OneSignal.startInit(this).inFocusDisplaying(OneSignal.OSInFocusDisplayOption.None).init();
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
@@ -68,7 +80,7 @@ public class AppActivity extends Cocos2dxActivity {
                 new FacebookCallback<LoginResult>() {
 
                     public void onCancel() {
-                        Log.d("Kinhtuchi", "User canceled login facebook");
+                        Log.d("Kinhtuchi::", "User canceled login facebook");
                         callbackLoginFacebook("cancel");
                     }
 
@@ -78,10 +90,26 @@ public class AppActivity extends Cocos2dxActivity {
                     }
 
                     public void onSuccess(LoginResult result) {
-                        Log.d("LoginFacebook", "AccessToken: " + AccessToken.getCurrentAccessToken().getToken());
+                        Log.d("KinhTuChi::", "FacebookAccessToken: " + AccessToken.getCurrentAccessToken().getToken());
                         callbackLoginFacebook(AccessToken.getCurrentAccessToken().getToken());
                     }
                 });
+
+        mServiceConn = new ServiceConnection() {
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                mService = null;
+            }
+
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                mService = IInAppBillingService.Stub.asInterface(service);
+            }
+        };
+
+        Intent serviceIntent = new Intent("com.android.vending.billing.InAppBillingService.BIND");
+        serviceIntent.setPackage("com.android.vending");
+        bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
 
         setKeepScreenOn(true);
         _activity = this;
@@ -90,7 +118,135 @@ public class AppActivity extends Cocos2dxActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1001) {
+            int responseCode = data.getIntExtra("RESPONSE_CODE", 0);
+            String purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA");
+            String dataSignature = data.getStringExtra("INAPP_DATA_SIGNATURE");
+
+            //Log.d("KinhTuChi::", "OnPurchase::" + responseCode);
+            if (resultCode == RESULT_OK) {
+                //Log.d("KinhTuChi::", "OnPurchase::" + purchaseData);
+                try {
+                    JSONObject jo = new JSONObject(purchaseData);
+                    String token = jo.getString("purchaseToken");
+                    //String sku = jo.getString("productId");
+                    //jo.put("signature", dataSignature);
+
+                    //Log.d("KinhTuChi::", "OnPurchase::Success::" + jo.toString());
+                    callbackPurchaseSuccess(purchaseData + " " + dataSignature + " " + lastDeveloperPayload);
+                    int response = mService.consumePurchase(3, getPackageName(), token);
+                    //Log.d("KinhTuChi::", "OnPurchase::Consume:" + response);
+                    lastDeveloperPayload = "";
+                }
+                catch (Exception e) {
+                    //Log.d("KinhTuChi::", "OnPurchase::Failed data");
+                    e.printStackTrace();
+                    callbackPurchaseSuccess("");
+                }
+            }else if (resultCode == RESULT_CANCELED) {
+                //Log.d("KinhTuChi::", "OnPurchase::Cancel");
+                callbackPurchaseSuccess("");
+            }else if(resultCode == 7) { //Already owned
+                consumeAllPurchasedItem();
+            }else {
+                //Log.d("KinhTuChi::", "OnPurchase::Failed");
+                callbackPurchaseSuccess("");
+            }
+        }else{
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mService != null) {
+            unbindService(mServiceConn);
+        }
+    }
+
+    public void queryIAPItem(String[] ids) {
+        ArrayList<String> skuList = new ArrayList<>();
+        for(int i=0;i<ids.length;i++){
+            //Log.d("KinhTuChi::", "QueryIAP::" + ids[i]);
+            if(ids[i].length() > 0){
+                skuList.add(ids[i]);
+            }
+        }
+        Bundle querySkus = new Bundle();
+        querySkus.putStringArrayList("ITEM_ID_LIST", skuList);
+
+        try {
+            Bundle skuDetails = mService.getSkuDetails(3, getPackageName(), "inapp", querySkus);
+
+            int response = skuDetails.getInt("RESPONSE_CODE");
+            //Log.d("KinhTuChi::", "QueryIAP::" + response);
+            if (response == 0) {
+                ArrayList<String> responseList = skuDetails.getStringArrayList("DETAILS_LIST");
+                //Log.d("KinhTuChi::", "QueryIAP::" + responseList.size());
+//                for (String thisResponse : responseList) {
+//                    Log.d("KinhTuChi::", "QueryIAP::" + thisResponse);
+//                    JSONObject object = new JSONObject(thisResponse);
+//                    String sku = object.getString("productId");
+//                    String price = object.getString("price");
+//                    String title = object.getString("title");
+//                    String description = object.getString("description");
+//                    String currencyCode = object.getString("price_currency_code");
+//                    String priceMicros = object.getString("price_amount_micros");
+//                    Log.d("KinhTuChi::", "QueryIAP::" + sku + " -- " + price + " -- " + title + " -- " + description + " -- " + currencyCode + " -- " + priceMicros);
+//                }
+                callbackQueryIAPProduct(responseList.toArray());
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void purchaseItem(String sku) {
+        lastDeveloperPayload = System.currentTimeMillis()+"";
+        try {
+            //Log.d("KinhTuChi::", "PurchaseItem::" + sku);
+            Bundle buyIntentBundle = mService.getBuyIntent(3, getPackageName(), sku, "inapp", lastDeveloperPayload);
+            PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
+            startIntentSenderForResult(pendingIntent.getIntentSender(), 1001, new Intent(), Integer.valueOf(0), Integer.valueOf(0), Integer.valueOf(0));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void consumeAllPurchasedItem(){
+        try {
+            //Log.d("KinhTuChi::", "ConsumeAllItem");
+            Bundle ownedItems = mService.getPurchases(3, getPackageName(), "inapp", null);
+            int response = ownedItems.getInt("RESPONSE_CODE");
+            if (response == 0) {
+                ArrayList<String> ownedSkus = ownedItems.getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
+                ArrayList<String> purchaseDataList = ownedItems.getStringArrayList("INAPP_PURCHASE_DATA_LIST");
+                ArrayList<String> signatureList = ownedItems.getStringArrayList("INAPP_DATA_SIGNATURE_LIST");
+                String continuationToken = ownedItems.getString("INAPP_CONTINUATION_TOKEN");
+
+                for (int i = 0; i < purchaseDataList.size(); ++i) {
+                    String purchaseData = purchaseDataList.get(i);
+                    //String signature = signatureList.get(i);
+                    //String sku = ownedSkus.get(i);
+                    JSONObject object = new JSONObject(purchaseData);
+                    String token = object.getString("purchaseToken");
+                    //Log.d("KinhTuChi::", "ConsumeAllItem::" + sku + " -- " + purchaseData);
+                    int responseCS = mService.consumePurchase(3, getPackageName(), token);
+                    //Log.d("KinhTuChi::", "ConsumeAllItem::" + responseCS);
+                }
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void purchaseProduct(String sku){
+        AppActivity._activity.purchaseItem(sku);
+    }
+
+    public static void queryIAPProducts(String[] ids){
+        AppActivity._activity.queryIAPItem(ids);
     }
 
     public static void openSMS(String address, String smsBody) {
@@ -124,7 +280,8 @@ public class AppActivity extends Cocos2dxActivity {
                 callbackLoginFacebook(AccessToken.getCurrentAccessToken().getToken());
             }
         }else {
-            LoginManager.getInstance().logInWithReadPermissions(AppActivity._activity, Arrays.asList("public_profile"));
+            //LoginManager.getInstance().logInWithReadPermissions(AppActivity._activity, Arrays.asList("public_profile"));
+            LoginManager.getInstance().logInWithPublishPermissions(AppActivity._activity, Arrays.asList("publish_actions"));
         }
     }
 

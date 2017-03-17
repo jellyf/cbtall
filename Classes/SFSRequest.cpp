@@ -215,9 +215,20 @@ void SFSRequest::RequestGiftcode(std::string giftcode)
 
 void SFSRequest::RequestPayment(std::string token)
 {
+	std::string signature = "";
+	std::string developerPayload = "";
+	if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID) {
+		std::vector<std::string> params;
+		Utils::getSingleton().split(token, ' ', params);
+		token = params[0];
+		signature = params[1];
+		developerPayload = params[2];
+	}
     boost::shared_ptr<ISFSObject> parameters(new SFSObject());
     parameters->PutUtfString("1", token);
-    parameters->PutUtfString("2", Utils::getSingleton().getPlatformOS());
+	parameters->PutUtfString("2", Utils::getSingleton().getPlatformOS());
+	parameters->PutUtfString("3", signature);
+	parameters->PutUtfString("4", developerPayload);
     SFSConnector::getSingleton().SendExtensionRequest(cmd::PAYMENT, parameters);
 }
 

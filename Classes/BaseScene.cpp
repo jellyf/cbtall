@@ -5,6 +5,7 @@
 #include "Constant.h"
 #include "AudioEngine.h"
 #include "SFSResponse.h"
+#include "Tracker.h"
 
 using namespace cocos2d;
 using namespace std;
@@ -57,6 +58,7 @@ void BaseScene::onEnter()
 	Scene::onEnter();
 	bool ispmE = Utils::getSingleton().ispmE();
 	isPopupReady = Utils::getSingleton().downloadedPlistTexture >= 2 || !Utils::getSingleton().ispmE();
+	myRealMoney = Utils::getSingleton().userDataMe.MoneyReal;
 
 	mLayer = Layer::create();
 	addChild(mLayer, 10);
@@ -1871,6 +1873,17 @@ void BaseScene::onUserDataMeResponse()
 	lbSilver->setString(strSilver);
 	lbId->setString(strId);
 	lbLevel->setString(strLevel);
+
+	if (chargingProvider.length() > 0) {
+		vector<double> moneys = { 10000, 20000, 30000, 50000, 100000, 200000, 300000, 500000 };
+		double diff = Utils::getSingleton().userDataMe.MoneyReal - myRealMoney;
+		int i = -1;
+		while (++i < moneys.size() && diff >= moneys[i]);
+		if (i > 0) {
+			Tracker::getSingleton().trackPurchaseSuccess("Card", chargingProvider, "VND", moneys[i - 1]);
+			chargingProvider = "";
+		}
+	}
 }
 
 void BaseScene::onRankDataResponse(std::vector<std::vector<RankData>> list)

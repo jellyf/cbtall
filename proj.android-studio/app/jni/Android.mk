@@ -28,6 +28,7 @@ LOCAL_SRC_FILES := hellocpp/main.cpp \
                    ../../../Classes/SFSResponse.cpp \
                    ../../../Classes/UserNode.cpp \
                    ../../../Classes/Utils.cpp \
+                   ../../../Classes/Tracker.cpp \
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../../Classes
 

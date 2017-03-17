@@ -6,7 +6,7 @@
 #include "GameScene.h"
 #include "Constant.h"
 #include "SFSRequest.h"
-#include "EventHandler.h"
+#include "Tracker.h"
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 #include "IOSHelperCPlus.h"
 #endif
@@ -51,13 +51,7 @@ Utils::Utils()
             EventHandler::getSingleton().onLoginFacebook(token);
         }
     });
-    IOSHelperCPlus::setPurchaseSuccessCallback([=](std::string token){
-        if(EventHandler::getSingleton().onPurchaseSuccess != NULL){
-            EventHandler::getSingleton().onPurchaseSuccess(token);
-        }else if(token.length() > 0){
-            cachedPaymentTokens.push_back(token);
-        }
-    });
+    IOSHelperCPlus::setPurchaseSuccessCallback(&Utils::onCallbackPurchaseSuccess);
 #endif
 }
 
@@ -288,6 +282,12 @@ bool Utils::ispmE()
 #endif
 }
 
+void Utils::setPmEByLogin(bool pme)
+{
+	gameConfig.pmE &= pme;
+	gameConfig.pmEIOS &= pme;
+}
+
 void Utils::split(const std::string & s, char delim, std::vector<std::string>& elems)
 {
 	std::stringstream ss;
@@ -506,6 +506,14 @@ void Utils::purchaseItem(std::string sku)
 {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
     IOSHelperCPlus::purchaseItem(sku);
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+	JniMethodInfo methodInfo;
+	if (!JniHelper::getStaticMethodInfo(methodInfo, "org/cocos2dx/cpp/AppActivity", "purchaseProduct", "(Ljava/lang/String;)V")) {
+		return;
+	}
+	jstring jsku = methodInfo.env->NewStringUTF(sku.c_str());
+	methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID, jsku);
+	methodInfo.env->DeleteLocalRef(methodInfo.classID);
 #else
     if(EventHandler::getSingleton().onPurchaseSuccess != NULL){
         EventHandler::getSingleton().onPurchaseSuccess("");
@@ -548,6 +556,19 @@ void Utils::queryIAPProduct()
     }
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
     IOSHelperCPlus::queryIAPProducts(ids);
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+	JniMethodInfo methodInfo;
+	if (!JniHelper::getStaticMethodInfo(methodInfo, "org/cocos2dx/cpp/AppActivity", "queryIAPProducts", "([Ljava/lang/String;)V")) {
+		return;
+	}
+	jobjectArray arr = methodInfo.env->NewObjectArray(5, methodInfo.env->FindClass("java/lang/String"), methodInfo.env->NewStringUTF(""));
+	jsize count = ids.size();
+	for (int i = 0; i < count; ++i) {
+		methodInfo.env->SetObjectArrayElement(arr, i, methodInfo.env->NewStringUTF(ids[i].c_str()));
+	}
+	methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID, arr);
+	methodInfo.env->DeleteLocalRef(arr);
+	methodInfo.env->DeleteLocalRef(methodInfo.classID);
 #else
 	std::vector<std::string> descs = { "21.000 ", "105.000 ", "210.000 " };
 	std::vector<double> prices = { 22000, 105000, 210000 };
@@ -613,4 +634,21 @@ void Utils::downloadPlistTextures()
 		});
 	});
 #endif
+}
+
+void Utils::onCallbackPurchaseSuccess(std::string token)
+{
+	if (EventHandler::getSingleton().onPurchaseSuccess != NULL) {
+		EventHandler::getSingleton().onPurchaseSuccess(token);
+	} else if (token.length() > 0) {
+		Utils::getSingleton().cachedPaymentTokens.push_back(token);
+	}
+}
+
+void Utils::setUserDataMe(UserData myData)
+{
+	if (!userDataMe.IsActived && myData.IsActived) {
+		Tracker::getSingleton().trackActiveAccount();
+	}
+	userDataMe = myData;
 }

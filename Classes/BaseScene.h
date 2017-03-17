@@ -81,12 +81,14 @@ protected:
 	cocos2d::Node* createPopupNotice();
 	cocos2d::Vec2 getScaleSmoothly(float scale);
 
+	std::string chargingProvider = "";
 	bool isReconnecting = false;
 	bool isOverlapLogin = false;
 	bool hasHeader = false;
 	bool isWaiting = false;
 	bool isPopupReady = false;
 	int pingId = 0;
+	double myRealMoney;
 
 	cocos2d::Vec2 scaleScene;
 	cocos2d::Size winSize;
