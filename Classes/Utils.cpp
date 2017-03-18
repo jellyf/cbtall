@@ -51,7 +51,9 @@ Utils::Utils()
             EventHandler::getSingleton().onLoginFacebook(token);
         }
     });
-    IOSHelperCPlus::setPurchaseSuccessCallback(&Utils::onCallbackPurchaseSuccess);
+    IOSHelperCPlus::setPurchaseSuccessCallback([=](std::string token){
+        Utils::onCallbackPurchaseSuccess(token);
+    });
 #endif
 }
 
