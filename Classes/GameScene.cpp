@@ -220,9 +220,11 @@ void GameScene::onInit()
 	autoScaleNode(btnChat);
 	vecMenuBtns.push_back(btnChat);
 
-	btnBack = ui::Button::create("btn_exit.png", "btn_exit_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnBack->setPosition(topRight + getScaleSceneDistance(Vec2(-50, -50)));
-	btnBack->setTouchEnabled(false);
+	btnBack = ui::Button::create("btn_back.png", "btn_back_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	//btnBack = ui::Button::create("btn_exit.png", "btn_exit_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	//btnBack->setPosition(topRight + getScaleSceneDistance(Vec2(-50, -50)));
+	btnBack->setPosition(topLeft + getScaleSceneDistance(Vec2(50, -50)));
+	//btnBack->setTouchEnabled(false);
 	addTouchEventListener(btnBack, [=]() {
 		if (state == NONE || state == READY || myServerSlot < 0) {
 			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
@@ -235,7 +237,7 @@ void GameScene::onInit()
 	});
 	mLayer->addChild(btnBack, constant::ZORDER_POPUP - 4);
 	autoScaleNode(btnBack);
-	vecMenuBtns.push_back(btnBack);
+	//vecMenuBtns.push_back(btnBack);
 
 	btnBag = ui::Button::create("btn_bag.png", "btn_bag_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnBag->setPosition(topRight + getScaleSceneDistance(Vec2(-50, -50)));
@@ -246,7 +248,7 @@ void GameScene::onInit()
 	});
 	mLayer->addChild(btnBag, constant::ZORDER_POPUP - 5);
 	autoScaleNode(btnBag);
-	vecMenuBtns.push_back(btnBag);
+	//vecMenuBtns.push_back(btnBag);
 
 	btnUp = ui::Button::create("btn_up.png", "btn_up_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnUp->setPosition(topRight + getScaleSceneDistance(Vec2(-50, -50)));
@@ -268,16 +270,19 @@ void GameScene::onInit()
 	initCofferView(topRight + getScaleSceneDistance(Vec2(-150, -50)), constant::GAME_ZORDER_BUTTON, .8f);
 
 	iconGa = Sprite::createWithSpriteFrameName("btn_ga_on.png");
-	iconGa->setPosition(topLeft + getScaleSceneDistance(Vec2(260, -50)));// 880, 650);
+	//iconGa->setPosition(topLeft + getScaleSceneDistance(Vec2(260, -50)));// 880, 650);
+	//iconGa->setPosition(topLeft + getScaleSceneDistance(Vec2(340, -50)));
+	iconGa->setPosition(topRight + getScaleSceneDistance(Vec2(-240, -50)));
 	mLayer->addChild(iconGa, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(iconGa);
 
 	lbMoneyGa = Label::create("", "fonts/arial.ttf", 20);
-	lbMoneyGa->setPosition(topLeft + getScaleSceneDistance(Vec2(260, -90)));// 880, 610);
+	lbMoneyGa->setPosition(iconGa->getPosition() - getScaleSceneDistance(Vec2(0, 40)));
 	mLayer->addChild(lbMoneyGa, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(lbMoneyGa);
 
-	spNetwork->setPosition(topRight + getScaleSceneDistance(Vec2(pmE ? -240 : -150, -50)));
+	//spNetwork->setPosition(topRight + getScaleSceneDistance(Vec2(pmE ? -240 : -150, -50)));
+	spNetwork->setPosition(Vec2(winSize.width, 0) + getScaleSceneDistance(Vec2(-40, 35)));
 
 	btnReady = ui::Button::create("btn_ready.png", "btn_ready_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnReady->setPosition(Vec2(560, 350));
@@ -3644,13 +3649,14 @@ void GameScene::initSettingsPopup()
 void GameScene::initTableInfo()
 {
 	tableInfo = Node::create();
-	tableInfo->setPosition(Vec2(0, 700) + getScaleSceneDistance(Vec2(105, -50)));
+	//tableInfo->setPosition(Vec2(0, 700) + getScaleSceneDistance(Vec2(105, -50)));
+	tableInfo->setPosition(Vec2(0, 700) + getScaleSceneDistance(Vec2(195, -50)));
 	mLayer->addChild(tableInfo, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(tableInfo);
 
-	Sprite* bg = Sprite::createWithSpriteFrameName("bg_table_info.png");
+	/*Sprite* bg = Sprite::createWithSpriteFrameName("bg_table_info.png");
 	bg->setScaleX(.85f);
-	tableInfo->addChild(bg);
+	tableInfo->addChild(bg);*/
 
 	Sprite* icMoney = Sprite::createWithSpriteFrameName("icon_gold.png");
 	icMoney->setPosition(-5, 15);
