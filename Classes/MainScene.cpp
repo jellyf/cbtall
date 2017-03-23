@@ -532,15 +532,18 @@ void MainScene::onShopItemsDataResponse(std::vector<ShopItemData> list)
 	}
 	scrollCard->setInnerContainerSize(Size(scrollCard->getContentSize().width, heightCard));
 
+	int count = -1;
 	for (int i = 0; i < cards.size(); i++) {
 		for (int j = 0; j < cards[i].size(); j++) {
+			count++;
 			string str = Utils::getSingleton().getStringForKey("xac_nhan_mua_vat_pham");
 			string strMoney = Utils::getSingleton().formatMoneyWithComma(cards[i][j].PriceChange);
 			string msg = String::createWithFormat(str.c_str(), cards[i][j].Name.c_str(), strMoney.c_str())->getCString();
 
 			ui::Button* btn = ui::Button::create("box_shop.png", "", "", ui::Widget::TextureResType::PLIST);
 			//btn->setPosition(Vec2(80 + j * 165, scrollCard->getContentSize().height - 50 - i * 110));
-			btn->setPosition(Vec2(80 + (j % 5) * 162, heightCard - 50 - (i + j/5) * 120));
+			//btn->setPosition(Vec2(80 + (j % 5) * 162, heightCard - 50 - (i + j / 5) * 120));
+			btn->setPosition(Vec2(80 + (count % 5) * 162, heightCard - 50 - (count/5) * 120));
 			btn->setBright(false);
 			btn->setTag((i + 1) * 100 + j);
 			addTouchEventListener(btn, [=]() {
