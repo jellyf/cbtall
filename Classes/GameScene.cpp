@@ -272,7 +272,7 @@ void GameScene::onInit()
 	iconGa = Sprite::createWithSpriteFrameName("btn_ga_on.png");
 	//iconGa->setPosition(topLeft + getScaleSceneDistance(Vec2(260, -50)));// 880, 650);
 	//iconGa->setPosition(topLeft + getScaleSceneDistance(Vec2(340, -50)));
-	iconGa->setPosition(topRight + getScaleSceneDistance(Vec2(-240, -50)));
+	iconGa->setPosition(topRight + getScaleSceneDistance(Vec2(Utils::getSingleton().ispmE() ? -240 : -150, -50)));
 	mLayer->addChild(iconGa, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(iconGa);
 
