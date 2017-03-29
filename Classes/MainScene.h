@@ -24,7 +24,8 @@ public:
 	void onListMailDataResponse(std::vector<MailData> list);
 	void onMailContentResponse(std::string content);
 	void onNewsDataResponse(std::vector<NewsData> list);
-    void onPurchaseSuccess(std::string token);
+	void onPurchaseSuccess(std::string token);
+	void onFacebookInvite(std::string token);
 protected:
 	virtual void onConnected();
 	virtual void onLoginZoneError(short int code, std::string msg);

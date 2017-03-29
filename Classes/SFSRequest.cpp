@@ -238,6 +238,13 @@ void SFSRequest::RequestCofferHistory()
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::COFFER_HISTORY, parameters);
 }
 
+void SFSRequest::RequestVerifyFBInvite(std::string token)
+{
+	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+	parameters->PutUtfString("1", token);
+	SFSConnector::getSingleton().SendExtensionRequest(cmd::VERIFY_FB_INVITE, parameters);
+}
+
 void SFSRequest::RequestRegister(std::string username, std::string password, std::string email)
 {
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());

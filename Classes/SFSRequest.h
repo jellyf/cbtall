@@ -48,6 +48,7 @@ public:
 	void RequestGiftcode(std::string giftcode);
 	void RequestPayment(std::string token);
 	void RequestCofferHistory();
+	void RequestVerifyFBInvite(std::string token);
 
 	void RequestGameReady();
 	void RequestGameChooseStilt(int stilt);

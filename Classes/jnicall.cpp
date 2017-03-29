@@ -11,6 +11,7 @@ extern "C"
 	JNIEXPORT jstring JNICALL Java_org_cocos2dx_cpp_AppActivity_callbackLoginFacebook(JNIEnv* env, jobject thiz, jstring stringParam);
 	JNIEXPORT jstring JNICALL Java_org_cocos2dx_cpp_AppActivity_callbackPurchaseSuccess(JNIEnv* env, jobject thiz, jstring jPurchaseToken);
 	JNIEXPORT jstring JNICALL Java_org_cocos2dx_cpp_AppActivity_callbackQueryIAPProduct(JNIEnv* env, jobject thiz, jobjectArray stringArray);
+	JNIEXPORT jstring JNICALL Java_org_cocos2dx_cpp_AppActivity_callbackFacebookInvite(JNIEnv* env, jobject thiz, jstring stringParam);
 };
 
 JNIEXPORT jstring JNICALL Java_org_cocos2dx_cpp_AppActivity_callbackLoginFacebook(JNIEnv* env, jobject thiz, jstring stringParam)
@@ -57,5 +58,17 @@ JNIEXPORT jstring JNICALL Java_org_cocos2dx_cpp_AppActivity_callbackPurchaseSucc
 	Utils::callbackPurchaseSuccess(token);
 
 	env->ReleaseStringUTFChars(jPurchaseToken, strToken);
+}
+
+JNIEXPORT jstring JNICALL Java_org_cocos2dx_cpp_AppActivity_callbackFacebookInvite(JNIEnv* env, jobject thiz, jstring stringParam)
+{
+	const char* str = env->GetStringUTFChars(stringParam, NULL);
+
+	std::string token = std::string(str);
+	if (EventHandler::getSingleton().onFacebookInvite != NULL) {
+		EventHandler::getSingleton().onFacebookInvite(token);
+	}
+
+	env->ReleaseStringUTFChars(stringParam, str);
 }
 #endif

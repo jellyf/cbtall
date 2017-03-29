@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.Locale;
 
 import org.cocos2dx.lib.Cocos2dxActivity;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.android.vending.billing.IInAppBillingService;
@@ -41,6 +42,8 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.facebook.share.model.GameRequestContent;
+import com.facebook.share.widget.GameRequestDialog;
 import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 import com.onesignal.OneSignal;
 
@@ -59,6 +62,7 @@ import android.util.Log;
 public class AppActivity extends Cocos2dxActivity {
 
     public static AppActivity _activity;
+    private GameRequestDialog requestDialog;
     private CallbackManager callbackManager;
     private IInAppBillingService mService;
     private ServiceConnection mServiceConn;
@@ -67,6 +71,7 @@ public class AppActivity extends Cocos2dxActivity {
     public static native void callbackLoginFacebook(String token);
     public static native void callbackPurchaseSuccess(String token);
     public static native void callbackQueryIAPProduct(Object[] jsonProducts);
+    public static native void callbackFacebookInvite(String token);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +85,7 @@ public class AppActivity extends Cocos2dxActivity {
                 new FacebookCallback<LoginResult>() {
 
                     public void onCancel() {
-                        Log.d("Kinhtuchi::", "User canceled login facebook");
+                        //Log.d("Kinhtuchi::", "User canceled login facebook");
                         callbackLoginFacebook("cancel");
                     }
 
@@ -90,10 +95,37 @@ public class AppActivity extends Cocos2dxActivity {
                     }
 
                     public void onSuccess(LoginResult result) {
-                        Log.d("KinhTuChi::", "FacebookAccessToken: " + AccessToken.getCurrentAccessToken().getToken());
+                        //Log.d("KinhTuChi::", "FacebookAccessToken: " + AccessToken.getCurrentAccessToken().getToken());
                         callbackLoginFacebook(AccessToken.getCurrentAccessToken().getToken());
                     }
-                });
+                }
+        );
+
+        requestDialog = new GameRequestDialog(this);
+        requestDialog.registerCallback(callbackManager,
+                new FacebookCallback<GameRequestDialog.Result>() {
+                    public void onSuccess(GameRequestDialog.Result result) {
+                        if(result != null && result.getRequestRecipients().size() > 0){
+                            try {
+                                JSONObject jo = new JSONObject();
+                                jo.put("request", result.getRequestId());
+                                jo.put("to", new JSONArray(result.getRequestRecipients()));
+                                //Log.d("KinhTuChi::", "callbackFacebookInvite: " + jo.toString());
+                                callbackFacebookInvite(jo.toString());
+                            }catch (Exception e){
+                                e.printStackTrace();
+                                callbackFacebookInvite("");
+                            }
+                        }
+                    }
+                    public void onCancel() {
+                        callbackFacebookInvite("");
+                    }
+                    public void onError(FacebookException error) {
+                        callbackFacebookInvite("");
+                    }
+                }
+        );
 
         mServiceConn = new ServiceConnection() {
             @Override
@@ -241,6 +273,13 @@ public class AppActivity extends Cocos2dxActivity {
         }
     }
 
+    public void openFacebookInvitable() {
+        GameRequestContent content = new GameRequestContent.Builder()
+                .setMessage("Vào chơi Kính Tứ Chi nào!")
+                .build();
+        requestDialog.show(content);
+    }
+
     public static void purchaseProduct(String sku){
         AppActivity._activity.purchaseItem(sku);
     }
@@ -324,5 +363,9 @@ public class AppActivity extends Cocos2dxActivity {
             e.printStackTrace();
         }
         return Settings.System.getString(getContext().getContentResolver(),Settings.Secure.ANDROID_ID);
+    }
+
+    public static void inviteFacebookFriends() {
+        AppActivity._activity.openFacebookInvitable();
     }
 }

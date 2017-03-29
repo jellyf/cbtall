@@ -36,14 +36,23 @@ void MainScene::onInit()
 	bg->setPosition(560, 350);
 	addChild(bg);
 
-	ui::Button* btnAgency = ui::Button::create("icon_agency.png", "", "", ui::Widget::TextureResType::PLIST);
+	/*ui::Button* btnAgency = ui::Button::create("icon_agency.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnAgency->setPosition(vecPos[0]);
 	btnAgency->setVisible(pmE);
 	addTouchEventListener(btnAgency, [=]() {
 		showPopupNotice(Utils::getSingleton().getStringForKey("feature_coming_soon"), [=]() {});
 	});
 	mLayer->addChild(btnAgency);
-	autoScaleNode(btnAgency);
+	autoScaleNode(btnAgency);*/
+
+	ui::Button* btnFBFriends = ui::Button::create("fb_friends.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnFBFriends->setPosition(vecPos[0]);
+	btnFBFriends->setVisible(pmE);
+	addTouchEventListener(btnFBFriends, [=]() {
+		Utils::getSingleton().inviteFacebookFriends();
+	});
+	mLayer->addChild(btnFBFriends);
+	autoScaleNode(btnFBFriends);
 
 	ui::Button* btnGuide = ui::Button::create("icon_guide.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnGuide->setPosition(vecPos[1]);
@@ -275,6 +284,7 @@ void MainScene::registerEventListenner()
 	EventHandler::getSingleton().onNewsDataSFSResponse = bind(&MainScene::onNewsDataResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onExchangeItemSFSResponse = bind(&MainScene::onExchangeItemResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onPurchaseSuccess = bind(&MainScene::onPurchaseSuccess, this, placeholders::_1);
+	EventHandler::getSingleton().onFacebookInvite = bind(&MainScene::onFacebookInvite, this, placeholders::_1);
 }
 
 void MainScene::unregisterEventListenner()
@@ -293,6 +303,7 @@ void MainScene::unregisterEventListenner()
 	EventHandler::getSingleton().onNewsDataSFSResponse = NULL;
 	EventHandler::getSingleton().onExchangeItemSFSResponse = NULL;
 	EventHandler::getSingleton().onPurchaseSuccess = NULL;
+	EventHandler::getSingleton().onFacebookInvite = NULL;
 }
 
 void MainScene::editBoxReturn(cocos2d::ui::EditBox * editBox)
@@ -878,6 +889,13 @@ void MainScene::onPurchaseSuccess(std::string token)
         SFSRequest::getSingleton().RequestPayment(token);
 	} else {
 		hideWaiting();
+	}
+}
+
+void MainScene::onFacebookInvite(std::string token)
+{
+	if (token.length() > 0) {
+		SFSRequest::getSingleton().RequestVerifyFBInvite(token);
 	}
 }
 

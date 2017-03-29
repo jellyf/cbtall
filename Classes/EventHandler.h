@@ -20,6 +20,7 @@ public:
 	std::function<void(int)> onDownloadedPlistTexture = NULL;
 	std::function<void(std::string)> onLoginFacebook = NULL;
 	std::function<void(std::string)> onPurchaseSuccess = NULL;
+	std::function<void(std::string)> onFacebookInvite = NULL;
 
 	std::function<void()> onConnected = NULL;
 	std::function<void()> onLoginZone = NULL;

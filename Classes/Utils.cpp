@@ -654,3 +654,19 @@ void Utils::setUserDataMe(UserData myData)
 	}
 	userDataMe = myData;
 }
+
+void Utils::inviteFacebookFriends()
+{
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+	IOSHelperCPlus::inviteFacebookFriends();
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+	JniMethodInfo methodInfo;
+	if (!JniHelper::getStaticMethodInfo(methodInfo, "org/cocos2dx/cpp/AppActivity", "inviteFacebookFriends", "()V")) {
+		return;
+	}
+	methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID);
+	methodInfo.env->DeleteLocalRef(methodInfo.classID);
+#else
+	return;
+#endif
+}

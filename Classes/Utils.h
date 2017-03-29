@@ -62,6 +62,7 @@ public:
 	void downloadPlistTextures();
 	void onCallbackPurchaseSuccess(std::string token);
 	void setUserDataMe(UserData myData);
+	void inviteFacebookFriends();
 public:
 	cocos2d::Scene* currentScene;
 	UserData userDataMe;
