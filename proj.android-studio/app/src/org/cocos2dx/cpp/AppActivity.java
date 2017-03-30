@@ -40,9 +40,12 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.applinks.AppLinkData;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.facebook.share.model.AppInviteContent;
 import com.facebook.share.model.GameRequestContent;
+import com.facebook.share.widget.AppInviteDialog;
 import com.facebook.share.widget.GameRequestDialog;
 import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 import com.onesignal.OneSignal;
@@ -56,13 +59,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
+import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+
+import bolts.AppLinks;
 
 public class AppActivity extends Cocos2dxActivity {
 
     public static AppActivity _activity;
     private GameRequestDialog requestDialog;
+    private AppInviteDialog appInviteDialog;
     private CallbackManager callbackManager;
     private IInAppBillingService mService;
     private ServiceConnection mServiceConn;
@@ -127,6 +134,52 @@ public class AppActivity extends Cocos2dxActivity {
                 }
         );
 
+//        appInviteDialog = new AppInviteDialog(this);
+//        appInviteDialog.registerCallback(callbackManager, new FacebookCallback<AppInviteDialog.Result>()
+//        {
+//            @Override
+//            public void onSuccess(AppInviteDialog.Result result)
+//            {
+//                try {
+//                    Bundle data = result.getData();
+//                    JSONObject jo = new JSONObject();
+//                    jo.put("request", data.getString("request"));
+//                    jo.put("to", new JSONArray(new ArrayList<>(Arrays.asList(data.getStringArray("to")))));
+//                    //Log.d("KinhTuChi::", "AppInviteDialog: " + jo.toString());
+//                    callbackFacebookInvite(jo.toString());
+//                }catch (Exception e){
+//                    e.printStackTrace();
+//                    callbackFacebookInvite("");
+//                }
+//            }
+//
+//            @Override
+//            public void onCancel()
+//            {
+//                callbackFacebookInvite("");
+//            }
+//
+//            @Override
+//            public void onError(FacebookException e)
+//            {
+//                callbackFacebookInvite("");
+//                e.printStackTrace();
+//            }
+//        });
+
+        Uri targetUrl = AppLinks.getTargetUrlFromInboundIntent(this, getIntent());
+        if (targetUrl != null) {
+            Log.i("Activity", "App Link Target URL: " + targetUrl.toString());
+        } else {
+            AppLinkData.fetchDeferredAppLinkData(this,
+                    new AppLinkData.CompletionHandler() {
+                        @Override
+                        public void onDeferredAppLinkDataFetched(AppLinkData appLinkData) {
+                            //Log.d("KinhTuChi::", "AppLinkData:: " + appLinkData.getRef());
+                        }
+                    });
+        }
+
         mServiceConn = new ServiceConnection() {
             @Override
             public void onServiceDisconnected(ComponentName name) {
@@ -150,6 +203,7 @@ public class AppActivity extends Cocos2dxActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        //Log.d("KinhTuChi::", "onActivityResult::" + requestCode);
         if (requestCode == 1001) {
             int responseCode = data.getIntExtra("RESPONSE_CODE", 0);
             String purchaseData = data.getStringExtra("INAPP_PURCHASE_DATA");
@@ -278,6 +332,27 @@ public class AppActivity extends Cocos2dxActivity {
                 .setMessage("Vào chơi Kính Tứ Chi nào!")
                 .build();
         requestDialog.show(content);
+
+//        //Log.d("KinhTuChi::", "invite friends");
+//        String appLinkUrl = "https://fb.me/1017406505057207";
+//        //String appLinkUrl = "https://kinhtuchi.com";
+//        String previewImageUrl = "http://kinhtuchi.com/img/256.png";
+//
+//        AppInviteContent content = new AppInviteContent.Builder()
+//                .setApplinkUrl(appLinkUrl)
+//                .setPreviewImageUrl(previewImageUrl)
+//                .build();
+//        if (appInviteDialog.canShow(content)) {
+//            appInviteDialog.show(content);
+//        }
+
+//        try {
+//            String download_link = "https://m.facebook.com/connect/dialog/MPlatformAppInvitesJSDialog?android_key_hash=lPwZFQsHrK2Am1jxclj-ZybtDy0%0A&display=touch&app_id=992430550888136&method_args=%7B%22app_link_url%22%3A%22https%3A%5C%2F%5C%2Ffb.me%5C%2F1017442851720239%22%2C%22preview_image_url%22%3A%22http%3A%5C%2F%5C%2Fkinhtuchi.com%5C%2Fimg%5C%2F256.png%22%2C%22destination%22%3A%22facebook%22%7D&bridge_args=%7B%22action_id%22%3A%22f89d20d8-a802-466b-bb30-bde267292f27%22%7D";
+//            Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(download_link));
+//            startActivity(myIntent);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     public static void purchaseProduct(String sku){
@@ -319,8 +394,8 @@ public class AppActivity extends Cocos2dxActivity {
                 callbackLoginFacebook(AccessToken.getCurrentAccessToken().getToken());
             }
         }else {
-            //LoginManager.getInstance().logInWithReadPermissions(AppActivity._activity, Arrays.asList("public_profile"));
-            LoginManager.getInstance().logInWithPublishPermissions(AppActivity._activity, Arrays.asList("publish_actions"));
+            LoginManager.getInstance().logInWithReadPermissions(AppActivity._activity, Arrays.asList("public_profile"));
+            //LoginManager.getInstance().logInWithPublishPermissions(AppActivity._activity, Arrays.asList("publish_actions"));
         }
     }
 
