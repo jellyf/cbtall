@@ -211,7 +211,6 @@ void MainScene::onInit()
 	initPopupGiftcode();*/
 	initEventView(Vec2(0, 575), Size(1120, 40));
 	//initWebView();
-	initPopupCoffer();
 
 	if (Utils::getSingleton().userDataMe.Name.length() > 0 && Utils::getSingleton().userDataMe.DisplayName.length() == 0) {
 		if (popupDisplayName == nullptr) {

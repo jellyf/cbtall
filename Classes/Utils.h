@@ -81,6 +81,7 @@ public:
 	std::string currentZoneName;
 	std::string currentZoneIp;
 	std::string textureHost;
+	std::string cofferGuide;
 	long cofferMoney;
 	long currentZonePort;
 	int currentRoomId;

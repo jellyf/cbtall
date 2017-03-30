@@ -10,6 +10,8 @@ public:
 	virtual void unregisterEventListenner();
 	virtual void editBoxReturn(cocos2d::ui::EditBox* editBox);
 	virtual void onDownloadedPlistTexture(int numb);
+	virtual void onHttpResponse(int tag, std::string content);
+	virtual void onHttpResponseFailed();
 
 	void onConnected();
 	void onLoginZone();
@@ -18,8 +20,6 @@ public:
 	void onUserDataMeResponse();
 	void onLoginFacebook(std::string token);
 	void onErrorResponse(unsigned char code, std::string msg);
-	void onHttpResponse(int tag, std::string content);
-	void onHttpResponseFailed();
 	void onTableDataResponse(LobbyListTable data);
 protected:
 	virtual void onConnectionFailed();

@@ -197,16 +197,7 @@ Những (tổ hợp) cước sau được tính có gà:
   •  Chì bạch thủ chi: 3 gà
 </string>
 	<key>tutorial_5</key><string>***** SĂN HŨ VÀNG - CẢ LÀNG CÙNG VUI *****
-  Kết thúc mỗi ván đánh, BQT sẽ cắt lại 10% trong khoản phế hệ thống đã trừ của người thắng để thu thập vào HŨ VÀNG (Người chơi không mất thêm khoản % nào). Khi Chắn Thủ đạt đủ điều kiện sẽ được nhận vàng từ HŨ VÀNG. Hũ nổ ở bàn nào sẽ được nhận số % tương ứng với mức cược của bàn đó.
-  
-***** ĐIỀU KIỆN NỔ HŨ *****
-  ++ Bàn chơi Quan, 4 người chơi. Ù từ 35 điểm trở lên ++
-  ++ Bàn chơi Quan, 4 người chơi. Ù ít nhât một trong các cước sau: Cá Lội Sân Đình, Cá Nhảy Đầu Thuyền, Hoa Rơi Cửa Phật, Nhà Lầu Xe Hơi Hoa Rơi Cửa Phật, Ngư Ông Bắt Cá ++
-  
-***** SỐ % NỔ HŨ THEO TỪNG BÀN *****
-  ++ Nhà Tranh: 50-0.1%, 100-0.2%, 200-0.4%, 500-1%
-  ++ Đình Làng: 1K-2%, 2K-3%, 5K-4%, 10K-6%
-  ++ Quận Phủ: 20K-15%, 50K-18% ,100k-25%, 200k-50%, 500K-100%
+  Kết thúc mỗi ván đánh, BQT sẽ cắt lại % trong khoản phế hệ thống đã trừ của người thắng để thu thập vào HŨ VÀNG (Người chơi không mất thêm khoản % nào). Khi Chắn Thủ đạt đủ điều kiện sẽ được nhận vàng từ HŨ VÀNG. Hũ nổ ở bàn nào sẽ được nhận số % tương ứng với mức cược của bàn đó.
 </string>
 </dict>
 </plist>

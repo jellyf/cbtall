@@ -212,9 +212,6 @@ void LoginScene::registerEventListenner()
 	EventHandler::getSingleton().onUserDataMeSFSResponse = std::bind(&LoginScene::onUserDataMeResponse, this);
 	EventHandler::getSingleton().onLoginFacebook = std::bind(&LoginScene::onLoginFacebook, this, std::placeholders::_1);
 	EventHandler::getSingleton().onLobbyTableSFSResponse = bind(&LoginScene::onTableDataResponse, this, placeholders::_1);
-
-	SFSRequest::getSingleton().onHttpResponseFailed = std::bind(&LoginScene::onHttpResponseFailed, this);
-	SFSRequest::getSingleton().onHttpResponse = std::bind(&LoginScene::onHttpResponse, this, std::placeholders::_1, std::placeholders::_2);
 }
 
 void LoginScene::unregisterEventListenner()
@@ -228,9 +225,6 @@ void LoginScene::unregisterEventListenner()
 	EventHandler::getSingleton().onUserDataMeSFSResponse = NULL;
 	EventHandler::getSingleton().onLoginFacebook = NULL;
 	EventHandler::getSingleton().onLobbyTableSFSResponse = NULL;
-
-	SFSRequest::getSingleton().onHttpResponse = NULL;
-	SFSRequest::getSingleton().onHttpResponseFailed = NULL;
 }
 
 void LoginScene::editBoxReturn(ui::EditBox * editBox)
@@ -353,6 +347,7 @@ void LoginScene::onErrorResponse(unsigned char code, std::string msg)
 
 void LoginScene::onHttpResponse(int tag, std::string content)
 {
+	if (tag != constant::TAG_HTTP_GAME_CONFIG) return;
 	rapidjson::Document d;
 	GameConfig config;
 	try {
@@ -607,10 +602,10 @@ void LoginScene::requestGameConfig(bool realConfig)
 {
 	showWaiting();
 	if (realConfig) {
-		SFSRequest::getSingleton().RequestHttpGet("http://115.84.179.242/configchanktc.txt", 1);
-		//SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", 1);
+		SFSRequest::getSingleton().RequestHttpGet("http://115.84.179.242/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
+		//SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", constant::TAG_HTTP_GAME_CONFIG);
 	} else {
-		SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configchanktc.txt", 1);
+		SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
 	}
 }
 

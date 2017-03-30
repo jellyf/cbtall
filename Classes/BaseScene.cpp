@@ -171,6 +171,9 @@ void BaseScene::registerEventListenner()
 	EventHandler::getSingleton().onCofferMoneySFSResponse = bind(&BaseScene::onCofferMoneyResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onCofferHistorySFSResponse = bind(&BaseScene::onCofferHistoryResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onDownloadedPlistTexture = bind(&BaseScene::onDownloadedPlistTexture, this, placeholders::_1);
+
+	SFSRequest::getSingleton().onHttpResponseFailed = std::bind(&BaseScene::onHttpResponseFailed, this);
+	SFSRequest::getSingleton().onHttpResponse = std::bind(&BaseScene::onHttpResponse, this, std::placeholders::_1, std::placeholders::_2);
 }
 
 void BaseScene::unregisterEventListenner()
@@ -188,6 +191,9 @@ void BaseScene::unregisterEventListenner()
 	EventHandler::getSingleton().onCofferMoneySFSResponse = NULL;
 	EventHandler::getSingleton().onCofferHistorySFSResponse = NULL;
 	EventHandler::getSingleton().onDownloadedPlistTexture = NULL;
+
+	SFSRequest::getSingleton().onHttpResponse = NULL;
+	SFSRequest::getSingleton().onHttpResponseFailed = NULL;
 }
 
 bool BaseScene::onTouchBegan(Touch * touch, Event * _event)
@@ -1689,10 +1695,16 @@ void BaseScene::initPopupCoffer()
 	scrollGuide->setPosition(Vec2(-scrollSize.width / 2, -scrollSize.height / 2) + rect->getPosition());
 	scrollGuide->setContentSize(scrollSize);
 	scrollGuide->setScrollBarEnabled(false);
+	scrollGuide->setName("scrollguide");
 	nodeGuide->addChild(scrollGuide);
 
-	cocos2d::ValueMap plist = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/tutorials.xml");
-	Label* lb = Label::create(plist["tutorial_5"].asString(), "fonts/arial.ttf", 20);
+	std::string guideContent = Utils::getSingleton().cofferGuide;
+	if (guideContent.length() == 0) {
+		SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/huvang.txt", constant::TAG_HTTP_COFFER_GUIDE);
+		cocos2d::ValueMap plist = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/tutorials.xml");
+		guideContent = plist["tutorial_5"].asString();
+	}
+	Label* lb = Label::create(guideContent, "fonts/arial.ttf", 20);
 	lb->setAnchorPoint(Vec2(0, 1));
 	lb->setColor(Color3B::WHITE);
 	lb->setName("lbcontent");
@@ -2106,6 +2118,30 @@ void BaseScene::onCofferHistoryResponse(std::vector<CofferWinnerData> list)
 void BaseScene::onDownloadedPlistTexture(int numb)
 {
 	isPopupReady = numb >= 2;
+}
+
+void BaseScene::onHttpResponse(int tag, std::string content)
+{
+	if (tag == constant::TAG_HTTP_COFFER_GUIDE) {
+		Utils::getSingleton().cofferGuide = content;
+		if (popupCoffer) {
+			Node* nodeGuide = popupCoffer->getChildByName("nodeguide");
+			ui::ScrollView* scrollGuide = (ui::ScrollView*)nodeGuide->getChildByName("scrollguide");
+			Label* lb = (Label*)scrollGuide->getChildByName("lbcontent");
+			lb->setString(content);
+			int height = lb->getContentSize().height;
+			if (height < scrollGuide->getContentSize().height) {
+				height = scrollGuide->getContentSize().height;
+			}
+			lb->setPosition(0, height);
+			scrollGuide->setInnerContainerSize(Size(scrollGuide->getContentSize().width, height));
+		}
+	}
+}
+
+void BaseScene::onHttpResponseFailed()
+{
+	CCLOG("falied");
 }
 
 void BaseScene::addBtnChoosePage(int x, int y, cocos2d::Node * node, std::function<void(int)> funcPage)
