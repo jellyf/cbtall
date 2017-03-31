@@ -320,7 +320,7 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 			btn->addChild(lbMoney);
 		}
 		addTouchEventListener(btn, [=]() {
-			long requiredMoney = data.Money * 20;
+			/*long requiredMoney = data.Money * 20;
 			if ((Utils::getSingleton().moneyType == 1 && Utils::getSingleton().userDataMe.MoneyReal < requiredMoney)
 				|| (!Utils::getSingleton().moneyType == 1 && Utils::getSingleton().userDataMe.MoneyFree < requiredMoney)) {
 				double money = Utils::getSingleton().moneyType == 1 ? Utils::getSingleton().userDataMe.MoneyReal : Utils::getSingleton().userDataMe.MoneyFree;
@@ -331,7 +331,7 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 				string notice = String::createWithFormat(str4.c_str(), str1.c_str(), str2.c_str(), str3.c_str())->getCString();
 				showPopupNotice(notice, [=]() {});
 				return;
-			}
+			}*/
 			string strformat = listRoomData.ListRoomType[currentRoomType].Group + "%d";
 			string name = String::createWithFormat(strformat.c_str(), btn->getTag())->getCString();
 			SFSRequest::getSingleton().RequestJoinRoom(name);
