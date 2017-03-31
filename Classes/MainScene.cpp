@@ -36,23 +36,24 @@ void MainScene::onInit()
 	bg->setPosition(560, 350);
 	addChild(bg);
 
-	/*ui::Button* btnAgency = ui::Button::create("icon_agency.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnAgency->setPosition(vecPos[0]);
-	btnAgency->setVisible(pmE);
-	addTouchEventListener(btnAgency, [=]() {
-		showPopupNotice(Utils::getSingleton().getStringForKey("feature_coming_soon"), [=]() {});
-	});
-	mLayer->addChild(btnAgency);
-	autoScaleNode(btnAgency);*/
-
+	bool canInvite = Utils::getSingleton().gameConfig.invite;
 	ui::Button* btnFBFriends = ui::Button::create("fb_friends.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnFBFriends->setPosition(vecPos[0]);
-	btnFBFriends->setVisible(pmE);
+	btnFBFriends->setVisible(pmE && canInvite);
 	addTouchEventListener(btnFBFriends, [=]() {
 		Utils::getSingleton().inviteFacebookFriends();
 	});
 	mLayer->addChild(btnFBFriends);
 	autoScaleNode(btnFBFriends);
+
+	ui::Button* btnAgency = ui::Button::create("icon_agency.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnAgency->setPosition(vecPos[0]);
+	btnAgency->setVisible(pmE && !canInvite);
+	addTouchEventListener(btnAgency, [=]() {
+		showPopupNotice(Utils::getSingleton().getStringForKey("feature_coming_soon"), [=]() {});
+	});
+	mLayer->addChild(btnAgency);
+	autoScaleNode(btnAgency);
 
 	ui::Button* btnGuide = ui::Button::create("icon_guide.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnGuide->setPosition(vecPos[1]);

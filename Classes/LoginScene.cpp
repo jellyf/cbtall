@@ -371,6 +371,7 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 		config.linkIOS = d["i"].GetString();
 		config.canUpdate = d["updatenow"].GetBool();
 		config.inapp = d["inapp"].GetString();
+		config.invite = d["invite"].GetBool();
 	} catch (exception e) {
 		onHttpResponseFailed();
 		return;

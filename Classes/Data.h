@@ -251,6 +251,7 @@ struct GameConfig
 	bool pmE;
 	bool pmEIOS;
 	bool canUpdate;
+	bool invite;
 	int port;
 	int websocket;
 	int version;
