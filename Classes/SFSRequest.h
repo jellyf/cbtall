@@ -33,7 +33,7 @@ public:
 	void RequestLoginFacebook(std::string token);
 	void RequestJoinRoom(std::string roomId, bool isReconnect = true);
 	void RequestLeaveRoom();
-	void RequestChargeCard(std::string code, std::string seri, std::string serviceId);
+	void RequestChargeCard(std::string code, std::string seri, std::string serviceId, int moneyType);
 	void RequestUserInfo(std::string username);
 	void RequestRank();
 	void RequestRankWin();

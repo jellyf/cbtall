@@ -85,7 +85,7 @@ void SFSRequest::RequestLeaveRoom()
 	SFSConnector::getSingleton().RequestLeaveRoom();
 }
 
-void SFSRequest::RequestChargeCard(std::string code, std::string seri, std::string serviceId)
+void SFSRequest::RequestChargeCard(std::string code, std::string seri, std::string serviceId, int moneyType)
 {
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
 	boost::shared_ptr<ByteArray> data = boost::shared_ptr<ByteArray>(new ByteArray());
@@ -106,6 +106,7 @@ void SFSRequest::RequestChargeCard(std::string code, std::string seri, std::stri
 	data->WriteUTF(code);
 	data->WriteUTF(seri);
 	data->WriteUTF(serviceId);
+	data->WriteInt(moneyType);
 	parameters->PutByteArray("d", data);
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::REQUEST_CHARGE_CARD, parameters);
 }

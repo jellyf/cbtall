@@ -46,6 +46,7 @@ private:
 	void showPopupNews();
 	void showWebView(std::string url);
 	void checkProviderToCharge();
+	void updateChargeRateCard(bool isQuan);
 
 	cocos2d::Node* popupShop;
 	cocos2d::Node* popupMail;
@@ -67,5 +68,7 @@ private:
 	std::string tmpDisplayName;
 	std::vector<ShopItemData> listItems;
 	std::map<std::string, cocos2d::Texture2D*> textures;
+	std::vector<int> moneys = { 10, 20, 50, 100, 200, 500 };
+	std::vector<int> moneyxs = { 50, 100, 250, 500, 1000, 2500 };
 };
 

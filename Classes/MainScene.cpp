@@ -922,7 +922,6 @@ void MainScene::onChangeMoneyType(int type)
 void MainScene::initPopupCharge()
 {
 	bool pmE = Utils::getSingleton().ispmE();
-	vector<int> moneys = { 10, 20, 50, 100, 200, 500 };
 
 	popupCharge = createPopup("title_naptien.png", true, true);
 	if (!popupCharge) return;
@@ -1137,6 +1136,7 @@ void MainScene::initPopupCharge()
 	//Node Card
 	Node* nodeCardInfo = Node::create();
 	nodeCardInfo->setPosition(-280, -140);
+	nodeCardInfo->setName("nodecardinfo");
 	nodeCard->addChild(nodeCardInfo);
 
 	ui::Scale9Sprite* bgCardInfo = ui::Scale9Sprite::createWithSpriteFrameName("box.png");
@@ -1150,6 +1150,7 @@ void MainScene::initPopupCharge()
 	scrollInfo->setPosition(Vec2(-bgCardInfo->getContentSize().width / 2 + 5, -bgCardInfo->getContentSize().height / 2 + 5));
 	scrollInfo->setContentSize(bgCardInfo->getContentSize() - Size(10, 10));
 	scrollInfo->setScrollBarEnabled(false);
+	scrollInfo->setName("scrollinfo");
 	nodeCardInfo->addChild(scrollInfo);
 
 	int height = moneys.size() * 25;
@@ -1163,13 +1164,15 @@ void MainScene::initPopupCharge()
 			string str2 = to_string(moneys[j]) + "k " + "Quan";//(i == 0 ? "Quan" : "Xu");
 
 			Label* lb1 = Label::create(str1, "fonts/aurora.ttf", 24);
+			lb1->setTag(j * 2);
 			lb1->setAnchorPoint(Vec2(1, .5f));
 			lb1->setPosition(scrollInfo->getContentSize().width/2, height - 15);
 			scrollInfo->addChild(lb1);
 
 			Label* lb2 = Label::create(str2, "fonts/aurora.ttf", 25);
+			lb2->setTag(j * 2 + 1);
 			lb2->setAnchorPoint(Vec2(0, .5f));
-			lb2->setPosition(scrollInfo->getContentSize().width/2, height - 15);
+			lb2->setPosition(scrollInfo->getContentSize().width/2 + 3, height - 15);
 			lb2->setColor(Color3B::YELLOW);//i == 0 ? Color3B::YELLOW : Color3B(0, 255, 255));
 			scrollInfo->addChild(lb2);
 
@@ -1193,7 +1196,7 @@ void MainScene::initPopupCharge()
 
 	Label* lbcode = Label::create(Utils::getSingleton().getStringForKey("ma_the"), "fonts/aurora.ttf", 30);
 	lbcode->setAnchorPoint(Vec2(0, .5f));
-	lbcode->setPosition(-240, 10);
+	lbcode->setPosition(-240, 0);
 	nodeInput->addChild(lbcode);
 
 	tfSeri->setPosition(Vec2(60, 60));
@@ -1248,8 +1251,49 @@ void MainScene::initPopupCharge()
 		}
 	});*/
 
+	vector<Label*> lbs;
+	vector<ui::CheckBox*> cbs;
+	for (int i = 0; i < 2; i++) {
+		ui::CheckBox* checkbox = ui::CheckBox::create();
+		checkbox->loadTextureBackGround("box0.png", ui::Widget::TextureResType::PLIST);
+		checkbox->loadTextureFrontCross("check.png", ui::Widget::TextureResType::PLIST);
+		checkbox->setPosition(Vec2(-120 + 130 * i, -65));
+		checkbox->setSelected(false);
+		checkbox->setTag(i);
+		nodeInput->addChild(checkbox);
+		cbs.push_back(checkbox);
+
+		Label* lb = Label::create("", "fonts/aurora.ttf", 30);
+		lb->setPosition(checkbox->getPosition() + Vec2(30, 0));
+		lb->setAnchorPoint(Vec2(0, .5f));
+		lb->setColor(Color3B::WHITE);
+		nodeInput->addChild(lb);
+		lbs.push_back(lb);
+	}
+
+	cbs[0]->setSelected(true);
+	cbs[0]->addEventListener([=](Ref* ref, ui::CheckBox::EventType type) {
+		if (type == ui::CheckBox::EventType::SELECTED) {
+			cbs[1]->setSelected(false);
+		} else if (type == ui::CheckBox::EventType::UNSELECTED) {
+			cbs[1]->setSelected(true);
+		}
+		updateChargeRateCard(cbs[0]->isSelected());
+	});
+	cbs[1]->addEventListener([=](Ref* ref, ui::CheckBox::EventType type) {
+		if (type == ui::CheckBox::EventType::SELECTED) {
+			cbs[0]->setSelected(false);
+		} else if (type == ui::CheckBox::EventType::UNSELECTED) {
+			cbs[0]->setSelected(true);
+		}
+		updateChargeRateCard(cbs[0]->isSelected());
+	});
+	lbs[0]->setString(Utils::getSingleton().getStringForKey("quan"));
+	lbs[1]->setString(Utils::getSingleton().getStringForKey("xu"));
+
+	ui::CheckBox* cbQuan = cbs[0];
 	ui::Button* btnCharge = ui::Button::create("btn_nap.png", "btn_nap_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnCharge->setPosition(Vec2(40, -65));
+	btnCharge->setPosition(Vec2(160, -65));
 	//btnCharge->setContentSize(Size(140, 55));
 	//btnCharge->setScale9Enabled(true);
 	btnCharge->setScale(.9f);
@@ -1266,7 +1310,8 @@ void MainScene::initPopupCharge()
 			}
 		}
 		string provider = strProviders[providerId];
-		SFSRequest::getSingleton().RequestChargeCard(code, seri, provider);
+		int moneyType = cbQuan->isSelected() ? 2 : 1;
+		SFSRequest::getSingleton().RequestChargeCard(code, seri, provider, moneyType);
 		tfCode->setText("");
 		tfSeri->setText("");
 		showWaiting();
@@ -2085,7 +2130,6 @@ void MainScene::showWebView(std::string url)
 
 void MainScene::checkProviderToCharge()
 {
-	vector<int> moneys = { 10, 20, 50, 100, 200, 500 };
 	int btnIndex = -1;
 	Node* btn4 = popupCharge->getChildByName("btn4");
 	//Sprite* img4 = (Sprite*)popupCharge->getChildByName("providerimg4");
@@ -2128,5 +2172,16 @@ void MainScene::checkProviderToCharge()
 		Label* lbTarget = (Label*)node->getChildByName("lbsmstarget");
 		lbContent->setString(smsStr);
 		lbTarget->setString(smstg);
+	}
+}
+
+void MainScene::updateChargeRateCard(bool isQuan)
+{
+	ui::ScrollView* scroll = (ui::ScrollView*)(popupCharge->getChildByName("nodecard")->getChildByName("nodecardinfo")->getChildByName("scrollinfo"));
+	for (int i = 0; i < moneys.size(); i++) {
+		string type = isQuan ? Utils::getSingleton().getStringForKey("quan") : Utils::getSingleton().getStringForKey("xu");
+		Label* lb = (Label*)scroll->getChildByTag(i * 2 + 1);
+		lb->setString(to_string(isQuan ? moneys[i] : moneyxs[i]) + "k " + type);
+		lb->setColor(isQuan ? Color3B::YELLOW : Color3B(0, 255, 255));
 	}
 }
