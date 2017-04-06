@@ -482,12 +482,18 @@ void Utils::rejoinRoom()
 
 void Utils::connectZoneByIndex(int moneyType, int index)
 {
+	if (moneyType < 0 || moneyType > zones.size())
+		moneyType = 0;
+	if (index < 0 || index > zones[moneyType].size())
+		index = 0;
+	if (zones.size() == 0 || zones[moneyType].size() == 0)
+		goToLoginScene();
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 	std::string host = zones[moneyType][index].ZoneIpIos;
 #else
 	std::string host = zones[moneyType][index].ZoneIp;
 #endif
-	SFSRequest::getSingleton().Connect(host, Utils::getSingleton().zones[moneyType][index].ZonePort);
+	SFSRequest::getSingleton().Connect(host, zones[moneyType][index].ZonePort);
 }
 
 void Utils::loginZoneByIndex(int moneyType, int index)
