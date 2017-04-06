@@ -24,7 +24,11 @@ void LobbyScene::onInit()
 	initPopupUserInfo();
 	initPopupHistory();
 
-	Sprite* bg = Sprite::create("lobby_bg.jpg");
+	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB565);
+	Texture2D* bgTexture = TextureCache::getInstance()->addImage("lobby_bg.jpg");
+	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
+
+	Sprite* bg = Sprite::createWithTexture(bgTexture);
 	bg->setPosition(560, 350);
 	addChild(bg);
 

@@ -24,7 +24,11 @@ void LoginScene::onInit()
 	isReadyToMain = Utils::getSingleton().downloadedPlistTexture != 0;
 	bool ispmE = Utils::getSingleton().ispmE();
 
-	Sprite* bg = Sprite::create("login_bg.jpg");
+	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB565);
+	Texture2D* bgTexture = TextureCache::getInstance()->addImage("login_bg.jpg");
+	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
+
+	Sprite* bg = Sprite::createWithTexture(bgTexture);
 	bg->setPosition(560, 350);
 	addChild(bg);
 

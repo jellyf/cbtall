@@ -118,7 +118,11 @@ void GameScene::onInit()
 		zone = "VuongPhu";
 	}
 
-	Sprite* bg = Sprite::create("bg" + zone + ".jpg");
+	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB565);
+	Texture2D* bgTexture = TextureCache::getInstance()->addImage("bg" + zone + ".jpg");
+	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
+
+	Sprite* bg = Sprite::createWithTexture(bgTexture);
 	bg->setPosition(560, 350);
 	mLayer->addChild(bg);
 

@@ -32,7 +32,11 @@ void MainScene::onInit()
 
 	initHeaderWithInfos();
 
-	Sprite* bg = Sprite::create("main_bg.jpg");
+	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB565);
+	Texture2D* bgTexture = TextureCache::getInstance()->addImage("main_bg.jpg");
+	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
+
+	Sprite* bg = Sprite::createWithTexture(bgTexture);
 	bg->setPosition(560, 350);
 	addChild(bg);
 
@@ -764,7 +768,6 @@ void MainScene::onListMailDataResponse(std::vector<MailData> list)
 			btn->setScale9Enabled(true);
 			btn->setOpacity(0);
 			btn->setTag(i * 5 + 4);
-			btn->setName(to_string((int)list[i].Id));
 			addTouchEventListener(btn, [=]() {
 				Node* nodeDetail = popupMail->getChildByName("nodedetail");
 				for (int i = 0; i < 4; i++) {
@@ -777,6 +780,7 @@ void MainScene::onListMailDataResponse(std::vector<MailData> list)
 			});
 			scroll->addChild(btn);
 		}
+		btn->setName(to_string((int)list[i].Id));
 		lbs[0]->setString(to_string((popupMail->getChildByName("nodepage")->getTag() - 1) * 10 + i + 1));
 		lbs[1]->setString(list[i].Date);
 		lbs[2]->setString(list[i].Title);
