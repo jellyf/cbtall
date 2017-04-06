@@ -38,6 +38,9 @@ SFSConnector::~SFSConnector()
 
 void SFSConnector::InitializeSmartFox()
 {
+	if (mSmartFox) {
+		mSmartFox->RemoveAllEventListeners();
+	}
 	// Initialize Smart Fox
 	mSmartFox = boost::shared_ptr<Sfs2X::SmartFox>(new Sfs2X::SmartFox(true));
 	mSmartFox->ThreadSafeMode(true);
@@ -271,26 +274,14 @@ void SFSConnector::Connect(std::string host, int port)
 {
     CCLOG("Connect to SmartFox: %s %d", host.c_str(), port);
 	SFSConnector::getSingleton().InitializeSmartFox();
-	try {
-		mSmartFox->Connect(host.c_str(), port);
-	} catch (exception e) {
-		CCLOG("SFSConnector::Connect::Exception: %s", e.what());
-		if (EventHandler::getSingleton().onConnectionFailed != NULL) {
-			EventHandler::getSingleton().onConnectionFailed();
-		}
-	}
+	mSmartFox->Connect(host.c_str(), port);
 }
 
 void SFSConnector::Disconnect()
 {
 	CCLOG("SFSConnector::Disconnect");
-	try {
-		if (mSmartFox) {
-			mSmartFox->Disconnect();
-		}
-	} catch (exception e) {
-		CCLOG("SFSConnector::Disconnect::Exception: %s", e.what());
-		//Utils::getSingleton().goToLoginScene();
+	if (mSmartFox) {
+		mSmartFox->Disconnect();
 	}
 }
 
