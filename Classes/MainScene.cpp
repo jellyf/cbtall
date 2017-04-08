@@ -196,10 +196,15 @@ void MainScene::onInit()
 	mLayer->addChild(btnPhuChua);
 	autoScaleNode(btnPhuChua);
 
-	ui::Button* btnLoiDai = ui::Button::create("loidai.png", "loidai.png", "", ui::Widget::TextureResType::PLIST);
+	ui::Button* btnLoiDai = ui::Button::create("dtd.png", "dtd.png", "", ui::Widget::TextureResType::PLIST);
 	btnLoiDai->setPosition(vecPos[11]);
 	addTouchEventListener(btnLoiDai, [=]() {
-		showPopupNotice(Utils::getSingleton().getStringForKey("feature_coming_soon"), [=]() {});
+		//showPopupNotice(Utils::getSingleton().getStringForKey("feature_coming_soon"), [=]() {});
+		if (isWaiting) return;
+		showWaiting();
+		tmpZoneId = 3;
+		isGoToLobby = true;
+		SFSRequest::getSingleton().Disconnect();
 	});
 	mLayer->addChild(btnLoiDai);
 	autoScaleNode(btnLoiDai);
@@ -215,7 +220,7 @@ void MainScene::onInit()
 	initPopupDisplayName();
 	initPopupGiftcode();*/
 	initEventView(Vec2(0, 575), Size(1120, 40));
-	//initWebView();
+	initWebView();
 
 	if (Utils::getSingleton().userDataMe.Name.length() > 0 && Utils::getSingleton().userDataMe.DisplayName.length() == 0) {
 		if (popupDisplayName == nullptr) {
@@ -232,6 +237,7 @@ void MainScene::onInit()
 		runEventView(Utils::getSingleton().events, Utils::getSingleton().currentEventPosX);
 	}
     Utils::getSingleton().solveCachedPurchases();
+	onDynamicConfigReceived();
 
 	//for (int i = 1; i <= 4; i++) {
 	//	string name1 = "provider" + to_string(i);
@@ -276,6 +282,7 @@ void MainScene::registerEventListenner()
 {
 	BaseScene::registerEventListenner();
 	EventHandler::getSingleton().onConfigZoneReceived = std::bind(&MainScene::onConfigZoneReceived, this);
+	EventHandler::getSingleton().onDynamicConfigReceived = std::bind(&MainScene::onDynamicConfigReceived, this);
 	EventHandler::getSingleton().onConnectionLost = std::bind(&MainScene::onConnectionLost, this, std::placeholders::_1);
 	EventHandler::getSingleton().onJoinRoom = std::bind(&MainScene::onJoinRoom, this, std::placeholders::_1, std::placeholders::_2);
 	EventHandler::getSingleton().onJoinRoomError = std::bind(&MainScene::onJoinRoomError, this, std::placeholders::_1);
@@ -296,6 +303,7 @@ void MainScene::unregisterEventListenner()
 	BaseScene::unregisterEventListenner();
 	EventHandler::getSingleton().onConnectionLost = NULL;
 	EventHandler::getSingleton().onConfigZoneReceived = NULL;
+	EventHandler::getSingleton().onDynamicConfigReceived = NULL;
 	EventHandler::getSingleton().onJoinRoom = NULL;
 	EventHandler::getSingleton().onJoinRoomError = NULL;
 	EventHandler::getSingleton().onLobbyTableSFSResponse = NULL;
@@ -890,7 +898,8 @@ void MainScene::onNewsDataResponse(std::vector<NewsData> list)
 void MainScene::onPurchaseSuccess(std::string token)
 {
     if(token.length() > 0){
-        SFSRequest::getSingleton().RequestPayment(token);
+		ui::CheckBox* cbQuan = (ui::CheckBox*)(popupCharge->getChildByName("nodemoneytype")->getChildByTag(0));
+        SFSRequest::getSingleton().RequestPayment(token, cbQuan->isSelected());
 	} else {
 		hideWaiting();
 	}
@@ -900,6 +909,16 @@ void MainScene::onFacebookInvite(std::string token)
 {
 	if (token.length() > 0) {
 		SFSRequest::getSingleton().RequestVerifyFBInvite(token);
+	}
+}
+
+void MainScene::onDynamicConfigReceived()
+{
+	if (Utils::getSingleton().allowEventPopup 
+		&& Utils::getSingleton().dynamicConfig.Popup
+		&& !Utils::getSingleton().hasShowEventPopup) {
+		Utils::getSingleton().hasShowEventPopup = true;
+		showWebView(Utils::getSingleton().dynamicConfig.PopupUrl);
 	}
 }
 
@@ -992,6 +1011,12 @@ void MainScene::initPopupCharge()
 	nodes.push_back(nodeSms);
 	nodes.push_back(nodeStore);
 
+	Node* nodeMoneyType = Node::create();
+	nodeStore->setName("nodemoneytype");
+	nodeMoneyType->setPosition(-220, 20);
+	nodeMoneyType->setVisible(pmE);
+	popupCharge->addChild(nodeMoneyType);
+
 	ui::EditBox* tfSeri = ui::EditBox::create(Size(350, 55), "box.png", ui::Widget::TextureResType::PLIST);
 	ui::EditBox* tfCode = ui::EditBox::create(Size(350, 55), "box.png", ui::Widget::TextureResType::PLIST);
 
@@ -1020,17 +1045,20 @@ void MainScene::initPopupCharge()
 			popupCharge->setTag(i);
 
 			if (i == 0) {
+				nodeMoneyType->setPosition(-220, 20);
 				for (int i = 1; i <= 4; i++) {
 					popupCharge->getChildByName("btn" + to_string(i))->setVisible(true);
 					//popupCharge->getChildByName("providerimg" + to_string(i))->setVisible(true);
 				}
 			} else if (i == 1) {
+				nodeMoneyType->setPosition(-220, 20);
 				for (int i = 1; i <= 3; i++) {
 					popupCharge->getChildByName("btn" + to_string(i))->setVisible(true);
 					//popupCharge->getChildByName("providerimg" + to_string(i))->setVisible(true);
 				}
 				checkProviderToCharge();
 			} else if(i == 2){
+				nodeMoneyType->setPosition(-220, 150);
 				for (int i = 1; i <= 4; i++) {
 					popupCharge->getChildByName("btn" + to_string(i))->setVisible(false);
 					//popupCharge->getChildByName("providerimg" + to_string(i))->setVisible(false);
@@ -1096,7 +1124,9 @@ void MainScene::initPopupCharge()
 			//sp->initWithTexture(textures["provider" + stri]);
 
 			if (i < strProviders.size() && nodeSms->isVisible()) {
-				string smsct = btnIndex == 1 ? Utils::getSingleton().gameConfig.smsVT : Utils::getSingleton().gameConfig.smsVNPVMS;
+				ui::CheckBox* cbQuan = (ui::CheckBox*)nodeMoneyType->getChildByTag(0);
+				updateSmsInfo(cbQuan->isSelected());
+				/*string smsct = btnIndex == 1 ? Utils::getSingleton().gameConfig.smsVT : Utils::getSingleton().gameConfig.smsVNPVMS;
 				int strid = smsct.find_last_of(' ');
 				string smstg = smsct.substr(strid + 1, smsct.length() - strid);
 				smsct = smsct.substr(0, strid);
@@ -1112,7 +1142,7 @@ void MainScene::initPopupCharge()
 					Label* lbTarget = (Label*)node->getChildByName("lbsmstarget");
 					lbContent->setString(smsStr);
 					lbTarget->setString(smstg);
-				}
+				}*/
 			}
 
 			if (i == 4) {
@@ -1136,6 +1166,49 @@ void MainScene::initPopupCharge()
 
 		xp += 200;
 	}
+
+	vector<Label*> lbs;
+	vector<ui::CheckBox*> cbs;
+	for (int i = 0; i < 2; i++) {
+		ui::CheckBox* checkbox = ui::CheckBox::create();
+		checkbox->loadTextureBackGround("box0.png", ui::Widget::TextureResType::PLIST);
+		checkbox->loadTextureFrontCross("check.png", ui::Widget::TextureResType::PLIST);
+		checkbox->setPosition(Vec2(150 * i, 0));
+		checkbox->setSelected(false);
+		checkbox->setTag(i);
+		nodeMoneyType->addChild(checkbox);
+		cbs.push_back(checkbox);
+
+		Label* lb = Label::create("", "fonts/aurora.ttf", 30);
+		lb->setPosition(checkbox->getPosition() + Vec2(30, 0));
+		lb->setAnchorPoint(Vec2(0, .5f));
+		lb->setColor(Color3B::WHITE);
+		nodeMoneyType->addChild(lb);
+		lbs.push_back(lb);
+	}
+
+	cbs[0]->setSelected(true);
+	cbs[0]->addEventListener([=](Ref* ref, ui::CheckBox::EventType type) {
+		if (type == ui::CheckBox::EventType::SELECTED) {
+			cbs[1]->setSelected(false);
+		} else if (type == ui::CheckBox::EventType::UNSELECTED) {
+			cbs[1]->setSelected(true);
+		}
+		updateChargeRateCard(cbs[0]->isSelected());
+		updateSmsInfo(cbs[0]->isSelected());
+	});
+	cbs[1]->addEventListener([=](Ref* ref, ui::CheckBox::EventType type) {
+		if (type == ui::CheckBox::EventType::SELECTED) {
+			cbs[0]->setSelected(false);
+		} else if (type == ui::CheckBox::EventType::UNSELECTED) {
+			cbs[0]->setSelected(true);
+		}
+		updateChargeRateCard(cbs[0]->isSelected());
+		updateSmsInfo(cbs[0]->isSelected());
+	});
+	lbs[0]->setString(Utils::getSingleton().getStringForKey("quan"));
+	lbs[1]->setString(Utils::getSingleton().getStringForKey("xu"));
+	ui::CheckBox* cbQuan = cbs[0];
 
 	//Node Card
 	Node* nodeCardInfo = Node::create();
@@ -1255,47 +1328,6 @@ void MainScene::initPopupCharge()
 		}
 	});*/
 
-	vector<Label*> lbs;
-	vector<ui::CheckBox*> cbs;
-	for (int i = 0; i < 2; i++) {
-		ui::CheckBox* checkbox = ui::CheckBox::create();
-		checkbox->loadTextureBackGround("box0.png", ui::Widget::TextureResType::PLIST);
-		checkbox->loadTextureFrontCross("check.png", ui::Widget::TextureResType::PLIST);
-		checkbox->setPosition(Vec2(-120 + 130 * i, -65));
-		checkbox->setSelected(false);
-		checkbox->setTag(i);
-		nodeInput->addChild(checkbox);
-		cbs.push_back(checkbox);
-
-		Label* lb = Label::create("", "fonts/aurora.ttf", 30);
-		lb->setPosition(checkbox->getPosition() + Vec2(30, 0));
-		lb->setAnchorPoint(Vec2(0, .5f));
-		lb->setColor(Color3B::WHITE);
-		nodeInput->addChild(lb);
-		lbs.push_back(lb);
-	}
-
-	cbs[0]->setSelected(true);
-	cbs[0]->addEventListener([=](Ref* ref, ui::CheckBox::EventType type) {
-		if (type == ui::CheckBox::EventType::SELECTED) {
-			cbs[1]->setSelected(false);
-		} else if (type == ui::CheckBox::EventType::UNSELECTED) {
-			cbs[1]->setSelected(true);
-		}
-		updateChargeRateCard(cbs[0]->isSelected());
-	});
-	cbs[1]->addEventListener([=](Ref* ref, ui::CheckBox::EventType type) {
-		if (type == ui::CheckBox::EventType::SELECTED) {
-			cbs[0]->setSelected(false);
-		} else if (type == ui::CheckBox::EventType::UNSELECTED) {
-			cbs[0]->setSelected(true);
-		}
-		updateChargeRateCard(cbs[0]->isSelected());
-	});
-	lbs[0]->setString(Utils::getSingleton().getStringForKey("quan"));
-	lbs[1]->setString(Utils::getSingleton().getStringForKey("xu"));
-
-	ui::CheckBox* cbQuan = cbs[0];
 	ui::Button* btnCharge = ui::Button::create("btn_nap.png", "btn_nap_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnCharge->setPosition(Vec2(160, -65));
 	//btnCharge->setContentSize(Size(140, 55));
@@ -1354,6 +1386,7 @@ void MainScene::initPopupCharge()
 			string strMoney = to_string(moneys[i]);
 			string strMoney2 = to_string(moneys[i] / 2);
 			string smsStr = Utils::getSingleton().replaceString(smsContent, "vnd", strMoney);
+			smsStr = Utils::getSingleton().replaceString(smsStr, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
 
 			Node* itemSms = Node::create();
 			itemSms->setPosition(125 + i * 250, 100);
@@ -1372,7 +1405,8 @@ void MainScene::initPopupCharge()
 			Label* lbItemSms2 = Label::create(strMoney2 + "k Quan", "fonts/aurora.ttf", 25);
 			lbItemSms2->setAnchorPoint(Vec2(0, .5f));
 			lbItemSms2->setColor(Color3B::YELLOW);
-			lbItemSms2->setPosition(5, 60);
+			lbItemSms2->setPosition(10, 60);
+			lbItemSms2->setName("lbsmsmoney");
 			itemSms->addChild(lbItemSms2);
 
 			Label* lbItemSms3 = Label::create(smsStr, "fonts/aurora.ttf", 25);
@@ -1399,14 +1433,15 @@ void MainScene::initPopupCharge()
 					}
 				}
 
-				string smsct = btnIndex == 1 ? Utils::getSingleton().gameConfig.smsVT : Utils::getSingleton().gameConfig.smsVNPVMS;
+				/*string smsct = btnIndex == 1 ? Utils::getSingleton().gameConfig.smsVT : Utils::getSingleton().gameConfig.smsVNPVMS;
 				int strid = smsct.find_last_of(' ');
 				string smstg = smsct.substr(strid + 1, smsct.length() - strid);
 				smsct = smsct.substr(0, strid);
 				string strMoney = to_string(moneys[i]);
 				string smsStr = Utils::getSingleton().replaceString(smsct, "vnd", strMoney);
-				smsStr = Utils::getSingleton().replaceString(smsStr, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
-				Utils::getSingleton().openSMS(smstg, smsStr);
+				smsStr = Utils::getSingleton().replaceString(smsStr, "uid", to_string(Utils::getSingleton().userDataMe.UserID));*/
+				//CCLOG("%s %s", lbItemSms4->getString().c_str(), lbItemSms3->getString().c_str());
+				Utils::getSingleton().openSMS(lbItemSms4->getString(), lbItemSms3->getString());
 				Tracker::getSingleton().trackPurchaseSuccess("ClickSMS", strProviders[btnIndex - 1], "VND", moneys[i] * 1000);
 			});
 			itemSms->addChild(btnItemSms);
@@ -1931,20 +1966,63 @@ void MainScene::initPopupShop()
 void MainScene::initWebView()
 {
 	nodeWebview = Node::create();
-	nodeWebview->setPosition(560, 350);
+	nodeWebview->setPosition(winSize.width/2, winSize.height/2);
 	nodeWebview->setVisible(false);
 	mLayer->addChild(nodeWebview, constant::ZORDER_POPUP);
+	autoScaleNode(nodeWebview);
+
+	ui::Scale9Sprite* webSplash = ui::Scale9Sprite::createWithSpriteFrameName("white.png");
+	webSplash->setContentSize(Size(1500, 1000));
+	webSplash->setColor(Color3B::BLACK);
+	webSplash->setOpacity(150);
+	nodeWebview->addChild(webSplash);
+
+	Sprite* bg = Sprite::create("popup_bg1.png");
+	bg->setName("spbg");
+	nodeWebview->addChild(bg);
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+	Size wSize = bg->getContentSize() - Size(80, 80);
+	auto webView = experimental::ui::WebView::create();
+	webView->setContentSize(wSize);
+	webView->setScalesPageToFit(true);
+	webView->setName("webview");
+	webView->setVisible(false);
+	nodeWebview->addChild(webView);
+#endif
+
+	ui::CheckBox* checkbox = ui::CheckBox::create();
+	checkbox->loadTextureBackGround("box0.png", ui::Widget::TextureResType::PLIST);
+	checkbox->loadTextureFrontCross("check.png", ui::Widget::TextureResType::PLIST);
+	checkbox->setPosition(Vec2(-500, -320));
+	checkbox->setSelected(false);
+	nodeWebview->addChild(checkbox);
+	checkbox->addEventListener([=](Ref* ref, ui::CheckBox::EventType type) {
+		if (type == ui::CheckBox::EventType::SELECTED) {
+			Utils::getSingleton().allowEventPopup = false;
+		} else if (type == ui::CheckBox::EventType::UNSELECTED) {
+			Utils::getSingleton().allowEventPopup = true;
+		}
+	});
+
+	Label* lb = Label::create(Utils::getSingleton().getStringForKey("khong_hien_lai"), "fonts/arial.ttf", 30);
+	lb->setPosition(checkbox->getPosition() + Vec2(40, 0));
+	lb->setAnchorPoint(Vec2(0, .5f));
+	lb->setColor(Color3B::WHITE);
+	nodeWebview->addChild(lb);
 
 	ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnClose->setPosition(Vec2(500, 310));
-	btnClose->setScale(.5f);
+	btnClose->setPosition(Vec2(bg->getContentSize().width / 2 - 10, bg->getContentSize().height / 2 - 5));
+	//btnClose->setScale(.8f);
 	addTouchEventListener(btnClose, [=]() {
-		hideSplash();
+		//hideSplash();
 		nodeWebview->setVisible(false);
-		nodeWebview->removeChildByName("webview");
+		//nodeWebview->removeChildByName("webview");
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+		webView->setVisible(false);
+#endif
 	});
 	nodeWebview->addChild(btnClose);
-	autoScaleNode(btnClose);
 }
 
 void MainScene::initPopupGiftcode()
@@ -2119,16 +2197,11 @@ void MainScene::showPopupNews()
 
 void MainScene::showWebView(std::string url)
 {
-	showSplash();
 	nodeWebview->setVisible(true);
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_TIZEN) && !defined(CC_PLATFORM_OS_TVOS)
-	Size  winSize = Director::getInstance()->getVisibleSize();
-	auto webView = experimental::ui::WebView::create();
-	webView->setContentSize(Size(winSize.width, winSize.height * 0.9));
-	webView->setScalesPageToFit(true);
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+	experimental::ui::WebView* webView = (experimental::ui::WebView*)nodeWebview->getChildByName("webview");
 	webView->loadURL(url);
-	webView->setName("webview");
-	nodeWebview->addChild(webView);
+	webView->setVisible(true);
 #endif
 }
 
@@ -2187,5 +2260,39 @@ void MainScene::updateChargeRateCard(bool isQuan)
 		Label* lb = (Label*)scroll->getChildByTag(i * 2 + 1);
 		lb->setString(to_string(isQuan ? moneys[i] : moneyxs[i]) + "k " + type);
 		lb->setColor(isQuan ? Color3B::YELLOW : Color3B(0, 255, 255));
+	}
+}
+
+void MainScene::updateSmsInfo(bool isQuan)
+{
+	int btnIndex = 0;
+	for (int j = 1; j <= 4; j++) {
+		string strj = to_string(j);
+		ui::Button* btn = (ui::Button*)popupCharge->getChildByName("btn" + strj);
+		if (btn->getTag() == 1) {
+			btnIndex = j;
+			break;
+		}
+	}
+	string smsct = btnIndex == 1 ? Utils::getSingleton().gameConfig.smsVT : Utils::getSingleton().gameConfig.smsVNPVMS;
+	int strid = smsct.find_last_of(' ');
+	string smstg = smsct.substr(strid + 1, smsct.length() - strid);
+	smsct = smsct.substr(0, strid);
+	smsct = Utils::getSingleton().replaceString(smsct, "uid", (isQuan ? "" : "X") + to_string(Utils::getSingleton().userDataMe.UserID));
+
+	Node* nodeSms = popupCharge->getChildByName("nodesms");
+	ui::ScrollView* scroll = (ui::ScrollView*)nodeSms->getChildByName("scrollsms");
+	for (int i = 0; i < moneys.size(); i++) {
+		string strMoney = to_string(moneys[i]);
+		string smsStr = Utils::getSingleton().replaceString(smsct, "vnd", strMoney);
+
+		Node* node = scroll->getChildByName(strMoney);
+		Label* lbMoney = (Label*)node->getChildByName("lbsmsmoney");
+		Label* lbContent = (Label*)node->getChildByName("lbsmscontent");
+		Label* lbTarget = (Label*)node->getChildByName("lbsmstarget");
+		lbMoney->setString(to_string(moneys[i] / 2 * 5) + "k " + (isQuan ? "Quan" : "Xu"));
+		lbMoney->setColor(isQuan ? Color3B::YELLOW : Color3B(0, 255, 255));
+		lbContent->setString(smsStr);
+		lbTarget->setString(smstg);
 	}
 }

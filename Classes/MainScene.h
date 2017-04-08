@@ -26,6 +26,7 @@ public:
 	void onNewsDataResponse(std::vector<NewsData> list);
 	void onPurchaseSuccess(std::string token);
 	void onFacebookInvite(std::string token);
+	void onDynamicConfigReceived();
 protected:
 	virtual void onConnected();
 	virtual void onLoginZoneError(short int code, std::string msg);
@@ -47,6 +48,7 @@ private:
 	void showWebView(std::string url);
 	void checkProviderToCharge();
 	void updateChargeRateCard(bool isQuan);
+	void updateSmsInfo(bool isQuan);
 
 	cocos2d::Node* popupShop;
 	cocos2d::Node* popupMail;

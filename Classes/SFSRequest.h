@@ -46,7 +46,7 @@ public:
 	void RequestUpdateDisplayName(std::string name);
 	void RequestNews(int page);
 	void RequestGiftcode(std::string giftcode);
-	void RequestPayment(std::string token);
+	void RequestPayment(std::string token, bool isQuan);
 	void RequestCofferHistory();
 	void RequestVerifyFBInvite(std::string token);
 

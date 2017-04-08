@@ -26,6 +26,7 @@ public:
 	std::string getCurrentSystemTimeString();
 	std::string getPlatformOS();
 	std::string getDeviceId();
+	std::string getCurrentZoneName();
 	double getCurrentSystemTimeInSecs();
 	int getCurrentZoneIndex();
 	bool isEmailValid(std::string email);
@@ -33,6 +34,7 @@ public:
 	bool isPasswordValid(std::string password);
 	bool isDisplayNameValid(std::string displayname);
 	bool ispmE();
+	bool isSoloGame();
 	void setPmEByLogin(bool pme);
 	void split(const std::string &s, char delim, std::vector<std::string> &elems);
 	void replaceScene(cocos2d::Scene* scene);
@@ -67,6 +69,7 @@ public:
 	cocos2d::Scene* currentScene;
 	UserData userDataMe;
 	GameConfig gameConfig;
+	DynamicConfig dynamicConfig;
 	LobbyListTable lobbyListTable;
 	LobbyListRoomType lobbyListRoomType;
 	TableReconnectData tableReconnectData;
@@ -94,6 +97,8 @@ public:
 	bool SoundEnabled;
 	bool isWaitingScene;
 	bool IgnoreInvitation;
+	bool allowEventPopup;
+	bool hasShowEventPopup;
 private:
 	cocos2d::ValueMap viLang;
 	std::map<std::string, cocos2d::Texture2D*> textures;

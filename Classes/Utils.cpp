@@ -30,9 +30,12 @@ Utils::Utils()
 	moneyType = -1;
 	userDataMe.UserID = 0;
 	downloadedPlistTexture = 0;
+	allowEventPopup = true;
 	isRunningEvent = false;
 	gameConfig.pmE = false;
 	gameConfig.pmEIOS = false;
+	dynamicConfig.Popup = false;
+	hasShowEventPopup = false;
 	currentEventPosX = constant::EVENT_START_POSX;
 	textureHost = "http://115.84.179.242/main_kinhtuchi/";
 	cofferGuide = "";
@@ -201,6 +204,15 @@ std::string Utils::getDeviceId()
 #endif
 }
 
+std::string Utils::getCurrentZoneName()
+{
+	/*if (currentZoneName == "SoLoXu")
+		return "NhaTranh";
+	else if (currentZoneName == "SoLoQuan")
+		return "NhaTranhQuan";*/
+	return currentZoneName;
+}
+
 double Utils::getCurrentSystemTimeInSecs()
 {
 	timeval time;
@@ -285,6 +297,11 @@ bool Utils::ispmE()
 #endif
 }
 
+bool Utils::isSoloGame()
+{
+	return currentZoneName.substr(0, 4).compare("SoLo") == 0;
+}
+
 void Utils::setPmEByLogin(bool pme)
 {
 	gameConfig.pmE &= pme;
@@ -302,6 +319,7 @@ void Utils::split(const std::string & s, char delim, std::vector<std::string>& e
 }
 
 void Utils::replaceScene(cocos2d::Scene* newScene) {
+	callbacks.clear();
 	if (currentScene != nullptr) {
 		currentScene->unscheduleUpdate();
 	}
@@ -347,6 +365,7 @@ void Utils::logoutGame()
 	userDataMe.UserID = 0;
 	userDataMe.Name = "";
 	logoutZone();
+	hasShowEventPopup = false;
 }
 
 void Utils::logoutZone()
@@ -508,6 +527,7 @@ void Utils::loginZoneByIndex(int moneyType, int index)
 	currentZonePort = zonePort;
 	currentZoneIp = zoneIp;
 	currentZoneName = zoneName;
+	CCLOG("%d %s", index, zoneName.c_str());
 	SFSRequest::getSingleton().LoginZone(username, password, zoneName);
 }
 
@@ -534,7 +554,7 @@ void Utils::solveCachedPurchases()
 {
     if(cachedPaymentTokens.size() == 0) return;
     for(std::string token : cachedPaymentTokens){
-        SFSRequest::getSingleton().RequestPayment(token);
+        SFSRequest::getSingleton().RequestPayment(token, ispmE());
     }
     cachedPaymentTokens.clear();
 }
@@ -594,12 +614,14 @@ void Utils::downloadPlistTextures()
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 	if (downloadedPlistTexture == 0) {
 		string str1 = FileUtils::getInstance()->getStringFromFile("menu1.plist");
+		Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA8888);
 		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu1.png", [=](Texture2D* texture1) {
 			SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str1, texture1);
 			downloadedPlistTexture = 1;
 			if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
 				EventHandler::getSingleton().onDownloadedPlistTexture(downloadedPlistTexture);
 			}
+			Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
 			string str2 = FileUtils::getInstance()->getStringFromFile("menu2.plist");
 			Utils::getSingleton().LoadTextureFromURL(textureHost + "menu2.png", [=](Texture2D* texture2) {
 				SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str2, texture2);
@@ -628,12 +650,14 @@ void Utils::downloadPlistTextures()
 		}
 	}
 #else
+	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA8888);
 	TextureCache::sharedTextureCache()->addImageAsync("menu1.png", [=](Texture2D* texture) {
 		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("menu1.plist");
 		downloadedPlistTexture = 1;
 		if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
 			EventHandler::getSingleton().onDownloadedPlistTexture(downloadedPlistTexture);
 		}
+		Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
 		TextureCache::sharedTextureCache()->addImageAsync("menu2.png", [=](Texture2D* texture) {
 			SpriteFrameCache::getInstance()->addSpriteFramesWithFile("menu2.plist");
 			downloadedPlistTexture = 2;

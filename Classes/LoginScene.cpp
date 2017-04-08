@@ -352,34 +352,43 @@ void LoginScene::onErrorResponse(unsigned char code, std::string msg)
 void LoginScene::onHttpResponse(int tag, std::string content)
 {
 	if (tag != constant::TAG_HTTP_GAME_CONFIG) return;
-	rapidjson::Document d;
-	GameConfig config;
-	try {
-		d.Parse<0>(content.c_str());
-		config.pmE = d["payment"].GetBool();
-		config.pmEIOS = d["paymentIOS"].GetBool();
-		config.zone = d["name"].GetString();
-		config.host = d["host"].GetString();
-		config.port = d["port"].GetInt();
-		config.websocket = d["port"].GetInt();
-		config.version = d["version"].GetInt();
-		config.versionIOS = d["versionIOS"].GetInt();
-		config.ip_rs = d["ip_rs"].GetString();
-		config.phone = d["phone"].GetString();
-		config.smsVT = d["smsVT"].GetString();
-		config.smsVNPVMS = d["smsVNPVMS"].GetString();
-		config.smsKH = d["smsKH"].GetString();
-		config.smsMK = d["smsMK"].GetString();
-		config.linkFb = d["fb"].GetString();
-		config.linkAndroid = d["a"].GetString();
-		config.linkIOS = d["i"].GetString();
-		config.canUpdate = d["updatenow"].GetBool();
-		config.inapp = d["inapp"].GetString();
-		config.invite = d["invite"].GetBool();
-	} catch (exception e) {
+	if (content.length() == 0) {
 		onHttpResponseFailed();
 		return;
 	}
+	rapidjson::Document d;
+	GameConfig config;
+	d.Parse<0>(content.c_str());
+
+	vector<string> keys = { "payment", "paymentIOS", "name", "host", "port", "websocket", "version", "versionIOS", "ip_rs", "phone",
+		"smsVT", "smsVNPVMS", "smsKH", "smsMK", "fb", "a", "i", "updatenow", "inapp", "invite" };
+	for (string k : keys) {
+		if (d.FindMember(k.c_str()) == d.MemberEnd()) {
+			onHttpResponseFailed();
+			return;
+		}
+	}
+
+	config.pmE = d["payment"].GetBool();
+	config.pmEIOS = d["paymentIOS"].GetBool();
+	config.zone = d["name"].GetString();
+	config.host = d["host"].GetString();
+	config.port = d["port"].GetInt();
+	config.websocket = d["websocket"].GetInt();
+	config.version = d["version"].GetInt();
+	config.versionIOS = d["versionIOS"].GetInt();
+	config.ip_rs = d["ip_rs"].GetString();
+	config.phone = d["phone"].GetString();
+	config.smsVT = d["smsVT"].GetString();
+	config.smsVNPVMS = d["smsVNPVMS"].GetString();
+	config.smsKH = d["smsKH"].GetString();
+	config.smsMK = d["smsMK"].GetString();
+	config.linkFb = d["fb"].GetString();
+	config.linkAndroid = d["a"].GetString();
+	config.linkIOS = d["i"].GetString();
+	config.canUpdate = d["updatenow"].GetBool();
+	config.inapp = d["inapp"].GetString();
+	config.invite = d["invite"].GetBool();
 		
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 	if (isRealConfig && !config.pmEIOS) {

@@ -196,6 +196,7 @@ private:
 	bool isPause = false;
 	bool isU411 = false;
 	bool mustGoToLobby = false;
+	bool isSolo = false;
 	GameState state;
 	StartGameData startGameData;
 	CardHandData myCardHand;

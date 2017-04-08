@@ -17,6 +17,7 @@ void GameScene::onInit()
 
 	UserDefault::getInstance()->setBoolForKey(constant::KEY_AUTO_READY.c_str(), false);
 	bool pmE = Utils::getSingleton().ispmE();
+	isSolo = Utils::getSingleton().isSoloGame();
 
 	state = NONE;
 	myServerSlot = -1;
@@ -108,7 +109,8 @@ void GameScene::onInit()
 		"bonthienkhai", "cobon", "haibon", "babon", "bonbon", "cochiu", "haichiu", "bachiu", "bonchiu", "hoaroicuaphat", "xuong", 
 		"caloisandinh", "canhaydauthuyen", "nhalauxehoihoaroicuaphat", "thienu", "chuadonathoa", "nguongbatca" };
 	
-	string zone = Utils::getSingleton().currentZoneName;
+	bool isSolo = Utils::getSingleton().isSoloGame();
+	string zone = Utils::getSingleton().getCurrentZoneName();
 	int index = zone.find_last_of("Q");
 	if (index >= 0 && index < zone.length()) {
 		zone = zone.substr(0, index);
@@ -118,32 +120,34 @@ void GameScene::onInit()
 		zone = "VuongPhu";
 	}
 
+	string bgName = isSolo ? "bgVuongPhu.jpg" : "bg" + zone + ".jpg";
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB565);
-	Texture2D* bgTexture = TextureCache::getInstance()->addImage("bg" + zone + ".jpg");
+	Texture2D* bgTexture = TextureCache::getInstance()->addImage(bgName);
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
 
 	Sprite* bg = Sprite::createWithTexture(bgTexture);
 	bg->setPosition(560, 350);
 	mLayer->addChild(bg);
 
-	//Sprite* centerBg = Sprite::create("game/center" + zone + ".png");
+	//Sprite* centerBg = Sprite::create("center.png");
 	Sprite* centerBg = Sprite::createWithSpriteFrameName("center.png");
 	centerBg->setPosition(560, 350);
+	//centerBg->setVisible(!isSolo);
 	mLayer->addChild(centerBg);
 	autoScaleNode(centerBg);
 
-	/*if (zone.compare("VuongPhu") == 0) {
-		Sprite* dragon1 = Sprite::create("game/dragon.png");
-		dragon1->setPosition(330, 350);
+	if (isSolo) {
+		Sprite* dragon1 = Sprite::create("dragon.png");
+		dragon1->setPosition(310, 350);
 		mLayer->addChild(dragon1);
 		autoScaleNode(dragon1);
 
-		Sprite* dragon2 = Sprite::create("game/dragon.png");
-		dragon2->setPosition(790, 350);
+		Sprite* dragon2 = Sprite::create("dragon.png");
+		dragon2->setPosition(810, 350);
 		dragon2->setFlippedX(true);
 		mLayer->addChild(dragon2);
 		autoScaleNode(dragon2);
-	}*/
+	}
 
 	playLayer = Layer::create();
 	mLayer->addChild(playLayer, 10);
@@ -1756,10 +1760,15 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 		tableCardPos[0] = tableCardPos[9];
 	}
 	for (int i = 0; i < 4; i++) {
-		spInvites[i]->setVisible(true);
 		vecUsers[i]->setVisible(false);
 		spBatBaos[i]->setVisible(false);
 		spSanSangs[i]->setVisible(false);
+	}
+	if (isSolo) {
+		spInvites[0]->setVisible(true);
+		spInvites[2]->setVisible(true);
+		spInvites[1]->setVisible(false);
+		spInvites[3]->setVisible(false);
 	}
 	int num = 0;
 	for (int i = 0; i < 4; i++) {
@@ -1846,9 +1855,6 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 	cofferSplash->setVisible(false);
 	cofferEffect->setVisible(false);
 	cofferEffect->getChildByName("splight")->pauseSchedulerAndActions();
-	for (Sprite* sp : spInvites) {
-		sp->setVisible(true);
-	}
 	for (int i = 0; i < tableCardNumb.size(); i++) {
 		tableCardNumb[i] = 0;
 	}
@@ -1941,6 +1947,9 @@ void GameScene::onChooseStilt(unsigned char stilt)
 	}
 
 	chosenStilt = stilt - 1;
+	if (chosenStilt < 0 || chosenStilt >= vecStilts.size()) {
+		chosenStilt = 0;
+	}
 	vecStilts[chosenStilt]->setVisible(false);
 	hostCard = Sprite::createWithSpriteFrameName("100.png");
 	hostCard->setName("hostCard");
@@ -3124,25 +3133,27 @@ void GameScene::onGameSpectatorDataResponse(std::vector<PlayerData> spectators)
 			}
 		}
 	}
-	for (PlayerData player : spectators) {
-		int index = player.Index;
-		for (int i = 0; i < 4; i++) {
-			if (!vecUsers[i]->isVisible()) {
-				index = i;
-				break;
+	if (!isSolo) {
+		for (PlayerData player : spectators) {
+			int index = player.Index;
+			for (int i = 0; i < 4; i++) {
+				if (!vecUsers[i]->isVisible()) {
+					index = i;
+					break;
+				}
 			}
+			if (vecUsers[index]->isVisible()) {
+				return;
+			}
+			userIndexs[player.Info.SfsUserId] = index;
+			userIndexs2[player.Info.UserID] = index;
+			spInvites[index]->setVisible(false);
+			vecUsers[index]->setVisible(true);
+			vecUsers[index]->setAlpha(150);
+			vecUsers[index]->setPlayerName(player.Info.DisplayName);
+			vecUsers[index]->setPlayerMoney(player.PMoney);
+			vecUsers[index]->setName(player.Info.Name);
 		}
-		if (vecUsers[index]->isVisible()) {
-			return;
-		}
-		userIndexs[player.Info.SfsUserId] = index;
-		userIndexs2[player.Info.UserID] = index;
-		spInvites[index]->setVisible(false);
-		vecUsers[index]->setVisible(true);
-		vecUsers[index]->setAlpha(150);
-		vecUsers[index]->setPlayerName(player.Info.DisplayName);
-		vecUsers[index]->setPlayerMoney(player.PMoney);
-		vecUsers[index]->setName(player.Info.Name);
 	}
 }
 
@@ -3728,14 +3739,18 @@ void GameScene::initCofferEffects()
 	cofferEffect->addChild(lbName);
 
 	if (CC_TARGET_PLATFORM != CC_PLATFORM_IOS) {
+		Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA8888);
 		spCoffer->initWithFile("hu.png");
 		spLight->initWithFile("as.png");
+		Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
 	} else if (Utils::getSingleton().ispmE()) {
+		Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA8888);
 		string host = Utils::getSingleton().textureHost;
 		Utils::getSingleton().LoadTextureFromURL(host + "hu.png", [=](Texture2D* texture1) {
 			spCoffer->initWithTexture(texture1);
 			Utils::getSingleton().LoadTextureFromURL(host + "as.png", [=](Texture2D* texture2) {
 				spLight->initWithTexture(texture2);
+				Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
 			});
 		});
 	}

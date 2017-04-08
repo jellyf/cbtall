@@ -214,7 +214,7 @@ void SFSRequest::RequestGiftcode(std::string giftcode)
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::GIFT_CODE, parameters);
 }
 
-void SFSRequest::RequestPayment(std::string token)
+void SFSRequest::RequestPayment(std::string token, bool isQuan)
 {
 	std::string signature = "";
 	std::string developerPayload = "";
@@ -230,6 +230,7 @@ void SFSRequest::RequestPayment(std::string token)
 	parameters->PutUtfString("2", Utils::getSingleton().getPlatformOS());
 	parameters->PutUtfString("3", signature);
 	parameters->PutUtfString("4", developerPayload);
+	parameters->PutBool("5", isQuan);
     SFSConnector::getSingleton().SendExtensionRequest(cmd::PAYMENT, parameters);
 }
 

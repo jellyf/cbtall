@@ -4,6 +4,7 @@
 #include "EventHandler.h"
 #include "SFSRequest.h"
 #include "Constant.h"
+#include "json/document.h"
 
 template<> SFSResponse* SingLeton<SFSResponse>::mSingleton = 0;
 SFSResponse* SFSResponse::getSingletonPtr(void)
@@ -66,6 +67,7 @@ SFSResponse::SFSResponse()
 	mapFunctions[cmd::COFFER_MONEY] = std::bind(&SFSResponse::onCofferMoneyResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::COFFER_HISTORY] = std::bind(&SFSResponse::onCofferHistoryResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::PAYMENT_ENABLE] = std::bind(&SFSResponse::onPaymentEnableResponse, this, std::placeholders::_1);
+	mapFunctions[cmd::POPUP_EVENT] = std::bind(&SFSResponse::onPopupEventResponse, this, std::placeholders::_1);
 }
 
 SFSResponse::~SFSResponse()
@@ -116,10 +118,12 @@ void SFSResponse::onErrorResponse(boost::shared_ptr<ISFSObject> isfsObject)
 
 void SFSResponse::onConfigZoneResponse(boost::shared_ptr<ISFSObject> isfsObject)
 {
+	//std::vector<std::vector<ZoneData>> zones;
+	std::vector<ZoneData> vecZone;
 	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
 	while (byteArray->Position() < byteArray->Length()) {
 		short size;
-		std::vector<ZoneData> vecZone;
+		//std::vector<ZoneData> vecZone;
 		byteArray->ReadShort(size);
 		int pos = byteArray->Position() + size;
 		while (byteArray->Position() < pos) {
@@ -134,8 +138,21 @@ void SFSResponse::onConfigZoneResponse(boost::shared_ptr<ISFSObject> isfsObject)
 			vecZone.push_back(data);
 			//CCLOG("%d %s %s %s %d %d %d", data.Id, data.ZoneName.c_str(), data.ZoneIpIos.c_str(), data.ZoneIp.c_str(), data.ZonePort, data.Status, data.Money);
 		}
-		Utils::getSingleton().zones.push_back(vecZone);
 	}
+	std::vector<std::vector<std::string>> names = { {"NhaTranh", "SanDinh", "VuongPhu", "SoLoXu"}, { "NhaTranhQuan", "SanDinhQuan", "VuongPhuQuan", "SoLoQuan" } };
+	Utils::getSingleton().zones.push_back(std::vector<ZoneData>());
+	Utils::getSingleton().zones.push_back(std::vector<ZoneData>());
+	for (int i = 0; i < names.size(); i++) {
+		for (int j = 0; j < names[i].size(); j++) {
+			for (ZoneData d : vecZone) {
+				if (d.ZoneName.compare(names[i][j]) == 0) {
+					Utils::getSingleton().zones[i].push_back(d);
+					break;
+				}
+			}
+		}
+	}
+	
 	if (EventHandler::getSingleton().onConfigZoneReceived != NULL) {
 		EventHandler::getSingleton().onConfigZoneReceived();
 	}
@@ -1165,4 +1182,27 @@ void SFSResponse::onPaymentEnableResponse(boost::shared_ptr<ISFSObject> isfsObje
 	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
 	byteArray->ReadBool(pEnable);
 	Utils::getSingleton().setPmEByLogin(pEnable);
+}
+
+void SFSResponse::onPopupEventResponse(boost::shared_ptr<ISFSObject> isfsObject)
+{
+	std::string json;
+	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
+	byteArray->ReadUTF(json);
+	DynamicConfig config;
+	if (json.length() > 0) {
+		rapidjson::Document d;
+		d.Parse<0>(json.c_str());
+		if (d.FindMember("POPUP") != d.MemberEnd()) {
+			std::string str = d["POPUP"].GetString();
+			config.Popup = str.compare("1") == 0;
+		} else config.Popup = false;
+		if (d.FindMember("POPUP_VALUE") != d.MemberEnd()) {
+			config.PopupUrl = d["POPUP_VALUE"].GetString();
+		} else config.PopupUrl = "";
+	}
+	Utils::getSingleton().dynamicConfig = config;
+	if (EventHandler::getSingleton().onDynamicConfigReceived != NULL) {
+		EventHandler::getSingleton().onDynamicConfigReceived();
+	}
 }

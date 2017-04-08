@@ -273,14 +273,16 @@ void SFSConnector::OnPingPong(unsigned long long ptrContext, boost::shared_ptr<S
 void SFSConnector::Connect(std::string host, int port)
 {
     CCLOG("Connect to SmartFox: %s %d", host.c_str(), port);
-	SFSConnector::getSingleton().InitializeSmartFox();
-	mSmartFox->Connect(host.c_str(), port);
+	if (!mSmartFox || (!mSmartFox->IsConnected() && !mSmartFox->IsConnecting())) {
+		SFSConnector::getSingleton().InitializeSmartFox();
+		mSmartFox->Connect(host.c_str(), port);
+	}
 }
 
 void SFSConnector::Disconnect()
 {
 	CCLOG("SFSConnector::Disconnect");
-	if (mSmartFox) {
+	if (mSmartFox && mSmartFox->IsConnected()) {
 		mSmartFox->Disconnect();
 	}
 }

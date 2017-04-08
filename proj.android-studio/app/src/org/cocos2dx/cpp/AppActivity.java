@@ -56,9 +56,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
+import android.provider.Telephony;
 import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -328,6 +330,15 @@ public class AppActivity extends Cocos2dxActivity {
     }
 
     public void openFacebookInvitable() {
+        if(!FacebookSdk.isInitialized()){
+            FacebookSdk.sdkInitialize(getApplicationContext(), new FacebookSdk.InitializeCallback() {
+                @Override
+                public void onInitialized() {
+                    openFacebookInvitable();
+                }
+            });
+            return;
+        }
         GameRequestContent content = new GameRequestContent.Builder()
                 .setMessage("Vào chơi Kính Tứ Chi nào!")
                 .build();
@@ -364,11 +375,23 @@ public class AppActivity extends Cocos2dxActivity {
     }
 
     public static void openSMS(String address, String smsBody) {
-        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-        sendIntent.putExtra("address", address);
-        sendIntent.putExtra("sms_body", smsBody);
-        sendIntent.setType("vnd.android-dir/mms-sms");
-        AppActivity._activity.startActivity(sendIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(AppActivity._activity);
+            Intent sendIntent = new Intent(Intent.ACTION_SEND);
+            sendIntent.setType("text/plain");
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "text");
+
+            if (defaultSmsPackageName != null) {
+                sendIntent.setPackage(defaultSmsPackageName);
+            }
+            AppActivity._activity.startActivity(sendIntent);
+        } else {
+            Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+            sendIntent.putExtra("address", address);
+            sendIntent.putExtra("sms_body", smsBody);
+            sendIntent.setType("vnd.android-dir/mms-sms");
+            AppActivity._activity.startActivity(sendIntent);
+        }
     }
 
     public static void openCall(String phone) {
@@ -377,6 +400,15 @@ public class AppActivity extends Cocos2dxActivity {
     }
 
     public static void loginFacebook(){
+        if(!FacebookSdk.isInitialized()){
+            FacebookSdk.sdkInitialize(AppActivity._activity.getApplicationContext(), new FacebookSdk.InitializeCallback() {
+                @Override
+                public void onInitialized() {
+                    loginFacebook();
+                }
+            });
+            return;
+        }
         if(AccessToken.getCurrentAccessToken() != null){
             if(AccessToken.getCurrentAccessToken().isExpired()){
                 AccessToken.refreshCurrentAccessTokenAsync(new AccessToken.AccessTokenRefreshCallback() {

@@ -384,3 +384,9 @@ struct CofferWinnerData
 	std::string Cuocs;
 	std::string Date;
 };
+
+struct DynamicConfig
+{
+	bool Popup;
+	std::string PopupUrl;
+};
