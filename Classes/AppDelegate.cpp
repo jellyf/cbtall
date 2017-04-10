@@ -9,6 +9,7 @@
 #include "EventHandler.h"
 #include "Utils.h"
 #include "Tracker.h"
+#include "SFSGEvent.h"
 
 USING_NS_CC;
 
@@ -62,6 +63,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("login.plist");
 
+	SFSGEvent* sfsEvent = new SFSGEvent();
 	SFSConnector* connector = new SFSConnector();
 	SFSRequest* request = new SFSRequest();
 	SFSResponse* response = new SFSResponse();

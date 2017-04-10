@@ -24,6 +24,7 @@ LOCAL_SRC_FILES := hellocpp/main.cpp \
                    ../../../Classes/MainScene.cpp \
                    ../../../Classes/md5.cpp \
                    ../../../Classes/SFSConnector.cpp \
+                   ../../../Classes/SFSGEvent.cpp \
                    ../../../Classes/SFSRequest.cpp \
                    ../../../Classes/SFSResponse.cpp \
                    ../../../Classes/UserNode.cpp \

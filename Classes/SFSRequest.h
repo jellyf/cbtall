@@ -17,6 +17,7 @@ public:
 	std::function<void(int, cocos2d::Texture2D*)> onLoadImageResponse = NULL;
 	std::function<void(std::string url, cocos2d::Texture2D*)> onLoadTextureResponse = NULL;
 
+	void InitSmartFox();
 	void Connect();
 	void Connect(std::string host, int port);
 	void Disconnect();
@@ -27,6 +28,7 @@ public:
 	void Ping(long long time);
 	void Ping();
 	void ForceIPv6(bool value);
+	void EnableLagMonitor();
 
 	void RequestRegister(std::string username, std::string password, std::string email);
 	void RequestLogin(std::string username, std::string password);

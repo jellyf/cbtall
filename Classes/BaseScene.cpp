@@ -6,6 +6,7 @@
 #include "AudioEngine.h"
 #include "SFSResponse.h"
 #include "Tracker.h"
+#include "SFSGEvent.h"
 
 using namespace cocos2d;
 using namespace std;
@@ -150,7 +151,7 @@ void BaseScene::onExit()
 void BaseScene::update(float delta)
 {
 	Scene::update(delta);
-	SFSRequest::getSingleton().ProcessEvents();
+	SFSGEvent::getSingleton().ProcessEvents();
 }
 
 void BaseScene::registerEventListenner()

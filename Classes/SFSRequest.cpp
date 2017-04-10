@@ -21,6 +21,11 @@ SFSRequest::~SFSRequest()
 {
 }
 
+void SFSRequest::InitSmartFox()
+{
+	SFSConnector::getSingleton().InitializeSmartFox();
+}
+
 void SFSRequest::Connect()
 {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
@@ -78,6 +83,11 @@ void SFSRequest::Ping()
 void SFSRequest::ForceIPv6(bool value)
 {
     SFSConnector::getSingleton().ForceIPv6(value);
+}
+
+void SFSRequest::EnableLagMonitor()
+{
+	SFSConnector::getSingleton().EnableLagMonitor();
 }
 
 void SFSRequest::RequestLeaveRoom()

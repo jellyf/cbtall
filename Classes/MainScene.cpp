@@ -275,7 +275,6 @@ void MainScene::onInit()
 	//		}
 	//	});
 	//}
-	scheduleUpdate();
 }
 
 void MainScene::registerEventListenner()

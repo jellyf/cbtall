@@ -4,7 +4,6 @@
 #include "SingLeton.h"
 #include "cocos2d.h"
 
-struct RoomData;
 class SFSConnector : public SingLeton<SFSConnector>
 {
 public:
@@ -15,6 +14,7 @@ public:
 	static SFSConnector& getSingleton(void);
 	static SFSConnector* getSingletonPtr(void);
 
+	static void OnSmartFoxEvent(unsigned long long ptrContext, boost::shared_ptr<Sfs2X::Core::BaseEvent> ptrEvent);/*
 	static void OnSmartFoxConnection(unsigned long long ptrContext, boost::shared_ptr<Sfs2X::Core::BaseEvent> ptrEvent);
 	static void OnSmartFoxConnectionLost(unsigned long long ptrContext, boost::shared_ptr<Sfs2X::Core::BaseEvent> ptrEvent);
 	static void OnSmartFoxDisconnection(unsigned long long ptrContext, boost::shared_ptr<Sfs2X::Core::BaseEvent> ptrEvent);
@@ -27,7 +27,7 @@ public:
 	static void OnUserEnterRoom(unsigned long long ptrContext, boost::shared_ptr<Sfs2X::Core::BaseEvent> ptrEvent);
 	static void OnExtensionResponse(unsigned long long ptrContext, boost::shared_ptr<Sfs2X::Core::BaseEvent> ptrEvent);
 	static void OnPublicMessage(unsigned long long ptrContext, boost::shared_ptr<Sfs2X::Core::BaseEvent> ptrEvent);
-	static void OnPingPong(unsigned long long ptrContext, boost::shared_ptr<Sfs2X::Core::BaseEvent> ptrEvent);
+	static void OnPingPong(unsigned long long ptrContext, boost::shared_ptr<Sfs2X::Core::BaseEvent> ptrEvent);*/
 
 	void Connect(std::string host, int port);
 	void Disconnect();
