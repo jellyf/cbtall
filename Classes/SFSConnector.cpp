@@ -38,12 +38,12 @@ SFSConnector::~SFSConnector()
 
 void SFSConnector::InitializeSmartFox()
 {
-	if (mSmartFox) {
+	/*if (mSmartFox) {
 		mSmartFox->RemoveAllEventListeners();
-	}
+	}*/
 	// Initialize Smart Fox
 	mSmartFox = boost::shared_ptr<Sfs2X::SmartFox>(new Sfs2X::SmartFox(true));
-	mSmartFox->ThreadSafeMode(true);
+	mSmartFox->ThreadSafeMode(false);
     mSmartFox->ForceIPv6(useIPv6);
 
 	// Add event listeners
@@ -79,6 +79,7 @@ void SFSConnector::OnSmartFoxConnection(unsigned long long ptrContext, boost::sh
 		}
 	} else {
 		CCLOG("OnSmartFoxConnection: failed");
+		SFSConnector::getSingleton().InitializeSmartFox();
 		if (EventHandler::getSingleton().onConnectionFailed != NULL) {
 			EventHandler::getSingleton().onConnectionFailed();
 		}
@@ -272,17 +273,18 @@ void SFSConnector::OnPingPong(unsigned long long ptrContext, boost::shared_ptr<S
 
 void SFSConnector::Connect(std::string host, int port)
 {
-    CCLOG("Connect to SmartFox: %s %d", host.c_str(), port);
-	if (!mSmartFox || (!mSmartFox->IsConnected() && !mSmartFox->IsConnecting())) {
+	if (!mSmartFox) {
 		SFSConnector::getSingleton().InitializeSmartFox();
-		mSmartFox->Connect(host.c_str(), port);
 	}
+	CCLOG("Connect to SmartFox: %s %d", host.c_str(), port);
+	mSmartFox->ForceIPv6(useIPv6);
+	mSmartFox->Connect(host.c_str(), port);
 }
 
 void SFSConnector::Disconnect()
 {
 	CCLOG("SFSConnector::Disconnect");
-	if (mSmartFox && mSmartFox->IsConnected()) {
+	if (mSmartFox) {
 		mSmartFox->Disconnect();
 	}
 }

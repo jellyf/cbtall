@@ -7,5 +7,8 @@ public:
 	LoadScene();
 	~LoadScene();
 	CREATE_FUNC(LoadScene);
+	virtual bool init();
+	virtual void onEnter();
+	virtual void update(float delta);
 };
 

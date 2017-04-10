@@ -272,8 +272,8 @@ void BaseScene::showWaiting(int time)
 		if (isWaiting) {
 			hideWaiting();
 			showPopupNotice(Utils::getSingleton().getStringForKey("connection_failed"), [=]() {
+				isBackToLogin = true;
 				SFSRequest::getSingleton().Disconnect();
-				Utils::getSingleton().goToLoginScene();
 			}, false);
 		}
 	});
@@ -603,6 +603,10 @@ void BaseScene::setMoneyType(int type)
 
 void BaseScene::handleClientDisconnectionReason(std::string reason)
 {
+	if (isBackToLogin) {
+		Utils::getSingleton().goToLoginScene();
+		return;
+	}
 	if (isOverlapLogin) {
 		reason = "overlap_login";
 	}
@@ -657,8 +661,9 @@ void BaseScene::onConnected()
 
 void BaseScene::onConnectionFailed()
 {
+	hideWaiting();
 	showPopupNotice(Utils::getSingleton().getStringForKey("connection_failed"), [=]() {
-		SFSRequest::getSingleton().Disconnect();
+		//SFSRequest::getSingleton().Disconnect();
 		Utils::getSingleton().goToLoginScene();
 	}, false);
 }
@@ -674,8 +679,8 @@ void BaseScene::onLoginZoneError(short int code, std::string msg)
 {
 	if (isReconnecting) {
 		isReconnecting = false;
+		isBackToLogin = true;
 		SFSRequest::getSingleton().Disconnect();
-		Utils::getSingleton().goToLoginScene();
 	}
 }
 
@@ -1370,9 +1375,9 @@ void BaseScene::initPopupUserInfo()
     btnLogoutFb->setName("btnlogoutfb");
     btnLogoutFb->setScale(.8f);
     addTouchEventListener(btnLogoutFb, [=]() {
+		isBackToLogin = true;
         SFSRequest::getSingleton().Disconnect();
         Utils::getSingleton().logoutFacebook();
-        Utils::getSingleton().goToLoginScene();
     });
     popupUserInfo->addChild(btnLogoutFb);
 

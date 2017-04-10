@@ -1623,9 +1623,11 @@ int GameScene::getCardName(unsigned char cardId)
 
 void GameScene::onConnectionFailed()
 {
-	SFSRequest::getSingleton().Disconnect();
-	Utils::getSingleton().goToLoginScene();
+	hideWaiting();
 	experimental::AudioEngine::stopAll();
+	showPopupNotice(Utils::getSingleton().getStringForKey("connection_failed"), [=]() {
+		Utils::getSingleton().goToLoginScene();
+	}, false);
 }
 
 void GameScene::onConnectionLost(std::string reason)

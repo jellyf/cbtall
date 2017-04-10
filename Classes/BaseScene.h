@@ -89,6 +89,7 @@ protected:
 	bool hasHeader = false;
 	bool isWaiting = false;
 	bool isPopupReady = false;
+	bool isBackToLogin = false;
 	int pingId = 0;
 	double myRealMoney;
 

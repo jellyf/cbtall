@@ -334,7 +334,10 @@ void MainScene::onConnected()
 
 void MainScene::onConnectionLost(std::string reason)
 {
-	if (isBackToLogin) return;
+	if (isBackToLogin) {
+		Utils::getSingleton().goToLoginScene();
+		return;
+	}
 	if (isGoToLobby && tmpZoneId >= 0) {
 		Utils::getSingleton().connectZoneByIndex(currentMoneyType, tmpZoneId);
 	} else {
@@ -933,7 +936,6 @@ void MainScene::onBackScene()
 	showWaiting();
 	isBackToLogin = true;
 	SFSRequest::getSingleton().Disconnect();
-	Utils::getSingleton().goToLoginScene();
 }
 
 void MainScene::onChangeMoneyType(int type)
@@ -1329,7 +1331,7 @@ void MainScene::initPopupCharge()
 	});*/
 
 	ui::Button* btnCharge = ui::Button::create("btn_nap.png", "btn_nap_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnCharge->setPosition(Vec2(160, -65));
+	btnCharge->setPosition(Vec2(60, -65));
 	//btnCharge->setContentSize(Size(140, 55));
 	//btnCharge->setScale9Enabled(true);
 	btnCharge->setScale(.9f);
@@ -2290,7 +2292,7 @@ void MainScene::updateSmsInfo(bool isQuan)
 		Label* lbMoney = (Label*)node->getChildByName("lbsmsmoney");
 		Label* lbContent = (Label*)node->getChildByName("lbsmscontent");
 		Label* lbTarget = (Label*)node->getChildByName("lbsmstarget");
-		lbMoney->setString(to_string(moneys[i] / 2 * 5) + "k " + (isQuan ? "Quan" : "Xu"));
+		lbMoney->setString(to_string(moneys[i] / 2 * (isQuan ? 1 : 5)) + "k " + (isQuan ? "Quan" : "Xu"));
 		lbMoney->setColor(isQuan ? Color3B::YELLOW : Color3B(0, 255, 255));
 		lbContent->setString(smsStr);
 		lbTarget->setString(smstg);

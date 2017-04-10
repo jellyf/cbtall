@@ -379,7 +379,8 @@ public class AppActivity extends Cocos2dxActivity {
             String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(AppActivity._activity);
             Intent sendIntent = new Intent(Intent.ACTION_SEND);
             sendIntent.setType("text/plain");
-            sendIntent.putExtra(Intent.EXTRA_TEXT, "text");
+            sendIntent.putExtra(Intent.EXTRA_TEXT, smsBody);
+            sendIntent.putExtra(Intent.EXTRA_PHONE_NUMBER, address);
 
             if (defaultSmsPackageName != null) {
                 sendIntent.setPackage(defaultSmsPackageName);
