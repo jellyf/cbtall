@@ -15,7 +15,6 @@ void GameScene::onInit()
 {
 	BaseScene::onInit();
 
-	UserDefault::getInstance()->setBoolForKey(constant::KEY_AUTO_READY.c_str(), false);
 	bool pmE = Utils::getSingleton().ispmE();
 	isSolo = Utils::getSingleton().isSoloGame();
 
@@ -1795,7 +1794,6 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 					spChuPhong->setPosition(vecUserPos[index] + Vec2(50 * scaleScene.y, 0));
 				}
 				if (player.Info.SfsUserId == sfsIdMe) {
-					bool isAutoReady = UserDefault::getInstance()->getBoolForKey(constant::KEY_AUTO_READY.c_str());
 					if (isAutoReady && !player.Ready) {
 						state = READY;
 						SFSRequest::getSingleton().RequestGameReady();
@@ -3624,7 +3622,7 @@ void GameScene::initSettingsPopup()
 		}
 	});
 
-	cbs[3]->setSelected(UserDefault::getInstance()->getBoolForKey(constant::KEY_AUTO_READY.c_str()));
+	cbs[3]->setSelected(isAutoReady);
 	cbs[4]->setSelected(UserDefault::getInstance()->getBoolForKey(constant::KEY_SOUND.c_str()));
 
 	lbs[0]->setString(Utils::getSingleton().getStringForKey("win") + " 4-11");
@@ -3637,12 +3635,16 @@ void GameScene::initSettingsPopup()
 	btnOK->setPosition(Vec2(0, -205));
 	addTouchEventListener(btnOK, [=]() {
 		hidePopup(popupSettings);
-		UserDefault::getInstance()->setBoolForKey(constant::KEY_AUTO_READY.c_str(), cbs[3]->isSelected());
+		isAutoReady = cbs[3]->isSelected();
 		UserDefault::getInstance()->setBoolForKey(constant::KEY_SOUND.c_str(), cbs[4]->isSelected());
 		if (myServerSlot == 0 && (state == NONE || state == READY)){
 			SFSRequest::getSingleton().RequestGameTableInfo(cbs[1]->isSelected(), cbs[0]->isSelected());
 		}
 		Utils::getSingleton().SoundEnabled = cbs[4]->isSelected();
+		if (btnReady->isVisible()) {
+			state = READY;
+			SFSRequest::getSingleton().RequestGameReady();
+		}
 	});
 	popupSettings->addChild(btnOK);
 
