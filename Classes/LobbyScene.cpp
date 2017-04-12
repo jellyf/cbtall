@@ -83,7 +83,7 @@ void LobbyScene::onInit()
 		onTableDataResponse(Utils::getSingleton().lobbyListTable);
 	}
 	if (Utils::getSingleton().isRunningEvent) {
-		runEventView(Utils::getSingleton().events, Utils::getSingleton().currentEventPosX - 270);
+		runEventView(Utils::getSingleton().events, Utils::getSingleton().currentEventPosX);
 	}
 	if (Utils::getSingleton().tableReconnectData.Room.length() > 0) {
 		onTableReconnectDataResponse(Utils::getSingleton().tableReconnectData);
