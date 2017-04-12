@@ -71,7 +71,7 @@ void GameScene::onInit()
 	for (int i = 0; i < 8; i++) {
 		tableCardNumb.push_back(0);
 	}
-	for (int i = 0; i < 39; i++) {
+	for (int i = 0; i < 40; i++) {
 		maxChosenCuocs.push_back(0);
 	}
 	maxChosenCuocs[11] = 3;
@@ -1683,7 +1683,7 @@ void GameScene::onUserExitRoom(long sfsUId)
 	if (vecUsers[index]->isVisible() && vecUsers[index]->getAlpha() == 150) {
 		vecUsers[index]->setName("");
 		vecUsers[index]->setVisible(false);
-		spInvites[index]->setVisible(true);
+		spInvites[index]->setVisible(state == NONE || state == READY);
 		spSanSangs[index]->setVisible(false);
 	}
 	if (progressTimer->getTag() == index) {
@@ -3352,7 +3352,7 @@ void GameScene::initCrestTable()
 	scroll->setPosition(Vec2(-size1.width / 2, -size1.height / 2 - 30));
 
 	int x = 130;
-	int y = size2.height - 10;
+	int y = size2.height - 20;
 	for (int i = 0; i < ids.size(); i++) {
 		string name = String::createWithFormat("cuoc_%d", ids[i])->getCString();
 		/*Label* lb = Label::createWithTTF(Utils::getSingleton().getStringForKey(name), "fonts/guanine.ttf", 25);

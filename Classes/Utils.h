@@ -18,6 +18,7 @@ public:
 #endif
     
 	cocos2d::SpriteFrame* getDownloadedTextureAsSpriteFrame(std::string key);
+	cocos2d::Color3B getAppellationColorByLevel(int level);
     std::string formatMoneyWithComma(double money);
 	std::string getStringForKey(std::string key);
 	std::string replaceString(std::string str, std::string strSearch, std::string strReplace);
@@ -27,6 +28,7 @@ public:
 	std::string getPlatformOS();
 	std::string getDeviceId();
 	std::string getCurrentZoneName();
+	std::string getAppellationByLevel(int level);
 	double getCurrentSystemTimeInSecs();
 	int getCurrentZoneIndex();
 	bool isEmailValid(std::string email);
@@ -77,6 +79,8 @@ public:
     std::vector<ProductData> products;
 	std::vector<EventData> events;
     std::vector<std::string> cachedPaymentTokens;
+	std::vector<cocos2d::Color3B> levelColors;
+	std::vector<int> levelStones;
 	std::string username;
 	std::string password;
 	std::string currentLobbyName;
@@ -101,6 +105,7 @@ public:
 	bool hasShowEventPopup;
 private:
 	cocos2d::ValueMap viLang;
+	cocos2d::ValueMap appellations;
 	std::map<std::string, cocos2d::Texture2D*> textures;
 	std::map<std::string, std::vector<std::function<void(cocos2d::Texture2D*)>>> callbacks;
 

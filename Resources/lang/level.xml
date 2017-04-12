@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>level_1</key><string>Dân Đen</string>
+	<key>level_2</key><string>Phụ Hồ</string>
+	<key>level_3</key><string>Tiểu Nhị</string>
+	<key>level_4</key><string>Cai Đội</string>
+	<key>level_5</key><string>Phú Ông</string>
+	<key>level_6</key><string>Địa Chủ</string>
+	<key>level_7</key><string>Hương Trưởng</string>
+	<key>level_8</key><string>Lý Trưởng</string>
+	<key>level_9</key><string>Tri Huyện</string>
+	<key>level_10</key><string>Tri Phủ</string>
+	<key>level_11</key><string>Tuần Phủ</string>
+	<key>level_12</key><string>Tổng Đốc</string>
+	<key>level_13</key><string>Đề Đốc</string>
+	<key>level_14</key><string>Thượng Thư</string>
+	<key>level_15</key><string>Đô Đốc</string>
+	<key>level_16</key><string>Thái Sư</string>
+	<key>level_17</key><string>Thừa Tướng</string>
+	<key>level_18</key><string>Tể Tướng</string>
+	<key>level_19</key><string>Vương Gia</string>
+</dict>
+</plist>

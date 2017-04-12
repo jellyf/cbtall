@@ -38,8 +38,13 @@ Utils::Utils()
 	hasShowEventPopup = false;
 	currentEventPosX = constant::EVENT_START_POSX;
 	textureHost = "http://115.84.179.242/main_kinhtuchi/";
+	levelStones = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 13, 18, 28, 40, 53, 70, 162, 287, 662 };
+	levelColors = { Color3B(125, 0, 0), Color3B(255, 0, 0), Color3B(255, 0, 50), Color3B(255, 0, 100), Color3B(255, 0, 150), Color3B(255, 0, 200),
+		Color3B(255, 0, 255), Color3B(200, 0, 255), Color3B(150, 0, 255), Color3B(100, 0, 255), Color3B(50, 0, 255), Color3B(0, 0, 255), Color3B(0, 125, 255),
+		Color3B(0, 255, 255), Color3B(0, 255, 125), Color3B(0, 255, 0), Color3B(125, 255, 0), Color3B(220, 255, 0), Color3B(255, 220, 0) };
 	cofferGuide = "";
 	viLang = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/vi.xml");
+	appellations = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/level.xml");
 	SFSRequest::getSingleton().onLoadTextureResponse = std::bind(&Utils::onLoadTextureResponse, this, std::placeholders::_1, std::placeholders::_2);
 
 	TextureCache::sharedTextureCache()->addImageAsync("test.png", [=](Texture2D* texture) {
@@ -95,6 +100,13 @@ cocos2d::SpriteFrame* Utils::getDownloadedTextureAsSpriteFrame(std::string key)
 	Texture2D* texture = TextureCache::getInstance()->getTextureForKey(key);
 	Size size = texture->getContentSize();
 	return SpriteFrame::createWithTexture(texture, Rect(0, 0, size.width, size.height));
+}
+
+cocos2d::Color3B Utils::getAppellationColorByLevel(int level)
+{
+	int i = 0;
+	while (i < levelStones.size() && level >= levelStones[i]) i++;
+	return levelColors[level == 0 ? 0 : i - 1];
 }
 
 string Utils::formatMoneyWithComma(double money) {
@@ -211,6 +223,14 @@ std::string Utils::getCurrentZoneName()
 	else if (currentZoneName == "SoLoQuan")
 		return "NhaTranhQuan";*/
 	return currentZoneName;
+}
+
+std::string Utils::getAppellationByLevel(int level)
+{
+	int i = 0;
+	while(i < levelStones.size() && level >= levelStones[i]) i ++;
+	std::string name = "level_" + to_string(level == 0 ? 1 : i);
+	return appellations[name].asString();
 }
 
 double Utils::getCurrentSystemTimeInSecs()

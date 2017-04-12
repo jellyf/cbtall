@@ -588,6 +588,7 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 	Label* lbXu = (Label*)popupUserInfo->getChildByName("lbxu");
 	Label* lbId = (Label*)popupUserInfo->getChildByName("lbid");
 	Label* lbLevel = (Label*)popupUserInfo->getChildByName("lblevel");
+	Label* lbAppellation = (Label*)popupUserInfo->getChildByName("lbappellation");
 	Label* lbWin = (Label*)popupUserInfo->getChildByName("lbwin");
 	Label* lbTotal = (Label*)popupUserInfo->getChildByName("lbtotal");
 
@@ -601,6 +602,8 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 	lbLevel->setString(Utils::getSingleton().getStringForKey("cap_do") + ": " + to_string(data.Level));
 	lbWin->setString(Utils::getSingleton().getStringForKey("thang") + ": " + to_string(data.Win));
 	lbTotal->setString(Utils::getSingleton().getStringForKey("tong") + ": " + to_string(data.Total));
+	lbAppellation->setString(Utils::getSingleton().getAppellationByLevel(data.Level));
+	lbAppellation->setColor(Utils::getSingleton().getAppellationColorByLevel(data.Level));
 }
 
 void BaseScene::setMoneyType(int type)
@@ -617,6 +620,7 @@ void BaseScene::handleClientDisconnectionReason(std::string reason)
 		Utils::getSingleton().goToLoginScene();
 		return;
 	}
+	hideWaiting();
 	if (isOverlapLogin) {
 		reason = "overlap_login";
 	}
@@ -1381,7 +1385,7 @@ void BaseScene::initPopupUserInfo()
 	popupUserInfo->addChild(btnActive);
 
     ui::Button* btnLogoutFb = ui::Button::create("btn_logout_fb.png", "btn_logout_fb_clicked.png", "", ui::Widget::TextureResType::PLIST);
-    btnLogoutFb->setPosition(Vec2(186, -125));
+    btnLogoutFb->setPosition(Vec2(196, -125));
     btnLogoutFb->setName("btnlogoutfb");
     btnLogoutFb->setScale(.8f);
     addTouchEventListener(btnLogoutFb, [=]() {
@@ -1433,7 +1437,7 @@ void BaseScene::initPopupUserInfo()
 	lbId->setName("lbid");
 	popupUserInfo->addChild(lbId);
 	
-	Label* lbLevel = Label::create(Utils::getSingleton().getStringForKey("cap_do") + ": 10", "fonts/arial.ttf", 25);
+	Label* lbLevel = Label::create(Utils::getSingleton().getStringForKey("cap_do") + ":", "fonts/arial.ttf", 25);
 	lbLevel->setAnchorPoint(Vec2(0, .5f));
 	lbLevel->setColor(Color3B::WHITE);
 	lbLevel->setPosition(-70, -70);
@@ -1446,6 +1450,13 @@ void BaseScene::initPopupUserInfo()
 	lbWin->setPosition(115, -30);
 	lbWin->setName("lbwin");
 	popupUserInfo->addChild(lbWin);
+
+	Label* lbAppellation = Label::create("Huong Truong", "fonts/aristote.ttf", 25);
+	lbAppellation->setAnchorPoint(Vec2(0, .5f));
+	lbAppellation->setColor(Color3B::WHITE);
+	lbAppellation->setPosition(lbLevel->getPositionX(), lbLevel->getPositionY() - 40);
+	lbAppellation->setName("lbappellation");
+	popupUserInfo->addChild(lbAppellation);
 
 	Label* lbTotal = Label::create(Utils::getSingleton().getStringForKey("tong") + ": 20", "fonts/arial.ttf", 25);
 	lbTotal->setAnchorPoint(Vec2(0, .5f));
