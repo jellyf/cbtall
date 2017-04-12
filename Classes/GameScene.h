@@ -187,6 +187,7 @@ private:
 	float cardSpeed = .35f;
 	float cardScaleTable = .85f;
 	float cardScaleTableNew = .9f;
+	long playIdMe;
 	long sfsIdMe;
 	bool isBatBao;
 	bool hasClickInvite = false;

@@ -241,7 +241,7 @@ void BaseScene::onApplicationWillEnterForeground()
 	lbNetwork->resume();
 }
 
-void BaseScene::showPopupNotice(std::string msg, std::function<void()> func, bool showBtnClose)
+void BaseScene::showPopupNotice(std::string msg, std::function<void()> func, bool showBtnClose, int timeToHide)
 {
 	Node* popupNotice = createPopupNotice();
 	showPopup(popupNotice);
@@ -251,9 +251,18 @@ void BaseScene::showPopupNotice(std::string msg, std::function<void()> func, boo
 	btnClose->setVisible(showBtnClose);
 	ui::Button* btnSubmit = (ui::Button*)popupNotice->getChildByName("btnsubmit");
 	addTouchEventListener(btnSubmit, [=]() {
+		popupNotice->stopAllActions();
 		func();
 		hidePopup(popupNotice);
 	}, false);
+
+	if (timeToHide > 0) {
+		DelayTime* delay = DelayTime::create(15);
+		CallFunc* funcHide = CallFunc::create([=]() {
+			hidePopup(popupNotice);
+		});
+		popupNotice->runAction(Sequence::createWithTwoActions(delay, funcHide));
+	}
 }
 
 void BaseScene::showSplash()

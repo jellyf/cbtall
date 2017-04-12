@@ -826,6 +826,9 @@ void GameScene::registerEventListenner()
 	EventHandler::getSingleton().onLobbyTableSFSResponse = std::bind(&GameScene::onLobbyListTableResponse, this, std::placeholders::_1);
 	EventHandler::getSingleton().onCofferMoneySFSResponse = bind(&GameScene::onCofferMoneyResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onCofferHistorySFSResponse = bind(&GameScene::onCofferHistoryResponse, this, placeholders::_1);
+
+	SFSRequest::getSingleton().onHttpResponseFailed = std::bind(&GameScene::onHttpResponseFailed, this);
+	SFSRequest::getSingleton().onHttpResponse = std::bind(&GameScene::onHttpResponse, this, std::placeholders::_1, std::placeholders::_2);
 }
 
 void GameScene::unregisterEventListenner()
@@ -865,6 +868,9 @@ void GameScene::unregisterEventListenner()
 	EventHandler::getSingleton().onLobbyTableSFSResponse = NULL;
 	EventHandler::getSingleton().onCofferMoneySFSResponse = NULL;
 	EventHandler::getSingleton().onCofferHistorySFSResponse = NULL;
+
+	SFSRequest::getSingleton().onHttpResponse = NULL;
+	SFSRequest::getSingleton().onHttpResponseFailed = NULL;
 }
 
 void GameScene::editBoxReturn(cocos2d::ui::EditBox * editBox)
@@ -1753,6 +1759,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 		if (player.Info.UserID == Utils::getSingleton().userDataMe.UserID) {
 			myServerSlot = player.Index;
 			sfsIdMe = player.Info.SfsUserId;
+			playIdMe = player.Info.UserID;
 		}
 	}
 	if (myServerSlot == -1) {
@@ -1796,6 +1803,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 				if (player.Info.SfsUserId == sfsIdMe) {
 					if (isAutoReady && !player.Ready) {
 						state = READY;
+						btnCancelReady->setVisible(true);
 						SFSRequest::getSingleton().RequestGameReady();
 					} else {
 						btnReady->setVisible(!player.Ready);
@@ -2860,7 +2868,7 @@ void GameScene::onPunishResponse(long UiD, std::string msg)
 void GameScene::onUserReadyResponse(long UiD, bool isReady)
 {
 	spSanSangs[userIndexs2[UiD]]->setVisible(isReady);
-	if (UiD == sfsIdMe) {
+	if (UiD == playIdMe) {
 		btnReady->setVisible(!isReady);
 		btnCancelReady->setVisible(isReady);
 	}
@@ -3004,6 +3012,7 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 		if (player.Info.UserID == Utils::getSingleton().userDataMe.UserID) {
 			myServerSlot = player.Index;
 			sfsIdMe = player.Info.SfsUserId;
+			playIdMe = player.Info.UserID;
 		}
 	}
 	if (myServerSlot < 0) {
@@ -3130,6 +3139,7 @@ void GameScene::onGameSpectatorDataResponse(std::vector<PlayerData> spectators)
 		for (PlayerData player : spectators) {
 			if (player.Info.UserID == Utils::getSingleton().userDataMe.UserID) {
 				sfsIdMe = player.Info.SfsUserId;
+				playIdMe = player.Info.UserID;
 			}
 		}
 	}

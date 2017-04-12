@@ -236,7 +236,7 @@ void LobbyScene::onInviteDataResponse(InviteData data)
 	showPopupNotice(content, [=]() {
 		SFSRequest::getSingleton().RequestJoinRoom(data.RoomName);
 		showWaiting();
-	});
+	}, true, 15);
 }
 
 void LobbyScene::onTableDataResponse(LobbyListTable data)

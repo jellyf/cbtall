@@ -2,8 +2,8 @@ APP_STL := gnustl_static
 
 APP_CPPFLAGS := -frtti -DCC_ENABLE_CHIPMUNK_INTEGRATION=1 -std=c++11 -fsigned-char
 APP_LDFLAGS := -latomic
-LOCAL_CFLAGS := -ffast-math -O3 -funroll-loops
-APP_ABI := armeabi
+LOCAL_CFLAGS := -O2
+APP_ABI := armeabi-v7a
 
 
 ifeq ($(NDK_DEBUG),1)
