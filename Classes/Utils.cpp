@@ -39,9 +39,9 @@ Utils::Utils()
 	currentEventPosX = constant::EVENT_START_POSX;
 	textureHost = "http://115.84.179.242/main_kinhtuchi/";
 	levelStones = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 13, 18, 28, 40, 53, 70, 162, 287, 662 };
-	levelColors = { Color3B(125, 0, 0), Color3B(255, 0, 0), Color3B(255, 0, 50), Color3B(255, 0, 100), Color3B(255, 0, 150), Color3B(255, 0, 200),
-		Color3B(255, 0, 255), Color3B(200, 0, 255), Color3B(150, 0, 255), Color3B(100, 0, 255), Color3B(50, 0, 255), Color3B(0, 0, 255), Color3B(0, 125, 255),
-		Color3B(0, 255, 255), Color3B(0, 255, 125), Color3B(0, 255, 0), Color3B(125, 255, 0), Color3B(220, 255, 0), Color3B(255, 220, 0) };
+	levelColors = { Color3B(200, 0, 0), Color3B(255, 0, 0), Color3B(255, 0, 60), Color3B(255, 0, 120), Color3B(255, 0, 180), Color3B(255, 0, 240),
+		Color3B(210, 0, 255), Color3B(0, 200, 255), Color3B(0, 255, 255), Color3B(0, 255, 200), Color3B(0, 255, 140), Color3B(0, 255, 80), Color3B(0, 255, 20),
+		Color3B(30, 255, 0), Color3B(80, 255, 0), Color3B(130, 255, 0), Color3B(80, 255, 0), Color3B(225, 255, 0), Color3B(255, 225, 0) };
 	cofferGuide = "";
 	viLang = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/vi.xml");
 	appellations = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/level.xml");

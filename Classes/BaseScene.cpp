@@ -599,7 +599,7 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 	lbQuan->setString(Utils::getSingleton().formatMoneyWithComma(data.MoneyReal));
 	lbXu->setString(Utils::getSingleton().formatMoneyWithComma(data.MoneyFree));
 	lbId->setString("ID: " + (data.UserID == Utils::getSingleton().userDataMe.UserID ? to_string(data.UserID) : ""));
-	lbLevel->setString(Utils::getSingleton().getStringForKey("cap_do") + ": " + to_string(data.Level));
+	lbLevel->setString(Utils::getSingleton().getStringForKey("cap_do") + ":");// +to_string(data.Level));
 	lbWin->setString(Utils::getSingleton().getStringForKey("thang") + ": " + to_string(data.Win));
 	lbTotal->setString(Utils::getSingleton().getStringForKey("tong") + ": " + to_string(data.Total));
 	lbAppellation->setString(Utils::getSingleton().getAppellationByLevel(data.Level));
@@ -1126,7 +1126,7 @@ Node* BaseScene::createPopupNotice()
 	Label* lb = Label::create();
 	lb->setColor(Color3B::WHITE);
 	lb->setSystemFontSize(30);
-	lb->setWidth(600);
+	lb->setWidth(550);
 	lb->setName("lbcontent");
 	lb->setAlignment(TextHAlignment::CENTER);
 	popupNotice->addChild(lb);
@@ -1385,7 +1385,7 @@ void BaseScene::initPopupUserInfo()
 	popupUserInfo->addChild(btnActive);
 
     ui::Button* btnLogoutFb = ui::Button::create("btn_logout_fb.png", "btn_logout_fb_clicked.png", "", ui::Widget::TextureResType::PLIST);
-    btnLogoutFb->setPosition(Vec2(196, -125));
+    btnLogoutFb->setPosition(Vec2(200, -125));
     btnLogoutFb->setName("btnlogoutfb");
     btnLogoutFb->setScale(.8f);
     addTouchEventListener(btnLogoutFb, [=]() {
@@ -1454,7 +1454,7 @@ void BaseScene::initPopupUserInfo()
 	Label* lbAppellation = Label::create("Huong Truong", "fonts/aristote.ttf", 25);
 	lbAppellation->setAnchorPoint(Vec2(0, .5f));
 	lbAppellation->setColor(Color3B::WHITE);
-	lbAppellation->setPosition(lbLevel->getPositionX(), lbLevel->getPositionY() - 40);
+	lbAppellation->setPosition(lbLevel->getPositionX() - 10, lbLevel->getPositionY() - 40);
 	lbAppellation->setName("lbappellation");
 	popupUserInfo->addChild(lbAppellation);
 
