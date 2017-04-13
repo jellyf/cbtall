@@ -18,7 +18,7 @@ private:
 	void onPingResponse(boost::shared_ptr<ISFSObject> isfsObject);
 	void onErrorResponse(boost::shared_ptr<ISFSObject> isfsObject);
 	void onConfigZoneResponse(boost::shared_ptr<ISFSObject> isfsObject);
-	void getUserDataFromSFSObject(boost::shared_ptr<ISFSObject> isfsObject, UserData &userData);
+	void getUserDataFromSFSObject(boost::shared_ptr<ByteArray> byteArray, UserData &userData);
 	void onUserDataResponse(boost::shared_ptr<ISFSObject> isfsObject);
 	void onUserDataMeResponse(boost::shared_ptr<ISFSObject> isfsObject);
 	void onUpdateUserDataMeResponse(boost::shared_ptr<ISFSObject> isfsObject);

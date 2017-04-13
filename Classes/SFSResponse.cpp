@@ -158,9 +158,9 @@ void SFSResponse::onConfigZoneResponse(boost::shared_ptr<ISFSObject> isfsObject)
 	}
 }
 
-void SFSResponse::getUserDataFromSFSObject(boost::shared_ptr<ISFSObject> isfsObject, UserData &userData)
+void SFSResponse::getUserDataFromSFSObject(boost::shared_ptr<ByteArray> byteArray, UserData &userData)
 {
-	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
+	//boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
 	byteArray->ReadUTF(userData.Name);
 	byteArray->ReadUTF(userData.DisplayName);
 	byteArray->ReadDouble(userData.MoneyFree);
@@ -170,19 +170,21 @@ void SFSResponse::getUserDataFromSFSObject(boost::shared_ptr<ISFSObject> isfsObj
 	byteArray->ReadShort(userData.Level);
 	byteArray->ReadInt(userData.Total);
 	byteArray->ReadInt(userData.Win);
-	if (byteArray->Position() < byteArray->Length()) {
+	/*if (byteArray->Position() < byteArray->Length()) {
 		byteArray->ReadByte(userData.MoneyType);
 	}
 	while (byteArray->Position() < byteArray->Length()) {
 		byteArray->ReadByte(userData.IsActived);
-	}
-	//CCLOG("%s %s %d %.0f %.0f %d %s", userData.Name.c_str(), userData.DisplayName.c_str(), userData.UserID, userData.MoneyFree, userData.MoneyReal, userData.MoneyType, userData.IsActived ? "actived" : "non-active");
+	}*/
+	//CCLOG("%s %s %d %.0f %.0f %d", userData.Name.c_str(), userData.DisplayName.c_str(), userData.UserID, userData.MoneyFree, userData.MoneyReal);
 }
 
 void SFSResponse::onUserDataResponse(boost::shared_ptr<ISFSObject> isfsObject)
 {
 	UserData data;
-	getUserDataFromSFSObject(isfsObject, data);
+	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
+	getUserDataFromSFSObject(byteArray, data);
+
 	if (EventHandler::getSingleton().onUserDataSFSResponse != NULL) {
 		EventHandler::getSingleton().onUserDataSFSResponse(data);
 	}
@@ -191,7 +193,11 @@ void SFSResponse::onUserDataResponse(boost::shared_ptr<ISFSObject> isfsObject)
 void SFSResponse::onUserDataMeResponse(boost::shared_ptr<ISFSObject> isfsObject)
 {
 	UserData newData;
-	getUserDataFromSFSObject(isfsObject, newData);
+	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
+	getUserDataFromSFSObject(byteArray, newData);
+	byteArray->ReadByte(newData.MoneyType);
+	byteArray->ReadByte(newData.IsActived);
+
 	Utils::getSingleton().setUserDataMe(newData);
 	if (Utils::getSingleton().moneyType == -1) {
 		if (Utils::getSingleton().ispmE()) {
@@ -207,7 +213,11 @@ void SFSResponse::onUserDataMeResponse(boost::shared_ptr<ISFSObject> isfsObject)
 
 void SFSResponse::onUpdateUserDataMeResponse(boost::shared_ptr<ISFSObject> isfsObject)
 {
-	getUserDataFromSFSObject(isfsObject, Utils::getSingleton().userDataMe);
+	UserData newData;
+	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
+	getUserDataFromSFSObject(byteArray, newData);
+	byteArray->ReadByte(newData.IsActived);
+	Utils::getSingleton().setUserDataMe(newData);
 	if (EventHandler::getSingleton().onUserDataMeSFSResponse != NULL) {
 		EventHandler::getSingleton().onUserDataMeSFSResponse();
 	}
