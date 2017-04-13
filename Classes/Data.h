@@ -390,3 +390,10 @@ struct DynamicConfig
 	bool Popup;
 	std::string PopupUrl;
 };
+
+struct AppellationData
+{
+	int Level;
+	std::string Name;
+	cocos2d::Color3B Color;
+};

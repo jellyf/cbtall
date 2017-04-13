@@ -591,6 +591,7 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 	Label* lbAppellation = (Label*)popupUserInfo->getChildByName("lbappellation");
 	Label* lbWin = (Label*)popupUserInfo->getChildByName("lbwin");
 	Label* lbTotal = (Label*)popupUserInfo->getChildByName("lbtotal");
+	AppellationData aplData = Utils::getSingleton().getAppellationByLevel(data.Level);
 
 	btnHistory->setVisible(showHistoryIfIsMe && data.UserID == Utils::getSingleton().userDataMe.UserID);
 	btnActive->setVisible(showHistoryIfIsMe && data.UserID == Utils::getSingleton().userDataMe.UserID && !Utils::getSingleton().userDataMe.IsActived && Utils::getSingleton().ispmE());
@@ -602,8 +603,8 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 	lbLevel->setString(Utils::getSingleton().getStringForKey("cap_do") + ":");// +to_string(data.Level));
 	lbWin->setString(Utils::getSingleton().getStringForKey("thang") + ": " + to_string(data.Win));
 	lbTotal->setString(Utils::getSingleton().getStringForKey("tong") + ": " + to_string(data.Total));
-	lbAppellation->setString(Utils::getSingleton().getAppellationByLevel(data.Level));
-	lbAppellation->setColor(Utils::getSingleton().getAppellationColorByLevel(data.Level));
+	lbAppellation->setString(aplData.Name);
+	lbAppellation->setColor(aplData.Color);
 }
 
 void BaseScene::setMoneyType(int type)

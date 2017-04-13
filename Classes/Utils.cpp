@@ -38,13 +38,8 @@ Utils::Utils()
 	hasShowEventPopup = false;
 	currentEventPosX = constant::EVENT_START_POSX;
 	textureHost = "http://115.84.179.242/main_kinhtuchi/";
-	levelStones = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 13, 18, 28, 40, 53, 70, 162, 287, 662 };
-	levelColors = { Color3B(200, 0, 0), Color3B(255, 0, 0), Color3B(255, 0, 60), Color3B(255, 0, 120), Color3B(255, 0, 180), Color3B(255, 0, 240),
-		Color3B(210, 0, 255), Color3B(0, 200, 255), Color3B(0, 255, 255), Color3B(0, 255, 200), Color3B(0, 255, 140), Color3B(0, 255, 80), Color3B(0, 255, 20),
-		Color3B(30, 255, 0), Color3B(80, 255, 0), Color3B(130, 255, 0), Color3B(80, 255, 0), Color3B(225, 255, 0), Color3B(255, 225, 0) };
 	cofferGuide = "";
 	viLang = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/vi.xml");
-	appellations = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/level.xml");
 	SFSRequest::getSingleton().onLoadTextureResponse = std::bind(&Utils::onLoadTextureResponse, this, std::placeholders::_1, std::placeholders::_2);
 
 	TextureCache::sharedTextureCache()->addImageAsync("test.png", [=](Texture2D* texture) {
@@ -53,6 +48,8 @@ Utils::Utils()
 		string str2 = FileUtils::getInstance()->getStringFromFile("menu2.plist");
 		SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str2, texture);
 	});
+
+	createAppellations();
     
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
     IOSHelperCPlus::setLoginFBCallback([=](std::string token){
@@ -102,11 +99,11 @@ cocos2d::SpriteFrame* Utils::getDownloadedTextureAsSpriteFrame(std::string key)
 	return SpriteFrame::createWithTexture(texture, Rect(0, 0, size.width, size.height));
 }
 
-cocos2d::Color3B Utils::getAppellationColorByLevel(int level)
+AppellationData& Utils::getAppellationByLevel(int level)
 {
 	int i = 0;
-	while (i < levelStones.size() && level >= levelStones[i]) i++;
-	return levelColors[level == 0 ? 0 : i - 1];
+	while (i < appellations.size() && level >= appellations[i].Level) i++;
+	return appellations[level == 0 ? 0 : i - 1];
 }
 
 string Utils::formatMoneyWithComma(double money) {
@@ -223,14 +220,6 @@ std::string Utils::getCurrentZoneName()
 	else if (currentZoneName == "SoLoQuan")
 		return "NhaTranhQuan";*/
 	return currentZoneName;
-}
-
-std::string Utils::getAppellationByLevel(int level)
-{
-	int i = 0;
-	while(i < levelStones.size() && level >= levelStones[i]) i ++;
-	std::string name = "level_" + to_string(level == 0 ? 1 : i);
-	return appellations[name].asString();
 }
 
 double Utils::getCurrentSystemTimeInSecs()
@@ -720,4 +709,20 @@ void Utils::inviteFacebookFriends()
 #else
 	return;
 #endif
+}
+
+void Utils::createAppellations()
+{
+	std::vector<int> levelStones = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 13, 18, 28, 40, 53, 70, 162, 287, 662 };
+	std::vector<cocos2d::Color3B> levelColors = { Color3B(200, 0, 0), Color3B(255, 0, 0), Color3B(255, 0, 60), Color3B(255, 0, 120), Color3B(255, 0, 180), Color3B(255, 0, 240),
+		Color3B(210, 0, 255), Color3B(0, 200, 255), Color3B(0, 255, 255), Color3B(0, 255, 200), Color3B(0, 255, 140), Color3B(0, 255, 80), Color3B(0, 255, 20),
+		Color3B(30, 255, 0), Color3B(80, 255, 0), Color3B(130, 255, 0), Color3B(80, 255, 0), Color3B(225, 255, 0), Color3B(255, 225, 0) };
+	ValueMap aplMap = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/level.xml");
+	for (int i = 0; i < levelStones.size(); i++) {
+		AppellationData apl;
+		apl.Level = levelStones[i];
+		apl.Color = levelColors[i];
+		apl.Name = aplMap["level_" + to_string(i)].asString();
+		appellations.push_back(apl);
+	}
 }
