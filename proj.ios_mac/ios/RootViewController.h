@@ -25,8 +25,9 @@
 
 #import <UIKit/UIKit.h>
 #import <StoreKit/StoreKit.h>
+#import <FBSDKShareKit/FBSDKShareKit.h>
 
-@interface RootViewController : UIViewController<SKProductsRequestDelegate,SKPaymentTransactionObserver> {
+@interface RootViewController : UIViewController<SKProductsRequestDelegate,SKPaymentTransactionObserver,FBSDKGameRequestDialogDelegate> {
     SKProductsRequest *productsRequest;
 }
 
@@ -35,6 +36,7 @@
 - (BOOL) prefersStatusBarHidden;
 - (void) loginFacebook;
 - (void) logoutFacebook;
+- (void) inviteFacebookFriends;
 - (void) purchaseItem:(NSString*)sku;
 
 - (BOOL)canMakePurchases;

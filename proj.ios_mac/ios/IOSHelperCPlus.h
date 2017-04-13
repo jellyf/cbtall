@@ -21,6 +21,7 @@ public :
     static void setRootView(void* rootView);
     static void setLoginFBCallback(std::function<void(std::string)> callback);
     static void setPurchaseSuccessCallback(std::function<void(std::string)> callback);
+    static void setFacebookInviteCallback(std::function<void(std::string)> callback);
     
     static void openSMS(const char* number, const char* text);
     static void openTel(const char* number);
@@ -28,6 +29,7 @@ public :
     static void logoutFacebook();
     static void purchaseItem(std::string sku);
     static void queryIAPProducts(std::vector<std::string> productIds);
+    static void inviteFacebookFriends();
 	static string getDeviceId();
 };
 

@@ -152,6 +152,16 @@
     [login logOut];
 }
 
+- (void)inviteFacebookFriends{
+    FBSDKGameRequestContent *gameRequestContent = [[FBSDKGameRequestContent alloc] init];
+    // Look at FBSDKGameRequestContent for futher optional properties
+    gameRequestContent.message = @"Cùng chơi Kính Tứ Chi nào!";
+    gameRequestContent.title = @"Kính Tứ Chi";
+    
+    // Assuming self implements <FBSDKGameRequestDialogDelegate>
+    [FBSDKGameRequestDialog showWithContent:gameRequestContent delegate:self];
+}
+
 - (void)purchaseItem:(NSString*)sku{
     for(SKProduct *product in self.products){
         if([product.productIdentifier isEqualToString:sku]){
@@ -259,6 +269,24 @@ updatedTransactions:(NSArray *)transactions {
 //    {
 //        NSLog(@"Invalid product id: %@" , invalidProductId);
 //    }
+}
+
+- (void)gameRequestDialog:(FBSDKGameRequestDialog *)gameRequestDialog didCompleteWithResults:(NSDictionary *)results
+{
+    if(results != nil && results[@"to"] != nil){
+        NSString* nstr = [results bv_jsonStringWithPrettyPrint:true];
+        [IOSNDKHelper OnFacebookInvite:nstr];
+    }
+}
+
+- (void)gameRequestDialog:(FBSDKGameRequestDialog *)gameRequestDialog didFailWithError:(NSError *)error
+{
+    [IOSNDKHelper OnFacebookInvite:@""];
+}
+
+- (void)gameRequestDialogDidCancel:(FBSDKGameRequestDialog *)gameRequestDialog
+{
+    [IOSNDKHelper OnFacebookInvite:@""];
 }
 
 @end

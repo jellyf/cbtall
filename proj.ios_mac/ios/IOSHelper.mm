@@ -12,6 +12,7 @@
 static RootViewController *rootView = nil;
 static std::function<void(std::string)> callbackLoginFacebook = nil;
 static std::function<void(std::string)> callbackPurchaseSuccess = nil;
+static std::function<void(std::string)> callbackFacebookInvite = nil;
 
 void IOSHelperCPlus::openSMS(const char* number, const char* text)
 {
@@ -42,6 +43,13 @@ void IOSHelperCPlus::logoutFacebook()
     }
 }
 
+void IOSHelperCPlus::inviteFacebookFriends()
+{
+    if(rootView != nil){
+        [rootView inviteFacebookFriends];
+    }
+}
+
 void IOSHelperCPlus::setRootView(void* view)
 {
     rootView = (RootViewController*) view;
@@ -55,6 +63,11 @@ void IOSHelperCPlus::setLoginFBCallback(std::function<void(std::string)> callbac
 void IOSHelperCPlus::setPurchaseSuccessCallback(std::function<void(std::string)> callback)
 {
     callbackPurchaseSuccess = callback;
+}
+
+void IOSHelperCPlus::setFacebookInviteCallback(std::function<void(std::string)> callback)
+{
+    callbackFacebookInvite = callback;
 }
 
 void IOSHelperCPlus::purchaseItem(std::string sku)
@@ -99,6 +112,30 @@ string IOSHelperCPlus::getDeviceId()
 {
     if(callbackPurchaseSuccess != nil){
         callbackPurchaseSuccess(std::string([token UTF8String]));
+    }
+}
+
++(void)OnFacebookInvite:(NSString *)token
+{
+    if(callbackFacebookInvite != nil){
+        callbackFacebookInvite(std::string([token UTF8String]));
+    }
+}
+@end
+
+@implementation NSDictionary (BVJSONString)
+
+-(NSString*) bv_jsonStringWithPrettyPrint:(BOOL) prettyPrint {
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:self
+                                                       options:(NSJSONWritingOptions)    (prettyPrint ? NSJSONWritingPrettyPrinted : 0)
+                                                         error:&error];
+    
+    if (! jsonData) {
+        NSLog(@"bv_jsonStringWithPrettyPrint: error: %@", error.localizedDescription);
+        return @"{}";
+    } else {
+        return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
     }
 }
 @end

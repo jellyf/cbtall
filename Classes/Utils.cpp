@@ -60,6 +60,11 @@ Utils::Utils()
     IOSHelperCPlus::setPurchaseSuccessCallback([=](std::string token){
         Utils::onCallbackPurchaseSuccess(token);
     });
+    IOSHelperCPlus::setFacebookInviteCallback([=](std::string token){
+        if (EventHandler::getSingleton().onFacebookInvite != NULL) {
+            EventHandler::getSingleton().onFacebookInvite(token);
+        }
+    });
 #endif
 }
 
