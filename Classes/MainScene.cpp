@@ -898,8 +898,7 @@ void MainScene::onNewsDataResponse(std::vector<NewsData> list)
 void MainScene::onPurchaseSuccess(std::string token)
 {
     if(token.length() > 0){
-		ui::CheckBox* cbQuan = (ui::CheckBox*)(popupCharge->getChildByName("nodemoneytype")->getChildByTag(0));
-        SFSRequest::getSingleton().RequestPayment(token, cbQuan->isSelected());
+		SFSRequest::getSingleton().RequestPayment(token, isChargeQuan);
 	} else {
 		hideWaiting();
 	}
@@ -1194,6 +1193,7 @@ void MainScene::initPopupCharge()
 		} else if (type == ui::CheckBox::EventType::UNSELECTED) {
 			cbs[1]->setSelected(true);
 		}
+		isChargeQuan = cbs[0]->isSelected();
 		updateChargeRateCard(cbs[0]->isSelected());
 		updateSmsInfo(cbs[0]->isSelected());
 	});
@@ -1203,6 +1203,7 @@ void MainScene::initPopupCharge()
 		} else if (type == ui::CheckBox::EventType::UNSELECTED) {
 			cbs[0]->setSelected(true);
 		}
+		isChargeQuan = cbs[0]->isSelected();
 		updateChargeRateCard(cbs[0]->isSelected());
 		updateSmsInfo(cbs[0]->isSelected());
 	});
