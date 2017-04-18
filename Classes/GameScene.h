@@ -56,7 +56,9 @@ public:
 	void onGameUserReconnectDataResponse(std::vector<UserReconnectData> list);
 	void onLobbyListTableResponse(LobbyListTable data);
 protected:
+	virtual bool onKeyBack();
 	virtual void onKeyHome();
+	virtual void onBackScene();
 	virtual void onErrorResponse(unsigned char code, std::string msg);
 private:
 	void initChatTable();

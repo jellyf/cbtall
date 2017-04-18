@@ -321,6 +321,25 @@ void MainScene::editBoxReturn(cocos2d::ui::EditBox * editBox)
 {
 }
 
+bool MainScene::onKeyBack()
+{
+	bool canBack = BaseScene::onKeyBack();
+	if (canBack) {
+		if (nodeWebview->isVisible()) {
+			nodeWebview->setVisible(false);
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+			experimental::ui::WebView* webView = (experimental::ui::WebView*)nodeWebview->getChildByName("webview");
+			webView->setVisible(false);
+#endif
+			return false;
+		} else {
+			onBackScene();
+			return false;
+		}
+	}
+	return canBack;
+}
+
 void MainScene::onConnected()
 {
 	BaseScene::onConnected();
@@ -736,7 +755,7 @@ void MainScene::onListMailDataResponse(std::vector<MailData> list)
 	}
 
 	vector<int> posX = { -390, -290, 0, 340 };
-	vector<int> widths = { 50, 100, 420, 120 };
+	vector<int> widths = { 50, 130, 420, 120 };
 	ui::ScrollView* scroll = (ui::ScrollView*)popupMail->getChildByName("scroll");
 	int height = list.size() * 60;
 	if (height < scroll->getContentSize().height) {
@@ -759,11 +778,11 @@ void MainScene::onListMailDataResponse(std::vector<MailData> list)
 			btn->setVisible(true);
 		} else {
 			for (int j = 0; j < 4; j++) {
-				Label* lbDetail = Label::create("", list[i].IsRead ? "fonts/arial.ttf" : "fonts/arialbd.ttf", 20);
+				Label* lbDetail = Label::create("", list[i].IsRead ? "fonts/arial.ttf" : "fonts/arialbd.ttf", 25);
 				lbDetail->setWidth(widths[j]);
-				lbDetail->setHeight(46);
+				lbDetail->setHeight(52);
 				lbDetail->setAnchorPoint(Vec2(.5f, 1));
-				lbDetail->setHorizontalAlignment(TextHAlignment::CENTER);
+				lbDetail->setHorizontalAlignment(TextHAlignment::LEFT);
 				lbDetail->setPosition(posX[j] + scroll->getContentSize().width / 2, height - 5 - i * 60);
 				lbDetail->setTag(i * 5 + j);
 				lbDetail->setColor(Color3B::WHITE);
@@ -784,7 +803,7 @@ void MainScene::onListMailDataResponse(std::vector<MailData> list)
 					Label* lb = (Label*)nodeDetail->getChildByTag(i);
 					lb->setString(lbs[i]->getString());
 					lbs[i]->setSystemFontName("fonts/arial.ttf");
-					lbs[i]->setSystemFontSize(20);
+					lbs[i]->setSystemFontSize(25);
 				}
 				SFSRequest::getSingleton().RequestMailContent(atoi(btn->getName().c_str()));
 			});
@@ -851,7 +870,7 @@ void MainScene::onNewsDataResponse(std::vector<NewsData> list)
 	}
 	scrollTitle->setInnerContainerSize(Size(scrollTitle->getContentSize().width, heightTitle));
 	for (int i = 0; i < list.size(); i++) {
-		string strTitle = list[i].Title.length() < 22 ? list[i].Title : list[i].Title.substr(0, 21);
+		string strTitle = list[i].Title.length() < 17 ? list[i].Title : list[i].Title.substr(0, 16);
 		int indexTitle = strTitle.find_last_of(' ');
 		strTitle = strTitle.substr(0, indexTitle);
 		ui::Button* btn = (ui::Button*) scrollTitle->getChildByTag(i);
@@ -861,8 +880,8 @@ void MainScene::onNewsDataResponse(std::vector<NewsData> list)
 			btn = ui::Button::create();
 			btn->setTitleFontName("fonts/aristote.ttf");
 			btn->setTitleColor(Color3B::BLACK);
-			btn->setTitleFontSize(20);
-			btn->setContentSize(Size(scrollTitle->getContentSize().width, 50));
+			btn->setTitleFontSize(25);
+			btn->setContentSize(Size(scrollTitle->getContentSize().width + 40, 50));
 			btn->setScale9Enabled(true);
 			btn->setTag(i);
 			scrollTitle->addChild(btn);
@@ -932,9 +951,11 @@ void MainScene::onDownloadedPlistTexture(int numb)
 
 void MainScene::onBackScene()
 {
-	showWaiting();
-	isBackToLogin = true;
-	SFSRequest::getSingleton().Disconnect();
+	showPopupNotice(Utils::getSingleton().getStringForKey("ban_muon_dang_xuat"), [=]() {
+		showWaiting();
+		isBackToLogin = true;
+		SFSRequest::getSingleton().Disconnect();
+	});
 }
 
 void MainScene::onChangeMoneyType(int type)
@@ -1020,6 +1041,8 @@ void MainScene::initPopupCharge()
 
 	ui::EditBox* tfSeri = ui::EditBox::create(Size(350, 55), "box.png", ui::Widget::TextureResType::PLIST);
 	ui::EditBox* tfCode = ui::EditBox::create(Size(350, 55), "box.png", ui::Widget::TextureResType::PLIST);
+	ui::ScrollView* scrollProvider = ui::ScrollView::create();
+	vector<string> strProviders = { "viettel", "mobifone", "vinaphone", "megacard", "gcard" };
 
 	int x = -420;
 	int y = 180;
@@ -1047,21 +1070,21 @@ void MainScene::initPopupCharge()
 
 			if (i == 0) {
 				nodeMoneyType->setPosition(-220, 20);
-				for (int i = 1; i <= 4; i++) {
-					popupCharge->getChildByName("btn" + to_string(i))->setVisible(true);
+				for (int i = 1; i <= strProviders.size(); i++) {
+					scrollProvider->getChildByName("btn" + to_string(i))->setVisible(true);
 					//popupCharge->getChildByName("providerimg" + to_string(i))->setVisible(true);
 				}
 			} else if (i == 1) {
 				nodeMoneyType->setPosition(-220, 20);
 				for (int i = 1; i <= 3; i++) {
-					popupCharge->getChildByName("btn" + to_string(i))->setVisible(true);
+					scrollProvider->getChildByName("btn" + to_string(i))->setVisible(true);
 					//popupCharge->getChildByName("providerimg" + to_string(i))->setVisible(true);
 				}
 				checkProviderToCharge();
 			} else if(i == 2){
 				nodeMoneyType->setPosition(-220, 150);
-				for (int i = 1; i <= 4; i++) {
-					popupCharge->getChildByName("btn" + to_string(i))->setVisible(false);
+				for (int i = 1; i <= strProviders.size(); i++) {
+					scrollProvider->getChildByName("btn" + to_string(i))->setVisible(false);
 					//popupCharge->getChildByName("providerimg" + to_string(i))->setVisible(false);
 				}
 			}
@@ -1070,10 +1093,17 @@ void MainScene::initPopupCharge()
 		y -= 70;
 	}
 
-	int xp = -220;
-	int yp = 135;
-	vector<string> strProviders = { "viettel", "mobifone", "vinaphone", "megacard" };
+	scrollProvider->setDirection(ui::ScrollView::Direction::HORIZONTAL);
+	scrollProvider->setBounceEnabled(true);
+	scrollProvider->setPosition(Vec2(-320, 80));
+	scrollProvider->setContentSize(Size(800, 120));
+	scrollProvider->setInnerContainerSize(Size(strProviders.size() * 170, 120));
+	scrollProvider->setScrollBarEnabled(true);
+	scrollProvider->setName("scrollprovider");
+	popupCharge->addChild(scrollProvider);
 
+	int xp = 80;
+	int yp = 70;
 	string smsContent = Utils::getSingleton().gameConfig.smsVT;
 	int strIndex = smsContent.find_last_of(' ');
 	string smsTarget = smsContent.substr(strIndex + 1, smsContent.length() - strIndex);
@@ -1097,7 +1127,7 @@ void MainScene::initPopupCharge()
 		btnProvider->setName("btn" + stri);
 		//btnProvider->setBright(false);
 		//btnProvider->setTouchEnabled(textures.size() == 8);
-		btnProvider->setScale(1.2f);
+		//btnProvider->setScale(1.2f);
 		if (i > 1) {
 			btnProvider->setColor(Color3B::GRAY);
 		}
@@ -1108,7 +1138,7 @@ void MainScene::initPopupCharge()
 			for (int j = 1; j <= strProviders.size(); j++) {
 				string strj = to_string(j);
 				//Sprite* img = (Sprite*)popupCharge->getChildByName("providerimg" + strj);
-				ui::Button* btn = (ui::Button*)popupCharge->getChildByName("btn" + strj);
+				ui::Button* btn = (ui::Button*)scrollProvider->getChildByName("btn" + strj);
 				if (btn->getColor() == Color3B::WHITE) {
 					btnIndexLast = j;
 				}
@@ -1146,11 +1176,11 @@ void MainScene::initPopupCharge()
 				}*/
 			}
 
-			if (i == 4) {
+			if (i == 4 || i == 5) {
 				tfCode->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
 				tfSeri->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
 			} else {
-				if (btnIndexLast == 4) {
+				if (btnIndexLast == 4 || btnIndexLast == 5) {
 					tfCode->setText("");
 					tfSeri->setText("");
 				}
@@ -1158,14 +1188,14 @@ void MainScene::initPopupCharge()
 				tfSeri->setInputMode(ui::EditBox::InputMode::NUMERIC);
 			}
 		});
-		popupCharge->addChild(btnProvider);
+		scrollProvider->addChild(btnProvider);
 
 		/*sp->setPosition(btnProvider->getPosition());
 		sp->setName("providerimg" + stri);
 		sp->setScale(.9f);
 		popupCharge->addChild(sp);*/
 
-		xp += 200;
+		xp += 170;
 	}
 
 	vector<Label*> lbs;
@@ -1339,8 +1369,8 @@ void MainScene::initPopupCharge()
 		string seri = tfSeri->getText();
 		if (code.length() == 0 || seri.length() == 0) return;
 		int providerId;
-		for (int i = 1; i <= 4; i++) {
-			Node* n = popupCharge->getChildByName("btn" + to_string(i));
+		for (int i = 1; i <= strProviders.size(); i++) {
+			Node* n = scrollProvider->getChildByName("btn" + to_string(i));
 			if (n->getTag() == 1) {
 				providerId = i - 1;
 				break;
@@ -1428,7 +1458,7 @@ void MainScene::initPopupCharge()
 			addTouchEventListener(btnItemSms, [=]() {
 				int btnIndex;
 				for (int i = 1; i < 4; i++) {
-					ui::Button* btn = (ui::Button*)popupCharge->getChildByName("btn" + to_string(i));
+					ui::Button* btn = (ui::Button*)scrollProvider->getChildByName("btn" + to_string(i));
 					if (btn->getTag() == 1) {
 						btnIndex = i;
 					}
@@ -1522,7 +1552,7 @@ void MainScene::initPopupCharge()
         nodeCard->setVisible(false);
         nodeStore->setVisible(true);
         nodeStore->setPosition(0, 10);
-        for(int i=1;i<=4;i++){
+        for(int i=1;i<= strProviders.size();i++){
             popupCharge->getChildByName("btn" + to_string(i))->setVisible(false);
             //popupCharge->getChildByName("providerimg" + to_string(i))->setVisible(false);
         }
@@ -1702,10 +1732,10 @@ void MainScene::initPopupMail()
 	nodeDetail->addChild(bgDetail);
 
 	for (int i = 0; i < posX.size(); i++) {
-		Label* lbDetail = Label::create("", "fonts/arial.ttf", 20);
+		Label* lbDetail = Label::create("", "fonts/arial.ttf", 25);
 		lbDetail->setWidth(widths[i]);
 		lbDetail->setAnchorPoint(Vec2(.5f, 1));
-		lbDetail->setHorizontalAlignment(TextHAlignment::CENTER);
+		lbDetail->setHorizontalAlignment(TextHAlignment::LEFT);
 		lbDetail->setPosition(posX[i], bgDetail->getContentSize().height / 2 - 15);
 		lbDetail->setTag(i);
 		lbDetail->setColor(Color3B::WHITE);
@@ -1784,7 +1814,7 @@ void MainScene::initPopupNews()
 	scrollContent->setName("scrollcontent");
 	popupNews->addChild(scrollContent);
 
-	Label* lbContent = Label::create("", "fonts/arial.ttf", 20);
+	Label* lbContent = Label::create("", "fonts/arial.ttf", 25);
 	lbContent->setWidth(scrollContent->getContentSize().width);
 	lbContent->setAnchorPoint(Vec2(0, 1));
 	lbContent->setColor(Color3B::WHITE);
@@ -2209,25 +2239,23 @@ void MainScene::showWebView(std::string url)
 void MainScene::checkProviderToCharge()
 {
 	int btnIndex = -1;
-	Node* btn4 = popupCharge->getChildByName("btn4");
-	//Sprite* img4 = (Sprite*)popupCharge->getChildByName("providerimg4");
-	if (btn4->getTag() == 1) {
-		Node* btn1 = popupCharge->getChildByName("btn1");
-		//Sprite* img1 = (Sprite*)popupCharge->getChildByName("providerimg1");
-		btn1->setTag(1);
-		btn1->setColor(Color3B::WHITE);
-		//img1->initWithTexture(textures["provider1"]);
-		btnIndex = 1;
+	Node* scrollProvider = popupCharge->getChildByName("scrollprovider");
+	for (int i = 4; i <= 5; i++) {
+		Node* btni = scrollProvider->getChildByName("btn" + to_string(i));
+		if (btni->getTag() == 1) {
+			Node* btn1 = scrollProvider->getChildByName("btn1");
+			btn1->setTag(1);
+			btn1->setColor(Color3B::WHITE);
+			btnIndex = 1;
+		}
+		btni->setVisible(false);
+		btni->setTag(0);
+		btni->setColor(Color3B::GRAY);
 	}
-	btn4->setVisible(false);
-	//img4->setVisible(false);
-	btn4->setTag(0);
-	btn4->setColor(Color3B::GRAY);
-	//img4->initWithTexture(textures["provider4_dark"]);
 
 	if (btnIndex == -1) {
-		for (int i = 1; i < 4; i++) {
-			ui::Button* btn = (ui::Button*)popupCharge->getChildByName("btn" + to_string(i));
+		for (int i = 1; i <= 5; i++) {
+			ui::Button* btn = (ui::Button*)scrollProvider->getChildByName("btn" + to_string(i));
 			if (btn->getTag() == 1) {
 				btnIndex = i;
 				break;
@@ -2266,10 +2294,11 @@ void MainScene::updateChargeRateCard(bool isQuan)
 
 void MainScene::updateSmsInfo(bool isQuan)
 {
+	Node* scrollProvider = popupCharge->getChildByName("scrollprovider");
 	int btnIndex = 0;
-	for (int j = 1; j <= 4; j++) {
+	for (int j = 1; j <= 5; j++) {
 		string strj = to_string(j);
-		ui::Button* btn = (ui::Button*)popupCharge->getChildByName("btn" + strj);
+		ui::Button* btn = (ui::Button*)scrollProvider->getChildByName("btn" + strj);
 		if (btn->getTag() == 1) {
 			btnIndex = j;
 			break;

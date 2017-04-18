@@ -151,5 +151,10 @@
 	<key>notice_update_new_version</key><string>Xin vui lòng cập nhật phiên bản mới nhất</string>
 	<key>open_sms_retake_password</key><string>Vui lòng soạn tin [sms] để lấy lại mật khẩu, trong đó [uid] là số ID tài khoản của bạn</string>
 	<key>khong_hien_lai</key><string>Không hiển thị</string>
+	<key>thang_lon_nhat</key><string>Tiền thắng lớn nhất</string>
+	<key>u_to_nhat</key><string>Cước ù to nhất</string>
+	<key>ban_muon_thoat_khoi_phong_cho</key><string>Bạn muốn thoát khỏi phòng chờ?</string>
+	<key>ban_muon_dang_xuat</key><string>Bạn muốn trở về đăng nhập?</string>
+	<key>ban_muon_thoat_game</key><string>Bạn muốn thoát Kính Tứ Chi?</string>
 </dict>
 </plist>

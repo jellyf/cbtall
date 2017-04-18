@@ -233,14 +233,7 @@ void GameScene::onInit()
 	btnBack->setPosition(topLeft + getScaleSceneDistance(Vec2(50, -50)));
 	//btnBack->setTouchEnabled(false);
 	addTouchEventListener(btnBack, [=]() {
-		if (state == NONE || state == READY || myServerSlot < 0) {
-			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
-			Utils::getSingleton().goToLobbyScene();
-			experimental::AudioEngine::stopAll();
-		} else {
-			hasRegisterOut = !hasRegisterOut;
-			showSystemNotice(Utils::getSingleton().getStringForKey((hasRegisterOut ? "" : "huy_") + string("dang_ky_roi_ban_khi_het_van")));
-		}
+		onBackScene();
 	});
 	mLayer->addChild(btnBack, constant::ZORDER_POPUP - 4);
 	autoScaleNode(btnBack);
@@ -998,11 +991,11 @@ bool GameScene::onTouchBegan(Touch * touch, Event * _event)
 		for (int i = 0; i < 4; i++) {
 			if (pos.distance(vecUserPos[i]) < 60) {
 				if (vecUsers[i]->isVisible() && vecUsers[i]->getName().length() > 0) {
-					if (vecUsers[i]->getName().compare(Utils::getSingleton().userDataMe.Name) == 0) {
+					/*if (vecUsers[i]->getName().compare(Utils::getSingleton().userDataMe.Name) == 0) {
 						showPopupUserInfo(Utils::getSingleton().userDataMe, false);
-					} else {
+					} else {*/
 						SFSRequest::getSingleton().RequestUserInfo(vecUsers[i]->getName());
-					}
+					//}
 					break;
 				} else {
 					hasClickInvite = true;
@@ -1650,7 +1643,7 @@ void GameScene::onConnectionLost(std::string reason)
 
 void GameScene::onUserDataResponse(UserData data)
 {
-	showPopupUserInfo(data);
+	showPopupUserInfo(data, false);
 }
 
 void GameScene::onUserExitRoom(long sfsUId)
@@ -3220,8 +3213,30 @@ void GameScene::onLobbyListTableResponse(LobbyListTable data)
 	}
 }
 
+bool GameScene::onKeyBack()
+{
+	bool canBack = BaseScene::onKeyBack();
+	if (canBack) {
+		onBackScene();
+		return false;
+	}
+	return canBack;
+}
+
 void GameScene::onKeyHome()
 {
+}
+
+void GameScene::onBackScene()
+{
+	if (state == NONE || state == READY || myServerSlot < 0) {
+		SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
+		Utils::getSingleton().goToLobbyScene();
+		experimental::AudioEngine::stopAll();
+	} else {
+		hasRegisterOut = !hasRegisterOut;
+		showSystemNotice(Utils::getSingleton().getStringForKey((hasRegisterOut ? "" : "huy_") + string("dang_ky_roi_ban_khi_het_van")));
+	}
 }
 
 void GameScene::initChatTable()
@@ -3266,7 +3281,7 @@ void GameScene::initChatTable()
 
 	ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnClose->setPosition(Vec2(490, 150));
-	btnClose->setScale(.7f);
+	btnClose->setScale(.8f);
 	addTouchEventListener(btnClose, [=]() {
 		input->setText("");
 		hidePopup(tableChat);
@@ -3659,8 +3674,8 @@ void GameScene::initSettingsPopup()
 	popupSettings->addChild(btnOK);
 
 	ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnClose->setPosition(Vec2(370, 205));
-	btnClose->setScale(.8f);
+	btnClose->setPosition(Vec2((bg->getContentSize().width / 2 - 10) * scale.x, (bg->getContentSize().height / 2 - 5) * scale.y));
+	//btnClose->setScale(.8f);
 	addTouchEventListener(btnClose, [=]() {
 		hidePopup(popupSettings);
 	});

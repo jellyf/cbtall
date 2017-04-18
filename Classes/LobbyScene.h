@@ -20,6 +20,7 @@ public:
 	void onTableReconnectDataResponse(TableReconnectData data);
 	void onPurchaseSuccess(std::string token);
 protected:
+	virtual bool onKeyBack();
 	virtual void onConnected();
 	virtual void onLoginZone();
 	virtual void onLoginZoneError(short int code, std::string msg);

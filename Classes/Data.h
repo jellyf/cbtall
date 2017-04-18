@@ -25,6 +25,7 @@ struct UserData
 	long Exp;
 	long Win;
 	long Total;
+	long BigWin;
 	short Level;
 	double MoneyFree;
 	double MoneyReal;
@@ -34,6 +35,7 @@ struct UserData
 	std::string Name;
 	std::string DisplayName;
 	std::string GroupAvatar;
+	std::string BigCrest;
 };
 
 struct PlayerData

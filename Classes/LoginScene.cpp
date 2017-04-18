@@ -475,9 +475,16 @@ void LoginScene::onDownloadedPlistTexture(int numb)
 	}
 }
 
-void LoginScene::onKeyBack()
+bool LoginScene::onKeyBack()
 {
-	Director::sharedDirector()->end();
+	bool canBack = BaseScene::onKeyBack();
+	if (canBack) {
+		showPopupNotice(Utils::getSingleton().getStringForKey("ban_muon_thoat_game"), [=]() {
+			Director::sharedDirector()->end();
+		});
+		return false;
+	}
+	return canBack;
 }
 
 void LoginScene::loginNormal()

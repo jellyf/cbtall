@@ -44,7 +44,7 @@ protected:
 	virtual void initHeaderWithInfos();
 	virtual void onBackScene();
 	virtual void onChangeMoneyType(int type);
-	virtual void onKeyBack();
+	virtual bool onKeyBack();
 	virtual void onKeyHome();
 
 	void handleClientDisconnectionReason(std::string reason);

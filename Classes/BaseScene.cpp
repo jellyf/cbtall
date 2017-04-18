@@ -587,10 +587,12 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 	Label* lbQuan = (Label*)popupUserInfo->getChildByName("lbquan");
 	Label* lbXu = (Label*)popupUserInfo->getChildByName("lbxu");
 	Label* lbId = (Label*)popupUserInfo->getChildByName("lbid");
-	Label* lbLevel = (Label*)popupUserInfo->getChildByName("lblevel");
+	//Label* lbLevel = (Label*)popupUserInfo->getChildByName("lblevel");
 	Label* lbAppellation = (Label*)popupUserInfo->getChildByName("lbappellation");
 	Label* lbWin = (Label*)popupUserInfo->getChildByName("lbwin");
 	Label* lbTotal = (Label*)popupUserInfo->getChildByName("lbtotal");
+	Label* lbBigWin = (Label*)popupUserInfo->getChildByName("lbbigwin");
+	Label* lbBigCrest = (Label*)popupUserInfo->getChildByName("lbbigcrest");
 	AppellationData aplData = Utils::getSingleton().getAppellationByLevel(data.Level);
 
 	btnHistory->setVisible(showHistoryIfIsMe && data.UserID == Utils::getSingleton().userDataMe.UserID);
@@ -599,12 +601,15 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 	lbName->setString(data.DisplayName);
 	lbQuan->setString(Utils::getSingleton().formatMoneyWithComma(data.MoneyReal));
 	lbXu->setString(Utils::getSingleton().formatMoneyWithComma(data.MoneyFree));
-	lbId->setString("ID: " + (data.UserID == Utils::getSingleton().userDataMe.UserID ? to_string(data.UserID) : ""));
-	lbLevel->setString(Utils::getSingleton().getStringForKey("cap_do") + ":");// +to_string(data.Level));
+	lbId->setString(to_string(data.UserID));
+	lbId->setVisible(data.UserID == Utils::getSingleton().userDataMe.UserID);
+	//lbLevel->setString(Utils::getSingleton().getStringForKey("cap_do") + ":");// +to_string(data.Level));
 	lbWin->setString(Utils::getSingleton().getStringForKey("thang") + ": " + to_string(data.Win));
 	lbTotal->setString(Utils::getSingleton().getStringForKey("tong") + ": " + to_string(data.Total));
 	lbAppellation->setString(aplData.Name);
 	lbAppellation->setColor(aplData.Color);
+	//lbBigWin->setString(Utils::getSingleton().formatMoneyWithComma(data.BigWin));
+	//lbBigCrest->setString(data.BigCrest);
 }
 
 void BaseScene::setMoneyType(int type)
@@ -937,8 +942,14 @@ void BaseScene::onChangeMoneyType(int type)
 {
 }
 
-void BaseScene::onKeyBack()
+bool BaseScene::onKeyBack()
 {
+	if (popups.size() == 0) {
+		return true;
+	}
+	Node* popup = popups[popups.size() - 1];
+	hidePopup(popup);
+	return false;
 }
 
 void BaseScene::onKeyHome()
@@ -1320,44 +1331,48 @@ void BaseScene::initPopupUserInfo()
 {
 	bool ispmE = Utils::getSingleton().ispmE();
 
-	popupUserInfo = createPopup("title_thongtin.png", false, false);
+	popupUserInfo = Node::create();
+	popupUserInfo->setPosition(560, 350);
+	popupUserInfo->setVisible(false);
+	mLayer->addChild(popupUserInfo, constant::ZORDER_POPUP);
 
-	//popupUserInfo = Node::create();
-	//popupUserInfo->setPosition(560, 350);
-	//popupUserInfo->setVisible(false);
-	//mLayer->addChild(popupUserInfo, constant::ZORDER_POPUP);
-	//autoScaleNode(popupUserInfo);
+	ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("popup_bg.png");
+	bg->setContentSize(Size(800, 550));
+	bg->setInsetLeft(300);
+	bg->setInsetRight(30);
+	bg->setInsetTop(30);
+	bg->setInsetBottom(320);
+	popupUserInfo->addChild(bg);
 
-	//Sprite* bg = Sprite::createWithSpriteFrameName("popup_bg.png");
-	//popupUserInfo->addChild(bg);
+	Sprite* bgTitle = Sprite::createWithSpriteFrameName("title_bg.png");
+	bgTitle->setPosition(0, bg->getContentSize().height / 2 - 5);
+	popupUserInfo->addChild(bgTitle);
 
-	//Sprite* title = Sprite::createWithSpriteFrameName("title_thongtin.png");
-	//title->setPosition(0, 170);
-	////title->setScale(.8f);
-	//popupUserInfo->addChild(title);
+	Sprite* title = Sprite::createWithSpriteFrameName("title_thongtin.png");
+	title->setPosition(0, bg->getContentSize().height / 2 - 5);
+	popupUserInfo->addChild(title);
 
-	//ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	//btnClose->setPosition(Vec2(310, 170));
-	//btnClose->setScale(.8f);
-	//addTouchEventListener(btnClose, [=]() {
-	//	hidePopup(popupUserInfo);
-	//});
-	//popupUserInfo->addChild(btnClose);
+	ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnClose->setPosition(Vec2(bg->getContentSize().width / 2 - 10, bg->getContentSize().height / 2 - 5));
+	addTouchEventListener(btnClose, [=]() {
+		hidePopup(popupUserInfo);
+	});
+	popupUserInfo->addChild(btnClose);
 
 	Sprite* avatar = Sprite::createWithSpriteFrameName("avatar_default.png");
-	avatar->setPosition(-186, 33);
-	avatar->setScale(1.5f);
+	avatar->setPosition(-255, 100);
+	avatar->setScale(1.7f);
 	avatar->setName("avatar");
 	popupUserInfo->addChild(avatar);
 
+	Label* lbAppellation = Label::create("Huong Truong", "fonts/aristote.ttf", 25);
+	lbAppellation->setColor(Color3B::WHITE);
+	lbAppellation->setPosition(avatar->getPositionX(), avatar->getPositionY() - 113);
+	lbAppellation->setName("lbappellation");
+	popupUserInfo->addChild(lbAppellation);
+
 	ui::Button* btnHistory = ui::Button::create("btn_lichsu.png", "btn_lichsu_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	//btnHistory->setTitleText(Utils::getSingleton().getStringForKey("lich_su"));
-	//btnHistory->setTitleFontName("fonts/arial.ttf");
-	//btnHistory->setTitleFontSize(25);
-	//btnHistory->setTitleColor(Color3B::BLACK);
-	btnHistory->setPosition(Vec2(-186, -70));
-	//btnHistory->setContentSize(Size(150, 50));
-	//btnHistory->setScale9Enabled(true);
+	btnHistory->setPosition(Vec2(lbAppellation->getPositionX(), lbAppellation->getPositionY() - 65));
 	btnHistory->setName("btnhistory");
 	btnHistory->setScale(.8f);
 	addTouchEventListener(btnHistory, [=]() {
@@ -1366,13 +1381,7 @@ void BaseScene::initPopupUserInfo()
 	popupUserInfo->addChild(btnHistory);
 
 	ui::Button* btnActive = ui::Button::create("btn_kichhoat.png", "btn_kickhoat_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	//btnActive->setTitleText(Utils::getSingleton().getStringForKey("kich_hoat"));
-	//btnActive->setTitleFontName("fonts/arial.ttf");
-	//btnActive->setTitleFontSize(25);
-	//btnActive->setTitleColor(Color3B::BLACK);
-	btnActive->setPosition(Vec2(-186, -125));
-	//btnActive->setContentSize(Size(150, 50));
-	//btnActive->setScale9Enabled(true);
+	btnActive->setPosition(Vec2(btnHistory->getPositionX(), btnHistory->getPositionY() - 60));
 	btnActive->setName("btnactive");
 	btnActive->setScale(.8f);
 	addTouchEventListener(btnActive, [=]() {
@@ -1386,7 +1395,7 @@ void BaseScene::initPopupUserInfo()
 	popupUserInfo->addChild(btnActive);
 
     ui::Button* btnLogoutFb = ui::Button::create("btn_logout_fb.png", "btn_logout_fb_clicked.png", "", ui::Widget::TextureResType::PLIST);
-    btnLogoutFb->setPosition(Vec2(200, -125));
+    btnLogoutFb->setPosition(Vec2(btnActive->getPositionX(), btnActive->getPositionY() - 60));
     btnLogoutFb->setName("btnlogoutfb");
     btnLogoutFb->setScale(.8f);
     addTouchEventListener(btnLogoutFb, [=]() {
@@ -1396,75 +1405,108 @@ void BaseScene::initPopupUserInfo()
     });
     popupUserInfo->addChild(btnLogoutFb);
 
-	Label* lbName = Label::create("Stormus", "fonts/arialbd.ttf", 25);
+	Label* lbName = Label::create("Stormus", "fonts/arialbd.ttf", 35);
 	lbName->setAnchorPoint(Vec2(0, .5f));
 	lbName->setColor(Color3B::WHITE);
-	lbName->setPosition(-70, 90);
+	lbName->setPosition(-130, 170);
 	lbName->setName("lbname");
 	popupUserInfo->addChild(lbName);
 
-	Label* lbQuan = Label::create(Utils::getSingleton().getStringForKey("quan"), "fonts/arial.ttf", 25);
+	int x = 50;
+	Label* lbId = Label::create("ID:", "fonts/arial.ttf", 25);
+	lbId->setAnchorPoint(Vec2(0, .5f));
+	lbId->setColor(Color3B::WHITE);
+	lbId->setPosition(lbName->getPositionX(), lbName->getPositionY() - x);
+	popupUserInfo->addChild(lbId);
+
+	Label* lbId1 = Label::create("847558", "fonts/arial.ttf", 25);
+	lbId1->setAnchorPoint(Vec2(0, .5f));
+	lbId1->setColor(Color3B::WHITE);
+	lbId1->setPosition(lbId->getPositionX() + 150, lbId->getPositionY());
+	lbId1->setName("lbid");
+	popupUserInfo->addChild(lbId1);
+
+	Label* lbQuan = Label::create(Utils::getSingleton().getStringForKey("quan") + ":", "fonts/arial.ttf", 25);
 	lbQuan->setAnchorPoint(Vec2(0, .5f));
 	lbQuan->setColor(Color3B::WHITE);
-	lbQuan->setPosition(-70, 50);
+	lbQuan->setPosition(lbId->getPositionX(), lbId->getPositionY() - x);
 	lbQuan->setVisible(ispmE);
 	popupUserInfo->addChild(lbQuan);
 
 	Label* lbQuan1 = Label::create("100,000", "fonts/arial.ttf", 25);
 	lbQuan1->setAnchorPoint(Vec2(0, .5f));
-	lbQuan1->setColor(Color3B::RED);
-	lbQuan1->setPosition(30, 50);
+	lbQuan1->setColor(Color3B::YELLOW);
+	lbQuan1->setPosition(lbQuan->getPositionX() + 150, lbQuan->getPositionY());
 	lbQuan1->setName("lbquan");
 	lbQuan1->setVisible(ispmE);
 	popupUserInfo->addChild(lbQuan1);
 
-	Label* lbXu = Label::create(Utils::getSingleton().getStringForKey("xu"), "fonts/arial.ttf", 25);
+	Label* lbXu = Label::create(Utils::getSingleton().getStringForKey("xu") + ":", "fonts/arial.ttf", 25);
 	lbXu->setAnchorPoint(Vec2(0, .5f));
 	lbXu->setColor(Color3B::WHITE);
-	lbXu->setPosition(-70, 10);
+	lbXu->setPosition(lbQuan->getPositionX(), lbQuan->getPositionY() - x);
 	popupUserInfo->addChild(lbXu);
 
 	Label* lbXu1 = Label::create("100,000", "fonts/arial.ttf", 25);
 	lbXu1->setAnchorPoint(Vec2(0, .5f));
 	lbXu1->setColor(Color3B(0, 255, 255));
-	lbXu1->setPosition(30, 10);
+	lbXu1->setPosition(lbXu->getPositionX() + 150, lbXu->getPositionY());
 	lbXu1->setName("lbxu");
 	popupUserInfo->addChild(lbXu1);
-
-	Label* lbId = Label::create("ID: 847558", "fonts/arial.ttf", 25);
-	lbId->setAnchorPoint(Vec2(0, .5f));
-	lbId->setColor(Color3B::WHITE);
-	lbId->setPosition(-70, -30);
-	lbId->setName("lbid");
-	popupUserInfo->addChild(lbId);
 	
-	Label* lbLevel = Label::create(Utils::getSingleton().getStringForKey("cap_do") + ":", "fonts/arial.ttf", 25);
+	/*Label* lbLevel = Label::create(Utils::getSingleton().getStringForKey("cap_do") + ":", "fonts/arial.ttf", 25);
 	lbLevel->setAnchorPoint(Vec2(0, .5f));
 	lbLevel->setColor(Color3B::WHITE);
 	lbLevel->setPosition(-70, -70);
 	lbLevel->setName("lblevel");
-	popupUserInfo->addChild(lbLevel);
+	popupUserInfo->addChild(lbLevel);*/
 
 	Label* lbWin = Label::create(Utils::getSingleton().getStringForKey("thang") + ": 12", "fonts/arial.ttf", 25);
 	lbWin->setAnchorPoint(Vec2(0, .5f));
 	lbWin->setColor(Color3B::WHITE);
-	lbWin->setPosition(115, -30);
+	lbWin->setPosition(lbXu->getPositionX(), lbXu->getPositionY() - x);
 	lbWin->setName("lbwin");
 	popupUserInfo->addChild(lbWin);
-
-	Label* lbAppellation = Label::create("Huong Truong", "fonts/aristote.ttf", 25);
-	lbAppellation->setAnchorPoint(Vec2(0, .5f));
-	lbAppellation->setColor(Color3B::WHITE);
-	lbAppellation->setPosition(lbLevel->getPositionX() - 10, lbLevel->getPositionY() - 40);
-	lbAppellation->setName("lbappellation");
-	popupUserInfo->addChild(lbAppellation);
 
 	Label* lbTotal = Label::create(Utils::getSingleton().getStringForKey("tong") + ": 20", "fonts/arial.ttf", 25);
 	lbTotal->setAnchorPoint(Vec2(0, .5f));
 	lbTotal->setColor(Color3B::WHITE);
-	lbTotal->setPosition(115, -70);
+	lbTotal->setPosition(lbWin->getPositionX() + 250, lbWin->getPositionY());
 	lbTotal->setName("lbtotal");
 	popupUserInfo->addChild(lbTotal);
+
+	Label* lbBigWin = Label::create(Utils::getSingleton().getStringForKey("thang_lon_nhat") + ":", "fonts/arial.ttf", 25);
+	lbBigWin->setPosition(lbWin->getPositionX(), lbWin->getPositionY() - x);
+	lbBigWin->setAnchorPoint(Vec2(0, .5f));
+	lbBigWin->setColor(Color3B::WHITE);
+	lbBigWin->setVisible(false);
+	popupUserInfo->addChild(lbBigWin);
+
+	Label* lbBigWin1 = Label::create("1111", "fonts/arial.ttf", 25);
+	lbBigWin1->setPosition(lbBigWin->getPositionX() + lbBigWin->getContentSize().width + 10, lbBigWin->getPositionY());
+	lbBigWin1->setAnchorPoint(Vec2(0, .5f));
+	lbBigWin1->setColor(Color3B::YELLOW);
+	lbBigWin1->setName("lbbigwin");
+	lbBigWin1->setVisible(false);
+	popupUserInfo->addChild(lbBigWin1);
+
+	Label* lbBigCrest = Label::create(Utils::getSingleton().getStringForKey("u_to_nhat") + ": Nha lau xe hoi - Hoa roi cua pha t, a a a Ngu ong bat ca, Ca loi san dinh", "fonts/arial.ttf", 25);
+	lbBigCrest->setPosition(lbBigWin->getPositionX(), lbBigWin->getPositionY() - x + 20);
+	lbBigCrest->setAnchorPoint(Vec2(0, 1));
+	lbBigCrest->setColor(Color3B::WHITE);
+	lbBigCrest->setWidth(480);
+	lbBigCrest->setName("lbbigcrest");
+	lbBigCrest->setVisible(false);
+	popupUserInfo->addChild(lbBigCrest);
+
+	//Label* lbBigCrest1 = Label::create("Nha lau xe hoi - Hoa roi cua pha t, a a a Ngu ong bat ca, Ca loi san dinh", "fonts/arial.ttf", 25);
+	//lbBigCrest1->setPosition(lbBigCrest->getPositionX() + lbBigCrest->getContentSize().width + 10, lbBigCrest->getPositionY() + 15);
+	////lbBigCrest1->setAlignment(TextHAlignment::LEFT, TextVAlignment::TOP);
+	//lbBigCrest1->setAnchorPoint(Vec2(0, 1));
+	//lbBigCrest1->setColor(Color3B::WHITE);
+	//lbBigCrest1->setWidth(380);
+	//lbBigCrest1->setName("lbbigcrest");
+	//popupUserInfo->addChild(lbBigCrest1);
 }
 
 void BaseScene::initPopupHistory()

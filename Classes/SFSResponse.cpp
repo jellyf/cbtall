@@ -170,12 +170,8 @@ void SFSResponse::getUserDataFromSFSObject(boost::shared_ptr<ByteArray> byteArra
 	byteArray->ReadShort(userData.Level);
 	byteArray->ReadInt(userData.Total);
 	byteArray->ReadInt(userData.Win);
-	/*if (byteArray->Position() < byteArray->Length()) {
-		byteArray->ReadByte(userData.MoneyType);
-	}
-	while (byteArray->Position() < byteArray->Length()) {
-		byteArray->ReadByte(userData.IsActived);
-	}*/
+	userData.BigWin = 0;
+	userData.BigCrest = "";
 	//CCLOG("%s %s %d %.0f %.0f %d", userData.Name.c_str(), userData.DisplayName.c_str(), userData.UserID, userData.MoneyFree, userData.MoneyReal);
 }
 

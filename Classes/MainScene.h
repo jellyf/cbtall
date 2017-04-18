@@ -28,6 +28,7 @@ public:
 	void onFacebookInvite(std::string token);
 	void onDynamicConfigReceived();
 protected:
+	virtual bool onKeyBack();
 	virtual void onConnected();
 	virtual void onLoginZoneError(short int code, std::string msg);
 	virtual void onBackScene();

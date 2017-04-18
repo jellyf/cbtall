@@ -23,7 +23,7 @@ public:
 	void onTableDataResponse(LobbyListTable data);
 protected:
 	virtual void onConnectionFailed();
-	virtual void onKeyBack();
+	virtual bool onKeyBack();
 private:
 	void loginNormal();
 	void loginFacebook();

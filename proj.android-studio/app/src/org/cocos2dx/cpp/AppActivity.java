@@ -380,8 +380,7 @@ public class AppActivity extends Cocos2dxActivity {
             Intent sendIntent = new Intent(Intent.ACTION_SEND);
             sendIntent.setType("text/plain");
             sendIntent.putExtra(Intent.EXTRA_TEXT, smsBody);
-            sendIntent.putExtra(Intent.EXTRA_PHONE_NUMBER, address);
-
+            sendIntent.putExtra("address", address);
             if (defaultSmsPackageName != null) {
                 sendIntent.setPackage(defaultSmsPackageName);
             }

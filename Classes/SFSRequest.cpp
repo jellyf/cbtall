@@ -97,6 +97,7 @@ void SFSRequest::RequestLeaveRoom()
 
 void SFSRequest::RequestChargeCard(std::string code, std::string seri, std::string serviceId, int moneyType)
 {
+	CCLOG("%s", serviceId.c_str());
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
 	boost::shared_ptr<ByteArray> data = boost::shared_ptr<ByteArray>(new ByteArray());
 

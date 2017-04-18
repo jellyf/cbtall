@@ -119,6 +119,16 @@ void LobbyScene::unregisterEventListenner()
 	EventHandler::getSingleton().onPurchaseSuccess = NULL;
 }
 
+bool LobbyScene::onKeyBack()
+{
+	bool canBack = BaseScene::onKeyBack();
+	if (canBack) {
+		onBackScene();
+		return false;
+	}
+	return canBack;
+}
+
 void LobbyScene::onConnected()
 {
 	BaseScene::onConnected();
@@ -482,7 +492,9 @@ void LobbyScene::onBackScene()
 	isBackToMain = true;
 	SFSRequest::getSingleton().Disconnect();*/
 
-	Utils::getSingleton().goToMainScene();
+	showPopupNotice(Utils::getSingleton().getStringForKey("ban_muon_thoat_khoi_phong_cho"), [=]() {
+		Utils::getSingleton().goToMainScene();
+	});
 }
 
 void LobbyScene::onChangeMoneyType(int type)
