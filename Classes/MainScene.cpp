@@ -1012,7 +1012,7 @@ void MainScene::initPopupCharge()
 	nodes.push_back(nodeStore);
 
 	Node* nodeMoneyType = Node::create();
-	nodeStore->setName("nodemoneytype");
+	nodeMoneyType->setName("nodemoneytype");
 	nodeMoneyType->setPosition(-220, 20);
 	nodeMoneyType->setVisible(pmE);
 	popupCharge->addChild(nodeMoneyType);
@@ -1071,7 +1071,7 @@ void MainScene::initPopupCharge()
 
 	int xp = -220;
 	int yp = 135;
-	vector<string> strProviders = { "viettel", "mobifone", "vinaphone", "megacard" };
+	vector<string> strProviders = { "viettel", "mobifone", "vinaphone", "gcard" };
 
 	string smsContent = Utils::getSingleton().gameConfig.smsVT;
 	int strIndex = smsContent.find_last_of(' ');
@@ -2290,7 +2290,7 @@ void MainScene::updateSmsInfo(bool isQuan)
 		Label* lbMoney = (Label*)node->getChildByName("lbsmsmoney");
 		Label* lbContent = (Label*)node->getChildByName("lbsmscontent");
 		Label* lbTarget = (Label*)node->getChildByName("lbsmstarget");
-		lbMoney->setString(to_string(moneys[i] / 2 * 5) + "k " + (isQuan ? "Quan" : "Xu"));
+		lbMoney->setString(to_string((isQuan ? moneys[i] : moneyxs[i]) / 2) + "k " + (isQuan ? "Quan" : "Xu"));
 		lbMoney->setColor(isQuan ? Color3B::YELLOW : Color3B(0, 255, 255));
 		lbContent->setString(smsStr);
 		lbTarget->setString(smstg);

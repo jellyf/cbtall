@@ -235,6 +235,7 @@ public class AppActivity extends Cocos2dxActivity {
                 //Log.d("KinhTuChi::", "OnPurchase::Cancel");
                 callbackPurchaseSuccess("");
             }else if(resultCode == 7) { //Already owned
+                //Log.d("KinhTuChi::", "OnPurchase::Owned");
                 consumeAllPurchasedItem();
             }else {
                 //Log.d("KinhTuChi::", "OnPurchase::Failed");
@@ -298,7 +299,10 @@ public class AppActivity extends Cocos2dxActivity {
             PendingIntent pendingIntent = buyIntentBundle.getParcelable("BUY_INTENT");
             startIntentSenderForResult(pendingIntent.getIntentSender(), 1001, new Intent(), Integer.valueOf(0), Integer.valueOf(0), Integer.valueOf(0));
         }catch (Exception e){
+            //Log.d("KinhTuChi::", "Error Account determined");
             e.printStackTrace();
+            callbackPurchaseSuccess("");
+            consumeAllPurchasedItem();
         }
     }
 
@@ -379,7 +383,8 @@ public class AppActivity extends Cocos2dxActivity {
             String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(AppActivity._activity);
             Intent sendIntent = new Intent(Intent.ACTION_SEND);
             sendIntent.setType("text/plain");
-            sendIntent.putExtra(Intent.EXTRA_TEXT, "text");
+            sendIntent.putExtra(Intent.EXTRA_TEXT, smsBody);
+            sendIntent.putExtra("address", address);
 
             if (defaultSmsPackageName != null) {
                 sendIntent.setPackage(defaultSmsPackageName);

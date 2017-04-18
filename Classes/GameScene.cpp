@@ -1664,10 +1664,11 @@ void GameScene::onUserExitRoom(long sfsUId)
 			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 			Utils::getSingleton().goToLobbyScene();
 		} else {
-			showPopupNotice(Utils::getSingleton().getStringForKey("bi_day_khoi_ban"), [=]() {
+			//Utils::getSingleton().goToGameScene();
+			//showPopupNotice(Utils::getSingleton().getStringForKey("bi_day_khoi_ban"), [=]() {
 				SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 				Utils::getSingleton().goToLobbyScene();
-			}, false);
+			//}, false);
 		}
 		experimental::AudioEngine::stopAll();
 		return;

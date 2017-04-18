@@ -102,7 +102,7 @@
 				<string>{158,99}</string>
 			</dict>
 
-			<key>provider4.png</key>
+			<key>provider5.png</key>
 			<dict>
 				<key>frame</key>
 				<string>{{0,176},{162,102}}</string>
@@ -116,7 +116,7 @@
 				<string>{162,102}</string>
 			</dict>
 
-			<key>provider5.png</key>
+			<key>provider4.png</key>
 			<dict>
 				<key>frame</key>
 				<string>{{0,279},{158,99}}</string>
