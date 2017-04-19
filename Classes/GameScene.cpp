@@ -1928,22 +1928,29 @@ void GameScene::onStartGameDataResponse(StartGameData data)
 void GameScene::onChooseStilt(unsigned char stilt)
 {
 	//if (myServerSlot < 0) return;
-	if (!vecStilts[0]->isVisible() && !vecStilts[1]->isVisible()) return;
+	for (Node* n : vecStilts) {
+		if (!n->isVisible()) return;
+	}
 	if (state == DEAL) {
 		experimental::AudioEngine::stopAll();
 		this->stopAllActions();
-		Node* n1 = spDealCards[0]->getParent();
-		Node* n2 = spDealCards[1]->getParent();
-		for (Sprite* sp : spDealCards) {
-			sp->stopAllActions();
-			int i = atoi(sp->getName().c_str());
-			sp->setParent(nullptr);
-			sp->setRotation(rand() % 60 - 30);
-			sp->setPosition(rand() % 20 - 10, rand() % 20 - 10);
-			vecStilts[i]->addChild(sp);
+		if (spDealCards.size() > 0) {
+			Node* n1 = spDealCards[0]->getParent();
+			Node* n2 = spDealCards[1]->getParent();
+			for (Sprite* sp : spDealCards) {
+				sp->stopAllActions();
+				int i = atoi(sp->getName().c_str());
+				if (i < 0 || i >= vecStilts.size()) i = 0;
+				sp->setRotation(rand() % 60 - 30);
+				sp->setPosition(rand() % 20 - 10, rand() % 20 - 10);
+				if (sp->getParent() != vecStilts[i]) {
+					sp->setParent(nullptr);
+					vecStilts[i]->addChild(sp);
+				}
+			}
+			n1->removeAllChildren();
+			n2->removeAllChildren();
 		}
-		n1->removeAllChildren();
-		n2->removeAllChildren();
 		state == CHOOSE_STILT;
 	}
 
@@ -1976,8 +1983,8 @@ void GameScene::onChooseHost(unsigned char stilt1, unsigned char stilt2, unsigne
 		onChooseStilt(stilt1);
 	}
 
-	if (chosenStiltHost < 0 || chosenStiltHost >= vecStilts.size()) {
-		while ((chosenStiltHost = rand() % vecStilts.size()) == stilt1 - 1);
+	if (chosenStiltHost < 0 || chosenStiltHost >= vecStilts.size() || chosenStiltHost == chosenStilt) {
+		while ((chosenStiltHost = rand() % vecStilts.size()) == chosenStilt);
 	}
 	//chosenHost = (startGameData.CardStilt / 3 + userIndexs[startGameData.LastWinner] - myServerSlot + vecPlayers.size()) % vecPlayers.size();
 
