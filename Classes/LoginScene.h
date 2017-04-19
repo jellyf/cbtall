@@ -43,6 +43,7 @@ private:
 	bool isRealConfig = true;
 	bool isFirstLoadConfig = true;
 	bool isReadyToMain = false;
+	bool isLoginFacebook = false;
 	bool isIPv4 = CC_TARGET_PLATFORM == CC_PLATFORM_IOS;
 
 	cocos2d::Node* loginNode;

@@ -317,6 +317,7 @@ void LoginScene::onUserDataMeResponse()
 
 void LoginScene::onLoginFacebook(std::string token)
 {
+	isLoginFacebook = false;
 	hideWaiting();
 	if (token.length() == 0) {
 		showPopupNotice(Utils::getSingleton().getStringForKey("error_unknown"), [=]() {});
@@ -479,10 +480,18 @@ bool LoginScene::onKeyBack()
 {
 	bool canBack = BaseScene::onKeyBack();
 	if (canBack) {
-		showPopupNotice(Utils::getSingleton().getStringForKey("ban_muon_thoat_game"), [=]() {
-			Director::sharedDirector()->end();
-		});
-		return false;
+		if (registerNode->isVisible()) {
+			loginNode->setVisible(true);
+			registerNode->setVisible(false);
+			return false;
+		}if (isLoginFacebook) {
+			return false;
+		} else {
+			showPopupNotice(Utils::getSingleton().getStringForKey("ban_muon_thoat_game"), [=]() {
+				Director::sharedDirector()->end();
+			});
+			return false;
+		}
 	}
 	return canBack;
 }
@@ -511,6 +520,7 @@ void LoginScene::loginNormal()
 void LoginScene::loginFacebook()
 {
 	isRequesting = true;
+	isLoginFacebook = true;
     showWaiting();
 	Utils::getSingleton().loginFacebook();
 }
