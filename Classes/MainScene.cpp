@@ -783,7 +783,7 @@ void MainScene::onListMailDataResponse(std::vector<MailData> list)
 				lbDetail->setWidth(widths[j]);
 				lbDetail->setHeight(52);
 				lbDetail->setAnchorPoint(Vec2(.5f, 1));
-				lbDetail->setHorizontalAlignment(TextHAlignment::LEFT);
+				lbDetail->setHorizontalAlignment(TextHAlignment::CENTER);
 				lbDetail->setPosition(posX[j] + scroll->getContentSize().width / 2, height - 5 - i * 60);
 				lbDetail->setTag(i * 5 + j);
 				lbDetail->setColor(Color3B::WHITE);
@@ -1740,7 +1740,7 @@ void MainScene::initPopupMail()
 		Label* lbDetail = Label::create("", "fonts/arial.ttf", 25);
 		lbDetail->setWidth(widths[i]);
 		lbDetail->setAnchorPoint(Vec2(.5f, 1));
-		lbDetail->setHorizontalAlignment(TextHAlignment::LEFT);
+		lbDetail->setHorizontalAlignment(TextHAlignment::CENTER);
 		lbDetail->setPosition(posX[i], bgDetail->getContentSize().height / 2 - 15);
 		lbDetail->setTag(i);
 		lbDetail->setColor(Color3B::WHITE);
