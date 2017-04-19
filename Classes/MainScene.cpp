@@ -12,6 +12,7 @@ using namespace std;
 void MainScene::onInit()
 {
 	BaseScene::onInit();
+	isChargeQuan = Utils::getSingleton().ispmE();
 	bool pmE = Utils::getSingleton().ispmE();
 	currentMoneyType = Utils::getSingleton().moneyType;
 
@@ -919,8 +920,7 @@ void MainScene::onNewsDataResponse(std::vector<NewsData> list)
 void MainScene::onPurchaseSuccess(std::string token)
 {
     if(token.length() > 0){
-		ui::CheckBox* cbQuan = (ui::CheckBox*)(popupCharge->getChildByName("nodemoneytype")->getChildByTag(0));
-        SFSRequest::getSingleton().RequestPayment(token, cbQuan->isSelected());
+        SFSRequest::getSingleton().RequestPayment(token, isChargeQuan);
 	} else {
 		hideWaiting();
 	}
@@ -1034,7 +1034,7 @@ void MainScene::initPopupCharge()
 	nodes.push_back(nodeStore);
 
 	Node* nodeMoneyType = Node::create();
-	nodeStore->setName("nodemoneytype");
+	nodeMoneyType->setName("nodemoneytype");
 	nodeMoneyType->setPosition(-220, 20);
 	nodeMoneyType->setVisible(pmE);
 	popupCharge->addChild(nodeMoneyType);
@@ -1069,12 +1069,14 @@ void MainScene::initPopupCharge()
 			popupCharge->setTag(i);
 
 			if (i == 0) {
+				scrollProvider->setVisible(true);
 				nodeMoneyType->setPosition(-220, 20);
 				for (int i = 1; i <= strProviders.size(); i++) {
 					scrollProvider->getChildByName("btn" + to_string(i))->setVisible(true);
 					//popupCharge->getChildByName("providerimg" + to_string(i))->setVisible(true);
 				}
 			} else if (i == 1) {
+				scrollProvider->setVisible(true);
 				nodeMoneyType->setPosition(-220, 20);
 				for (int i = 1; i <= 3; i++) {
 					scrollProvider->getChildByName("btn" + to_string(i))->setVisible(true);
@@ -1082,11 +1084,12 @@ void MainScene::initPopupCharge()
 				}
 				checkProviderToCharge();
 			} else if(i == 2){
+				scrollProvider->setVisible(false);
 				nodeMoneyType->setPosition(-220, 150);
-				for (int i = 1; i <= strProviders.size(); i++) {
-					scrollProvider->getChildByName("btn" + to_string(i))->setVisible(false);
-					//popupCharge->getChildByName("providerimg" + to_string(i))->setVisible(false);
-				}
+				//for (int i = 1; i <= strProviders.size(); i++) {
+				//	scrollProvider->getChildByName("btn" + to_string(i))->setVisible(false);
+				//	//popupCharge->getChildByName("providerimg" + to_string(i))->setVisible(false);
+				//}
 			}
 		});
 		popupCharge->addChild(btn);
@@ -1225,6 +1228,7 @@ void MainScene::initPopupCharge()
 		} else if (type == ui::CheckBox::EventType::UNSELECTED) {
 			cbs[1]->setSelected(true);
 		}
+		isChargeQuan = cbs[0]->isSelected();
 		updateChargeRateCard(cbs[0]->isSelected());
 		updateSmsInfo(cbs[0]->isSelected());
 	});
@@ -1234,6 +1238,7 @@ void MainScene::initPopupCharge()
 		} else if (type == ui::CheckBox::EventType::UNSELECTED) {
 			cbs[0]->setSelected(true);
 		}
+		isChargeQuan = cbs[0]->isSelected();
 		updateChargeRateCard(cbs[0]->isSelected());
 		updateSmsInfo(cbs[0]->isSelected());
 	});
@@ -2320,7 +2325,7 @@ void MainScene::updateSmsInfo(bool isQuan)
 		Label* lbMoney = (Label*)node->getChildByName("lbsmsmoney");
 		Label* lbContent = (Label*)node->getChildByName("lbsmscontent");
 		Label* lbTarget = (Label*)node->getChildByName("lbsmstarget");
-		lbMoney->setString(to_string(moneys[i] / 2 * (isQuan ? 1 : 5)) + "k " + (isQuan ? "Quan" : "Xu"));
+		lbMoney->setString(to_string((isQuan ? moneys[i] : moneyxs[i]) / 2) + "k " + (isQuan ? "Quan" : "Xu"));
 		lbMoney->setColor(isQuan ? Color3B::YELLOW : Color3B(0, 255, 255));
 		lbContent->setString(smsStr);
 		lbTarget->setString(smstg);

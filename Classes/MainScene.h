@@ -68,6 +68,7 @@ private:
 	bool isGoToLobby = false;
 	bool isWaitPopupNews = false;
 	bool isWaitPopupMail = false;
+	bool isChargeQuan = true;
 	std::string tmpDisplayName;
 	std::vector<ShopItemData> listItems;
 	std::map<std::string, cocos2d::Texture2D*> textures;
