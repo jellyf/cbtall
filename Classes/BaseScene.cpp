@@ -634,8 +634,10 @@ void BaseScene::handleClientDisconnectionReason(std::string reason)
 		if (reason.compare(constant::DISCONNECTION_REASON_UNKNOWN) == 0
 			|| reason.compare(constant::DISCONNECTION_REASON_IDLE) == 0) {
 			isReconnecting = true;
+			SFSGEvent::getSingleton().Reset();
 			Utils::getSingleton().reconnect();
 			showWaiting();
+			Utils::getSingleton().timeStartReconnect = Utils::getSingleton().getCurrentSystemTimeInSecs();
 		} else {
 			Utils::getSingleton().goToLoginScene();
 		}
@@ -681,11 +683,18 @@ void BaseScene::onConnected()
 
 void BaseScene::onConnectionFailed()
 {
-	hideWaiting();
-	showPopupNotice(Utils::getSingleton().getStringForKey("connection_failed"), [=]() {
-		//SFSRequest::getSingleton().Disconnect();
-		Utils::getSingleton().goToLoginScene();
-	}, false);
+	double waitedTime = Utils::getSingleton().getCurrentSystemTimeInSecs() - Utils::getSingleton().timeStartReconnect;
+	if (waitedTime < 0) waitedTime = 0;
+	if (waitedTime > 5) waitedTime = 5;
+	DelayTime* delay = DelayTime::create(5 - waitedTime);
+	CallFunc* func = CallFunc::create([=]() {
+		hideWaiting();
+		showPopupNotice(Utils::getSingleton().getStringForKey("connection_failed"), [=]() {
+			Utils::getSingleton().timeStartReconnect = Utils::getSingleton().getCurrentSystemTimeInSecs();
+			Utils::getSingleton().goToLoginScene();
+		}, false);
+	});
+	this->runAction(Sequence::createWithTwoActions(delay, func));
 }
 
 void BaseScene::onLoginZone()

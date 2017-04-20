@@ -788,6 +788,7 @@ void GameScene::registerEventListenner()
 	EventHandler::getSingleton().onConnectionLost = std::bind(&GameScene::onConnectionLost, this, std::placeholders::_1);
 	EventHandler::getSingleton().onLoginZone = bind(&GameScene::onLoginZone, this);
 	EventHandler::getSingleton().onLoginZoneError = bind(&GameScene::onLoginZoneError, this, placeholders::_1, placeholders::_2);
+	EventHandler::getSingleton().onJoinRoom = bind(&GameScene::onJoinRoom, this, placeholders::_1, placeholders::_2);
 	EventHandler::getSingleton().onUserDataSFSResponse = std::bind(&GameScene::onUserDataResponse, this, std::placeholders::_1);
 	EventHandler::getSingleton().onUserExitRoom = std::bind(&GameScene::onUserExitRoom, this, std::placeholders::_1);
 	EventHandler::getSingleton().onErrorSFSResponse = std::bind(&GameScene::onErrorResponse, this, std::placeholders::_1, std::placeholders::_2);
@@ -830,6 +831,7 @@ void GameScene::unregisterEventListenner()
 	EventHandler::getSingleton().onConnected = NULL;
 	EventHandler::getSingleton().onConnectionFailed = NULL;
 	EventHandler::getSingleton().onConnectionLost = NULL;
+	EventHandler::getSingleton().onJoinRoom = NULL;
 	EventHandler::getSingleton().onUserDataSFSResponse = NULL;
 	EventHandler::getSingleton().onUserExitRoom = NULL;
 	EventHandler::getSingleton().onErrorSFSResponse = NULL;
@@ -1301,6 +1303,7 @@ void GameScene::updateCardHand(CardHandData data)
 		indexs.push_back(i);
 	}
 	for (int i = 0; i < spHandCards.size(); i++) {
+		spHandCards[i]->setScale(1.2f);
 		int j = 0;
 		for (; j < indexs.size(); j++) {
 			if (atoi(spHandCards[i]->getName().c_str()) == groups[indexs[j]] + ids[indexs[j]]) {
@@ -1621,11 +1624,8 @@ int GameScene::getCardName(unsigned char cardId)
 
 void GameScene::onConnectionFailed()
 {
-	hideWaiting();
+	BaseScene::onConnectionFailed();
 	experimental::AudioEngine::stopAll();
-	showPopupNotice(Utils::getSingleton().getStringForKey("connection_failed"), [=]() {
-		Utils::getSingleton().goToLoginScene();
-	}, false);
 }
 
 void GameScene::onConnectionLost(std::string reason)
@@ -1639,6 +1639,13 @@ void GameScene::onConnectionLost(std::string reason)
 		n->setLocalZOrder(constant::GAME_ZORDER_BUTTON - i++);
 	}*/
 	handleClientDisconnectionReason(reason);
+}
+
+void GameScene::onJoinRoom(long roomId, std::string roomName)
+{
+	if (roomName.at(0) == 'g' && roomName.at(2) == 'b') {
+		reset();
+	}
 }
 
 void GameScene::onUserDataResponse(UserData data)
@@ -1665,8 +1672,8 @@ void GameScene::onUserExitRoom(long sfsUId)
 			Utils::getSingleton().goToLobbyScene();
 		} else {
 			//showPopupNotice(Utils::getSingleton().getStringForKey("bi_day_khoi_ban"), [=]() {
-				SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
-				Utils::getSingleton().goToLobbyScene();
+				SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentRoomName);
+				//Utils::getSingleton().goToLobbyScene();
 			//}, false);
 		}
 		experimental::AudioEngine::stopAll();
@@ -1815,7 +1822,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 		btnReady->setVisible(false);
 		btnCancelReady->setVisible(false);
 		spSanSangs[0]->setVisible(false);
-	} else {
+	} else if(roomData.Players.size() > 0){
 		if (roomData.TimeStart > 0 && !lbCrestTime->isVisible()) {
 			Vec2 lbscale = getScaleSmoothly(1.5f);
 			lbCrestTime->setVisible(true);
@@ -2489,6 +2496,7 @@ void GameScene::onUserPick(PickData data)
 		btnPenet->stopAllActions();
         btnDropPenet->stopAllActions();
 	}
+
 	if (!isBatBao) {
 		if (data.CanWin) {
 			if (isU411) {
@@ -2519,6 +2527,12 @@ void GameScene::onUserPick(PickData data)
 	}
 	runTimeWaiting(data.TurnId, timeTurn);
 	playSoundAction(data.SoundId);
+
+	for (Sprite* sp : spHandCards) {
+		if (sp->getScale() != 1.2f) {
+			sp->setScale(1.2f);
+		}
+	}
 }
 
 void GameScene::onUserPenet(PenetData data)
@@ -3244,6 +3258,22 @@ void GameScene::onBackScene()
 		hasRegisterOut = !hasRegisterOut;
 		showSystemNotice(Utils::getSingleton().getStringForKey((hasRegisterOut ? "" : "huy_") + string("dang_ky_roi_ban_khi_het_van")));
 	}
+}
+
+void GameScene::reset()
+{
+	spChonCai->setVisible(false);
+	spDealCards.clear();
+	for (Node* n : vecStilts) {
+		n->setVisible(false);
+		n->removeAllChildren();
+	}
+	RoomData roomData;
+	roomData.TimeChooseHost = timeChooseHost;
+	roomData.TimeDeal = timeDeal;
+	roomData.TimeStart = timeStart;
+	winMoneyData.ListUserId.clear();
+	onRoomDataResponse(roomData);
 }
 
 void GameScene::initChatTable()

@@ -27,6 +27,7 @@ public:
 
 	void onConnectionFailed();
 	void onConnectionLost(std::string reason);
+	void onJoinRoom(long roomId, std::string roomName);
 	void onUserDataResponse(UserData data);
 	void onUserExitRoom(long sfsUId);
 	void onPublicMessage(long uid, std::string msg);
@@ -61,6 +62,7 @@ protected:
 	virtual void onBackScene();
 	virtual void onErrorResponse(unsigned char code, std::string msg);
 private:
+	void reset();
 	void initChatTable();
 	void initCrestTable();
 	void initEndMatchTable();

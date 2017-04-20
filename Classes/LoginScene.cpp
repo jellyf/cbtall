@@ -199,6 +199,7 @@ void LoginScene::onInit()
 	if (Utils::getSingleton().gameConfig.phone.length() == 0) {
 		requestGameConfig(isRealConfig);
 	} else {
+		showWaiting();
 		SFSRequest::getSingleton().Connect();
 	}
 
@@ -279,11 +280,20 @@ void LoginScene::onConnectionFailed()
         isIPv4 = false;
         SFSRequest::getSingleton().ForceIPv6(true);
         SFSRequest::getSingleton().Connect();
+		Utils::getSingleton().timeStartReconnect = Utils::getSingleton().getCurrentSystemTimeInSecs();
     }else{
         isIPv4 = CC_TARGET_PLATFORM == CC_PLATFORM_IOS;
         SFSRequest::getSingleton().ForceIPv6(false);
-        hideWaiting();
-        showPopupNotice(Utils::getSingleton().getStringForKey("connection_failed"), [=]() {});
+
+		double waitedTime = Utils::getSingleton().getCurrentSystemTimeInSecs() - Utils::getSingleton().timeStartReconnect;
+		if (waitedTime < 0) waitedTime = 0;
+		if (waitedTime > 3) waitedTime = 3;
+		DelayTime* delay = DelayTime::create(3 - waitedTime);
+		CallFunc* func = CallFunc::create([=]() {
+			hideWaiting();
+			showPopupNotice(Utils::getSingleton().getStringForKey("connection_failed"), [=]() {});
+		});
+		this->runAction(Sequence::createWithTwoActions(delay, func));
     }
 }
 
