@@ -948,15 +948,16 @@ bool GameScene::onTouchBegan(Touch * touch, Event * _event)
 		}
 
 		if (startGameData.LastWinner == sfsIdMe) {
-			if (state == CHOOSE_STILT) {
+			if (state == CHOOSE_STILT && chosenStilt == -1) {
 				for (int i = 0; i < dealPos.size(); i++) {
 					if (pos.distance(Vec2(560, 350) + dealPos[i]) < 100) {
+						chosenStilt = i;
 						state = CHOOSE_HOST;
 						SFSRequest::getSingleton().RequestGameChooseStilt(i + 1);
 						return true;
 					}
 				}
-			} else if (state == CHOOSE_HOST) {
+			} else if (state == CHOOSE_HOST && chosenStiltHost == -1) {
 				Point pos2 = touch->getLocation();
 				pos2 = nodeStilt->convertToNodeSpace(pos2);
 				for (int i = 0; i < dealPos.size(); i++) {
@@ -2094,7 +2095,9 @@ void GameScene::onChooseHost(unsigned char stilt1, unsigned char stilt2, unsigne
 	if (!startGameData.CanWin) {
 		DelayTime* delay4 = DelayTime::create(6);
 		CallFunc* func4 = CallFunc::create([=]() {
-			if (startGameData.CurrentTurn == sfsIdMe) {
+			int num = startGameData.CardHand.BaDau.size() * 3 + startGameData.CardHand.Ca.size() / 3 * 2 + startGameData.CardHand.Chan.size() * 2
+				+ startGameData.CardHand.Que.size() + startGameData.CardHand.ThienKhai.size() * 4;
+			if (startGameData.CurrentTurn == sfsIdMe || num == 20) {
 				btnBash->setVisible(true);
 			}
 			runTimeWaiting(startGameData.CurrentTurn, timeTurn);
