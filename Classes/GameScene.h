@@ -74,6 +74,7 @@ private:
 	void dealCards();
 	void dropWin();
     void dropPenet();
+	void syncHandCard(CardHandData cardHand);
 	void showMyCards(bool runEffect = true);
 	void runTimeWaiting(long uid, float time);
 	void getCardSpriteToHand(int id, int group, int zorder);

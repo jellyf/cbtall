@@ -1223,6 +1223,16 @@ void GameScene::dropPenet()
     }
 }
 
+void GameScene::syncHandCard(CardHandData cardHand)
+{
+	for (Sprite* sp : spHandCards) {
+		sp->setVisible(false);
+	}
+	spHandCards.clear();
+	myCardHand = cardHand;
+	showMyCards(false);
+}
+
 void GameScene::runTimeWaiting(long uid, float time)
 {
 	int index = userIndexs[uid];
@@ -2108,6 +2118,7 @@ void GameScene::onChooseHost(unsigned char stilt1, unsigned char stilt2, unsigne
 
 void GameScene::onUserBash(BashData data)
 {
+	bool hasSync = false;
 	Sprite* spCard = NULL;
 	int zorder = 0;
 	int index = userIndexs[data.UId];
@@ -2143,7 +2154,11 @@ void GameScene::onUserBash(BashData data)
 				}
 			}
 		}
-		if (spCard == NULL) return;
+		if (spCard == NULL) {
+			hasSync = true;
+			syncHandCard(data.CardHand);
+			spCard = getCardSprite(data.CardId);
+		}
 		int rot = spCard->getRotation();
 		Vec2 scaledUserPos = getScaleScenePosition(vecUserPos[index]);
 		float x = sin(CC_DEGREES_TO_RADIANS(rot)) * spCard->getContentSize().height + scaledUserPos.x;
@@ -2176,7 +2191,7 @@ void GameScene::onUserBash(BashData data)
 	runningSpCard = spCard;
 	if (data.UId == sfsIdMe) {
 		btnBash->setVisible(false);
-		updateCardHand(data.CardHand);
+		if(!hasSync) updateCardHand(data.CardHand);
 	}
 	if (!isBatBao) {
 		if (data.CanPenetWin) {
@@ -2217,6 +2232,7 @@ void GameScene::onUserBash(BashData data)
 
 void GameScene::onUserBashBack(BashBackData data)
 {
+	bool hasSync = false;
 	Sprite* spCard = NULL;
 	int zorder = 0;
 	int index = userIndexs[data.UId];
@@ -2253,7 +2269,11 @@ void GameScene::onUserBashBack(BashBackData data)
 				}
 			}
 		}
-		if (spCard == NULL) return;
+		if (spCard == NULL) {
+			hasSync = true;
+			syncHandCard(data.CardHand);
+			spCard = getCardSprite(data.CardId);
+		}
 		int rot = spCard->getRotation();
 		Vec2 scaledUserPos = getScaleScenePosition(vecUserPos[index]);
 		float x = sin(CC_DEGREES_TO_RADIANS(rot)) * spCard->getContentSize().height + scaledUserPos.x;
@@ -2289,7 +2309,7 @@ void GameScene::onUserBashBack(BashBackData data)
 		btnBashBack->setVisible(false);
 		progressTimer->setVisible(false);
 		progressTimer->stopAllActions();
-		updateCardHand(data.CardHand);
+		if(!hasSync) updateCardHand(data.CardHand);
 	}
 	if (!isBatBao) {
 		if (data.CanPenetWin) {
@@ -2370,6 +2390,7 @@ void GameScene::onUserHold(HoldData data)
 	tableCardNumb[index2] ++;
 	tableCardNumb[index3] --;
 
+	bool hasSync = false;
 	Sprite* spCard = NULL;
 	if (data.UId == sfsIdMe) {
 		if (chosenCard > 0 && atoi(spHandCards[chosenCard]->getName().c_str()) % 1000 == data.CardId) {
@@ -2389,7 +2410,11 @@ void GameScene::onUserHold(HoldData data)
 				}
 			}
 		}
-		if (spCard == NULL) return;
+		if (spCard == NULL) {
+			hasSync = true;
+			syncHandCard(data.CardHand);
+			spCard = getCardSprite(data.CardId);
+		}
 		int rot = spCard->getRotation();
 		Vec2 scaledUserPos = getScaleScenePosition(vecUserPos[index]);
 		float x = sin(CC_DEGREES_TO_RADIANS(rot)) * spCard->getContentSize().height + scaledUserPos.x;
@@ -2432,7 +2457,7 @@ void GameScene::onUserHold(HoldData data)
 		btnHold->setVisible(false);
 		btnPick->setVisible(false);
 		btnForward->setVisible(false);
-		updateCardHand(data.CardHand);
+		if(!hasSync) updateCardHand(data.CardHand);
 	}
 	if (!isBatBao && data.TurnId == sfsIdMe) {
 		noaction++;
