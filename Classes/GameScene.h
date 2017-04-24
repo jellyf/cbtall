@@ -120,6 +120,7 @@ private:
 	std::vector<cocos2d::Sprite*> runningCards;
 	std::vector<cocos2d::ui::Button*> vecCrests;
 	std::vector<cocos2d::ui::Button*> vecMenuBtns;
+	std::vector<cocos2d::ui::Button*> vecBtnKicks;
 	std::vector<char> tableCardNumb;
 	std::vector<char> maxTableCardNumb;
 	std::vector<char> chosenCuocs;

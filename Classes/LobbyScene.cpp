@@ -492,9 +492,9 @@ void LobbyScene::onBackScene()
 	isBackToMain = true;
 	SFSRequest::getSingleton().Disconnect();*/
 
-	showPopupNotice(Utils::getSingleton().getStringForKey("ban_muon_thoat_khoi_phong_cho"), [=]() {
+	//showPopupNotice(Utils::getSingleton().getStringForKey("ban_muon_thoat_khoi_phong_cho"), [=]() {
 		Utils::getSingleton().goToMainScene();
-	});
+	//});
 }
 
 void LobbyScene::onChangeMoneyType(int type)

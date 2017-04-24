@@ -1195,6 +1195,7 @@ void SFSResponse::onPopupEventResponse(boost::shared_ptr<ISFSObject> isfsObject)
 	std::string json;
 	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
 	byteArray->ReadUTF(json);
+	//CCLOG("%s", json.c_str());
 	DynamicConfig config;
 	if (json.length() > 0) {
 		rapidjson::Document d;
@@ -1206,6 +1207,10 @@ void SFSResponse::onPopupEventResponse(boost::shared_ptr<ISFSObject> isfsObject)
 		if (d.FindMember("POPUP_VALUE") != d.MemberEnd()) {
 			config.PopupUrl = d["POPUP_VALUE"].GetString();
 		} else config.PopupUrl = "";
+		if (d.FindMember("KICH") != d.MemberEnd()) {
+			std::string str = d["KICH"].GetString();
+			config.Kick = str.compare("1") == 0;
+		}
 	}
 	Utils::getSingleton().dynamicConfig = config;
 	if (EventHandler::getSingleton().onDynamicConfigReceived != NULL) {

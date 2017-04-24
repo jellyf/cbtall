@@ -639,6 +639,20 @@ void GameScene::onInit()
 		lb1->setOpacity(0);
 		lbWinMoneys.push_back(lb1);
 		autoScaleNode(lb1);
+
+		ui::Button* btnKick = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
+		mLayer->addChild(btnKick, constant::GAME_ZORDER_USER + 12);
+		btnKick->setPosition(vecUserPos[i] + Vec2(35, 55));
+		btnKick->setVisible(false);
+		btnKick->setScale(.7f);
+		vecBtnKicks.push_back(btnKick);
+		autoScaleNode(btnKick);
+
+		addTouchEventListener(btnKick, [=](){
+			showPopupNotice(Utils::getSingleton().getStringForKey("ban_muon_da_nguoi_nay_ra"), [=]() {
+				SFSRequest::getSingleton().RequestGameKickPlayer(user->getSfsId());
+			});
+		});
 	}
 
 	progressTimer = ProgressTimer::create(Sprite::createWithSpriteFrameName("time_line.png"));
@@ -1674,10 +1688,10 @@ void GameScene::onUserExitRoom(long sfsUId)
 			n->setLocalZOrder(constant::GAME_ZORDER_BUTTON - i++);
 		}*/
 		if (isKickForNotReady) {
-			showPopupNotice(Utils::getSingleton().getStringForKey("bi_thoat_do_khong_san_sang"), [=]() {
+			/*showPopupNotice(Utils::getSingleton().getStringForKey("bi_thoat_do_khong_san_sang"), [=]() {
 				SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 				Utils::getSingleton().goToLobbyScene();
-			}, false);
+			}, false);*/
 		}else if (isReconnecting) {
 			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 			Utils::getSingleton().goToLobbyScene();
@@ -1696,6 +1710,7 @@ void GameScene::onUserExitRoom(long sfsUId)
 		vecUsers[index]->setVisible(false);
 		spInvites[index]->setVisible(state == NONE || state == READY);
 		spSanSangs[index]->setVisible(false);
+		vecBtnKicks[index]->setVisible(false);
 	}
 	if (progressTimer->getTag() == index) {
 		progressTimer->stopAllActions();
@@ -1712,11 +1727,10 @@ void GameScene::onErrorResponse(unsigned char code, std::string msg)
 	}
 	if (code == 19) {
 		isKickForNotReady = true;
-		/*unregisterEventListenner();
-		showPopupNotice(Utils::getSingleton().getStringForKey("bi_thoat_do_khong_san_sang"), [=]() {
+		showPopupNotice(msg, [=]() {
 			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 			Utils::getSingleton().goToLobbyScene();
-		}, false);*/
+		}, false);
 		return;
 	}
 	if (code == 42) {
@@ -1782,14 +1796,14 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 		vecUsers[i]->setVisible(false);
 		spBatBaos[i]->setVisible(false);
 		spSanSangs[i]->setVisible(false);
+		vecBtnKicks[i]->setVisible(false);
 	}
-	if (isSolo) {
-		spInvites[0]->setVisible(true);
-		spInvites[2]->setVisible(true);
-		spInvites[1]->setVisible(false);
-		spInvites[3]->setVisible(false);
-	}
+	spInvites[0]->setVisible(true);
+	spInvites[2]->setVisible(true);
+	spInvites[1]->setVisible(!isSolo);
+	spInvites[3]->setVisible(!isSolo);
 	int num = 0;
+	bool isMeHost = false;
 	for (int i = 0; i < 4; i++) {
 		int index = -1;
 		for (PlayerData player : roomData.Players) {
@@ -1806,6 +1820,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 				vecUsers[index]->setPlayerName(player.Info.DisplayName);
 				vecUsers[index]->setPlayerMoney(player.PMoney);
 				vecUsers[index]->setName(player.Info.Name);
+				vecUsers[index]->setSfsId(player.Info.SfsUserId);
 				spSanSangs[index]->setVisible(player.Ready);
 				if (player.Index == 0) {
 					spChuPhong->setVisible(true);
@@ -1820,6 +1835,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 						btnReady->setVisible(!player.Ready);
 						btnCancelReady->setVisible(player.Ready);
 					}
+					isMeHost = player.Index == 0;
 				}
 			}
 		}
@@ -1841,6 +1857,11 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 			lbCrestTime->setColor(Color3B::RED);
 			lbCrestTime->setString(to_string((int)timeStart));
 			lbCrestTime->resumeSchedulerAndActions();
+		}
+		if (isMeHost) {
+			for (int i = 1; i < 4; i++) {
+				vecBtnKicks[i]->setVisible(vecUsers[i]->isVisible() && Utils::getSingleton().dynamicConfig.Kick);
+			}
 		}
 	}
 
@@ -1938,6 +1959,9 @@ void GameScene::onStartGameDataResponse(StartGameData data)
 	}
 	for (Sprite* sp : spInvites) {
 		sp->setVisible(false);
+	}
+	for (int i = 1; i < 4; i++) {
+		vecBtnKicks[i]->setVisible(false);
 	}
 	dealCards();
 	noaction = 0;

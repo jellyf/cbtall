@@ -11,9 +11,12 @@ public:
 	void setAlpha(int alpha);
 	void setPlayerName(std::string name);
 	void setPlayerMoney(double money);
+	void setSfsId(long id);
 	std::string getPlayerName();
 	double getPlayerMoney();
+	long getSfsId();
 private:
+	long sfsId;
 	double mMoney;
 	std::string fullName;
 	cocos2d::Label* lbName;

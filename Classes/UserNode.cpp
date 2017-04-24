@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "UserNode.h"
 #include "Utils.h"
 using namespace cocos2d;
@@ -63,6 +63,11 @@ void UserNode::setPlayerMoney(double money)
 	lbMoney->setString(Utils::getSingleton().formatMoneyWithComma(money));
 }
 
+void UserNode::setSfsId(long id)
+{
+	sfsId = id;
+}
+
 std::string UserNode::getPlayerName()
 {
 	return fullName;
@@ -71,5 +76,10 @@ std::string UserNode::getPlayerName()
 double UserNode::getPlayerMoney()
 {
 	return mMoney;
+}
+
+long UserNode::getSfsId()
+{
+	return sfsId;
 }
 

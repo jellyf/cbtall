@@ -951,11 +951,11 @@ void MainScene::onDownloadedPlistTexture(int numb)
 
 void MainScene::onBackScene()
 {
-	showPopupNotice(Utils::getSingleton().getStringForKey("ban_muon_dang_xuat"), [=]() {
+	//showPopupNotice(Utils::getSingleton().getStringForKey("ban_muon_dang_xuat"), [=]() {
 		showWaiting();
 		isBackToLogin = true;
 		SFSRequest::getSingleton().Disconnect();
-	});
+	//});
 }
 
 void MainScene::onChangeMoneyType(int type)

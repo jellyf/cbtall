@@ -441,6 +441,13 @@ void SFSRequest::RequestGameGa()
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::GAME_REQUEST_ROOM_DATA_GA, parameters);
 }
 
+void SFSRequest::RequestGameKickPlayer(long sfsId)
+{
+	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+	parameters->PutInt("1", sfsId);
+	SFSConnector::getSingleton().SendExtensionRequest(cmd::GAME_KICK_PLAYER, parameters);
+}
+
 void SFSRequest::RequestHttpGet(std::string url, int tag)
 {
 	// Setting HTTP Request Header

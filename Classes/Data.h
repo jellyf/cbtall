@@ -389,6 +389,7 @@ struct CofferWinnerData
 
 struct DynamicConfig
 {
+	bool Kick;
 	bool Popup;
 	std::string PopupUrl;
 };

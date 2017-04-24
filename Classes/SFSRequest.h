@@ -69,6 +69,7 @@ public:
 	void RequestGameInvitePlayer(long uid);
 	void RequestGameTableInfo(bool isQuick, bool isU411);
 	void RequestGameGa();
+	void RequestGameKickPlayer(long sfsId);
 
 	void RequestHttpGet(std::string url, int tag);
 	void LoadImageFromURL(std::string url, int tag);
