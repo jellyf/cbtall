@@ -583,26 +583,35 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 	Node* btnHistory = popupUserInfo->getChildByName("btnhistory");
 	Node* btnActive = popupUserInfo->getChildByName("btnactive");
     Node* btnFB = popupUserInfo->getChildByName("btnlogoutfb");
+	Node* nodeInfo = popupUserInfo->getChildByName("nodeinfo");
 	Label* lbName = (Label*)popupUserInfo->getChildByName("lbname");
-	Label* lbQuan = (Label*)popupUserInfo->getChildByName("lbquan");
-	Label* lbXu = (Label*)popupUserInfo->getChildByName("lbxu");
-	Label* lbId = (Label*)popupUserInfo->getChildByName("lbid");
-	//Label* lbLevel = (Label*)popupUserInfo->getChildByName("lblevel");
 	Label* lbAppellation = (Label*)popupUserInfo->getChildByName("lbappellation");
-	Label* lbWin = (Label*)popupUserInfo->getChildByName("lbwin");
-	Label* lbTotal = (Label*)popupUserInfo->getChildByName("lbtotal");
-	Label* lbBigWin = (Label*)popupUserInfo->getChildByName("lbbigwin");
-	Label* lbBigCrest = (Label*)popupUserInfo->getChildByName("lbbigcrest");
+	Label* lbUname = (Label*)nodeInfo->getChildByName("lbuname");
+	Label* lbUname1 = (Label*)nodeInfo->getChildByName("lbuname1");
+	Label* lbQuan = (Label*)nodeInfo->getChildByName("lbquan");
+	Label* lbXu = (Label*)nodeInfo->getChildByName("lbxu");
+	Label* lbId = (Label*)nodeInfo->getChildByName("lbid");
+	Label* lbId1 = (Label*)nodeInfo->getChildByName("lbid1");
+	//Label* lbLevel = (Label*)nodeInfo->getChildByName("lblevel");
+	Label* lbWin = (Label*)nodeInfo->getChildByName("lbwin");
+	Label* lbTotal = (Label*)nodeInfo->getChildByName("lbtotal");
+	Label* lbBigWin = (Label*)nodeInfo->getChildByName("lbbigwin");
+	Label* lbBigCrest = (Label*)nodeInfo->getChildByName("lbbigcrest");
 	AppellationData aplData = Utils::getSingleton().getAppellationByLevel(data.Level);
 
-	btnHistory->setVisible(showHistoryIfIsMe && data.UserID == Utils::getSingleton().userDataMe.UserID);
-	btnActive->setVisible(showHistoryIfIsMe && data.UserID == Utils::getSingleton().userDataMe.UserID && !Utils::getSingleton().userDataMe.IsActived && Utils::getSingleton().ispmE());
-	btnFB->setVisible(showHistoryIfIsMe && data.UserID == Utils::getSingleton().userDataMe.UserID && Utils::getSingleton().loginType == constant::LOGIN_FACEBOOK);
+	bool isMe = data.UserID == Utils::getSingleton().userDataMe.UserID;
+	btnHistory->setVisible(showHistoryIfIsMe && isMe);
+	btnActive->setVisible(showHistoryIfIsMe && isMe && !Utils::getSingleton().userDataMe.IsActived && Utils::getSingleton().ispmE());
+	btnFB->setVisible(showHistoryIfIsMe && isMe && Utils::getSingleton().loginType == constant::LOGIN_FACEBOOK);
+	lbUname->setVisible(isMe);
+	lbUname1->setVisible(isMe);
+	lbUname1->setString(data.Name);
 	lbName->setString(data.DisplayName);
 	lbQuan->setString(Utils::getSingleton().formatMoneyWithComma(data.MoneyReal));
 	lbXu->setString(Utils::getSingleton().formatMoneyWithComma(data.MoneyFree));
-	lbId->setString(to_string(data.UserID));
-	lbId->setVisible(data.UserID == Utils::getSingleton().userDataMe.UserID);
+	lbId->setVisible(isMe);
+	lbId1->setVisible(isMe);
+	lbId1->setString(to_string(data.UserID));
 	//lbLevel->setString(Utils::getSingleton().getStringForKey("cap_do") + ":");// +to_string(data.Level));
 	lbWin->setString(Utils::getSingleton().getStringForKey("thang") + ": " + to_string(data.Win));
 	lbTotal->setString(Utils::getSingleton().getStringForKey("tong") + ": " + to_string(data.Total));
@@ -610,6 +619,7 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 	lbAppellation->setColor(aplData.Color);
 	//lbBigWin->setString(Utils::getSingleton().formatMoneyWithComma(data.BigWin));
 	//lbBigCrest->setString(data.BigCrest);
+	nodeInfo->setPosition(isMe ? lbName->getPosition() - Vec2(0, 45) : lbName->getPosition() + Vec2(0, 40));
 }
 
 void BaseScene::setMoneyType(int type)
@@ -1414,6 +1424,7 @@ void BaseScene::initPopupUserInfo()
     });
     popupUserInfo->addChild(btnLogoutFb);
 
+	int x = 45;
 	Label* lbName = Label::create("Stormus", "fonts/arialbd.ttf", 35);
 	lbName->setAnchorPoint(Vec2(0, .5f));
 	lbName->setColor(Color3B::WHITE);
@@ -1421,26 +1432,45 @@ void BaseScene::initPopupUserInfo()
 	lbName->setName("lbname");
 	popupUserInfo->addChild(lbName);
 
-	int x = 50;
+	Node* nodeInfo = Node::create();
+	nodeInfo->setName("nodeinfo");
+	nodeInfo->setPosition(lbName->getPositionX(), lbName->getPositionY() - x);
+	popupUserInfo->addChild(nodeInfo);
+
+	Label* lbUname = Label::create(Utils::getSingleton().getStringForKey("login") + ":", "fonts/arial.ttf", 25);
+	lbUname->setAnchorPoint(Vec2(0, .5f));
+	lbUname->setColor(Color3B::WHITE);
+	lbUname->setPosition(0, 0);
+	lbUname->setName("lbuname");
+	nodeInfo->addChild(lbUname);
+
+	Label* lbUname1 = Label::create("stormus", "fonts/arial.ttf", 25);
+	lbUname1->setAnchorPoint(Vec2(0, .5f));
+	lbUname1->setColor(Color3B::WHITE);
+	lbUname1->setPosition(lbUname->getPositionX() + 150, lbUname->getPositionY());
+	lbUname1->setName("lbuname1");
+	nodeInfo->addChild(lbUname1);
+
 	Label* lbId = Label::create("ID:", "fonts/arial.ttf", 25);
 	lbId->setAnchorPoint(Vec2(0, .5f));
 	lbId->setColor(Color3B::WHITE);
-	lbId->setPosition(lbName->getPositionX(), lbName->getPositionY() - x);
-	popupUserInfo->addChild(lbId);
+	lbId->setPosition(lbUname->getPositionX(), lbUname->getPositionY() - x);
+	lbId->setName("lbid");
+	nodeInfo->addChild(lbId);
 
 	Label* lbId1 = Label::create("847558", "fonts/arial.ttf", 25);
 	lbId1->setAnchorPoint(Vec2(0, .5f));
 	lbId1->setColor(Color3B::WHITE);
 	lbId1->setPosition(lbId->getPositionX() + 150, lbId->getPositionY());
-	lbId1->setName("lbid");
-	popupUserInfo->addChild(lbId1);
+	lbId1->setName("lbid1");
+	nodeInfo->addChild(lbId1);
 
 	Label* lbQuan = Label::create(Utils::getSingleton().getStringForKey("quan") + ":", "fonts/arial.ttf", 25);
 	lbQuan->setAnchorPoint(Vec2(0, .5f));
 	lbQuan->setColor(Color3B::WHITE);
 	lbQuan->setPosition(lbId->getPositionX(), lbId->getPositionY() - x);
 	lbQuan->setVisible(ispmE);
-	popupUserInfo->addChild(lbQuan);
+	nodeInfo->addChild(lbQuan);
 
 	Label* lbQuan1 = Label::create("100,000", "fonts/arial.ttf", 25);
 	lbQuan1->setAnchorPoint(Vec2(0, .5f));
@@ -1448,20 +1478,20 @@ void BaseScene::initPopupUserInfo()
 	lbQuan1->setPosition(lbQuan->getPositionX() + 150, lbQuan->getPositionY());
 	lbQuan1->setName("lbquan");
 	lbQuan1->setVisible(ispmE);
-	popupUserInfo->addChild(lbQuan1);
+	nodeInfo->addChild(lbQuan1);
 
 	Label* lbXu = Label::create(Utils::getSingleton().getStringForKey("xu") + ":", "fonts/arial.ttf", 25);
 	lbXu->setAnchorPoint(Vec2(0, .5f));
 	lbXu->setColor(Color3B::WHITE);
 	lbXu->setPosition(lbQuan->getPositionX(), lbQuan->getPositionY() - x);
-	popupUserInfo->addChild(lbXu);
+	nodeInfo->addChild(lbXu);
 
 	Label* lbXu1 = Label::create("100,000", "fonts/arial.ttf", 25);
 	lbXu1->setAnchorPoint(Vec2(0, .5f));
 	lbXu1->setColor(Color3B(0, 255, 255));
 	lbXu1->setPosition(lbXu->getPositionX() + 150, lbXu->getPositionY());
 	lbXu1->setName("lbxu");
-	popupUserInfo->addChild(lbXu1);
+	nodeInfo->addChild(lbXu1);
 	
 	/*Label* lbLevel = Label::create(Utils::getSingleton().getStringForKey("cap_do") + ":", "fonts/arial.ttf", 25);
 	lbLevel->setAnchorPoint(Vec2(0, .5f));
@@ -1475,21 +1505,21 @@ void BaseScene::initPopupUserInfo()
 	lbWin->setColor(Color3B::WHITE);
 	lbWin->setPosition(lbXu->getPositionX(), lbXu->getPositionY() - x);
 	lbWin->setName("lbwin");
-	popupUserInfo->addChild(lbWin);
+	nodeInfo->addChild(lbWin);
 
 	Label* lbTotal = Label::create(Utils::getSingleton().getStringForKey("tong") + ": 20", "fonts/arial.ttf", 25);
 	lbTotal->setAnchorPoint(Vec2(0, .5f));
 	lbTotal->setColor(Color3B::WHITE);
 	lbTotal->setPosition(lbWin->getPositionX() + 250, lbWin->getPositionY());
 	lbTotal->setName("lbtotal");
-	popupUserInfo->addChild(lbTotal);
+	nodeInfo->addChild(lbTotal);
 
 	Label* lbBigWin = Label::create(Utils::getSingleton().getStringForKey("thang_lon_nhat") + ":", "fonts/arial.ttf", 25);
 	lbBigWin->setPosition(lbWin->getPositionX(), lbWin->getPositionY() - x);
 	lbBigWin->setAnchorPoint(Vec2(0, .5f));
 	lbBigWin->setColor(Color3B::WHITE);
 	lbBigWin->setVisible(false);
-	popupUserInfo->addChild(lbBigWin);
+	nodeInfo->addChild(lbBigWin);
 
 	Label* lbBigWin1 = Label::create("1111", "fonts/arial.ttf", 25);
 	lbBigWin1->setPosition(lbBigWin->getPositionX() + lbBigWin->getContentSize().width + 10, lbBigWin->getPositionY());
@@ -1497,7 +1527,7 @@ void BaseScene::initPopupUserInfo()
 	lbBigWin1->setColor(Color3B::YELLOW);
 	lbBigWin1->setName("lbbigwin");
 	lbBigWin1->setVisible(false);
-	popupUserInfo->addChild(lbBigWin1);
+	nodeInfo->addChild(lbBigWin1);
 
 	Label* lbBigCrest = Label::create(Utils::getSingleton().getStringForKey("u_to_nhat") + ": Nha lau xe hoi - Hoa roi cua pha t, a a a Ngu ong bat ca, Ca loi san dinh", "fonts/arial.ttf", 25);
 	lbBigCrest->setPosition(lbBigWin->getPositionX(), lbBigWin->getPositionY() - x + 20);
@@ -1506,7 +1536,7 @@ void BaseScene::initPopupUserInfo()
 	lbBigCrest->setWidth(480);
 	lbBigCrest->setName("lbbigcrest");
 	lbBigCrest->setVisible(false);
-	popupUserInfo->addChild(lbBigCrest);
+	nodeInfo->addChild(lbBigCrest);
 
 	//Label* lbBigCrest1 = Label::create("Nha lau xe hoi - Hoa roi cua pha t, a a a Ngu ong bat ca, Ca loi san dinh", "fonts/arial.ttf", 25);
 	//lbBigCrest1->setPosition(lbBigCrest->getPositionX() + lbBigCrest->getContentSize().width + 10, lbBigCrest->getPositionY() + 15);
