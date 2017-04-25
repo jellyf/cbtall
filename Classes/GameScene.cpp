@@ -2312,6 +2312,7 @@ void GameScene::onUserBash(BashData data)
 				btnDropWin->setVisible(true);
 				delayFunction(btnDropWin, 10, [=]() {
 					btnDropWin->setVisible(false);
+					onUserBashToMe(data);
 				});
 				if (data.TurnId == sfsIdMe) {
 					waitAction = constant::GAME_ACTION_BASH;
@@ -2322,15 +2323,12 @@ void GameScene::onUserBash(BashData data)
             btnDropPenet->setVisible(true);
             delayFunction(btnDropPenet, 7, [=]() {
                 btnDropPenet->setVisible(false);
+				onUserBashToMe(data);
             });
             if (data.TurnId == sfsIdMe) {
                 waitAction = constant::GAME_ACTION_BASH;
             }
-		} else if (data.TurnId == sfsIdMe) {
-			noaction++;
-			btnHold->setVisible(true);
-			btnPick->setVisible(true);
-		}
+		} else onUserBashToMe(data);
 	}
 	runTimeWaiting(data.TurnId, timeTurn);
 	playSoundAction(data.SoundId);
@@ -2431,6 +2429,7 @@ void GameScene::onUserBashBack(BashBackData data)
 				btnDropWin->setVisible(true);
 				delayFunction(btnDropWin, 10, [=]() {
 					btnDropWin->setVisible(false);
+					onUserBashBackToMe(data);
 				});
 				if (data.TurnId == sfsIdMe) {
 					if (data.IsPicked) {
@@ -2445,6 +2444,7 @@ void GameScene::onUserBashBack(BashBackData data)
             btnDropPenet->setVisible(true);
             delayFunction(btnDropPenet, 7, [=]() {
                 btnDropPenet->setVisible(false);
+				onUserBashBackToMe(data);
             });
             if (data.TurnId == sfsIdMe) {
                 if (data.IsPicked) {
@@ -2453,17 +2453,7 @@ void GameScene::onUserBashBack(BashBackData data)
                     waitAction = constant::GAME_ACTION_BASH;
                 }
             }
-		} else if (data.TurnId == sfsIdMe) {
-			noaction++;
-			btnHold->setVisible(true);
-			if (data.IsPicked) {
-				if (data.UId != sfsIdMe) {
-					btnForward->setVisible(true);
-				}
-			} else {
-				btnPick->setVisible(true);
-			}
-		}
+		} else onUserBashBackToMe(data);
 	}
 	runTimeWaiting(data.TurnId, timeTurn);
 	playSoundAction(data.SoundId);
@@ -2650,6 +2640,7 @@ void GameScene::onUserPick(PickData data)
 				btnDropWin->setVisible(true);
 				delayFunction(btnDropWin, 10, [=]() {
 					btnDropWin->setVisible(false);
+					onUserPickToMe(data);
 				});
 				if (data.TurnId == sfsIdMe) {
 					waitAction = constant::GAME_ACTION_PICK;
@@ -2660,15 +2651,12 @@ void GameScene::onUserPick(PickData data)
             btnDropPenet->setVisible(true);
             delayFunction(btnDropPenet, 7, [=]() {
                 btnDropPenet->setVisible(false);
+				onUserPickToMe(data);
             });
             if (data.TurnId == sfsIdMe) {
                 waitAction = constant::GAME_ACTION_PICK;
             }
-		} else if (data.TurnId == sfsIdMe) {
-			noaction++;
-			btnHold->setVisible(true);
-			btnForward->setVisible(true);
-		}
+		} else onUserPickToMe(data);
 	}
 	runTimeWaiting(data.TurnId, timeTurn);
 	playSoundAction(data.SoundId);
@@ -3967,6 +3955,39 @@ void GameScene::initCofferEffects()
 				Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
 			});
 		});
+	}
+}
+
+void GameScene::onUserBashToMe(BashData data)
+{
+	if (data.TurnId == sfsIdMe) {
+		noaction++;
+		btnHold->setVisible(true);
+		btnPick->setVisible(true);
+	}
+}
+
+void GameScene::onUserBashBackToMe(BashBackData data)
+{
+	if (data.TurnId == sfsIdMe) {
+		noaction++;
+		btnHold->setVisible(true);
+		if (data.IsPicked) {
+			if (data.UId != sfsIdMe) {
+				btnForward->setVisible(true);
+			}
+		} else {
+			btnPick->setVisible(true);
+		}
+	}
+}
+
+void GameScene::onUserPickToMe(PickData data)
+{
+	if (data.TurnId == sfsIdMe) {
+		noaction++;
+		btnHold->setVisible(true);
+		btnForward->setVisible(true);
 	}
 }
 

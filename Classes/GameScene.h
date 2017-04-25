@@ -71,6 +71,10 @@ private:
 	void initTableInfo();
 	void initCofferEffects();
 
+	void onUserBashToMe(BashData data);
+	void onUserBashBackToMe(BashBackData data);
+	void onUserPickToMe(PickData data);
+
 	void dealCards();
 	void dropWin();
     void dropPenet();
