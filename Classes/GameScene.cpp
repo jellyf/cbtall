@@ -640,13 +640,19 @@ void GameScene::onInit()
 		lbWinMoneys.push_back(lb1);
 		autoScaleNode(lb1);
 
-		ui::Button* btnKick = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
+		ui::Button* btnKick = ui::Button::create("empty.png", "empty.png", "", ui::Widget::TextureResType::PLIST);
 		mLayer->addChild(btnKick, constant::GAME_ZORDER_USER + 12);
-		btnKick->setPosition(vecUserPos[i] + Vec2(35, 55));
+		btnKick->setPosition(vecUserPos[i] + Vec2(45, 40));
+		btnKick->setContentSize(Size(70, 70));
+		btnKick->setScale9Enabled(true);
 		btnKick->setVisible(false);
-		btnKick->setScale(.7f);
 		vecBtnKicks.push_back(btnKick);
 		autoScaleNode(btnKick);
+
+		Sprite* spKick = Sprite::createWithSpriteFrameName("btn_dong.png");
+		spKick->setPosition(btnKick->getContentSize().width / 2, btnKick->getContentSize().height / 2);
+		btnKick->addChild(spKick);
+		spKick->setScale(.45f);
 
 		addTouchEventListener(btnKick, [=](){
 			showPopupNotice(Utils::getSingleton().getStringForKey("ban_muon_da_nguoi_nay_ra"), [=]() {
