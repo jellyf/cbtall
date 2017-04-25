@@ -636,6 +636,18 @@ void BaseScene::handleClientDisconnectionReason(std::string reason)
 		Utils::getSingleton().goToLoginScene();
 		return;
 	}
+	if (reason.compare(constant::DISCONNECTION_REASON_SYNC) == 0) {
+		showWaiting();
+		isReconnecting = true;
+		DelayTime* delay = DelayTime::create(2);
+		CallFunc* func = CallFunc::create([=]() {
+			SFSGEvent::getSingleton().Reset();
+			Utils::getSingleton().reconnect();
+			Utils::getSingleton().timeStartReconnect = Utils::getSingleton().getCurrentSystemTimeInSecs();
+		});
+		this->runAction(Sequence::createWithTwoActions(delay, func));
+		return;
+	}
 	hideWaiting();
 	if (isOverlapLogin) {
 		reason = "overlap_login";

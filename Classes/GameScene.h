@@ -74,6 +74,7 @@ private:
 	void dealCards();
 	void dropWin();
     void dropPenet();
+	void disconnectToSync();
 	void syncHandCard(CardHandData cardHand);
 	void showMyCards(bool runEffect = true);
 	void runTimeWaiting(long uid, float time);
@@ -92,7 +93,9 @@ private:
 	void changeZOrderAfterFly(cocos2d::Sprite* card, int zorder);
 	void delayFunction(Node* node, float time, std::function<void()> func);
 	void beatenNodeAndHide(cocos2d::Node* node, float scale1, float scale2, float timeToBeaten, float timeToHide);
+	bool isCardHandDataSync(CardHandData cardHand);
 	int getCardName(unsigned char cardId);
+	std::vector<int>& getCardCount(CardHandData cardHand);
 	cocos2d::Sprite* getCardSprite(int id);
 	cocos2d::Vec2 getScaleScenePosition(cocos2d::Vec2 pos);
 	cocos2d::Vec2 getScaleSceneDistance(cocos2d::Vec2 pos);
@@ -205,6 +208,7 @@ private:
 	bool mustGoToLobby = false;
 	bool isSolo = false;
 	bool isAutoReady = false;
+	bool isSynchronizing = false;
 	GameState state;
 	StartGameData startGameData;
 	CardHandData myCardHand;
