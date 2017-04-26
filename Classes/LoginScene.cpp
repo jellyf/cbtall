@@ -204,6 +204,7 @@ void LoginScene::onInit()
 	}
 
 	loadTextureCache();
+	if (isPopupReady) isReadyToMain = 2;
 }
 
 void LoginScene::registerEventListenner()
@@ -482,7 +483,7 @@ void LoginScene::onDownloadedPlistTexture(int numb)
 	//labelPhone->setVisible(true);
 	labelPhone->setString(Utils::getSingleton().gameConfig.phone);
 	if (numb == 1) {
-		updateStateToGoToMain(numb);
+		updateStateToGoToMain(2);
 	}
 }
 
@@ -663,9 +664,9 @@ void LoginScene::loadTextureCache()
 
 void LoginScene::updateStateToGoToMain(int state)
 {
-	if (isReadyToMain || !Utils::getSingleton().ispmE()) {
+	isReadyToMain |= state;
+	CCLOG("%d %d", state, isReadyToMain);
+	if (isReadyToMain == 3 || !Utils::getSingleton().ispmE()) {
 		Utils::getSingleton().goToMainScene();
-	} else {
-		isReadyToMain = true;
 	}
 }

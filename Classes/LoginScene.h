@@ -35,6 +35,7 @@ private:
 	int waitingLogin = 0;
 	int currentConfigLink = 0;
 	int tmpZoneIndex;
+	int isReadyToMain = 0;
 	std::string fbToken = "";
 	std::string load_host = "http://115.84.179.242/main_kinhtuchi/";
 	bool isReconnecting = false;
@@ -42,7 +43,6 @@ private:
 	bool isRequesting = false;
 	bool isRealConfig = true;
 	bool isFirstLoadConfig = true;
-	bool isReadyToMain = false;
 	bool isLoginFacebook = false;
 	bool isIPv4 = CC_TARGET_PLATFORM == CC_PLATFORM_IOS;
 
