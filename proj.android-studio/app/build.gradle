@@ -9,8 +9,8 @@ android {
         manifestPlaceholders = [onesignal_app_id: "86615baf-bc50-4d73-851b-dc5b87668da3", onesignal_google_project_number: "600091456418"]
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 1014
-        versionName "1.1.4"
+        versionCode 1018
+        versionName "1.1.6"
         multiDexEnabled = true
     }
 

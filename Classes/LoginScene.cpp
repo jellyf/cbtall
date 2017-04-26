@@ -665,7 +665,6 @@ void LoginScene::loadTextureCache()
 void LoginScene::updateStateToGoToMain(int state)
 {
 	isReadyToMain |= state;
-	CCLOG("%d %d", state, isReadyToMain);
 	if (isReadyToMain == 3 || !Utils::getSingleton().ispmE()) {
 		Utils::getSingleton().goToMainScene();
 	}
