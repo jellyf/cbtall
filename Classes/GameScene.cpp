@@ -1752,6 +1752,7 @@ void GameScene::onConnectionLost(std::string reason)
 		n->setLocalZOrder(constant::GAME_ZORDER_BUTTON - i++);
 	}*/
 	if (isSynchronizing) {
+		isSynchronizing = false;
 		handleClientDisconnectionReason(constant::DISCONNECTION_REASON_SYNC);
 	} else {
 		handleClientDisconnectionReason(reason);

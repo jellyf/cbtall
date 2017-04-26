@@ -358,6 +358,7 @@ void MainScene::onConnectionLost(std::string reason)
 		return;
 	}
 	if (isGoToLobby && tmpZoneId >= 0) {
+		showWaiting();
 		Utils::getSingleton().connectZoneByIndex(currentMoneyType, tmpZoneId);
 	} else {
 		handleClientDisconnectionReason(reason);
