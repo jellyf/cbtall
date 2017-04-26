@@ -3990,11 +3990,15 @@ void GameScene::onUserBashBackToMe(BashBackData data)
 
 void GameScene::onUserPickToMe(PickData data)
 {
-	if (data.TurnId == sfsIdMe) {
-		noaction++;
-		btnHold->setVisible(true);
-		btnForward->setVisible(true);
-	}
+	DelayTime* delay = DelayTime::create(.5f);
+	CallFunc* func = CallFunc::create([=]() {
+		if (data.TurnId == sfsIdMe) {
+			noaction++;
+			btnHold->setVisible(true);
+			btnForward->setVisible(true);
+		}
+	});
+	this->runAction(Sequence::createWithTwoActions(delay, func));
 }
 
 Sprite* GameScene::getCardSprite(int id)
