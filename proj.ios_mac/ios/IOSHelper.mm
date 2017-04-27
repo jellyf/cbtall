@@ -8,6 +8,7 @@
 
 #import "IOSHelper.h"
 #import "RootViewController.h"
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
 
 static RootViewController *rootView = nil;
 static std::function<void(std::string)> callbackLoginFacebook = nil;
@@ -92,6 +93,31 @@ void IOSHelperCPlus::queryIAPProducts(std::vector<std::string> productIds)
 string IOSHelperCPlus::getDeviceId()
 {
     return [[[[[UIDevice currentDevice] identifierForVendor] UUIDString] lowercaseString] UTF8String];
+}
+
+void IOSHelperCPlus::trackActiveAccount()
+{
+    [FBSDKAppEvents logEvent:@"CompletedActive"];
+}
+
+void IOSHelperCPlus::trackRegistration(std::string regisMethod)
+{
+    
+    NSDictionary *params = [[NSDictionary alloc] initWithObjectsAndKeys: @(regisMethod.c_str()), FBSDKAppEventParameterNameRegistrationMethod, nil];
+    [FBSDKAppEvents logEvent: FBSDKAppEventNameCompletedRegistration parameters: params];
+}
+
+void IOSHelperCPlus::trackPurchaseSuccess(std::string type, std::string id, std::string strcurrency, double price)
+{
+    NSDictionary *params =
+    [[NSDictionary alloc] initWithObjectsAndKeys:
+     [NSNumber numberWithInt:1], FBSDKAppEventParameterNameNumItems,
+     @(type.c_str()), FBSDKAppEventParameterNameContentType,
+     @(id.c_str()), FBSDKAppEventParameterNameContentID,
+     @(strcurrency.c_str()), FBSDKAppEventParameterNameCurrency,
+     nil];
+    
+    [FBSDKAppEvents logPurchase:price currency: @(strcurrency.c_str()) parameters: params];
 }
 
 @implementation IOSNDKHelper

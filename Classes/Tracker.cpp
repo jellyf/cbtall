@@ -1,4 +1,5 @@
 #include "Tracker.h"
+#include "IOSHelperCPlus.h"
 
 using namespace std;
 using namespace cocos2d;
@@ -31,6 +32,8 @@ void Tracker::trackActiveAccount()
 	}
 	methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID);
 	methodInfo.env->DeleteLocalRef(methodInfo.classID);
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_IOS
+    IOSHelperCPlus::trackActiveAccount();
 #endif
 }
 
@@ -43,7 +46,9 @@ void Tracker::trackRegistration(std::string regisMethod)
 	}
 	jstring jregisMethod = methodInfo.env->NewStringUTF(regisMethod.c_str());
 	methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID, jregisMethod);
-	methodInfo.env->DeleteLocalRef(methodInfo.classID);
+    methodInfo.env->DeleteLocalRef(methodInfo.classID);
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_IOS
+    IOSHelperCPlus::trackRegistration(regisMethod);
 #endif
 }
 
@@ -59,6 +64,8 @@ void Tracker::trackPurchaseSuccess(std::string type, std::string id, std::string
 	jstring jCurrency = methodInfo.env->NewStringUTF(currency.c_str());
 	jdouble jprice = (jdouble)price;
 	methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID, jContentType, jContentId, jCurrency, jprice);
-	methodInfo.env->DeleteLocalRef(methodInfo.classID);
+    methodInfo.env->DeleteLocalRef(methodInfo.classID);
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_IOS
+    IOSHelperCPlus::trackPurchaseSuccess(type, id, currency, price);
 #endif
 }
