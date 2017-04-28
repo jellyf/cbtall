@@ -31,6 +31,10 @@ public :
     static void queryIAPProducts(std::vector<std::string> productIds);
     static void inviteFacebookFriends();
 	static string getDeviceId();
+    
+    static void trackActiveAccount();
+    static void trackRegistration(std::string regisMethod);
+    static void trackPurchaseSuccess(std::string type, std::string id, std::string currency, double price);
 };
 
 #endif /* IOSHelperCPlus_h */
