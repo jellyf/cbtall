@@ -629,7 +629,7 @@ void Utils::downloadPlistTextures()
 	if (downloadedPlistTexture == 0) {
 		string str1 = FileUtils::getInstance()->getStringFromFile("menu1.plist");
 		Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA8888);
-		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu1.png", [=](Texture2D* texture1) {
+		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu3.png", [=](Texture2D* texture1) {
 			SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str1, texture1);
 			downloadedPlistTexture = 1;
 			if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
@@ -637,7 +637,7 @@ void Utils::downloadPlistTextures()
 			}
 			Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
 			string str2 = FileUtils::getInstance()->getStringFromFile("menu2.plist");
-			Utils::getSingleton().LoadTextureFromURL(textureHost + "menu2.png", [=](Texture2D* texture2) {
+			Utils::getSingleton().LoadTextureFromURL(textureHost + "menu4.png", [=](Texture2D* texture2) {
 				SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str2, texture2);
 				downloadedPlistTexture = 2;
 				if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
@@ -651,7 +651,7 @@ void Utils::downloadPlistTextures()
 		});
 	} else if (downloadedPlistTexture == 1) {
 		string str2 = FileUtils::getInstance()->getStringFromFile("menu2.plist");
-		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu2.png", [=](Texture2D* texture) {
+		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu4.png", [=](Texture2D* texture) {
 			SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str2, texture);
 			downloadedPlistTexture = 2;
 			if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
