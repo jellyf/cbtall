@@ -968,6 +968,7 @@ void MainScene::onChangeMoneyType(int type)
 
 void MainScene::initPopupCharge()
 {
+	strProviders = Utils::getSingleton().dynamicConfig.CashValue;
 	bool pmE = Utils::getSingleton().ispmE();
 
 	popupCharge = createPopup("title_naptien.png", true, true);
@@ -1044,7 +1045,6 @@ void MainScene::initPopupCharge()
 	ui::EditBox* tfSeri = ui::EditBox::create(Size(350, 55), "box.png", ui::Widget::TextureResType::PLIST);
 	ui::EditBox* tfCode = ui::EditBox::create(Size(350, 55), "box.png", ui::Widget::TextureResType::PLIST);
 	ui::ScrollView* scrollProvider = ui::ScrollView::create();
-	vector<string> strProviders = { "viettel", "mobifone", "vinaphone", "megacard", "gcard" };
 
 	int x = -420;
 	int y = 180;
@@ -1078,9 +1078,10 @@ void MainScene::initPopupCharge()
 					//popupCharge->getChildByName("providerimg" + to_string(i))->setVisible(true);
 				}
 			} else if (i == 1) {
+				scrollProvider->scrollToLeft(.3f, true);
 				scrollProvider->setVisible(true);
 				nodeMoneyType->setPosition(-220, 20);
-				for (int i = 1; i <= 3; i++) {
+				for (int i = 1; i <= 3 && i <= strProviders.size(); i++) {
 					scrollProvider->getChildByName("btn" + to_string(i))->setVisible(true);
 					//popupCharge->getChildByName("providerimg" + to_string(i))->setVisible(true);
 				}
@@ -1116,7 +1117,7 @@ void MainScene::initPopupCharge()
 	smsContent = Utils::getSingleton().replaceString(smsContent, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
 	for (int i = 1; i <= strProviders.size(); i++) {
 		string stri = to_string(i);
-		string strimg = "provider" + stri + ".png";
+		string strimg = strProviders[i-1] + ".png";
 		/*Sprite* sp = Sprite::create();
 		if (textures.size() == 8) {
 			sp->initWithTexture(textures["provider" + stri + (i > 1 ? "_dark" : "")]);
@@ -1181,11 +1182,11 @@ void MainScene::initPopupCharge()
 				}*/
 			}
 
-			if (i == 4 || i == 5) {
+			if (i > 3) {
 				tfCode->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
 				tfSeri->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
 			} else {
-				if (btnIndexLast == 4 || btnIndexLast == 5) {
+				if (btnIndexLast > 3) {
 					tfCode->setText("");
 					tfSeri->setText("");
 				}
@@ -1202,7 +1203,7 @@ void MainScene::initPopupCharge()
 
 		xp += 170;
 	}
-
+	
 	vector<Label*> lbs;
 	vector<ui::CheckBox*> cbs;
 	for (int i = 0; i < 2; i++) {
@@ -1372,6 +1373,7 @@ void MainScene::initPopupCharge()
 	//btnCharge->setScale9Enabled(true);
 	btnCharge->setScale(.9f);
 	addTouchEventListener(btnCharge, [=]() {
+		if (strProviders.size() == 0) return;
 		string code = tfCode->getText();
 		string seri = tfSeri->getText();
 		if (code.length() == 0 || seri.length() == 0) return;
@@ -1463,8 +1465,9 @@ void MainScene::initPopupCharge()
 			//btnItemSms->setScale9Enabled(true);
 			btnItemSms->setScale(.9f);
 			addTouchEventListener(btnItemSms, [=]() {
+				if (strProviders.size() == 0) return;
 				int btnIndex;
-				for (int i = 1; i < 4; i++) {
+				for (int i = 1; i < strProviders.size(); i++) {
 					ui::Button* btn = (ui::Button*)scrollProvider->getChildByName("btn" + to_string(i));
 					if (btn->getTag() == 1) {
 						btnIndex = i;
@@ -2247,7 +2250,7 @@ void MainScene::checkProviderToCharge()
 {
 	int btnIndex = -1;
 	Node* scrollProvider = popupCharge->getChildByName("scrollprovider");
-	for (int i = 4; i <= 5; i++) {
+	for (int i = 4; i <= strProviders.size(); i++) {
 		Node* btni = scrollProvider->getChildByName("btn" + to_string(i));
 		if (btni->getTag() == 1) {
 			Node* btn1 = scrollProvider->getChildByName("btn1");
@@ -2261,7 +2264,7 @@ void MainScene::checkProviderToCharge()
 	}
 
 	if (btnIndex == -1) {
-		for (int i = 1; i <= 5; i++) {
+		for (int i = 1; i <= strProviders.size(); i++) {
 			ui::Button* btn = (ui::Button*)scrollProvider->getChildByName("btn" + to_string(i));
 			if (btn->getTag() == 1) {
 				btnIndex = i;
@@ -2303,7 +2306,7 @@ void MainScene::updateSmsInfo(bool isQuan)
 {
 	Node* scrollProvider = popupCharge->getChildByName("scrollprovider");
 	int btnIndex = 0;
-	for (int j = 1; j <= 5; j++) {
+	for (int j = 1; j <= strProviders.size(); j++) {
 		string strj = to_string(j);
 		ui::Button* btn = (ui::Button*)scrollProvider->getChildByName("btn" + strj);
 		if (btn->getTag() == 1) {

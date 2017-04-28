@@ -1210,6 +1210,10 @@ void SFSResponse::onPopupEventResponse(boost::shared_ptr<ISFSObject> isfsObject)
 		if (d.FindMember("KICH") != d.MemberEnd()) {
 			std::string str = d["KICH"].GetString();
 			config.Kick = str.compare("1") == 0;
+		} else config.Kick = false;
+		if (d.FindMember("CASH_VALUE") != d.MemberEnd()) {
+			std::string str = d["CASH_VALUE"].GetString();
+			Utils::getSingleton().split(str, ',', config.CashValue);
 		}
 	}
 	Utils::getSingleton().dynamicConfig = config;
