@@ -1,5 +1,7 @@
 #include "Tracker.h"
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
 #include "IOSHelperCPlus.h"
+#endif
 
 using namespace std;
 using namespace cocos2d;
