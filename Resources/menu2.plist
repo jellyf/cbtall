@@ -35,7 +35,7 @@
 			<key>btn_nap.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{203,0},{126,61}}</string>
+				<string>{{318,276},{126,61}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -49,7 +49,7 @@
 			<key>btn_nap_clicked.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{318,232},{126,61}}</string>
+				<string>{{203,52},{126,61}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -60,10 +60,10 @@
 				<string>{126,61}</string>
 			</dict>
 
-			<key>provider1.png</key>
+			<key>gcard.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{159,379},{158,99}}</string>
+				<string>{{163,176},{158,99}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -74,35 +74,7 @@
 				<string>{158,99}</string>
 			</dict>
 
-			<key>provider2.png</key>
-			<dict>
-				<key>frame</key>
-				<string>{{159,279},{158,99}}</string>
-				<key>offset</key>
-				<string>{0,0}</string>
-				<key>rotated</key>
-				<false/>
-				<key>sourceColorRect</key>
-				<string>{{0,0},{158,99}}</string>
-				<key>sourceSize</key>
-				<string>{158,99}</string>
-			</dict>
-
-			<key>provider3.png</key>
-			<dict>
-				<key>frame</key>
-				<string>{{0,379},{158,99}}</string>
-				<key>offset</key>
-				<string>{0,0}</string>
-				<key>rotated</key>
-				<false/>
-				<key>sourceColorRect</key>
-				<string>{{0,0},{158,99}}</string>
-				<key>sourceSize</key>
-				<string>{158,99}</string>
-			</dict>
-
-			<key>provider4.png</key>
+			<key>megacard.png</key>
 			<dict>
 				<key>frame</key>
 				<string>{{0,176},{162,102}}</string>
@@ -116,10 +88,10 @@
 				<string>{162,102}</string>
 			</dict>
 
-			<key>provider5.png</key>
+			<key>mobifone.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{0,279},{158,99}}</string>
+				<string>{{159,379},{158,99}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -147,7 +119,7 @@
 			<key>title_giftcode.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{175,120},{151,51}}</string>
+				<string>{{203,0},{151,51}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -161,7 +133,7 @@
 			<key>title_huvang.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{163,176},{156,55}}</string>
+				<string>{{175,120},{156,55}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -170,6 +142,48 @@
 				<string>{{0,0},{156,55}}</string>
 				<key>sourceSize</key>
 				<string>{156,55}</string>
+			</dict>
+
+			<key>vcard.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,379},{158,99}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false/>
+				<key>sourceColorRect</key>
+				<string>{{0,0},{158,99}}</string>
+				<key>sourceSize</key>
+				<string>{158,99}</string>
+			</dict>
+
+			<key>viettel.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,279},{158,99}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false/>
+				<key>sourceColorRect</key>
+				<string>{{0,0},{158,99}}</string>
+				<key>sourceSize</key>
+				<string>{158,99}</string>
+			</dict>
+
+			<key>vinaphone.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{159,279},{158,99}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false/>
+				<key>sourceColorRect</key>
+				<string>{{0,0},{158,99}}</string>
+				<key>sourceSize</key>
+				<string>{158,99}</string>
 			</dict>
 
 		</dict>

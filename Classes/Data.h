@@ -392,6 +392,7 @@ struct DynamicConfig
 	bool Kick;
 	bool Popup;
 	std::string PopupUrl;
+	std::vector<std::string> CashValue;
 };
 
 struct AppellationData

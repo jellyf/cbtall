@@ -74,5 +74,6 @@ private:
 	std::map<std::string, cocos2d::Texture2D*> textures;
 	std::vector<int> moneys = { 10, 20, 50, 100, 200, 500 };
 	std::vector<int> moneyxs = { 50, 100, 250, 500, 1000, 2500 };
+	std::vector<std::string> strProviders;
 };
 
