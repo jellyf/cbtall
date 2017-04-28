@@ -388,7 +388,7 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	config.port = d["port"].GetInt();
 	config.websocket = d["websocket"].GetInt();
 	config.version = d["version"].GetInt();
-	config.versionIOS = d["versionIOS"].GetInt();
+	config.versionIOS = d["versionIOS4"].GetInt();
 	config.ip_rs = d["ip_rs"].GetString();
 	config.phone = d["phone"].GetString();
 	config.smsVT = d["smsVT"].GetString();
