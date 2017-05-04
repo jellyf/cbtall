@@ -55,7 +55,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.0</string>
+	<string>1.0.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -63,14 +63,14 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>fb306944756392700</string>
+				<string>fb992430550888136</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1000</string>
+	<string>1001</string>
 	<key>FacebookAppID</key>
-	<string>306944756392700</string>
+	<string>992430550888136</string>
 	<key>FacebookDisplayName</key>
 	<string>Kính 4 Chi</string>
 	<key>LSApplicationQueriesSchemes</key>
