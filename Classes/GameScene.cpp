@@ -3993,7 +3993,7 @@ void GameScene::onUserPickToMe(PickData data)
 {
 	DelayTime* delay = DelayTime::create(.5f);
 	CallFunc* func = CallFunc::create([=]() {
-		if (data.TurnId == sfsIdMe) {
+		if (state == PLAY && data.TurnId == sfsIdMe) {
 			noaction++;
 			btnHold->setVisible(true);
 			btnForward->setVisible(true);
