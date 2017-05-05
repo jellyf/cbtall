@@ -885,7 +885,7 @@ void BaseScene::initHeaderWithInfos()
 	mLayer->addChild(lbId, constant::MAIN_ZORDER_HEADER);
 	autoScaleNode(lbId);
 
-	lbLevel = Label::create("Level: ", "fonts/arialbd.ttf", 23);
+    lbLevel = Label::create(Utils::getSingleton().getStringForKey("level") + ": ", "fonts/arialbd.ttf", 23);
 	lbLevel->setAnchorPoint(Vec2(0, .5f));
 	lbLevel->setPosition(vecPos[12]);
 	mLayer->addChild(lbLevel, constant::MAIN_ZORDER_HEADER);
@@ -1998,7 +1998,7 @@ void BaseScene::onUserDataMeResponse()
 	std::string strGold = Utils::getSingleton().formatMoneyWithComma(Utils::getSingleton().userDataMe.MoneyReal);
 	std::string strSilver = Utils::getSingleton().formatMoneyWithComma(Utils::getSingleton().userDataMe.MoneyFree);
 	std::string strId = String::createWithFormat("ID: %ld", Utils::getSingleton().userDataMe.UserID)->getCString();
-	std::string strLevel = String::createWithFormat("Level: %d", Utils::getSingleton().userDataMe.Level)->getCString();
+	std::string strLevel = String::createWithFormat((Utils::getSingleton().getStringForKey("level") + ": %d").c_str(), Utils::getSingleton().userDataMe.Level)->getCString();
 
 	lbName->setString(Utils::getSingleton().userDataMe.DisplayName);
 	lbGold->setString(strGold);
