@@ -17,7 +17,8 @@
 	<key>bet</key><string>Cược</string>
 	<key>win</key><string>Ù</string>
 	<key>chicken</key><string>Gà</string>
-	<key>noted</key><string>Chú ý</string>
+    <key>noted</key><string>Chú ý</string>
+    <key>level</key><string>Cấp độ</string>
 	<key>invite</key><string>Mời</string>
 	<key>send</key><string>Gửi</string>
 	<key>quick</key><string>Nhanh</string>
