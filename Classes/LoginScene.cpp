@@ -401,12 +401,12 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	config.canUpdate = d["updatenow"].GetBool();
 	config.inapp = d["inapp"].GetString();
 	config.invite = d["invite"].GetBool();
+    config.versionIOS71 = d["versionIOS71"].GetBool();
 		
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-	if (isRealConfig && !config.pmEIOS) {
-		isRealConfig = false;
-		//requestGameConfig(false);
-		//return;
+    if (config.versionIOS71) {
+        config.ip_rs = "api4chan.info";
+        config.port = 843;
 	}
 #endif
 
