@@ -619,7 +619,7 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 	lbAppellation->setColor(aplData.Color);
 	//lbBigWin->setString(Utils::getSingleton().formatMoneyWithComma(data.BigWin));
 	//lbBigCrest->setString(data.BigCrest);
-	nodeInfo->setPosition(isMe ? lbName->getPosition() - Vec2(0, 45) : lbName->getPosition() + Vec2(0, 40));
+	nodeInfo->setPosition(isMe ? lbName->getPosition() - Vec2(0, 45) : lbName->getPosition() + Vec2(0, 20));
 }
 
 void BaseScene::setMoneyType(int type)
