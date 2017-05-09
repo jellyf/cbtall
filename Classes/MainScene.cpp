@@ -57,7 +57,7 @@ void MainScene::onInit()
 
 	ui::Button* btnAgency = ui::Button::create("icon_agency.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnAgency->setPosition(vecPos[0]);
-	btnAgency->setVisible(!btnFBFriends->isVisible());
+	btnAgency->setVisible(pmE && !canInvite);
 	addTouchEventListener(btnAgency, [=]() {
 		showPopupNotice(Utils::getSingleton().getStringForKey("feature_coming_soon"), [=]() {});
 	});
