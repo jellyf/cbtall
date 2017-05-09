@@ -61,6 +61,7 @@ private:
 	cocos2d::Node* nodeWebview;
 
 	cocos2d::Label* lbNewMail;
+	cocos2d::ui::Button* btnEvent;
 
 	int currentMoneyType = 0;
 	int tmpZoneId = -1;

@@ -25,10 +25,14 @@ void MainScene::onInit()
 	vecPos.push_back(Vec2(1040, 350));
 	vecPos.push_back(Vec2(1040, 210));
 	vecPos.push_back(Vec2(1040, 70));
-	vecPos.push_back(Vec2(380, 420));
-	vecPos.push_back(Vec2(740, 420));
-	vecPos.push_back(Vec2(380, 150));
-	vecPos.push_back(Vec2(740, 150));
+	/*vecPos.push_back(Vec2(390, 420));
+	vecPos.push_back(Vec2(730, 420));
+	vecPos.push_back(Vec2(390, 150));
+	vecPos.push_back(Vec2(730, 150));*/
+	vecPos.push_back(Vec2(560 - 170 * scaleScene.y, 285 + 135 * scaleScene.x));
+	vecPos.push_back(Vec2(560 + 170 * scaleScene.y, 285 + 135 * scaleScene.x));
+	vecPos.push_back(Vec2(560 - 170 * scaleScene.y, 285 - 135 * scaleScene.x));
+	vecPos.push_back(Vec2(560 + 170 * scaleScene.y, 285 - 135 * scaleScene.x));
 	int m = 0;
 
 	initHeaderWithInfos();
@@ -53,12 +57,22 @@ void MainScene::onInit()
 
 	ui::Button* btnAgency = ui::Button::create("icon_agency.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnAgency->setPosition(vecPos[0]);
-	btnAgency->setVisible(pmE && !canInvite);
+	btnAgency->setVisible(!btnFBFriends->isVisible());
 	addTouchEventListener(btnAgency, [=]() {
 		showPopupNotice(Utils::getSingleton().getStringForKey("feature_coming_soon"), [=]() {});
 	});
 	mLayer->addChild(btnAgency);
 	autoScaleNode(btnAgency);
+
+	btnEvent = ui::Button::create("icon_event.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnEvent->setPosition(vecPos[0] + Vec2(110, 0));
+	btnEvent->setVisible(false);
+	addTouchEventListener(btnEvent, [=]() {
+		Utils::getSingleton().hasShowEventPopup = true;
+		showWebView(Utils::getSingleton().dynamicConfig.PopupUrl);
+	});
+	mLayer->addChild(btnEvent);
+	autoScaleNode(btnEvent);
 
 	ui::Button* btnGuide = ui::Button::create("icon_guide.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnGuide->setPosition(vecPos[1]);
@@ -163,6 +177,7 @@ void MainScene::onInit()
 
 	ui::Button* btnNhaTranh = ui::Button::create("nha_tranh.png", "nha_tranh.png", "", ui::Widget::TextureResType::PLIST);
 	btnNhaTranh->setPosition(vecPos[8]);
+	btnNhaTranh->setScale(.95f);
 	addTouchEventListener(btnNhaTranh, [=]() {
 		if (isWaiting) return;
 		showWaiting();
@@ -175,6 +190,7 @@ void MainScene::onInit()
 
 	ui::Button* btnDinhLang = ui::Button::create("dinhlang.png", "dinhlang.png", "", ui::Widget::TextureResType::PLIST);
 	btnDinhLang->setPosition(vecPos[9]);
+	btnDinhLang->setScale(.95f);
 	addTouchEventListener(btnDinhLang, [=]() {
 		if (isWaiting) return;
 		showWaiting();
@@ -187,6 +203,7 @@ void MainScene::onInit()
 
 	ui::Button* btnPhuChua = ui::Button::create("phuchua.png", "phuchua.png", "", ui::Widget::TextureResType::PLIST);
 	btnPhuChua->setPosition(vecPos[10]);
+	btnPhuChua->setScale(.95f);
 	addTouchEventListener(btnPhuChua, [=]() {
 		if (isWaiting) return;
 		showWaiting();
@@ -199,6 +216,7 @@ void MainScene::onInit()
 
 	ui::Button* btnLoiDai = ui::Button::create("dtd.png", "dtd.png", "", ui::Widget::TextureResType::PLIST);
 	btnLoiDai->setPosition(vecPos[11]);
+	btnLoiDai->setScale(.95f);
 	addTouchEventListener(btnLoiDai, [=]() {
 		//showPopupNotice(Utils::getSingleton().getStringForKey("feature_coming_soon"), [=]() {});
 		if (isWaiting) return;
@@ -938,9 +956,11 @@ void MainScene::onDynamicConfigReceived()
 {
 	if (Utils::getSingleton().allowEventPopup 
 		&& Utils::getSingleton().dynamicConfig.Popup
-		&& !Utils::getSingleton().hasShowEventPopup) {
-		Utils::getSingleton().hasShowEventPopup = true;
-		showWebView(Utils::getSingleton().dynamicConfig.PopupUrl);
+		&& !Utils::getSingleton().hasShowEventPopup
+		&& Utils::getSingleton().ispmE()) {
+		//Utils::getSingleton().hasShowEventPopup = true;
+		//showWebView(Utils::getSingleton().dynamicConfig.PopupUrl);
+		btnEvent->setVisible(true);
 	}
 }
 
@@ -2037,6 +2057,7 @@ void MainScene::initWebView()
 	checkbox->loadTextureFrontCross("check.png", ui::Widget::TextureResType::PLIST);
 	checkbox->setPosition(Vec2(-500, -320));
 	checkbox->setSelected(false);
+	checkbox->setVisible(false);
 	nodeWebview->addChild(checkbox);
 	checkbox->addEventListener([=](Ref* ref, ui::CheckBox::EventType type) {
 		if (type == ui::CheckBox::EventType::SELECTED) {
@@ -2050,6 +2071,7 @@ void MainScene::initWebView()
 	lb->setPosition(checkbox->getPosition() + Vec2(40, 0));
 	lb->setAnchorPoint(Vec2(0, .5f));
 	lb->setColor(Color3B::WHITE);
+	lb->setVisible(false);
 	nodeWebview->addChild(lb);
 
 	ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
