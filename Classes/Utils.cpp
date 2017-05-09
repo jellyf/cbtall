@@ -592,7 +592,7 @@ void Utils::queryIAPProduct()
     std::vector<std::string> ids;
     split(gameConfig.inapp, ',', ids);
     for(int i=0;i<ids.size();i++){
-        ids[i] = "com.chan.kinhtuchi.goi." + ids[i];
+        ids[i] = "com.chan.kinh4chi.goi." + ids[i];
         ProductData data;
         data.Id = ids[i];
         products.push_back(data);
