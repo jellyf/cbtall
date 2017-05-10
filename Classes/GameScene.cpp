@@ -3846,7 +3846,7 @@ void GameScene::initSettingsPopup()
 			SFSRequest::getSingleton().RequestGameTableInfo(cbs[1]->isSelected(), cbs[0]->isSelected());
 		}
 		Utils::getSingleton().SoundEnabled = cbs[4]->isSelected();
-		if (btnReady->isVisible()) {
+		if (isAutoReady && btnReady->isVisible()) {
 			state = READY;
 			SFSRequest::getSingleton().RequestGameReady();
 		}
