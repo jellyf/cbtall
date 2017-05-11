@@ -2235,11 +2235,17 @@ void GameScene::onChooseHost(unsigned char stilt1, unsigned char stilt2, unsigne
 
 void GameScene::onUserBash(BashData data)
 {
+	int index = 0;
+	if (userIndexs.find(data.UId) == userIndexs.end()) {
+		disconnectToSync();
+		return;
+	} else {
+		index = userIndexs[data.UId];
+	}
 	if (data.CardId > 100) data.CardId = 256 - data.CardId;
 	bool hasSync = false;
 	Sprite* spCard = NULL;
 	int zorder = 0;
-	int index = userIndexs[data.UId];
 	int index2 = index * 2;
 	float scale = 1.0f;
 	if (tableCardNumb[index2] >= maxTableCardNumb[index2]) {
@@ -2348,11 +2354,17 @@ void GameScene::onUserBash(BashData data)
 
 void GameScene::onUserBashBack(BashBackData data)
 {
+	int index;
+	if (userIndexs.find(data.UId) == userIndexs.end()) {
+		disconnectToSync();
+		return;
+	} else {
+		index = userIndexs[data.UId];
+	}
 	if (data.CardId > 100) data.CardId = 256 - data.CardId;
 	bool hasSync = false;
 	Sprite* spCard = NULL;
 	int zorder = 0;
-	int index = userIndexs[data.UId];
 	int index1 = userIndexs[data.BackId];
 	int index2 = index1 * 2;
 	float scale = 1.0f;
@@ -2468,18 +2480,29 @@ void GameScene::onUserBashBack(BashBackData data)
 
 void GameScene::onUserHold(HoldData data)
 {
-	int index = userIndexs[data.UId];
-	if (runningSpCard == NULL && runningCards.size() > 0) {
-		int cid = atoi(runningCards[index]->getName().c_str());
-		if (runningCards[index] != NULL && (cid == data.CardIdHold || cid == 256 - data.CardIdHold)) {
-			runningSpCard = runningCards[index];
-		}else if(runningCards.size() > 0){
-			int tmpIndex = (index + 3) % 4;
-			if (!vecUsers[tmpIndex]->isVisible() || vecUsers[tmpIndex]->getAlpha() < 255) {
-				tmpIndex = (tmpIndex + 3) % 4;
-			}
-			runningSpCard = runningCards[tmpIndex];
+	int index = 0;
+	if (userIndexs.find(data.UId) == userIndexs.end()) {
+		if (userIndexs.find(data.TurnId) == userIndexs.end()) {
+			disconnectToSync();
+			return;
+		} else {
+			index = userIndexs[data.TurnId];
 		}
+	} else {
+		index = userIndexs[data.UId];
+	}
+	if (runningSpCard == NULL && runningCards.size() > 0 && runningCards[index] != NULL) {
+		int cid = atoi(runningCards[index]->getName().c_str());
+		if (cid == data.CardIdHold || cid == 256 - data.CardIdHold) {
+			runningSpCard = runningCards[index];
+		}
+	}
+	if (runningSpCard == NULL) {
+		int tmpIndex = (index + 3) % 4;
+		if (!vecUsers[tmpIndex]->isVisible() || vecUsers[tmpIndex]->getAlpha() < 255) {
+			tmpIndex = (tmpIndex + 3) % 4;
+		}
+		runningSpCard = runningCards[tmpIndex];
 	}
 	if (runningSpCard == NULL) {
 		disconnectToSync();
@@ -2583,7 +2606,13 @@ void GameScene::onUserHold(HoldData data)
 
 void GameScene::onUserPick(PickData data)
 {
-	int index = userIndexs[data.UId];
+	int index;
+	if (userIndexs.find(data.UId) == userIndexs.end()) {
+		disconnectToSync();
+		return;
+	} else {
+		index = userIndexs[data.UId];
+	}
 	int index2 = index * 2;
 	float scale = 1.0f;
 	if (tableCardNumb[index2] >= maxTableCardNumb[index2]) {
@@ -2677,6 +2706,13 @@ void GameScene::onUserPick(PickData data)
 
 void GameScene::onUserPenet(PenetData data)
 {
+	int index;
+	if (userIndexs.find(data.UId) == userIndexs.end()) {
+		disconnectToSync();
+		return;
+	} else {
+		index = userIndexs[data.UId];
+	}
 	if (runningSpCard == NULL) {
 		for (Sprite* sp : runningCards) {
 			int cid = atoi(sp->getName().c_str());
@@ -2696,7 +2732,6 @@ void GameScene::onUserPenet(PenetData data)
 		return;
 	}
 	vector<int> zorders;
-	int index = userIndexs[data.UId];
 	int index2 = index * 2 + 1;
 	int index3 = runningSpCard->getTag() % 100;
 	float scale = 1.0f;
