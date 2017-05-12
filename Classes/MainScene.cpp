@@ -427,7 +427,9 @@ void MainScene::onErrorResponse(unsigned char code, std::string msg)
 
 void MainScene::onJoinRoom(long roomId, std::string roomName)
 {
-
+	if (roomName.at(0) == 'g' && roomName.at(2) == 'b') {
+		Utils::getSingleton().goToGameScene();
+	}
 }
 
 void MainScene::onJoinRoomError(std::string msg)
@@ -2159,6 +2161,7 @@ void MainScene::initPopupDisplayName()
 	popupDisplayName = Node::create();
 	popupDisplayName->setPosition(560, 350);
 	popupDisplayName->setVisible(false);
+	popupDisplayName->setName("popupdisplayname");
 	mLayer->addChild(popupDisplayName, constant::ZORDER_POPUP);
 	//autoScaleNode(popupDisplayName);
 

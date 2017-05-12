@@ -840,6 +840,7 @@ void GameScene::registerEventListenner()
 	EventHandler::getSingleton().onLobbyTableSFSResponse = std::bind(&GameScene::onLobbyListTableResponse, this, std::placeholders::_1);
 	EventHandler::getSingleton().onCofferMoneySFSResponse = bind(&GameScene::onCofferMoneyResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onCofferHistorySFSResponse = bind(&GameScene::onCofferHistoryResponse, this, placeholders::_1);
+	EventHandler::getSingleton().onTableReconnectDataSFSResponse = bind(&GameScene::onTableReconnectDataResponse, this, placeholders::_1);
 
 	SFSRequest::getSingleton().onHttpResponseFailed = std::bind(&GameScene::onHttpResponseFailed, this);
 	SFSRequest::getSingleton().onHttpResponse = std::bind(&GameScene::onHttpResponse, this, std::placeholders::_1, std::placeholders::_2);
@@ -883,6 +884,7 @@ void GameScene::unregisterEventListenner()
 	EventHandler::getSingleton().onLobbyTableSFSResponse = NULL;
 	EventHandler::getSingleton().onCofferMoneySFSResponse = NULL;
 	EventHandler::getSingleton().onCofferHistorySFSResponse = NULL;
+	EventHandler::getSingleton().onTableReconnectDataSFSResponse = NULL;
 
 	SFSRequest::getSingleton().onHttpResponse = NULL;
 	SFSRequest::getSingleton().onHttpResponseFailed = NULL;
@@ -3410,6 +3412,12 @@ void GameScene::onLobbyListTableResponse(LobbyListTable data)
 	if (mustGoToLobby) {
 		Utils::getSingleton().goToLobbyScene();
 	}
+}
+
+void GameScene::onTableReconnectDataResponse(TableReconnectData data)
+{
+	SFSRequest::getSingleton().RequestJoinRoom(data.Room, false);
+	showWaiting();
 }
 
 bool GameScene::onKeyBack()

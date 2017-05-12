@@ -56,6 +56,7 @@ public:
 	void onGameMyReconnectDataResponse(GameReconnectData data);
 	void onGameUserReconnectDataResponse(std::vector<UserReconnectData> list);
 	void onLobbyListTableResponse(LobbyListTable data);
+	void onTableReconnectDataResponse(TableReconnectData data);
 protected:
 	virtual bool onKeyBack();
 	virtual void onKeyHome();

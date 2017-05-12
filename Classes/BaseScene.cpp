@@ -491,7 +491,6 @@ void BaseScene::showPopupRankWin()
 		data.Date = "05/01/2016";
 		listRankWin.push_back(data);
 	}*/
-
 	ui::ScrollView* scroll = (ui::ScrollView*)popupRank->getChildByName("scroll");
 	ui::ScrollView* scrollWin = (ui::ScrollView*)popupRank->getChildByName("scrollwin");
 	scroll->setVisible(false);
@@ -979,7 +978,9 @@ bool BaseScene::onKeyBack()
 		return true;
 	}
 	Node* popup = popups[popups.size() - 1];
-	hidePopup(popup);
+	if (popup->getName().compare("popupdisplayname") != 0) {
+		hidePopup(popup);
+	}
 	return false;
 }
 
@@ -2028,6 +2029,9 @@ void BaseScene::onRankDataResponse(std::vector<std::vector<RankData>> list)
 void BaseScene::onRankWinDataResponse(std::vector<RankWinData> list)
 {
 	this->listRankWin = list;
+	if (popupRank != nullptr && popupRank->isVisible() && popupRank->getTag() == 2) {
+		showPopupRankWin();
+	}
 }
 
 void BaseScene::onListEventDataResponse(std::vector<EventData> list)
