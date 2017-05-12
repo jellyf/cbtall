@@ -55,7 +55,7 @@ void LoginScene::onInit()
 	tfUsername->setPlaceHolder(Utils::getSingleton().getStringForKey("login_name").c_str());
 	tfUsername->setPlaceholderFontColor(Color3B::WHITE);
 	tfUsername->setPlaceholderFont("Arial", 25);
-	tfUsername->setMaxLength(16);
+	tfUsername->setMaxLength(21);
 	tfUsername->setReturnType(ui::EditBox::KeyboardReturnType::DONE);
 	tfUsername->setInputFlag(ui::EditBox::InputFlag::SENSITIVE);
 	tfUsername->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
