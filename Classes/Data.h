@@ -392,6 +392,8 @@ struct DynamicConfig
 {
 	bool Kick;
 	bool Popup;
+	bool Log;
+	std::string LogHost;
 	std::string PopupUrl;
 	std::vector<std::string> CashValue;
 };

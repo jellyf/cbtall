@@ -291,7 +291,11 @@ void SFSConnector::Connect(std::string host, int port)
 	//}
 	CCLOG("Connect to SmartFox: %s %d", host.c_str(), port);
 	//mSmartFox->ForceIPv6(useIPv6);
-	mSmartFox->Connect(host.c_str(), port);
+	try {
+		mSmartFox->Connect(host.c_str(), port);
+	} catch (exception e) {
+		CCLOG("SFSConnector::Connect::Exception: %s", e.what());
+	}
 }
 
 void SFSConnector::Disconnect()

@@ -1215,6 +1215,13 @@ void SFSResponse::onPopupEventResponse(boost::shared_ptr<ISFSObject> isfsObject)
 			std::string str = d["CASH_VALUE"].GetString();
 			Utils::getSingleton().split(str, ',', config.CashValue);
 		}
+		if (d.FindMember("CLIENT_LOG") != d.MemberEnd()) {
+			std::string str = d["CLIENT_LOG"].GetString();
+			config.Log = str.compare("1") == 0;
+		} else config.Log = false;
+		if (d.FindMember("CLIENT_LOG_VALUE") != d.MemberEnd()) {
+			config.LogHost = d["CLIENT_LOG_VALUE"].GetString();
+		} else config.LogHost = "";
 	}
 	Utils::getSingleton().dynamicConfig = config;
 	if (EventHandler::getSingleton().onDynamicConfigReceived != NULL) {
