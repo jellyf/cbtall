@@ -2237,12 +2237,10 @@ void GameScene::onChooseHost(unsigned char stilt1, unsigned char stilt2, unsigne
 
 void GameScene::onUserBash(BashData data)
 {
-	int index = 0;
-	if (userIndexs.find(data.UId) == userIndexs.end()) {
+	int index = userIndexs[data.UId];
+	if (myServerSlot >= 0 && index == 0 && data.UId != sfsIdMe) {
 		disconnectToSync();
 		return;
-	} else {
-		index = userIndexs[data.UId];
 	}
 	if (data.CardId > 100) data.CardId = 256 - data.CardId;
 	bool hasSync = false;
@@ -2356,12 +2354,10 @@ void GameScene::onUserBash(BashData data)
 
 void GameScene::onUserBashBack(BashBackData data)
 {
-	int index;
-	if (userIndexs.find(data.UId) == userIndexs.end()) {
+	int index = userIndexs[data.UId];
+	if (myServerSlot >= 0 && index == 0 && data.UId != sfsIdMe) {
 		disconnectToSync();
 		return;
-	} else {
-		index = userIndexs[data.UId];
 	}
 	if (data.CardId > 100) data.CardId = 256 - data.CardId;
 	bool hasSync = false;
@@ -2482,16 +2478,13 @@ void GameScene::onUserBashBack(BashBackData data)
 
 void GameScene::onUserHold(HoldData data)
 {
-	int index = 0;
-	if (userIndexs.find(data.UId) == userIndexs.end()) {
-		if (userIndexs.find(data.TurnId) == userIndexs.end()) {
+	int index = userIndexs[data.UId];
+	if (myServerSlot >= 0 && index == 0 && data.UId != sfsIdMe) {
+		index = userIndexs[data.TurnId];
+		if (index == 0 && data.TurnId != sfsIdMe) {
 			disconnectToSync();
 			return;
-		} else {
-			index = userIndexs[data.TurnId];
 		}
-	} else {
-		index = userIndexs[data.UId];
 	}
 	if (runningSpCard == NULL && runningCards.size() > 0 && runningCards[index] != NULL) {
 		int cid = atoi(runningCards[index]->getName().c_str());
@@ -2608,12 +2601,10 @@ void GameScene::onUserHold(HoldData data)
 
 void GameScene::onUserPick(PickData data)
 {
-	int index;
-	if (userIndexs.find(data.UId) == userIndexs.end()) {
+	int index = userIndexs[data.UId];
+	if (myServerSlot >= 0 && index == 0 && data.UId != sfsIdMe) {
 		disconnectToSync();
 		return;
-	} else {
-		index = userIndexs[data.UId];
 	}
 	int index2 = index * 2;
 	float scale = 1.0f;
@@ -2708,12 +2699,10 @@ void GameScene::onUserPick(PickData data)
 
 void GameScene::onUserPenet(PenetData data)
 {
-	int index;
-	if (userIndexs.find(data.UId) == userIndexs.end()) {
+	int index = userIndexs[data.UId];
+	if (myServerSlot >= 0 && index == 0 && data.UId != sfsIdMe) {
 		disconnectToSync();
 		return;
-	} else {
-		index = userIndexs[data.UId];
 	}
 	if (runningSpCard == NULL) {
 		for (Sprite* sp : runningCards) {
@@ -3449,6 +3438,19 @@ void GameScene::onBackScene()
 void GameScene::reset()
 {
 	spChonCai->setVisible(false);
+	btnBash->setVisible(false);
+	btnBashBack->setVisible(false);
+	btnHold->setVisible(false);
+	btnPick->setVisible(false);
+	btnForward->setVisible(false);
+	btnWin->setVisible(false);
+	btnDropWin->setVisible(false);
+	btnPenet->setVisible(false);
+	btnDropPenet->setVisible(false);
+	btnWin->stopAllActions();
+	btnDropWin->stopAllActions();
+	btnPenet->stopAllActions();
+	btnDropPenet->stopAllActions();
 	spDealCards.clear();
 	for (Node* n : vecStilts) {
 		n->setVisible(false);
