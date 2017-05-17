@@ -517,10 +517,14 @@ void Utils::connectZoneByIndex(int moneyType, int index)
 {
 	if (moneyType < 0 || moneyType >= zones.size())
 		moneyType = 0;
+	if (zones.size() == 0) {
+		return;
+	}
 	if (index < 0 || index >= zones[moneyType].size())
 		index = 0;
-	if (zones.size() == 0 || zones[moneyType].size() == 0)
-		goToLoginScene();
+	if (zones[moneyType].size() == 0) {
+		return;
+	}
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 	std::string host = zones[moneyType][index].ZoneIpIos;
 #else
