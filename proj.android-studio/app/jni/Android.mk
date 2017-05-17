@@ -16,6 +16,7 @@ LOCAL_SRC_FILES := hellocpp/main.cpp \
                    ../../../Classes/AppDelegate.cpp \
                    ../../../Classes/BaseScene.cpp \
                    ../../../Classes/EventHandler.cpp \
+                   ../../../Classes/GameLogger.cpp \
                    ../../../Classes/GameScene.cpp \
                    ../../../Classes/jnicall.cpp \
                    ../../../Classes/LoadScene.cpp \

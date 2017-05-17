@@ -5,6 +5,7 @@
 #include "Utils.h"
 #include "EventHandler.h"
 #include "Tracker.h"
+#include "GameLogger.h"
 
 using namespace cocos2d;
 using namespace std;
@@ -964,6 +965,9 @@ void MainScene::onDynamicConfigReceived()
 		//showWebView(Utils::getSingleton().dynamicConfig.PopupUrl);
 		btnEvent->setVisible(true);
 	}
+	GameLogger::getSingleton().setEnabled(Utils::getSingleton().dynamicConfig.Log);
+	GameLogger::getSingleton().setHost(Utils::getSingleton().dynamicConfig.LogHost);
+	GameLogger::getSingleton().setUser(Utils::getSingleton().userDataMe);
 }
 
 void MainScene::onDownloadedPlistTexture(int numb)

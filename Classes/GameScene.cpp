@@ -7,6 +7,7 @@
 #include "Utils.h"
 #include "EventHandler.h"
 #include "AudioEngine.h"
+#include "GameLogger.h"
 
 using namespace std;
 using namespace cocos2d;
@@ -1880,6 +1881,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 			myServerSlot = player.Index;
 			sfsIdMe = player.Info.SfsUserId;
 			playIdMe = player.Info.UserID;
+			playerMe = player;
 		}
 	}
 	if (myServerSlot == -1) {
@@ -1920,6 +1922,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 				if (player.Index == 0) {
 					spChuPhong->setVisible(true);
 					spChuPhong->setPosition(vecUserPos[index] + Vec2(50 * scaleScene.y, 0));
+					spChuPhong->setTag(player.Info.SfsUserId == sfsIdMe ? 1 : 0);
 				}
 				if (player.Info.SfsUserId == sfsIdMe) {
 					if (isAutoReady && !player.Ready) {
@@ -2238,6 +2241,7 @@ void GameScene::onChooseHost(unsigned char stilt1, unsigned char stilt2, unsigne
 void GameScene::onUserBash(BashData data)
 {
 	int index = userIndexs[data.UId];
+	GameLogger::getSingleton().logUserBash(data);
 	if (myServerSlot >= 0 && index == 0 && data.UId != sfsIdMe) {
 		disconnectToSync();
 		return;
@@ -2354,6 +2358,7 @@ void GameScene::onUserBash(BashData data)
 
 void GameScene::onUserBashBack(BashBackData data)
 {
+	GameLogger::getSingleton().logUserBashBack(data);
 	int index = userIndexs[data.UId];
 	if (myServerSlot >= 0 && index == 0 && data.UId != sfsIdMe) {
 		disconnectToSync();
@@ -2478,6 +2483,7 @@ void GameScene::onUserBashBack(BashBackData data)
 
 void GameScene::onUserHold(HoldData data)
 {
+	GameLogger::getSingleton().logUserHold(data);
 	int index = userIndexs[data.UId];
 	if (myServerSlot >= 0 && index == 0 && data.UId != sfsIdMe) {
 		index = userIndexs[data.TurnId];
@@ -2601,6 +2607,7 @@ void GameScene::onUserHold(HoldData data)
 
 void GameScene::onUserPick(PickData data)
 {
+	GameLogger::getSingleton().logUserPick(data);
 	int index = userIndexs[data.UId];
 	if (myServerSlot >= 0 && index == 0 && data.UId != sfsIdMe) {
 		disconnectToSync();
@@ -2699,6 +2706,7 @@ void GameScene::onUserPick(PickData data)
 
 void GameScene::onUserPenet(PenetData data)
 {
+	GameLogger::getSingleton().logUserPenet(data);
 	int index = userIndexs[data.UId];
 	if (myServerSlot >= 0 && index == 0 && data.UId != sfsIdMe) {
 		disconnectToSync();
@@ -2814,6 +2822,7 @@ void GameScene::onUserPenet(PenetData data)
 
 void GameScene::onUserForward(ForwardData data)
 {
+	GameLogger::getSingleton().logUserForward(data);
 	if (data.UId == sfsIdMe) {
 		btnHold->setVisible(false);
 		btnPick->setVisible(false);
@@ -2940,6 +2949,9 @@ void GameScene::onCrestResponse(CrestResponseData data)
 
 void GameScene::onEndMatch(EndMatchData data)
 {
+	if (spChuPhong->getTag() == 1) {
+		GameLogger::getSingleton().logEndMatch(data);
+	}
 	if (state == NONE || state == READY) return;
 	state = ENDING;
 	this->endMatchData = data;
@@ -2985,6 +2997,9 @@ void GameScene::onEndMatchMoney(EndMatchMoneyData data)
 
 void GameScene::onEndMatchTie(std::vector<unsigned char> stiltCards)
 {
+	if (spChuPhong->getTag() == 1) {
+		GameLogger::getSingleton().logEndMatchTie();
+	}
 	if (state == NONE || state == READY) return;
 	state = ENDING;
 	btnXemNoc->setVisible(false);
@@ -3063,6 +3078,8 @@ void GameScene::onTableResponse(GameTableData data)
 	isU411 = data.IsU411;
 	string roomName = Utils::getSingleton().currentRoomName;
 	string tableId = roomName.substr(roomName.find_last_of("b") + 1, roomName.length()).c_str();
+	bool isQuan = Utils::getSingleton().moneyType == 1;
+	GameLogger::getSingleton().setRoom(isQuan, data.Money, tableId);
 
 	Label* lbName = (Label*)tableInfo->getChildByName("lbname");
 	Label* lbBet = (Label*)tableInfo->getChildByName("lbbet");
@@ -3071,7 +3088,7 @@ void GameScene::onTableResponse(GameTableData data)
 	lbName->setString(Utils::getSingleton().getStringForKey("table") + " " + tableId);
 	lbBet->setString(Utils::getSingleton().formatMoneyWithComma(data.Money));
 	lbType->setString(Utils::getSingleton().getStringForKey(data.IsU411 ? "win_411" : "win_free") + ", " + to_string((int)timeTurn) + "s");
-	if (Utils::getSingleton().moneyType == 1) {
+	if (isQuan) {
 		icMoney->initWithSpriteFrameName("icon_gold.png");
 	} else {
 		icMoney->initWithSpriteFrameName("icon_silver.png");
@@ -3196,6 +3213,7 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 			myServerSlot = player.Index;
 			sfsIdMe = player.Info.SfsUserId;
 			playIdMe = player.Info.UserID;
+			playerMe = player;
 		}
 	}
 	if (myServerSlot < 0) {
@@ -3323,6 +3341,7 @@ void GameScene::onGameSpectatorDataResponse(std::vector<PlayerData> spectators)
 			if (player.Info.UserID == Utils::getSingleton().userDataMe.UserID) {
 				sfsIdMe = player.Info.SfsUserId;
 				playIdMe = player.Info.UserID;
+				playerMe = player;
 			}
 		}
 	}

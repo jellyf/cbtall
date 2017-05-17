@@ -186,16 +186,16 @@ private:
 	cocos2d::Texture2D* textureHu;
 	cocos2d::Texture2D* textureLight;
 
-	char timeStart;
-	char timeDeal;
-	char timeChooseHost;
-	char timeTurn;
-	char myServerSlot;
-	char chosenStilt = -1;
-	char chosenStiltHost = -1;
-	char chosenHost = -1;
-	char chosenCard = -1;
-	char noaction = 0;
+	int timeStart;
+	int timeDeal;
+	int timeChooseHost;
+	int timeTurn;
+	int myServerSlot;
+	int chosenStilt = -1;
+	int chosenStiltHost = -1;
+	int chosenHost = -1;
+	int chosenCard = -1;
+	int noaction = 0;
 	int soundDealId = -1;
 	int waitAction = -1;
 	float cardSpeed = .35f;
@@ -219,6 +219,7 @@ private:
 	CardHandData myCardHand;
 	EndMatchData endMatchData;
 	EndMatchMoneyData winMoneyData;
+	PlayerData playerMe;
 	std::vector<PlayerData> vecPlayers;
 	std::vector<PlayerData> vecSpectators;
 	//std::string tmpMessage;
