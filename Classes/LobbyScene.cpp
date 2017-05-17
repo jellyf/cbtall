@@ -258,6 +258,13 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 		height = scrollListTable->getContentSize().height;
 	scrollListTable->setInnerContainerSize(Size(820, height));
 
+	auto vecChildren = scrollListTable->getChildren();
+	for (Node* c : vecChildren) {
+		if (c->getTag() > data.Size) {
+			c->setVisible(false);
+		}
+	}
+
 	bool isSolo = Utils::getSingleton().isSoloGame();
 	string zone = Utils::getSingleton().getCurrentZoneName();
 	if (zone.length() > 0) {
@@ -285,7 +292,7 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 			isNewBtn = true;
 			string tbName = isSolo ? "table_SoLo.png" : "table_" + zone + ".png";
 			btn = ui::Button::create(tbName, "", "", ui::Widget::TextureResType::PLIST);
-			btn->setPosition(Vec2(100 + (i % 4) * 210, height - 70 - (i / 4) * 170));
+			//btn->setPosition(Vec2(100 + (i % 4) * 210, height - 70 - (i / 4) * 170));
 			btn->setTag(i + 1);
 			btn->setScale(.8f);
 			scrollListTable->addChild(btn);
@@ -347,6 +354,8 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 			lbMoney->setName("lbmoney");
 			btn->addChild(lbMoney);
 		}
+		btn->setVisible(true);
+		btn->setPosition(Vec2(100 + (i % 4) * 210, height - 70 - (i / 4) * 170));
 		addTouchEventListener(btn, [=]() {
 			/*long requiredMoney = data.Money * 20;
 			if ((Utils::getSingleton().moneyType == 1 && Utils::getSingleton().userDataMe.MoneyReal < requiredMoney)
