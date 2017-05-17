@@ -2714,19 +2714,16 @@ void GameScene::onUserPenet(PenetData data)
 	}
 	if (runningSpCard == NULL) {
 		for (Sprite* sp : runningCards) {
-			int cid = atoi(sp->getName().c_str());
-			if (sp != NULL && (cid == data.CardId || cid == 256 - data.CardId)) {
-				runningSpCard = sp;
-				break;
+			if (sp != NULL) {
+				int cid = atoi(sp->getName().c_str());
+				if (cid == data.CardId || cid == 256 - data.CardId) {
+					runningSpCard = sp;
+					break;
+				}
 			}
 		}
 	}
 	if (runningSpCard == NULL) {
-		/*runningSpCard = getCardSprite(data.CardId);
-		runningSpCard->setRotation(0);
-		runningSpCard->setScale(cardScaleTable);
-		runningSpCard->setAnchorPoint(Vec2(.5f, .5f));
-		runningSpCard->setPosition(lbCardNoc->getParent()->getPosition());*/
 		disconnectToSync();
 		return;
 	}
@@ -2949,9 +2946,7 @@ void GameScene::onCrestResponse(CrestResponseData data)
 
 void GameScene::onEndMatch(EndMatchData data)
 {
-	if (spChuPhong->getTag() == 1) {
-		GameLogger::getSingleton().logEndMatch(data);
-	}
+	GameLogger::getSingleton().logEndMatch(data);
 	if (state == NONE || state == READY) return;
 	state = ENDING;
 	this->endMatchData = data;
@@ -2997,9 +2992,7 @@ void GameScene::onEndMatchMoney(EndMatchMoneyData data)
 
 void GameScene::onEndMatchTie(std::vector<unsigned char> stiltCards)
 {
-	if (spChuPhong->getTag() == 1) {
-		GameLogger::getSingleton().logEndMatchTie();
-	}
+	GameLogger::getSingleton().logEndMatchTie();
 	if (state == NONE || state == READY) return;
 	state = ENDING;
 	btnXemNoc->setVisible(false);
