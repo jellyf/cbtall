@@ -26,6 +26,11 @@ void SFSRequest::InitSmartFox()
 	SFSConnector::getSingleton().InitializeSmartFox();
 }
 
+bool SFSRequest::IsConnected()
+{
+	return SFSConnector::getSingleton().IsConnected();
+}
+
 void SFSRequest::Connect()
 {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)

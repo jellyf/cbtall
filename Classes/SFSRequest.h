@@ -18,6 +18,7 @@ public:
 	std::function<void(std::string url, cocos2d::Texture2D*)> onLoadTextureResponse = NULL;
 
 	void InitSmartFox();
+	bool IsConnected();
 	void Connect();
 	void Connect(std::string host, int port);
 	void Disconnect();

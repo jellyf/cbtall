@@ -284,6 +284,12 @@ void SFSConnector::OnSmartFoxEvent(unsigned long long ptrContext, boost::shared_
 //	}
 //}
 
+bool SFSConnector::IsConnected()
+{
+	if (!mSmartFox) return false;
+	return mSmartFox->IsConnected();
+}
+
 void SFSConnector::Connect(std::string host, int port)
 {
 	//if (!mSmartFox) {

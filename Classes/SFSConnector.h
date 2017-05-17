@@ -29,6 +29,7 @@ public:
 	static void OnPublicMessage(unsigned long long ptrContext, boost::shared_ptr<Sfs2X::Core::BaseEvent> ptrEvent);
 	static void OnPingPong(unsigned long long ptrContext, boost::shared_ptr<Sfs2X::Core::BaseEvent> ptrEvent);*/
 
+	bool IsConnected();
 	void Connect(std::string host, int port);
 	void Disconnect();
 	void ProcessEvents();

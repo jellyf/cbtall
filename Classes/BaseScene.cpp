@@ -282,8 +282,12 @@ void BaseScene::showWaiting(int time)
 		if (isWaiting) {
 			hideWaiting();
 			showPopupNotice(Utils::getSingleton().getStringForKey("connection_failed"), [=]() {
-				isBackToLogin = true;
-				SFSRequest::getSingleton().Disconnect();
+				if (SFSRequest::getSingleton().IsConnected()) {
+					isBackToLogin = true;
+					SFSRequest::getSingleton().Disconnect();
+				} else {
+					Utils::getSingleton().goToLoginScene();
+				}
 			}, false);
 		}
 	});
