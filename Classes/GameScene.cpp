@@ -1158,6 +1158,12 @@ void GameScene::dealCards()
 
 void GameScene::showMyCards(bool runEffect)
 {
+	for (Sprite* sp : spHandCards) {
+		sp->setVisible(false);
+		sp->stopAllActions();
+	}
+	spHandCards.clear();
+
 	int k = 0;
 	for (int i = 0; i < myCardHand.ThienKhai.size(); i++) {
 		for (int j = 0; j < 4; j++) {
@@ -1269,11 +1275,6 @@ void GameScene::disconnectToSync()
 
 void GameScene::syncHandCard(CardHandData cardHand)
 {
-	for (Sprite* sp : spHandCards) {
-		sp->setVisible(false);
-		sp->stopAllActions();
-	}
-	spHandCards.clear();
 	myCardHand = cardHand;
 	showMyCards(false);
 }
