@@ -3469,6 +3469,11 @@ void GameScene::reset()
 		n->setVisible(false);
 		n->removeAllChildren();
 	}
+	for (Sprite* sp : spHandCards) {
+		sp->setVisible(false);
+		sp->stopAllActions();
+	}
+	spHandCards.clear();
 	RoomData roomData;
 	roomData.TimeChooseHost = timeChooseHost;
 	roomData.TimeDeal = timeDeal;
