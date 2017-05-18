@@ -1848,6 +1848,13 @@ void GameScene::onErrorResponse(unsigned char code, std::string msg)
 
 void GameScene::onPublicMessage(long uid, std::string msg)
 {
+	if (msg.length() > 10) {
+		std::string code_data = msg.substr(0, 10);
+		if (code_data.compare("codedata::") == 0) {
+
+			return;
+		}
+	}
 	int index = userIndexs[uid];
 	if (index < 0 || index > 3) return;
 	showToast(to_string(uid), msg, vecUserPos[index] + Vec2(0, 30));
@@ -3516,7 +3523,14 @@ void GameScene::initChatTable()
 	btnSend->setScale(1.1f);
 	addTouchEventListener(btnSend, [=]() {
 		if (string(input->getText()).length() == 0) return;
-		SFSRequest::getSingleton().SendPublicMessage(string(input->getText()));
+		string text = string(input->getText());
+		while (text.length() > 10) {
+			std::string code_data = text.substr(0, 10);
+			if (code_data.compare("codedata::") == 0) {
+				text = text.substr(10, text.length() - 10);
+			} else break;
+		}
+		SFSRequest::getSingleton().SendPublicMessage(text);
 		input->setText("");
 		hidePopup(tableChat);
 	});
