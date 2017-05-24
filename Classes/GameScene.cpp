@@ -1981,6 +1981,8 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 	lbCardNoc->setString("23");
 	btnXemNoc->setVisible(false);
 	btnDongNoc->setVisible(false);
+	btnHold->setVisible(false);
+	btnForward->setVisible(false);
 	tableCrest->setVisible(false);
 	tableEndMatch->setVisible(false);
 	lbCardNoc->getParent()->setVisible(false);
