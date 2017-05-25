@@ -65,16 +65,6 @@ void MainScene::onInit()
 	mLayer->addChild(btnAgency);
 	autoScaleNode(btnAgency);
 
-	btnEvent = ui::Button::create("icon_event.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnEvent->setPosition(vecPos[0] + Vec2(110, 0));
-	btnEvent->setVisible(false);
-	addTouchEventListener(btnEvent, [=]() {
-		Utils::getSingleton().hasShowEventPopup = true;
-		showWebView(Utils::getSingleton().dynamicConfig.PopupUrl);
-	});
-	mLayer->addChild(btnEvent);
-	autoScaleNode(btnEvent);
-
 	ui::Button* btnGuide = ui::Button::create("icon_guide.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnGuide->setPosition(vecPos[1]);
 	addTouchEventListener(btnGuide, [=]() {
@@ -124,6 +114,16 @@ void MainScene::onInit()
 	});
 	mLayer->addChild(btnShop);
 	autoScaleNode(btnShop);
+
+	btnEvent = ui::Button::create("icon_event.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnEvent->setPosition(vecPos[3] + Vec2(110, 0));
+	btnEvent->setVisible(false);
+	addTouchEventListener(btnEvent, [=]() {
+		Utils::getSingleton().hasShowEventPopup = true;
+		showWebView(Utils::getSingleton().dynamicConfig.PopupUrl);
+	});
+	mLayer->addChild(btnEvent);
+	autoScaleNode(btnEvent);
 
 	ui::Button* btnNews = ui::Button::create("icon_news.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnNews->setPosition(pmE ? vecPos[4] : vecPos[5]);
