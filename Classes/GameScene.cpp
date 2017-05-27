@@ -1996,6 +1996,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 	for (Node* n : vecMenuBtns) {
 		n->setLocalZOrder(constant::GAME_ZORDER_BUTTON - i++);
 	}*/
+	runningSpCard = NULL;
 	spHandCards.clear();
 	chosenCuocs.clear();
 	chosenCuocNumbs.clear();
