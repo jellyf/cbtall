@@ -255,6 +255,7 @@ struct GameConfig
 	bool canUpdate;
 	bool invite;
     bool versionIOS71;
+    bool versionIOS71ktc;
 	int port;
 	int websocket;
 	int version;
