@@ -312,6 +312,14 @@ void SFSConnector::Disconnect()
 	}
 }
 
+void SFSConnector::Dispose()
+{
+    CCLOG("SFSConnector::Dispose");
+    if (mSmartFox) {
+        mSmartFox->Dispose();
+    }
+}
+
 void SFSConnector::ProcessEvents()
 {
 	if (mSmartFox) {

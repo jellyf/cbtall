@@ -233,6 +233,8 @@ void BaseScene::onApplicationDidEnterBackground()
 {
 	spNetwork->pause();
 	lbNetwork->pause();
+    isPauseApp = true;
+    SFSRequest::getSingleton().Disconnect();
 }
 
 void BaseScene::onApplicationWillEnterForeground()
@@ -635,6 +637,10 @@ void BaseScene::setMoneyType(int type)
 
 void BaseScene::handleClientDisconnectionReason(std::string reason)
 {
+    if(isPauseApp){
+        isPauseApp = false;
+        reason = constant::DISCONNECTION_REASON_SYNC;
+    }
 	if (isBackToLogin) {
 		Utils::getSingleton().goToLoginScene();
 		return;
@@ -655,18 +661,22 @@ void BaseScene::handleClientDisconnectionReason(std::string reason)
 	if (isOverlapLogin) {
 		reason = "overlap_login";
 	}
-	showPopupNotice(Utils::getSingleton().getStringForKey("disconnection_" + reason), [=]() {
-		if (reason.compare(constant::DISCONNECTION_REASON_UNKNOWN) == 0
-			|| reason.compare(constant::DISCONNECTION_REASON_IDLE) == 0) {
-			isReconnecting = true;
-			SFSGEvent::getSingleton().Reset();
-			Utils::getSingleton().reconnect();
-			showWaiting();
-			Utils::getSingleton().timeStartReconnect = Utils::getSingleton().getCurrentSystemTimeInSecs();
-		} else {
-			Utils::getSingleton().goToLoginScene();
-		}
-	}, false);
+    if(!isShowDisconnected){
+        isShowDisconnected = true;
+        showPopupNotice(Utils::getSingleton().getStringForKey("disconnection_" + reason), [=]() {
+            isShowDisconnected = false;
+            if (reason.compare(constant::DISCONNECTION_REASON_UNKNOWN) == 0
+                || reason.compare(constant::DISCONNECTION_REASON_IDLE) == 0) {
+                isReconnecting = true;
+                SFSGEvent::getSingleton().Reset();
+                Utils::getSingleton().reconnect();
+                showWaiting();
+                Utils::getSingleton().timeStartReconnect = Utils::getSingleton().getCurrentSystemTimeInSecs();
+            } else {
+                Utils::getSingleton().goToLoginScene();
+            }
+        }, false);
+    }
 }
 
 void BaseScene::addTouchEventListener(ui::Button* btn, std::function<void()> func, bool isNew)

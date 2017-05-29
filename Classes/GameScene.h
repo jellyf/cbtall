@@ -23,7 +23,8 @@ public:
 	virtual void editBoxReturn(cocos2d::ui::EditBox* editBox);
 	virtual bool onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* _event);
 
-	void onApplicationDidEnterBackground();
+	virtual void onApplicationDidEnterBackground();
+    virtual void onApplicationWillEnterForeground();
 
 	void onConnectionFailed();
 	void onConnectionLost(std::string reason);
@@ -201,6 +202,7 @@ private:
 	float cardSpeed = .35f;
 	float cardScaleTable = .85f;
 	float cardScaleTableNew = .9f;
+    double pauseTimeInSecs = 0;
 	long playIdMe;
 	long sfsIdMe;
 	bool isBatBao;

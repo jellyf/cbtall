@@ -8,6 +8,7 @@
 #include "EventHandler.h"
 #include "AudioEngine.h"
 #include "GameLogger.h"
+#include "SFSGEvent.h"
 
 using namespace std;
 using namespace cocos2d;
@@ -802,7 +803,8 @@ void GameScene::onInit()
 
 void GameScene::registerEventListenner()
 {
-	EventHandler::getSingleton().onApplicationDidEnterBackground = std::bind(&GameScene::onApplicationDidEnterBackground, this);
+    EventHandler::getSingleton().onApplicationDidEnterBackground = std::bind(&GameScene::onApplicationDidEnterBackground, this);
+    EventHandler::getSingleton().onApplicationWillEnterForeground = std::bind(&GameScene::onApplicationWillEnterForeground, this);
 	EventHandler::getSingleton().onPingPong = std::bind(&GameScene::onPingPong, this, std::placeholders::_1);
 	EventHandler::getSingleton().onConnected = std::bind(&GameScene::onConnected, this);
 	EventHandler::getSingleton().onConnectionFailed = std::bind(&GameScene::onConnectionFailed, this);
@@ -1061,13 +1063,34 @@ bool GameScene::onTouchBegan(Touch * touch, Event * _event)
 
 void GameScene::onApplicationDidEnterBackground()
 {
-	BaseScene::onApplicationDidEnterBackground();
+	// Do NOT call BaseScene::onApplicationDidEnterBackground();
+    spNetwork->pause();
+    lbNetwork->pause();
+    pauseTimeInSecs = Utils::getSingleton().getCurrentSystemTimeInSecs();
 	if (state != NONE && state != READY && myServerSlot >= 0) {
 		string username = Utils::getSingleton().userDataMe.Name;
 		double timeSecs = Utils::getSingleton().getCurrentSystemTimeInSecs();
 		UserDefault::getInstance()->setDoubleForKey((constant::KEY_RECONNECT_TIME + username).c_str(), timeSecs + 300);
 		UserDefault::getInstance()->setIntegerForKey((constant::KEY_RECONNECT_ZONE_INDEX + username).c_str(), Utils::getSingleton().getCurrentZoneIndex());
 	}
+}
+
+void GameScene::onApplicationWillEnterForeground()
+{
+    // Do NOT call BaseScene::onApplicationWillEnterForeground();
+    spNetwork->resume();
+    lbNetwork->resume();
+    double curTime = Utils::getSingleton().getCurrentSystemTimeInSecs();
+    float pauseTime = curTime - pauseTimeInSecs;
+    if(pauseTime > 120){
+        float timeWait = pauseTime / 40;
+        showWaiting(timeWait + 10);
+        SFSGEvent::getSingleton().DoWork(false);
+        this->delayFunction(this, timeWait, [=](){
+            SFSGEvent::getSingleton().DoWork(true);
+            this->disconnectToSync();
+        });
+    }
 }
 
 void GameScene::dealCards()
@@ -1270,7 +1293,11 @@ void GameScene::disconnectToSync()
 
 	isSynchronizing = true;
 	showWaiting();
-	SFSRequest::getSingleton().Disconnect();
+    if(SFSRequest::getSingleton().IsConnected()){
+        SFSRequest::getSingleton().Disconnect();
+    }else{
+        onConnectionLost("unknown");
+    }
 }
 
 void GameScene::syncHandCard(CardHandData cardHand)
@@ -1757,6 +1784,7 @@ void GameScene::onConnectionLost(std::string reason)
 	}*/
 	if (isSynchronizing) {
 		isSynchronizing = false;
+        SFSGEvent::getSingleton().DoWork(true);
 		handleClientDisconnectionReason(constant::DISCONNECTION_REASON_SYNC);
 	} else {
 		handleClientDisconnectionReason(reason);

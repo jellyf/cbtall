@@ -32,6 +32,7 @@ public:
 	bool IsConnected();
 	void Connect(std::string host, int port);
 	void Disconnect();
+    void Dispose();
 	void ProcessEvents();
 	void LoginZone(std::string username, std::string password, std::string zone);
 	void LogoutZone();

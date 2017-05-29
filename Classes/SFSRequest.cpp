@@ -51,6 +51,11 @@ void SFSRequest::Disconnect()
 	SFSConnector::getSingleton().Disconnect();
 }
 
+void SFSRequest::Dispose()
+{
+    SFSConnector::getSingleton().Dispose();
+}
+
 void SFSRequest::ProcessEvents()
 {
 	SFSConnector::getSingleton().ProcessEvents();

@@ -4,7 +4,7 @@
 #include "SFSRequest.h"
 #include "Utils.h"
 
-#define MAX_QUEUE 20
+#define MAX_QUEUE 100
 
 template<> SFSGEvent* SingLeton<SFSGEvent>::mSingleton = 0;
 SFSGEvent* SFSGEvent::getSingletonPtr(void)
@@ -61,8 +61,14 @@ void SFSGEvent::ProcessEvents()
 	}
 }
 
+void SFSGEvent::DoWork(bool work)
+{
+    isWork = work;
+}
+
 void SFSGEvent::OnSFSEvent(unsigned long long ptrContext, boost::shared_ptr<Sfs2X::Core::BaseEvent> ptrEvent)
 {
+    if(!isWork) return;
 	eventQueue[sizeQueue].first = *ptrEvent->Type();
 	eventQueue[sizeQueue].second = *ptrEvent->Params();
 	sizeQueue++;

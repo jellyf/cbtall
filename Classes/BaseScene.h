@@ -24,8 +24,8 @@ public:
 	virtual void onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* _event);
 	virtual void onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* _event);
 
-	void onApplicationDidEnterBackground();
-	void onApplicationWillEnterForeground();
+	virtual void onApplicationDidEnterBackground();
+	virtual void onApplicationWillEnterForeground();
 
 	void onPingPong(long timems);
 	void onUserDataMeResponse();
@@ -132,6 +132,8 @@ protected:
 	int tmpIndex;
 
 private:
+    bool isPauseApp = false;
+    bool isShowDisconnected = false;
 	std::vector<RankWinData> listRankWin;
 	std::vector<std::vector<RankData>> listRanks;
 	cocos2d::Vector<Node*> vecPopupNotices;
