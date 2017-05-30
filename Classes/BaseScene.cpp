@@ -665,16 +665,21 @@ void BaseScene::handleClientDisconnectionReason(std::string reason)
         isShowDisconnected = true;
         showPopupNotice(Utils::getSingleton().getStringForKey("disconnection_" + reason), [=]() {
             isShowDisconnected = false;
-            if (reason.compare(constant::DISCONNECTION_REASON_UNKNOWN) == 0
-                || reason.compare(constant::DISCONNECTION_REASON_IDLE) == 0) {
-                isReconnecting = true;
-                SFSGEvent::getSingleton().Reset();
-                Utils::getSingleton().reconnect();
-                showWaiting();
-                Utils::getSingleton().timeStartReconnect = Utils::getSingleton().getCurrentSystemTimeInSecs();
-            } else {
-                Utils::getSingleton().goToLoginScene();
-            }
+			if (SFSRequest::getSingleton().IsConnected()) {
+				isPauseApp = true;
+				SFSRequest::getSingleton().Disconnect();
+			} else {
+				if (reason.compare(constant::DISCONNECTION_REASON_UNKNOWN) == 0
+					|| reason.compare(constant::DISCONNECTION_REASON_IDLE) == 0) {
+					showWaiting();
+					isReconnecting = true;
+					SFSGEvent::getSingleton().Reset();
+					Utils::getSingleton().reconnect();
+					Utils::getSingleton().timeStartReconnect = Utils::getSingleton().getCurrentSystemTimeInSecs();
+				} else {
+					Utils::getSingleton().goToLoginScene();
+				}
+			}
         }, false);
     }
 }
