@@ -401,7 +401,7 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	config.canUpdate = d["updatenow"].GetBool();
 	config.inapp = d["inapp"].GetString();
     config.invite = d["invite"].GetBool();
-    config.versionIOS71ktc = false;//d["versionIOS71ktc"].GetBool();
+    config.versionIOS71ktc = d["versionIOS71ktc"].GetBool();
 		
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
     if (config.versionIOS71ktc) {
