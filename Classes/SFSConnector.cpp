@@ -295,8 +295,8 @@ void SFSConnector::Connect(std::string host, int port)
 	//if (!mSmartFox) {
 		SFSConnector::getSingleton().InitializeSmartFox();
 	//}
-	CCLOG("Connect to SmartFox: %s %d", host.c_str(), port);
-	mSmartFox->ForceIPv6(useIPv6);
+    CCLOG("Connect to SmartFox: %s %d :: ipv6: %s", host.c_str(), port, useIPv6 ? "true" : "false");
+	//mSmartFox->ForceIPv6(useIPv6);
 	try {
 		mSmartFox->Connect(host.c_str(), port);
 	} catch (exception e) {
