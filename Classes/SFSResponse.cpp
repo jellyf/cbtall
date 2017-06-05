@@ -995,23 +995,47 @@ void SFSResponse::onGameUserReconnectResponse(boost::shared_ptr<ISFSObject> isfs
 
 void SFSResponse::onShopHistoryResponse(boost::shared_ptr<ISFSObject> isfsObject)
 {
-	long numb;
 	std::vector<ShopHistoryData> list;
 	boost::shared_ptr<ByteArray> byteArray;
-	byteArray = isfsObject->GetByteArray("dd");
-	while (byteArray->Position() < byteArray->Length()) {
-		ShopHistoryData data;
-		byteArray->ReadInt(data.Id);
-		byteArray->ReadInt(data.ItemId);
-		byteArray->ReadInt(data.UserId);
-		byteArray->ReadUTF(data.Name);
-		byteArray->ReadInt(data.Price);
-		byteArray->ReadByte(data.Status);
-		byteArray->ReadUTF(data.CreateDate);
-		byteArray->ReadUTF(data.UpdateDate);
-		byteArray->ReadUTF(data.Content);
-		list.push_back(data);
-		//CCLOG("%d %d %s %d %d %s %s %s", data.Id, data.ItemId, data.Name.c_str(), data.Price, data.Status, data.CreateDate.c_str(), data.Content);
+	if (isfsObject->ContainsKey("dd")) {
+		byteArray = isfsObject->GetByteArray("dd");
+		while (byteArray->Position() < byteArray->Length()) {
+			ShopHistoryData data;
+			byteArray->ReadInt(data.Id);
+			byteArray->ReadInt(data.ItemId);
+			byteArray->ReadInt(data.UserId);
+			byteArray->ReadUTF(data.Name);
+			byteArray->ReadInt(data.Price);
+			byteArray->ReadByte(data.Status);
+			byteArray->ReadUTF(data.CreateDate);
+			byteArray->ReadUTF(data.UpdateDate);
+			byteArray->ReadUTF(data.Content);
+			list.push_back(data);
+			//CCLOG("%d %d %s %d %d %s %s %s", data.Id, data.ItemId, data.Name.c_str(), data.Price, data.Status, data.CreateDate.c_str(), data.Content);
+		}
+	} else {
+		long numb;
+		unsigned char id, itemid, price;
+		byteArray = isfsObject->GetByteArray("d");
+		byteArray->ReadInt(numb);
+		while (byteArray->Position() < byteArray->Length()) {
+			ShopHistoryData data;
+			byteArray->ReadByte(id);
+			byteArray->ReadByte(itemid);
+			byteArray->ReadInt(data.UserId);
+			byteArray->ReadUTF(data.Name);
+			byteArray->ReadByte(price);
+			byteArray->ReadByte(data.Status);
+			byteArray->ReadUTF(data.CreateDate);
+			byteArray->ReadUTF(data.UpdateDate);
+			byteArray->ReadUTF(data.Content);
+
+			data.Id = id;
+			data.ItemId = itemid;
+			data.Price = price;
+			list.push_back(data);
+			//CCLOG("%d %d %s %d %d %s %s %s", data.Id, data.ItemId, data.Name.c_str(), data.Price, data.Status, data.CreateDate.c_str(), data.Content);
+		}
 	}
 	if (EventHandler::getSingleton().onShopHistoryDataSFSResponse != NULL) {
 		EventHandler::getSingleton().onShopHistoryDataSFSResponse(list);
