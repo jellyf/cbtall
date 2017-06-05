@@ -997,15 +997,15 @@ void SFSResponse::onShopHistoryResponse(boost::shared_ptr<ISFSObject> isfsObject
 {
 	long numb;
 	std::vector<ShopHistoryData> list;
-	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
-	byteArray->ReadInt(numb);
+	boost::shared_ptr<ByteArray> byteArray;
+	byteArray = isfsObject->GetByteArray("dd");
 	while (byteArray->Position() < byteArray->Length()) {
 		ShopHistoryData data;
-		byteArray->ReadByte(data.Id);
-		byteArray->ReadByte(data.ItemId);
+		byteArray->ReadInt(data.Id);
+		byteArray->ReadInt(data.ItemId);
 		byteArray->ReadInt(data.UserId);
 		byteArray->ReadUTF(data.Name);
-		byteArray->ReadByte(data.Price);
+		byteArray->ReadInt(data.Price);
 		byteArray->ReadByte(data.Status);
 		byteArray->ReadUTF(data.CreateDate);
 		byteArray->ReadUTF(data.UpdateDate);

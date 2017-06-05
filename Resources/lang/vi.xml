@@ -159,5 +159,6 @@
 	<key>ban_muon_dang_xuat</key><string>Bạn muốn trở về đăng nhập?</string>
 	<key>ban_muon_thoat_game</key><string>Bạn muốn thoát Kính Tứ Chi?</string>
 	<key>ban_muon_da_nguoi_nay_ra</key><string>Bạn muốn đá người này ra khỏi bàn chơi?</string>
+	<key>ban_muon_huy_don_hang_nay</key><string>Bạn muốn hủy đơn hàng này?</string>
 </dict>
 </plist>

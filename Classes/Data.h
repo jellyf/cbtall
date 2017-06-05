@@ -317,10 +317,10 @@ struct UserReconnectData
 
 struct ShopHistoryData
 {
+	long Id;
 	long UserId;
-	unsigned char Id;
-	unsigned char ItemId;
-	unsigned char Price;
+	long ItemId;
+	long Price;
 	unsigned char Status;
 	std::string Name;
 	std::string CreateDate;

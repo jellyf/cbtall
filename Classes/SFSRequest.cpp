@@ -267,6 +267,13 @@ void SFSRequest::RequestVerifyFBInvite(std::string token)
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::VERIFY_FB_INVITE, parameters);
 }
 
+void SFSRequest::RequestCancelItemShop(int itemId)
+{
+	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+	parameters->PutInt("1", itemId);
+	SFSConnector::getSingleton().SendExtensionRequest(cmd::CANCEL_ITEM_SHOP, parameters);
+}
+
 void SFSRequest::RequestRegister(std::string username, std::string password, std::string email)
 {
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());

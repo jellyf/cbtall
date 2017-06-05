@@ -53,6 +53,7 @@ public:
 	void RequestPayment(std::string token, bool isQuan);
 	void RequestCofferHistory();
 	void RequestVerifyFBInvite(std::string token);
+	void RequestCancelItemShop(int itemId);
 
 	void RequestGameReady();
 	void RequestGameChooseStilt(int stilt);
