@@ -73,6 +73,9 @@ private:
 	void initTableInfo();
 	void initCofferEffects();
 
+	bool bashCardDown(int index, int cardId, bool isMe);
+	void autoBash(int card, int group);
+
 	void onUserBashToMe(BashData data);
 	void onUserBashBackToMe(BashBackData data);
 	void onUserPickToMe(PickData data);
@@ -81,6 +84,7 @@ private:
 	void dropWin();
     void dropPenet();
 	void disconnectToSync();
+	void processWaitAction();
 	void syncHandCard(CardHandData cardHand);
 	void showMyCards(bool runEffect = true);
 	void runTimeWaiting(long uid, float time);
@@ -101,6 +105,7 @@ private:
 	void beatenNodeAndHide(cocos2d::Node* node, float scale1, float scale2, float timeToBeaten, float timeToHide);
 	bool isCardHandDataSync(CardHandData cardHand);
 	int getCardName(unsigned char cardId);
+	int getNextPlayerIndexFrom(int index);
 	std::vector<int>& getCardCount(CardHandData cardHand);
 	cocos2d::Sprite* getCardSprite(int id);
 	cocos2d::Vec2 getScaleScenePosition(cocos2d::Vec2 pos);
@@ -216,6 +221,7 @@ private:
 	bool isSolo = false;
 	bool isAutoReady = false;
 	bool isSynchronizing = false;
+	bool isAutoBash = false;
 	GameState state;
 	StartGameData startGameData;
 	CardHandData myCardHand;

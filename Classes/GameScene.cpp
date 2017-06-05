@@ -327,23 +327,8 @@ void GameScene::onInit()
 		progressTimer->stopAllActions();
 		noaction = 0;
 
-		/*BashData data;
-		data.UId = sfsIdMe;
-		data.TurnId = 0;
-		data.CanPenet = false;
-		data.CanPenetWin = false;
-		data.CardId = card;
-
-		data.CardHand = myCardHand;
-		for (int i = 0; i < 4; i++) {
-			if (data.CardHand.Chan[i] == card) {
-				data.CardHand.Chan.erase(data.CardHand.Chan.begin() + i);
-				break;
-			}
-		}
-		data.CardHand.Que.push_back(card);
-
-		onUserBash(data);*/
+		//autoBash(card, group);
+		btnBash->setVisible(false);
 	});
 	mLayer->addChild(btnBash, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(btnBash);
@@ -368,7 +353,13 @@ void GameScene::onInit()
 		int card = numb % 1000;
 		int group = numb / 1000;
 		SFSRequest::getSingleton().RequestGameBashBack(card, group);
+
+		progressTimer->setVisible(false);
+		progressTimer->stopAllActions();
 		noaction = 0;
+
+		//autoBash(card, group);
+		btnBashBack->setVisible(false);
 	});
 	mLayer->addChild(btnBashBack, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(btnBashBack);
@@ -1243,16 +1234,7 @@ void GameScene::dropWin()
 	btnWin->setVisible(false);
 	btnDropWin->setVisible(false);
 	noaction = 0;
-
-	if (waitAction == constant::GAME_ACTION_BASH) {
-		btnPick->setVisible(true);
-		btnHold->setVisible(true);
-		waitAction = -1;
-	} else if (waitAction == constant::GAME_ACTION_PICK) {
-		btnForward->setVisible(true);
-		btnHold->setVisible(true);
-		waitAction = -1;
-	}
+	processWaitAction();
 }
 
 void GameScene::dropPenet()
@@ -1263,16 +1245,7 @@ void GameScene::dropPenet()
     btnPenet->setVisible(false);
     btnDropPenet->setVisible(false);
     noaction = 0;
-    
-    if (waitAction == constant::GAME_ACTION_BASH) {
-        btnPick->setVisible(true);
-        btnHold->setVisible(true);
-        waitAction = -1;
-    } else if (waitAction == constant::GAME_ACTION_PICK) {
-        btnForward->setVisible(true);
-        btnHold->setVisible(true);
-        waitAction = -1;
-    }
+	processWaitAction();
 }
 
 void GameScene::disconnectToSync()
@@ -1298,6 +1271,23 @@ void GameScene::disconnectToSync()
     }else{
         onConnectionLost("unknown");
     }
+}
+
+void GameScene::processWaitAction()
+{
+	if (waitAction == constant::GAME_ACTION_BASH) {
+		btnPick->setVisible(true);
+		btnHold->setVisible(true);
+		waitAction = constant::GAME_ACTION_NONE;
+	} else if (waitAction == constant::GAME_ACTION_PICK) {
+		btnForward->setVisible(true);
+		btnHold->setVisible(true);
+		waitAction = constant::GAME_ACTION_NONE;
+	} else if (waitAction == constant::GAME_ACTION_FORWARD) {
+		btnForward->setVisible(true);
+		btnHold->setVisible(true);
+		waitAction = constant::GAME_ACTION_NONE;
+	}
 }
 
 void GameScene::syncHandCard(CardHandData cardHand)
@@ -1732,6 +1722,15 @@ int GameScene::getCardName(unsigned char cardId)
 	return (cardId / 3 + 1) * 10 + cardId % 3 + 1;
 }
 
+int GameScene::getNextPlayerIndexFrom(int index)
+{
+	int ret = (index + 1) % 4;
+	if (vecUsers[ret]->isVisible() && vecUsers[ret]->getAlpha() == 255) {
+		return ret;
+	}
+	return (ret + 1) % 4;
+}
+
 std::vector<int>& GameScene::getCardCount(CardHandData cardHand)
 {
 	vector<int> a;
@@ -1845,6 +1844,11 @@ void GameScene::onUserExitRoom(long sfsUId)
 
 void GameScene::onErrorResponse(unsigned char code, std::string msg)
 {
+	//error = 4: co nguoi doi u
+	//		  3: Bạn chưa tới lượt bốc
+	//		  4: Bạn chưa tới lượt dưới
+	//		  2: Bạn chưa tới lượt ăn
+	//CCLOG("onErrorResponse: %d %s", (int)code, msg.c_str());
 	BaseScene::onErrorResponse(code, msg);
 	if (code == 31 || code == 30 || code == 29) {
 		showSystemNotice(msg);
@@ -1876,6 +1880,7 @@ void GameScene::onErrorResponse(unsigned char code, std::string msg)
 
 void GameScene::onPublicMessage(long uid, std::string msg)
 {
+	//CCLOG("onPublicMessage: %d %s", uid, msg.c_str());
 	if (msg.length() > 10) {
 		std::string code_data = msg.substr(0, 10);
 		if (code_data.compare("codedata::") == 0) {
@@ -2053,6 +2058,10 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 			MoveTo* move = MoveTo::create(.5f, vecUserPos[index] + Vec2(0, 40));
 			DelayTime* delay = DelayTime::create(1.5f);
 			FadeOut* fadeOut = FadeOut::create(.5f);
+			/*CallFunc* logFunc = CallFunc::create([=]() {
+				Vec2 pos = lbWinMoneys[index]->getPosition();
+				CCLOG("winmoney %d: %.0f %.0f", index, pos.x, pos.y);
+			});*/
 
 			std::string str1 = Utils::getSingleton().formatMoneyWithComma(winMoneyData.ListUserAmount[i]);// > 0 ? money : -money);
 			std::string moneystr = String::createWithFormat(winMoneyData.ListUserAmount[i] > 0 ? "+%s" : "%s", str1.c_str())->getCString();
@@ -2279,87 +2288,27 @@ void GameScene::onChooseHost(unsigned char stilt1, unsigned char stilt2, unsigne
 
 void GameScene::onUserBash(BashData data)
 {
+	bool isMe = data.UId == sfsIdMe;
+	bool isToMe = data.TurnId == sfsIdMe;
 	int index = userIndexs[data.UId];
 	GameLogger::getSingleton().logUserBash(data);
-	if (myServerSlot >= 0 && index == 0 && data.UId != sfsIdMe) {
+	if (myServerSlot >= 0 && index == 0 && !isMe) {
 		disconnectToSync();
 		return;
 	}
-	if (data.CardId > 100) data.CardId = 256 - data.CardId;
-	bool hasSync = false;
-	Sprite* spCard = NULL;
-	int zorder = 0;
-	int index2 = index * 2;
-	float scale = 1.0f;
-	if (tableCardNumb[index2] >= maxTableCardNumb[index2]) {
-		scale = ((float)maxTableCardNumb[index2] - 1) / tableCardNumb[index2];
-		for (Sprite* sp : spCards) {
-			if (sp->isVisible() && sp->getTag() == constant::TAG_CARD_TABLE + index2) {
-				int index = sp->getLocalZOrder() - constant::GAME_ZORDER_TABLE_CARD - 1;
-				Vec2 newPos = tableCardPos[index2] + index * tableCardDistance[index2] * scale;
-				MoveTo* move = MoveTo::create(.2f, newPos);
-				sp->runAction(move);
-			}
-		}
-	}
-	Vec2 pos = tableCardPos[index2] + tableCardNumb[index2] * tableCardDistance[index2] * scale;
-	tableCardNumb[index2] ++;
-	if (data.UId == sfsIdMe) {
-		if (chosenCard > 0 && atoi(spHandCards[chosenCard]->getName().c_str()) % 1000 == data.CardId) {
-			spCard = spHandCards[chosenCard];
-			spHandCards.erase(spHandCards.begin() + chosenCard);
-			chosenCard = -1;
-		} else {
-			if (chosenCard >= 0) {
-				spHandCards[chosenCard]->setAnchorPoint(Vec2(.5f, -.2f));
-			}
-			for (int i = 0; i < spHandCards.size(); i++) {
-				if (atoi(spHandCards[i]->getName().c_str()) % 1000 == data.CardId) {
-					spCard = spHandCards[i];
-					spHandCards.erase(spHandCards.begin() + i);
-					break;
-				}
-			}
-		}
-		if (spCard == NULL) {
-			hasSync = true;
-			syncHandCard(data.CardHand);
-			spCard = getCardSprite(data.CardId);
-		}
-		int rot = spCard->getRotation();
-		Vec2 scaledUserPos = getScaleScenePosition(vecUserPos[index]);
-		float x = sin(CC_DEGREES_TO_RADIANS(rot)) * spCard->getContentSize().height + scaledUserPos.x;
-		float y = cos(CC_DEGREES_TO_RADIANS(rot)) * spCard->getContentSize().height + scaledUserPos.y;
-		spCard->setPosition(x, y);
-		spCard->setName(to_string((int)data.CardId));
-		RotateTo* rotate = RotateTo::create(cardSpeed, 0);
-		spCard->stopAllActions();
-		spCard->runAction(rotate);
-		zorder = spCard->getLocalZOrder();
+	btnBash->setVisible(false);
+	if (isAutoBash) {
+		isAutoBash = false;
+		if (isMe) updateCardHand(data.CardHand);
 	} else {
-		spCard = getCardSprite(data.CardId);
-		spCard->setRotation(0);
-		spCard->setScale(cardScaleTableNew);
-		spCard->setPosition(getScaleScenePosition(vecUserPos[index]));
+		bool rightData = bashCardDown(index, data.CardId, isMe);
+		if (!rightData) {
+			syncHandCard(data.CardHand);
+		} else if (isMe) {
+			updateCardHand(data.CardHand);
+		}
 	}
 
-	spCard->setLocalZOrder(constant::GAME_ZORDER_TABLE_CARD + tableCardNumb[index2]);
-	spCard->setTag(constant::TAG_CARD_TABLE + index2);
-	spCard->setName(to_string((int)data.CardId));
-	spCard->setAnchorPoint(Vec2(.5f,.5f));
-
-	MoveTo* move = MoveTo::create(cardSpeed, pos);
-	ScaleTo* scaleTo = ScaleTo::create(cardSpeed, cardScaleTableNew);
-	spCard->runAction(move);
-	spCard->runAction(scaleTo);
-	changeZOrderAfterFly(spCard, constant::GAME_ZORDER_CARD_FLY);
-
-	if(runningSpCard != NULL) runningSpCard->setScale(cardScaleTable);
-	runningSpCard = spCard;
-	if (data.UId == sfsIdMe) {
-		btnBash->setVisible(false);
-		if(!hasSync) updateCardHand(data.CardHand);
-	}
 	if (!isBatBao) {
 		if (data.CanPenetWin) {
 			if (isU411) {
@@ -2370,7 +2319,7 @@ void GameScene::onUserBash(BashData data)
 					btnDropWin->setVisible(false);
 					onUserBashToMe(data);
 				});
-				if (data.TurnId == sfsIdMe) {
+				if (isToMe) {
 					waitAction = constant::GAME_ACTION_BASH;
 				}
 			}
@@ -2381,7 +2330,7 @@ void GameScene::onUserBash(BashData data)
                 btnDropPenet->setVisible(false);
 				onUserBashToMe(data);
             });
-            if (data.TurnId == sfsIdMe) {
+            if (isToMe) {
                 waitAction = constant::GAME_ACTION_BASH;
             }
 		} else onUserBashToMe(data);
@@ -2397,91 +2346,27 @@ void GameScene::onUserBash(BashData data)
 
 void GameScene::onUserBashBack(BashBackData data)
 {
+	bool isMe = data.UId == sfsIdMe;
+	bool isToMe = data.TurnId == sfsIdMe;
 	GameLogger::getSingleton().logUserBashBack(data);
 	int index = userIndexs[data.UId];
-	if (myServerSlot >= 0 && index == 0 && data.UId != sfsIdMe) {
+	if (myServerSlot >= 0 && index == 0 && !isMe) {
 		disconnectToSync();
 		return;
 	}
-	if (data.CardId > 100) data.CardId = 256 - data.CardId;
-	bool hasSync = false;
-	Sprite* spCard = NULL;
-	int zorder = 0;
-	int index1 = userIndexs[data.BackId];
-	int index2 = index1 * 2;
-	float scale = 1.0f;
-	if (tableCardNumb[index2] >= maxTableCardNumb[index2]) {
-		scale = ((float)maxTableCardNumb[index2] - 1) / tableCardNumb[index2];
-		for (Sprite* sp : spCards) {
-			if (sp->isVisible() && sp->getTag() == constant::TAG_CARD_TABLE + index2) {
-				int index = sp->getLocalZOrder() - constant::GAME_ZORDER_TABLE_CARD - 1;
-				Vec2 newPos = tableCardPos[index2] + index * tableCardDistance[index2] * scale;
-				MoveTo* move = MoveTo::create(.2f, newPos);
-				sp->runAction(move);
-			}
-		}
-	}
-	Vec2 pos = tableCardPos[index2] + tableCardNumb[index2] * tableCardDistance[index2] * scale;
-	tableCardNumb[index2] ++;
-	if (data.UId == sfsIdMe) {
-		if (chosenCard > 0 && atoi(spHandCards[chosenCard]->getName().c_str()) % 1000 == data.CardId) {
-			spCard = spHandCards[chosenCard];
-			spHandCards.erase(spHandCards.begin() + chosenCard);
-			chosenCard = -1;
-		} else {
-			if (chosenCard >= 0) {
-				spHandCards[chosenCard]->setAnchorPoint(Vec2(.5f, -.2f));
-			}
-			for (int i = 0; i < spHandCards.size(); i++) {
-				if (atoi(spHandCards[i]->getName().c_str()) % 1000 == data.CardId) {
-					spCard = spHandCards[i];
-					spHandCards.erase(spHandCards.begin() + i);
-					break;
-				}
-			}
-		}
-		if (spCard == NULL) {
-			hasSync = true;
-			syncHandCard(data.CardHand);
-			spCard = getCardSprite(data.CardId);
-		}
-		int rot = spCard->getRotation();
-		Vec2 scaledUserPos = getScaleScenePosition(vecUserPos[index]);
-		float x = sin(CC_DEGREES_TO_RADIANS(rot)) * spCard->getContentSize().height + scaledUserPos.x;
-		float y = cos(CC_DEGREES_TO_RADIANS(rot)) * spCard->getContentSize().height + scaledUserPos.y;
-		spCard->setPosition(x, y);
-		spCard->setName(to_string((int)data.CardId));
-		RotateTo* rotate = RotateTo::create(cardSpeed, 0);
-		spCard->stopAllActions();
-		spCard->runAction(rotate);
-		zorder = spCard->getLocalZOrder();
+	btnBashBack->setVisible(false);
+	if (isAutoBash) {
+		isAutoBash = false;
+		if (isMe) updateCardHand(data.CardHand);
 	} else {
-		spCard = getCardSprite(data.CardId);
-		spCard->setRotation(0);
-		spCard->setScale(cardScaleTableNew);
-		spCard->setPosition(getScaleScenePosition(vecUserPos[index]));
+		bool rightData = bashCardDown(index, data.CardId, isMe);
+		if (!rightData) {
+			syncHandCard(data.CardHand);
+		} else if (isMe) {
+			updateCardHand(data.CardHand);
+		}
 	}
 
-	spCard->setLocalZOrder(constant::GAME_ZORDER_TABLE_CARD + tableCardNumb[index2]);
-	spCard->setTag(constant::TAG_CARD_TABLE + index2);
-	spCard->setName(to_string((int)data.CardId));
-	spCard->setAnchorPoint(Vec2(.5f, .5f));
-
-	MoveTo* move = MoveTo::create(cardSpeed, pos);
-	ScaleTo* scaleTo = ScaleTo::create(cardSpeed, cardScaleTableNew);
-	spCard->runAction(move);
-	spCard->runAction(scaleTo);
-	changeZOrderAfterFly(spCard, constant::GAME_ZORDER_CARD_FLY);
-
-	if(runningSpCard != nullptr) 
-		runningSpCard->setScale(cardScaleTable);
-	runningSpCard = spCard;
-	if (data.UId == sfsIdMe) {
-		btnBashBack->setVisible(false);
-		progressTimer->setVisible(false);
-		progressTimer->stopAllActions();
-		if(!hasSync) updateCardHand(data.CardHand);
-	}
 	if (!isBatBao) {
 		if (data.CanPenetWin) {
 			if (isU411) {
@@ -2492,7 +2377,7 @@ void GameScene::onUserBashBack(BashBackData data)
 					btnDropWin->setVisible(false);
 					onUserBashBackToMe(data);
 				});
-				if (data.TurnId == sfsIdMe) {
+				if (isToMe) {
 					if (data.IsPicked) {
 						waitAction = constant::GAME_ACTION_PICK;
 					} else {
@@ -2507,7 +2392,7 @@ void GameScene::onUserBashBack(BashBackData data)
                 btnDropPenet->setVisible(false);
 				onUserBashBackToMe(data);
             });
-            if (data.TurnId == sfsIdMe) {
+            if (isToMe) {
                 if (data.IsPicked) {
                     waitAction = constant::GAME_ACTION_PICK;
                 } else {
@@ -4071,6 +3956,88 @@ void GameScene::initCofferEffects()
 			});
 		});
 	}
+}
+
+bool GameScene::bashCardDown(int index, int cardId, bool isMe)
+{
+	bool rightData = true;
+	if (cardId > 100) cardId = 256 - cardId;
+	Sprite* spCard = NULL;
+	int zorder = 0;
+	int index2 = index * 2;
+	float scale = 1.0f;
+	if (tableCardNumb[index2] >= maxTableCardNumb[index2]) {
+		scale = ((float)maxTableCardNumb[index2] - 1) / tableCardNumb[index2];
+		for (Sprite* sp : spCards) {
+			if (sp->isVisible() && sp->getTag() == constant::TAG_CARD_TABLE + index2) {
+				int index = sp->getLocalZOrder() - constant::GAME_ZORDER_TABLE_CARD - 1;
+				Vec2 newPos = tableCardPos[index2] + index * tableCardDistance[index2] * scale;
+				MoveTo* move = MoveTo::create(.2f, newPos);
+				sp->runAction(move);
+			}
+		}
+	}
+	Vec2 pos = tableCardPos[index2] + tableCardNumb[index2] * tableCardDistance[index2] * scale;
+	tableCardNumb[index2] ++;
+	if (isMe) {
+		if (chosenCard > 0 && atoi(spHandCards[chosenCard]->getName().c_str()) % 1000 == cardId) {
+			spCard = spHandCards[chosenCard];
+			spHandCards.erase(spHandCards.begin() + chosenCard);
+			chosenCard = -1;
+		} else {
+			if (chosenCard >= 0) {
+				spHandCards[chosenCard]->setAnchorPoint(Vec2(.5f, -.2f));
+			}
+			for (int i = 0; i < spHandCards.size(); i++) {
+				if (atoi(spHandCards[i]->getName().c_str()) % 1000 == cardId) {
+					spCard = spHandCards[i];
+					spHandCards.erase(spHandCards.begin() + i);
+					break;
+				}
+			}
+		}
+		if (spCard == NULL) {
+			spCard = getCardSprite(cardId);
+			rightData = false;
+		}
+		int rot = spCard->getRotation();
+		Vec2 scaledUserPos = getScaleScenePosition(vecUserPos[index]);
+		float x = sin(CC_DEGREES_TO_RADIANS(rot)) * spCard->getContentSize().height + scaledUserPos.x;
+		float y = cos(CC_DEGREES_TO_RADIANS(rot)) * spCard->getContentSize().height + scaledUserPos.y;
+		spCard->setPosition(x, y);
+		spCard->setName(to_string((int)cardId));
+		RotateTo* rotate = RotateTo::create(cardSpeed, 0);
+		spCard->stopAllActions();
+		spCard->runAction(rotate);
+		zorder = spCard->getLocalZOrder();
+	} else {
+		spCard = getCardSprite(cardId);
+		spCard->setRotation(0);
+		spCard->setScale(cardScaleTableNew);
+		spCard->setPosition(getScaleScenePosition(vecUserPos[index]));
+	}
+
+	spCard->setLocalZOrder(constant::GAME_ZORDER_TABLE_CARD + tableCardNumb[index2]);
+	spCard->setTag(constant::TAG_CARD_TABLE + index2);
+	spCard->setName(to_string((int)cardId));
+	spCard->setAnchorPoint(Vec2(.5f, .5f));
+
+	MoveTo* move = MoveTo::create(cardSpeed, pos);
+	ScaleTo* scaleTo = ScaleTo::create(cardSpeed, cardScaleTableNew);
+	spCard->runAction(move);
+	spCard->runAction(scaleTo);
+	changeZOrderAfterFly(spCard, constant::GAME_ZORDER_CARD_FLY);
+
+	if (runningSpCard != NULL) runningSpCard->setScale(cardScaleTable);
+	runningSpCard = spCard;
+	return rightData;
+}
+
+void GameScene::autoBash(int card, int group)
+{
+	CCLOG("autoBash");
+	bashCardDown(0, card, true);
+	isAutoBash = true;
 }
 
 void GameScene::onUserBashToMe(BashData data)
