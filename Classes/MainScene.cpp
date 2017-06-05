@@ -530,9 +530,14 @@ void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)
 			scrollHistory->addChild(btn);
 			isNewBtn = true;
 
-			btnCancel = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
-			btnCancel->setPosition(Vec2(lb5->getPositionX() + 60, heightHistory - 15));
-			btnCancel->setScale(.4f);
+			btnCancel = ui::Button::create("empty.png", "empty.png", "", ui::Widget::TextureResType::PLIST);
+			btnCancel->setTitleText("[" + Utils::getSingleton().getStringForKey("huy") + "]");
+			btnCancel->setTitleFontName("fonts/aurora.ttf");
+			btnCancel->setTitleFontSize(25);
+			btnCancel->setTitleColor(Color3B::RED);
+			btnCancel->setPosition(Vec2(lb5->getPositionX() + 60, heightHistory - 11));
+			btnCancel->setContentSize(Size(50, 30));
+			btnCancel->setScale9Enabled(true);
 			btnCancel->setTag(tag + 6);
 			scrollHistory->addChild(btnCancel);
 		} else {
@@ -561,6 +566,12 @@ void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)
 			list[i].Status = 1;
 		} else if (list[i].Status > strStatus.size()) {
 			list[i].Status = strStatus.size();
+		}
+		if (list[i].Status == 1) {
+			lb5->setPositionX(posX[4] + scrollHistory->getContentSize().width / 2 + dx - 30);
+			btnCancel->setPosition(Vec2(lb5->getPositionX() + 65, lb5->getPositionY() - 1));
+		} else {
+			lb5->setPositionX(posX[4] + scrollHistory->getContentSize().width / 2 + dx);
 		}
 		lb1->setString(to_string((int)list[i].Id));
 		lb2->setString(list[i].Name);
