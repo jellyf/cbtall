@@ -30,7 +30,7 @@ bool GameLogger::isEnable()
 
 void GameLogger::setEnabled(bool enabled)
 {
-	mIsEnabled = enabled;
+	mIsEnabled = false;// enabled;
 }
 
 void GameLogger::setHost(std::string host)
