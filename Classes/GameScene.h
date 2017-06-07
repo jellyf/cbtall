@@ -101,7 +101,6 @@ private:
 	void playSoundAction(unsigned char soundId);
 	void playSoundCuoc(unsigned char cuocId);
 	void changeZOrderAfterFly(cocos2d::Sprite* card, int zorder);
-	void delayFunction(Node* node, float time, std::function<void()> func);
 	void beatenNodeAndHide(cocos2d::Node* node, float scale1, float scale2, float timeToBeaten, float timeToHide);
 	bool isCardHandDataSync(CardHandData cardHand);
 	int getCardName(unsigned char cardId);

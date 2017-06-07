@@ -1676,13 +1676,6 @@ void GameScene::changeZOrderAfterFly(Sprite * card, int zorder)
 	card->runAction(Sequence::create(delay, func, nullptr));
 }
 
-void GameScene::delayFunction(Node * node, float time, std::function<void()> func)
-{
-	DelayTime* delay = DelayTime::create(time);
-	CallFunc* callfunc = CallFunc::create(func);
-	node->runAction(Sequence::create(delay, callfunc, nullptr));
-}
-
 void GameScene::beatenNodeAndHide(cocos2d::Node * node, float scale1, float scale2, float timeToBeaten, float timeToHide)
 {
 	node->setVisible(true);

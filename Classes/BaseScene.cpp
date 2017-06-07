@@ -2410,3 +2410,10 @@ void BaseScene::autoScaleNode(cocos2d::Node * node)
 		node->setScaleX(node->getScaleX() * scaleScene.y);
 	}
 }
+
+void BaseScene::delayFunction(Node * node, float time, std::function<void()> func)
+{
+    DelayTime* delay = DelayTime::create(time);
+    CallFunc* callfunc = CallFunc::create(func);
+    node->runAction(Sequence::create(delay, callfunc, nullptr));
+}
