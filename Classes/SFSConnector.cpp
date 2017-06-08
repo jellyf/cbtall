@@ -301,6 +301,7 @@ void SFSConnector::Connect(std::string host, int port)
 		mSmartFox->Connect(host.c_str(), port);
 	} catch (exception e) {
 		CCLOG("SFSConnector::Connect::Exception: %s", e.what());
+        SFSGEvent::getSingleton().OnConnectionException(e);
 	}
 }
 

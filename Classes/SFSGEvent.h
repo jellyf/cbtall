@@ -28,6 +28,7 @@ public:
 	void OnExtensionResponse(map<string, boost::shared_ptr<void>> params);
 	void OnPublicMessage(map<string, boost::shared_ptr<void>> params);
 	void OnPingPong(map<string, boost::shared_ptr<void>> params);
+    void OnConnectionException(std::exception e);
 private:
 	map<string, function<void(map<string, boost::shared_ptr<void>>)>> mapFunctions;
 	vector<pair<string, map<string, boost::shared_ptr<void>>>> eventQueue;

@@ -25,7 +25,8 @@ public:
 	std::function<void()> onConnected = NULL;
 	std::function<void()> onLoginZone = NULL;
 	std::function<void()> onLogoutZone = NULL;
-	std::function<void()> onConnectionFailed = NULL;
+    std::function<void()> onConnectionFailed = NULL;
+    std::function<void()> onConnectionException = NULL;
 	std::function<void()> onConfigZoneReceived = NULL;
 	std::function<void()> onUserDataMeSFSResponse = NULL;
 	std::function<void()> onDynamicConfigReceived = NULL;

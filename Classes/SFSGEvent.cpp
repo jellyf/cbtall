@@ -242,3 +242,10 @@ void SFSGEvent::OnPingPong(map<string, boost::shared_ptr<void>> params)
 		EventHandler::getSingleton().onPingPong(*ptrValue);
 	}
 }
+
+void SFSGEvent::OnConnectionException(std::exception e)
+{
+    if(EventHandler::getSingleton().onConnectionException != NULL){
+        EventHandler::getSingleton().onConnectionException();
+    }
+}
