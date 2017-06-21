@@ -425,16 +425,15 @@ void BaseScene::showPopupRank(int type)
 	ui::ScrollView* scrollWin = (ui::ScrollView*)popupRank->getChildByName("scrollwin");
 	scroll->setVisible(true);
 	scrollWin->setVisible(false);
-	int height = listRanks[type].size() * 70 + 100;
+	int height = listRanks[type].size() * 70 + 80;
 	int width = scroll->getContentSize().width;
 	scroll->setInnerContainerSize(Size(width, height));
-	vector<Color3B> colors = { Color3B::YELLOW, Color3B::BLACK, Color3B::BLACK };
-	//vector<Color3B> colors = { Color3B::YELLOW, Color3B(255, 255, 102), Color3B(255, 255, 153) };
 	for (int i = 0; i < listRanks[type].size(); i++) {
+		Label *lb1, *lb2, *lb3;
 		Node* node = scroll->getChildByTag(i);
 		if (node == nullptr) {
 			node = Node::create();
-			node->setPosition(scroll->getContentSize().width / 2, height - 100 - i * 70);
+			node->setPosition(scroll->getContentSize().width / 2, height - 40 - i * 70);
 			node->setTag(i);
 			scroll->addChild(node);
 
@@ -442,31 +441,28 @@ void BaseScene::showPopupRank(int type)
 			nbg->setContentSize(Size(width, 65));
 			node->addChild(nbg);
 
-			Label* lb1 = Label::create(to_string(i + 1), i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 25);
+			lb1 = Label::create(to_string(i + 1), i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 30);
 			//lb1->setAnchorPoint(Vec2(0, .5f));
-			lb1->setColor(i < 3 ? colors[i] : Color3B::WHITE);
-			lb1->setPosition(-width / 2 + 70, 5);
+			lb1->setPosition(-width / 2 + 140, 0);
 			lb1->setTag(1);
 			node->addChild(lb1);
 
-			Label* lb2 = Label::create(listRanks[type][i].Name, i < 3  ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 25);
+			lb2 = Label::create("", i < 3  ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 30);
 			lb2->setAnchorPoint(Vec2(0, .5f));
-			lb2->setColor(i < 3 ? colors[i] : Color3B::WHITE);
-			lb2->setPosition(-width / 2 + 220, 0);
+			lb2->setPosition(lb1->getPositionX() + 100, 0);
 			lb2->setWidth(400);
 			lb2->setHeight(30);
 			lb2->setTag(2);
 			node->addChild(lb2);
 
-			Label* lb3 = Label::create(Utils::getSingleton().formatMoneyWithComma(listRanks[type][i].Money), i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 25);
+			lb3 = Label::create("", i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 30);
 			//lb3->setAnchorPoint(Vec2(1, .5f));
-			lb3->setColor(type == 0 ? Color3B::YELLOW : Color3B(0, 255, 255));
-			lb3->setPosition(width / 2 - 130, 0);
+			lb3->setPosition(lb2->getPositionX() + 510, 0);
 			lb3->setTag(3);
 			node->addChild(lb3);
 
 			ui::Scale9Sprite* spbg1 = ui::Scale9Sprite::createWithSpriteFrameName(i == 0 ? "box10.png" : "box11.png");
-			spbg1->setContentSize(Size(70, 60));
+			spbg1->setContentSize(Size(100, 60));
 			spbg1->setPosition(lb1->getPositionX(), lb1->getPositionY() + 5);
 			node->addChild(spbg1, -1);
 
@@ -476,17 +472,20 @@ void BaseScene::showPopupRank(int type)
 			node->addChild(spbg2, -1);
 
 			ui::Scale9Sprite* spbg3 = ui::Scale9Sprite::createWithSpriteFrameName(i == 0 ? "box10.png" : "box11.png");
-			spbg3->setContentSize(Size(180, 60));
+			spbg3->setContentSize(Size(200, 60));
 			spbg3->setPosition(lb3->getPositionX(), lb3->getPositionY() + 5);
 			node->addChild(spbg3, -1);
 		} else {
 			node->setVisible(true);
-			Label* lb2 = (Label*)node->getChildByTag(2);
-			Label* lb3 = (Label*)node->getChildByTag(3);
-			lb2->setString(listRanks[type][i].Name);
-			lb3->setString(Utils::getSingleton().formatMoneyWithComma(listRanks[type][i].Money));
-			lb3->setColor(type == 0 ? Color3B::YELLOW : Color3B(0, 255, 255));
+			lb1 = (Label*)node->getChildByTag(1);
+			lb2 = (Label*)node->getChildByTag(2);
+			lb3 = (Label*)node->getChildByTag(3);
 		}
+		lb2->setString(listRanks[type][i].Name);
+		lb3->setString(Utils::getSingleton().formatMoneyWithComma(listRanks[type][i].Money));
+		lb1->setColor(i == 0 ? Color3B::YELLOW : Color3B::BLACK);
+		lb2->setColor(i == 0 ? Color3B::YELLOW : Color3B::BLACK);
+		lb3->setColor(i == 0 ? Color3B::YELLOW : Color3B::BLACK);
 	}
 	int i = listRanks[type].size();
 	Node* n;
@@ -511,19 +510,18 @@ void BaseScene::showPopupRankWin()
 	ui::ScrollView* scrollWin = (ui::ScrollView*)popupRank->getChildByName("scrollwin");
 	scroll->setVisible(false);
 	scrollWin->setVisible(true);
-	int height = listRankWin.size() * 90 + 50;
+	int height = listRankWin.size() * 90 + 60;
 	int width = scrollWin->getContentSize().width;
 	if (height < scrollWin->getContentSize().height) {
 		height = scrollWin->getContentSize().height;
 	}
 	scrollWin->setInnerContainerSize(Size(width, height));
-	vector<Color3B> colors = { Color3B::YELLOW, Color3B::BLACK, Color3B::BLACK };
 	for (int i = 0; i < listRankWin.size(); i++) {
-		Label* lb2;
+		Label *lb1, *lb2, *lb3, *lb4;
 		Node* node = scrollWin->getChildByTag(i);
 		if (node == nullptr) {
 			node = Node::create();
-			node->setPosition(scrollWin->getContentSize().width / 2, height - 110 - i * 90);
+			node->setPosition(scrollWin->getContentSize().width / 2, height - 50 - i * 90);
 			node->setTag(i);
 			scrollWin->addChild(node);
 
@@ -531,35 +529,24 @@ void BaseScene::showPopupRankWin()
 			nbg->setContentSize(Size(width, 85));
 			node->addChild(nbg);
 
-			Label* lb1 = Label::create(to_string(i + 1), i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 25);
-			//lb1->setAnchorPoint(Vec2(0, .5f));
-			lb1->setColor(i < 3 ? colors[i] : Color3B::BLACK);
-			lb1->setPosition(-width / 2 + 50, 0);
+			lb1 = Label::create(to_string(i + 1), i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 25);
+			lb1->setPosition(-width / 2 + 80, 0);
 			lb1->setTag(1);
 			node->addChild(lb1);
 
-			lb2 = Label::create(listRankWin[i].Name, i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 22);
-			//lb2->setAnchorPoint(Vec2(0, .5f));
-			lb2->setColor(i < 3 ? colors[i] : Color3B::BLACK);
-			lb2->setPosition(-width / 2 + 220, 0);
-			//lb2->setWidth(400);
-			//lb2->setHeight(30);
+			lb2 = Label::create("", i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 22);
+			lb2->setPosition(lb1->getPositionX() + 140, 0);
 			lb2->setTag(2);
 			node->addChild(lb2);
 
-			Label* lb3 = Label::create(listRankWin[i].Cuoc, i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 22);
-			//lb3->setAnchorPoint(Vec2(0, .5f));
-			lb3->setColor(Color3B::YELLOW);
-			lb3->setPosition(120, 0);
+			lb3 = Label::create("", i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 22);
+			lb3->setPosition(lb2->getPositionX() + 355, 0);
 			lb3->setWidth(450);
-			//lb3->setHeight(30);
 			lb3->setTag(3);
 			node->addChild(lb3);
 
-			Label* lb4 = Label::create(Utils::getSingleton().formatMoneyWithComma(listRankWin[i].Point), i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 22);
-			//lb4->setAnchorPoint(Vec2(1, .5f));
-			lb4->setColor(Color3B(102, 255, 51));
-			lb4->setPosition(width / 2 - 40, 0);
+			lb4 = Label::create("", i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 22);
+			lb4->setPosition(lb3->getPositionX() + 290, 0);
 			lb4->setTag(4);
 			node->addChild(lb4);
 
@@ -584,23 +571,25 @@ void BaseScene::showPopupRankWin()
 			node->addChild(spbg4, -1);
 		} else {
 			node->setVisible(true);
+			lb1 = (Label*)node->getChildByTag(1);
 			lb2 = (Label*)node->getChildByTag(2);
-			Label* lb3 = (Label*)node->getChildByTag(3);
-			Label* lb4 = (Label*)node->getChildByTag(4);
-			lb2->setString(listRankWin[i].Name);
-			lb3->setString(listRankWin[i].Cuoc);
-			lb4->setString(Utils::getSingleton().formatMoneyWithComma(listRankWin[i].Point));
+			lb3 = (Label*)node->getChildByTag(3);
+			lb4 = (Label*)node->getChildByTag(4);
 		}
+		lb3->setString(listRankWin[i].Cuoc);
+		lb4->setString(Utils::getSingleton().formatMoneyWithComma(listRankWin[i].Point));
 
 		string strName = listRankWin[i].Name;
-		/*if (strName.length() > 14) {
-			strName = strName.substr(0, 14);
-		}*/
 		lb2->setString(strName);
 		while (lb2->getContentSize().width > 200) {
 			strName = strName.substr(0, strName.length() - 1);
 			lb2->setString(strName);
 		}
+
+		lb1->setColor(i == 0 ? Color3B::YELLOW : Color3B::BLACK);
+		lb2->setColor(i == 0 ? Color3B::YELLOW : Color3B::BLACK);
+		lb3->setColor(i == 0 ? Color3B::YELLOW : Color3B::BLACK);
+		lb4->setColor(i == 0 ? Color3B::YELLOW : Color3B::BLACK);
 	}
 	int i = listRankWin.size();
 	Node* n;
@@ -1289,13 +1278,13 @@ void BaseScene::initPopupRank()
 	if (!popupRank) return;
 	popupRank->setTag(pmE ? 0 : 1);
 
-	Size size = Size(960, 466);
+	Size size = Size(960, 440);
 	Size scrollSize = size - Size(20, 20);
 
 	ui::ScrollView* scroll = ui::ScrollView::create();
 	scroll->setDirection(ui::ScrollView::Direction::VERTICAL);
 	scroll->setBounceEnabled(true);
-	scroll->setPosition(Vec2(-scrollSize.width / 2, -scrollSize.height / 2));
+	scroll->setPosition(Vec2(-scrollSize.width / 2, -scrollSize.height / 2 - 50));
 	scroll->setContentSize(scrollSize);
 	scroll->setScrollBarEnabled(false);
 	scroll->setName("scroll");
@@ -1310,12 +1299,12 @@ void BaseScene::initPopupRank()
 	scrollWin->setName("scrollwin");
 	popupRank->addChild(scrollWin);
 
-	Sprite* bgMenu = Sprite::create("bg_tabs.png");
+	Sprite* bgMenu = Sprite::createWithSpriteFrameName("bg_tabs.png");
 	bgMenu->setPosition(0, 200);
 	popupRank->addChild(bgMenu);
 
-	vector<string> texts = { "quan", "xu", "win" };
-	int x = -250;
+	vector<string> texts = { "top_quan", "top_xu", "top_u" };
+	int x = -280;
 	int y = bgMenu->getPositionY();
 	for (int i = pmE ? 0 : 1; i < texts.size(); i++) {
 		string strBtn = i == 0 ? "box12.png" : "empty.png";
@@ -1325,7 +1314,7 @@ void BaseScene::initPopupRank()
 		btn->setTitleFontSize(35);
 		btn->setTitleColor(i == 0 ? Color3B::YELLOW : Color3B::WHITE);
 		btn->setTitleDeviation(Vec2(0, -5));
-		btn->setContentSize(Size(205, 60));
+		btn->setContentSize(Size(255, 60));
 		btn->setPosition(Vec2(x, y));
 		btn->setScale9Enabled(true);
 		//btn->setCapInsets(Rect(0, 0, 0, 0));
@@ -1335,7 +1324,7 @@ void BaseScene::initPopupRank()
 		});
 		popupRank->addChild(btn);
 
-		x += 250;
+		x += 280;
 	}
 }
 
@@ -1360,7 +1349,7 @@ void BaseScene::initPopupSettings()
 		cbs.push_back(checkbox);
 
 		Label* lb = Label::createWithTTF("", "fonts/myriadb.ttf", 35);
-		lb->setPosition(vecPos[i] + Vec2(40, 0));
+		lb->setPosition(vecPos[i] + Vec2(40, -5));
 		lb->setAnchorPoint(Vec2(0, .5f));
 		lb->setColor(Color3B::BLACK);
 		popupMainSettings->addChild(lb);
@@ -1430,8 +1419,9 @@ void BaseScene::initPopupUserInfo()
 
 	Label* lbAppellation = Label::create("Huong Truong", "fonts/davida.ttf", 25);
 	lbAppellation->setColor(Color3B::BLACK);
+	lbAppellation->setOpacity(200);
 	lbAppellation->setPosition(avatar->getPositionX(), avatar->getPositionY() - 95);
-	//lbAppellation->enableOutline(Color4B::BLACK, 1);
+	//lbAppellation->enableShadow(Color4B::BLACK);
 	lbAppellation->setName("lbappellation");
 	popupUserInfo->addChild(lbAppellation);
 
@@ -1640,7 +1630,7 @@ void BaseScene::initPopupHistory()
 	scroll->setName("scroll");
 	popupHistory->addChild(scroll);
 
-	Sprite* bgMenu = Sprite::create("bg_tabs.png");
+	Sprite* bgMenu = Sprite::createWithSpriteFrameName("bg_tabs.png");
 	bgMenu->setPosition(0, 200);
 	popupHistory->addChild(bgMenu);
 
@@ -1714,7 +1704,7 @@ void BaseScene::initPopupCoffer()
 	nodeHistory->setVisible(false);
 	popupCoffer->addChild(nodeHistory);
 
-	Sprite* bgMenu = Sprite::create("bg_tabs.png");
+	Sprite* bgMenu = Sprite::createWithSpriteFrameName("bg_tabs.png");
 	bgMenu->setPosition(0, 200);
 	popupCoffer->addChild(bgMenu);
 

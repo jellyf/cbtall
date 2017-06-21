@@ -1109,7 +1109,7 @@ void MainScene::initPopupCharge()
 	nodeMoneyType->setVisible(pmE);
 	popupCharge->addChild(nodeMoneyType);
 
-	Sprite* bgMenu = Sprite::create("bg_tabs.png");
+	Sprite* bgMenu = Sprite::createWithSpriteFrameName("bg_tabs.png");
 	bgMenu->setPosition(0, 200);
 	popupCharge->addChild(bgMenu);
 
@@ -1572,7 +1572,7 @@ void MainScene::initPopupGuide()
 	Size size = Size(850, 416);
 	Size scrollSize = size - Size(20, 20);
 
-	Sprite* bgScrollMenu = Sprite::create("bg_tabs.png");
+	Sprite* bgScrollMenu = Sprite::createWithSpriteFrameName("bg_tabs.png");
 	bgScrollMenu->setPosition(0, 200);
 	popupGuide->addChild(bgScrollMenu);
 
@@ -1659,7 +1659,7 @@ void MainScene::initPopupMail()
 	scroll->setTag(0);
 	popupMail->addChild(scroll);
 
-	Sprite* bgChosen = Sprite::create("bg_tabs.png");
+	Sprite* bgChosen = Sprite::createWithSpriteFrameName("bg_tabs.png");
 	bgChosen->setPosition(scroll->getContentSize().width / 2, 0);
 	bgChosen->setTag(9999);
 	scroll->addChild(bgChosen);
@@ -1679,7 +1679,7 @@ void MainScene::initPopupNews()
 	Size size = Size(850, 386);
 	Size scrollSize = size - Size(20, 20);
 
-	Sprite* bgScrollMenu = Sprite::create("bg_tabs.png");
+	Sprite* bgScrollMenu = Sprite::createWithSpriteFrameName("bg_tabs.png");
 	bgScrollMenu->setPosition(0, 200);
 	popupNews->addChild(bgScrollMenu);
 
@@ -1748,7 +1748,7 @@ void MainScene::initPopupShop()
 	nodeHistory->setName("nodehistory");
 	popupShop->addChild(nodeHistory);
 
-	Sprite* bgMenu = Sprite::create("bg_tabs.png");
+	Sprite* bgMenu = Sprite::createWithSpriteFrameName("bg_tabs.png");
 	bgMenu->setPosition(0, 200);
 	popupShop->addChild(bgMenu);
 

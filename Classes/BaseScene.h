@@ -127,8 +127,8 @@ protected:
 	std::vector<cocos2d::ui::Button*> blockedButtons;
 	std::vector<cocos2d::Node*> popups;
 
-	cocos2d::Color3B colorGold = cocos2d::Color3B(179, 179, 0);
-	cocos2d::Color3B colorSilver = cocos2d::Color3B(0, 179, 179);
+	cocos2d::Color3B colorGold = cocos2d::Color3B(255, 255, 0);
+	cocos2d::Color3B colorSilver = cocos2d::Color3B(0, 255, 255);
 
 	cocos2d::Vector<Node*> tmps;
 	int tmpIndex;

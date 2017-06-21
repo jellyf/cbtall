@@ -624,7 +624,7 @@ void GameScene::onInit()
 		autoScaleNode(spBB);*/
 
 		Label* lbBB = Label::createWithTTF(Utils::getSingleton().getStringForKey("bat_bao"), "fonts/myriadb.ttf", 40);
-		lbBB->setPosition(vecUserPos[i] + getScaleSceneDistance(Vec2(0, i == 0 ? 90 : -110)));
+		lbBB->setPosition(vecUserPos[i] + getScaleSceneDistance(Vec2(0, i == 0 ? 95 : -110)));
 		lbBB->setColor(Color3B(120, 120, 120));
 		lbBB->enableOutline(Color4B(50, 50, 50, 255), 2);
 		lbBB->setVisible(false);
@@ -1524,7 +1524,7 @@ void GameScene::showSettings()
 {
 	showPopup(popupSettings);
 
-	int opacity = myServerSlot == 0 ? 255 : 200;
+	int opacity = myServerSlot == 0 ? 255 : 150;
 	for (int i = 0; i < 3; i++) {
 		auto cb = (ui::CheckBox*)popupSettings->getChildByTag(i);
 		//cb->setEnabled(myServerSlot == 0 && (state == NONE || state == READY));
@@ -2056,10 +2056,6 @@ void GameScene::onRoomDataGaResponse(bool isGa, double gaMoney)
 		lbMoneyGa->setString(Utils::getSingleton().formatMoneyWithComma(gaMoney));
 	} else {
 		lbMoneyGa->setString("");
-	}
-
-	for (Node* n : lbBatBaos) {
-		n->setVisible(true);
 	}
 }
 
@@ -3406,7 +3402,7 @@ void GameScene::initChatTable()
 	//bg->setOpacity(150);
 	tableChat->addChild(bg);
 
-	Sprite* bgInput = Sprite::create("bg_tabs.png");
+	Sprite* bgInput = Sprite::createWithSpriteFrameName("bg_tabs.png");
 	bgInput->setPosition(Vec2(-110, 150));
 	bgInput->setScaleX(.9f);
 	tableChat->addChild(bgInput);
@@ -3472,7 +3468,7 @@ void GameScene::initChatTable()
 	int height = (plist.size() / 2 + 1) * 80 + 20;
 	scroll->setInnerContainerSize(Size(1120, height));
 	for (auto iter = plist.begin(); iter != plist.end(); iter++) {
-		ui::Button* btn = ui::Button::create("bg_message.png", "", "");
+		ui::Button* btn = ui::Button::create("bg_message.png", "", "", ui::Widget::TextureResType::PLIST);
 		//btn->setScale9Enabled(true);
 		//btn->setContentSize(Size(500, 64));
 		btn->setTitleFontName("fonts/myriadb.ttf");
@@ -3514,7 +3510,7 @@ void GameScene::initCrestTable()
 	bg->setScale(.9f);
 	tableCrest->addChild(bg);
 
-	Sprite* bgChosen = Sprite::create("bg_tabs.png");
+	Sprite* bgChosen = Sprite::createWithSpriteFrameName("bg_tabs.png");
 	bgChosen->setPosition(0, 110);
 	bgChosen->setScaleX(.8f);
 	tableCrest->addChild(bgChosen);
@@ -3792,10 +3788,8 @@ void GameScene::initSettingsPopup()
 		popupSettings->addChild(checkbox);
 		cbs.push_back(checkbox);
 
-		Label* lb = Label::create();
-		lb->setSystemFontName("Arial");
-		lb->setSystemFontSize(30);
-		lb->setPosition(vecPos[i] + Vec2(40, 0));
+		Label* lb = Label::create("", "fonts/myriadb.ttf", 35);
+		lb->setPosition(vecPos[i] + Vec2(40, -5));
 		lb->setAnchorPoint(Vec2(0, .5f));
 		lb->setColor(Color3B::BLACK);
 		popupSettings->addChild(lb);
@@ -3831,7 +3825,7 @@ void GameScene::initSettingsPopup()
 	btnOK->setTitleFontName("fonts/myriadb.ttf");
 	btnOK->setTitleFontSize(40);
 	btnOK->setTitleDeviation(Vec2(0, -5));
-	btnOK->setPosition(Vec2(0, -215));
+	btnOK->setPosition(Vec2(0, -210));
 	btnOK->setScale(scale.x, scale.y);
 	addTouchEventListener(btnOK, [=]() {
 		hidePopup(popupSettings);

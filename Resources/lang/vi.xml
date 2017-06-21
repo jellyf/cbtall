@@ -136,6 +136,9 @@
 	<key>cua_hang</key><string>Cửa hàng</string>
 	<key>huong_dan</key><string>Hướng dẫn</string>
 	<key>lich_su_no</key><string>Lịch sử nổ</string>
+	<key>top_quan</key><string>Top đại gia(Quan)</string>
+	<key>top_xu</key><string>Top đại gia(Xu)</string>
+	<key>top_u</key><string>Top cao thủ</string>
 	<key>hay_nhap_tai_khoan</key><string>Vui lòng nhập tài khoản</string>
 	<key>hay_nhap_mat_khau</key><string>Vui lòng nhập mật khẩu</string>
 	<key>bi_day_khoi_ban</key><string>Bạn đã bị đẩy ra khỏi phòng</string>
