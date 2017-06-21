@@ -609,7 +609,8 @@ void SFSRequest::onRequestTextureCompleted(cocos2d::network::HttpClient * client
 		return;
 	}
 
-	//CCLOG("onHttpRequestCompleted - Response code: %lu", response->getResponseCode());
+    long responseCode = response->getResponseCode();
+	//CCLOG("onHttpRequestCompleted - Response code: %lu", responseCode);
 
 	string tag = response->getHttpRequest()->getTag();
 	string url = response->getHttpRequest()->getUrl();
@@ -620,8 +621,9 @@ void SFSRequest::onRequestTextureCompleted(cocos2d::network::HttpClient * client
 		SFSRequest::getSingleton().LoadTextureFromURL(url, tag);
 		return;
 	}
-	//CCLOG("onHttpRequestCompleted - Response code: %s", response->getResponseDataString());
-
+	//CCLOG("onHttpRequestCompleted - Response data: %s", response->getResponseDataString());
+    if(responseCode != 200) return;
+    
 	try {
 		std::vector<char> *buffer = response->getResponseData();
 		const char* file_char = buffer->data();
