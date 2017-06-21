@@ -1570,7 +1570,9 @@ void GameScene::showCofferEffects(std::string money)
 	cofferEffect->runAction(Sequence::createWithTwoActions(scaleTo1, scaleTo2));
 	cofferSplash->setVisible(true);
 
+    SpriteFrame* spriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName("icon_gold.png");
 	ParticleSystemQuad *m_emitter = ParticleSystemQuad::create("nohu_particle.plist");
+    m_emitter->setTextureWithRect(spriteFrame->getTexture(), spriteFrame->getRect());
 	m_emitter->setPosition(0, 100);
 	cofferEffect->addChild(m_emitter);
 	m_emitter->runAction(Sequence::create(DelayTime::create(10), RemoveSelf::create(), NULL));
