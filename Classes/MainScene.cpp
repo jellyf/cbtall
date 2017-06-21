@@ -681,7 +681,7 @@ void MainScene::onShopItemsDataResponse(std::vector<ShopItemData> list)
 
 			Label* lb1 = Label::create(Utils::getSingleton().formatMoneyWithComma(cards[i][j].Price), "fonts/myriadb.ttf", 25);
 			lb1->setPosition(btn->getContentSize().width / 2 - spCoin->getContentSize().width * spCoin->getScale() / 2, -20);
-            lb1->enableOutline(Color4B(150, 150, 0, 255), 2);
+            lb1->enableOutline(Color4B(150, 150, 0, 255), 1);
 			lb1->setColor(Color3B::YELLOW);
 			btn->addChild(lb1);
 
@@ -767,7 +767,7 @@ void MainScene::onShopItemsDataResponse(std::vector<ShopItemData> list)
 
 		Label* lb1 = Label::create(Utils::getSingleton().formatMoneyWithComma(moneyItems[i]), "fonts/myriadb.ttf", 25);
 		lb1->setPosition(btn->getContentSize().width / 2 - spCoin->getContentSize().width * spCoin->getScale() / 2, btn->getContentSize().height / 2 - 80);
-        lb1->enableOutline(Color4B(150, 150, 0, 255), 2);
+        lb1->enableOutline(Color4B(150, 150, 0, 255), 1);
         lb1->setColor(Color3B::YELLOW);
 		btn->addChild(lb1);
 

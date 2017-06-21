@@ -655,8 +655,8 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 	lbWin->setString(Utils::getSingleton().getStringForKey("thang") + ": " + to_string(data.Win));
 	lbTotal->setString(Utils::getSingleton().getStringForKey("tong") + ": " + to_string(data.Total));
 	lbAppellation->setString(aplData.Name);
-	lbAppellation->setColor(aplData.Color);
-	lbAppellation->enableOutline(aplData.ColorOutline, 2);
+	//lbAppellation->setColor(aplData.Color);
+	//lbAppellation->enableOutline(aplData.ColorOutline, 2);
 	//lbBigWin->setString(Utils::getSingleton().formatMoneyWithComma(data.BigWin));
 	//lbBigCrest->setString(data.BigCrest);
 	iconGold->setPosition(lbQuan->getPosition() + Vec2(lbQuan->getContentSize().width + 20, 5));
@@ -1412,15 +1412,20 @@ void BaseScene::initPopupUserInfo()
 	});
 	popupUserInfo->addChild(btnClose);
 
+	Sprite* bgAvar = Sprite::createWithSpriteFrameName("bg_user_avatar.png");
+	bgAvar->setPosition(-255, 75);
+	bgAvar->setScale(1.4f);
+	popupUserInfo->addChild(bgAvar);
+
 	Sprite* avatar = Sprite::createWithSpriteFrameName("avatar_default.png");
-	avatar->setPosition(-255, 100);
-	avatar->setScale(1.7f);
+	avatar->setPosition(bgAvar->getPositionX(), bgAvar->getPositionY() + 20);
+	avatar->setScale(1.4f);
 	avatar->setName("avatar");
 	popupUserInfo->addChild(avatar);
 
-	Label* lbAppellation = Label::create("Huong Truong", "fonts/aristote.ttf", 25);
-	lbAppellation->setColor(Color3B::WHITE);
-	lbAppellation->setPosition(avatar->getPositionX(), avatar->getPositionY() - 113);
+	Label* lbAppellation = Label::create("Huong Truong", "fonts/davida.ttf", 25);
+	lbAppellation->setColor(Color3B::BLACK);
+	lbAppellation->setPosition(avatar->getPositionX(), avatar->getPositionY() - 95);
 	//lbAppellation->enableOutline(Color4B::BLACK, 1);
 	lbAppellation->setName("lbappellation");
 	popupUserInfo->addChild(lbAppellation);
@@ -1457,7 +1462,10 @@ void BaseScene::initPopupUserInfo()
 	popupUserInfo->addChild(btnActive);
 
     ui::Button* btnLogoutFb = ui::Button::create("btn.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnLogoutFb->setTitleText(Utils::getSingleton().getStringForKey("Logout Facebook"));
+	btnLogoutFb->setTitleText("Logout Facebook");
+	btnLogoutFb->setTitleFontName("fonts/myriadb.ttf");
+	btnLogoutFb->setTitleFontSize(40);
+	btnLogoutFb->setTitleDeviation(Vec2(0, -5));
     btnLogoutFb->setPosition(Vec2(btnActive->getPositionX(), btnActive->getPositionY() - 60));
     btnLogoutFb->setName("btnlogoutfb");
     btnLogoutFb->setScale(.8f);

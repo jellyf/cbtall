@@ -9,14 +9,14 @@ bool UserNode::init()
 	}
 
 	Sprite* bg = Sprite::createWithSpriteFrameName("bg_avatar.png");
-	bg->setPosition(0, -4);
+	bg->setPosition(0, -3);
 	addChild(bg);
 
 	Sprite* avatar = Sprite::createWithSpriteFrameName("avatar_default.png");
 	addChild(avatar);
 
-	Sprite* mask = Sprite::createWithSpriteFrameName("mask_avar.png");
-	addChild(mask);
+	/*Sprite* mask = Sprite::createWithSpriteFrameName("mask_avar.png");
+	addChild(mask);*/
 
 	lbName = Label::createWithTTF("Stormus", "fonts/myriad.ttf", 30);
 	lbName->setHorizontalAlignment(TextHAlignment::CENTER);
