@@ -13,6 +13,9 @@ public:
 	virtual void onHttpResponse(int tag, std::string content);
 	virtual void onHttpResponseFailed();
 
+	virtual void onApplicationDidEnterBackground();
+	virtual void onApplicationWillEnterForeground();
+
 	void onConnected();
 	void onLoginZone();
     void onConnectionException();
@@ -60,5 +63,8 @@ private:
 	//cocos2d::ui::EditBox* tfResEmail;
 	cocos2d::Label* labelPhone;
 	cocos2d::Label* lbBtnForgotPass;
+
+	std::string testMessage;
+	std::string testDevice;
 };
 

@@ -404,4 +404,5 @@ struct AppellationData
 	int Level;
 	std::string Name;
 	cocos2d::Color3B Color;
+	cocos2d::Color4B ColorOutline;
 };

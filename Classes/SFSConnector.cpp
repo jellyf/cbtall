@@ -330,7 +330,8 @@ void SFSConnector::ProcessEvents()
 
 void SFSConnector::LoginZone(string username, string password, string zone) 
 {
-	boost::shared_ptr<IRequest> request(new LoginRequest(username, password, zone));
+	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+	boost::shared_ptr<IRequest> request(new LoginRequest(username, password, zone, parameters));
 	SendRequest(request);
 }
 

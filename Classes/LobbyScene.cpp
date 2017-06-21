@@ -19,39 +19,39 @@ void LobbyScene::onInit()
 	playerPos.push_back(Vec2(207, 97));
 
 	initHeaderWithInfos();
-	initPopupRank();
+	/*initPopupRank();
 	initPopupSettings();
 	initPopupUserInfo();
-	initPopupHistory();
+	initPopupHistory();*/
 
-	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB565);
-	Texture2D* bgTexture = TextureCache::getInstance()->addImage("lobby_bg.jpg");
-	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
-
-	Sprite* bg = Sprite::createWithTexture(bgTexture);
+	Sprite* bg = Sprite::create("bg.jpg");
 	bg->setPosition(560, 350);
 	addChild(bg);
 
 	bool isSolo = Utils::getSingleton().isSoloGame();
+	bool isTour = Utils::getSingleton().isTourGame();
 	string zone = Utils::getSingleton().getCurrentZoneName();
 	if (zone.length() > 0) {
 		int index = zone.find_last_of("Q");
 		if (index >= 0 && index < zone.length()) {
 			zone = zone.substr(0, index);
 		}
+	} else if (isSolo) {
+		zone = "SoLo";
+	} else if (isTour) {
+		zone = "Tour";
 	} else {
 		zone = "VuongPhu";
 	}
-
-	Sprite* spName = Sprite::createWithSpriteFrameName(isSolo ? "SoLo.png" : zone + ".png");
-	spName->setPosition(130, 530);
+	Sprite* spName = Sprite::createWithSpriteFrameName(zone + ".png");
+	spName->setPosition(140, 530);
 	mLayer->addChild(spName);
 
 	scrollListRoom = ui::ScrollView::create();
 	scrollListRoom->setDirection(ui::ScrollView::Direction::VERTICAL);
 	scrollListRoom->setBounceEnabled(true);
-	scrollListRoom->setPosition(Vec2(17, 0));
-	scrollListRoom->setContentSize(Size(220, 475));
+	scrollListRoom->setPosition(Vec2(15, 0));
+	scrollListRoom->setContentSize(Size(240, 490));
 	scrollListRoom->setScrollBarEnabled(false);
 	mLayer->addChild(scrollListRoom);
 
@@ -277,10 +277,10 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 	}
 	Color3B colorMoney = Utils::getSingleton().moneyType == 1 ? Color3B::YELLOW : Color3B(0, 255, 255);
 	vector<Vec2> ppos;
-	ppos.push_back(Vec2(40, 35));
-	ppos.push_back(Vec2(160, 105));
-	ppos.push_back(Vec2(40, 105));
-	ppos.push_back(Vec2(160, 35));
+	ppos.push_back(Vec2(65, 95));
+	ppos.push_back(Vec2(145, 95));
+	ppos.push_back(Vec2(37, 70));
+	ppos.push_back(Vec2(170, 70));
 	vector<int> prot = { -30, -30, 30, 30 };
 	for (int i = 0; i < data.Size; i++) {
 		ui::Button* btn;
@@ -290,7 +290,7 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 			isNewBtn = false;
 		} else {
 			isNewBtn = true;
-			string tbName = isSolo ? "table_SoLo.png" : "table_" + zone + ".png";
+			string tbName = "table.png";// isSolo ? "table_SoLo.png" : "table_" + zone + ".png";
 			btn = ui::Button::create(tbName, "", "", ui::Widget::TextureResType::PLIST);
 			//btn->setPosition(Vec2(100 + (i % 4) * 210, height - 70 - (i / 4) * 170));
 			btn->setTag(i + 1);
@@ -314,50 +314,53 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 				x += 40;
 			}*/
 
+			Size bsize = btn->getContentSize();
 			for (int j = 0; j < (isSolo ? 2 : 4); j++) {
 				//Sprite* sp = Sprite::create("lobby/player" + to_string(j / 2 + 1) + zone + ".png");
-				string playerName = isSolo ? "playerSoLo.png" : "player" + zone + ".png";
+				string playerName = "player" + to_string(j+1) + ".png";// isSolo ? "playerSoLo.png" : "player" + zone + ".png";
 				Sprite* sp = Sprite::createWithSpriteFrameName(playerName);
 				sp->setTag(j);
 				btn->addChild(sp);
 				if (isSolo) {
 					sp->setPosition(j == 0 ? Vec2(40, 65) : Vec2(160, 75));
-					sp->setRotation(j == 0 ? 0 : 180);
+					//sp->setRotation(j == 0 ? 0 : 180);
 				} else {
 					sp->setPosition(ppos[j]);
-					sp->setFlipX(j == 3 || j == 1);
-					sp->setFlipY(j == 2 || j == 1);
-					sp->setRotation(prot[j]);
+					//sp->setFlipX(j == 3 || j == 1);
+					//sp->setFlipY(j == 2 || j == 1);
+					//sp->setRotation(prot[j]);
 				}
 			}
 
 			Sprite* spStilt = Sprite::createWithSpriteFrameName("stilt.png");
-			spStilt->setPosition(btn->getContentSize().width / 2 + 3, btn->getContentSize().height / 2 + 2);
+			spStilt->setPosition(bsize.width / 2 + 5, bsize.height / 2 + 7);
 			btn->addChild(spStilt);
 
-			Label* lb411 = Label::createWithTTF("4-11", "fonts/arialbd.ttf", 20);
-			lb411->setPosition(btn->getContentSize().width / 2 - 2, 25);
+			Label* lb411 = Label::createWithTTF("4-11", "fonts/myriadb.ttf", 25);
+			lb411->setPosition(bsize.width / 2 - 2, 15);
+			lb411->setAnchorPoint(Vec2(.5f, 1));
 			lb411->setColor(Color3B::WHITE);
 			lb411->setName("lb411");
 			btn->addChild(lb411);
 
 			Sprite* spGa = Sprite::createWithSpriteFrameName("ga_off.png");
-			spGa->setPosition(btn->getContentSize().width / 2 - 5, -20);
+			spGa->setPosition(180, 10);
 			spGa->setName("iconga");
-			//spGa->setScale(.8f);
+			spGa->setScale(.8f);
 			btn->addChild(spGa);
 
-			Label* lbName = Label::create(Utils::getSingleton().getStringForKey("table") + " " + to_string(i + 1), "fonts/arialbd.ttf", 24);
+			Label* lbName = Label::create(Utils::getSingleton().getStringForKey("table") + " " + to_string(i + 1), "fonts/myriadb.ttf", 25);
 			lbName->setColor(Color3B::WHITE);
-			lbName->setPosition(-10, 0);
+			lbName->setPosition(0, 15);
 			lbName->setAnchorPoint(Vec2(0, 1));
 			btn->addChild(lbName);
 
-			Label* lbMoney = Label::create("", "fonts/arialbd.ttf", 24);
+			Label* lbMoney = Label::create("", "fonts/myriadb.ttf", 25);
 			lbMoney->setColor(colorMoney);
-			lbMoney->setPosition(210, 0);
+			lbMoney->setPosition(210, 15);
 			lbMoney->setAnchorPoint(Vec2(1, 1));
 			lbMoney->setName("lbmoney");
+			lbMoney->setVisible(false);
 			btn->addChild(lbMoney);
 		}
 		btn->setVisible(true);
@@ -444,12 +447,13 @@ void LobbyScene::onRoomTypeDataResponse(LobbyListRoomType data)
 	scrollListRoom->setInnerContainerSize(Size(180, height));
 	for (int i = 0; i < data.ListRoomType.size(); i++) {
 		ui::Button* btn = (ui::Button*)scrollListRoom->getChildByTag(i);
-		string btnName = isSolo ? "btn_VuongPhu.png" : "btn_" + zone + ".png";
-		string btnName1 = isSolo ? "btn_VuongPhu1.png" : "btn_" + zone + "1.png";
+		string btnName = "btn_active.png";//isSolo ? "btn_VuongPhu.png" : "btn_" + zone + ".png";
+		string btnName1 = "btn.png";//isSolo ? "btn_VuongPhu1.png" : "btn_" + zone + "1.png";
 		if (btn == nullptr) {
-			btn = ui::Button::create(btnName, "", "", ui::Widget::TextureResType::PLIST);
-			btn->setTitleFontName("fonts/arial.ttf");
-			btn->setTitleFontSize(19);
+			btn = ui::Button::create(btnName, btnName, "", ui::Widget::TextureResType::PLIST);
+			btn->setTitleFontName("fonts/myriad.ttf");
+			btn->setTitleFontSize(35);
+			//btn->setTitleDeviation(Vec2(0, -5));
 			btn->setPosition(Vec2(scrollListRoom->getContentSize().width / 2, height - 37 - i * 78));
 			btn->setTag(i);
 			addTouchEventListener(btn, [=]() {
@@ -457,8 +461,8 @@ void LobbyScene::onRoomTypeDataResponse(LobbyListRoomType data)
 				ui::Button* lastBtn = (ui::Button*)scrollListRoom->getChildByTag(currentRoomType);
 				//lastBtn->setColor(Color3B::GRAY);
 				//btn->setColor(Color3B::WHITE);
-				lastBtn->loadTextureNormal(btnName1, ui::Widget::TextureResType::PLIST);
-				btn->loadTextureNormal(btnName, ui::Widget::TextureResType::PLIST);
+				lastBtn->loadTextures(btnName1, btnName1, "", ui::Widget::TextureResType::PLIST);
+				btn->loadTextures(btnName, btnName, "", ui::Widget::TextureResType::PLIST);
 				currentRoomType = i;
 				Utils::getSingleton().currentLobbyId = data.ListRoomType[i].Id;
 				Utils::getSingleton().currentLobbyName = data.ListRoomType[i].Name;

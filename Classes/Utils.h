@@ -36,6 +36,7 @@ public:
 	bool isDisplayNameValid(std::string displayname);
 	bool ispmE();
 	bool isSoloGame();
+	bool isTourGame();
 	void setPmEByLogin(bool pme);
 	void split(const std::string &s, char delim, std::vector<std::string> &elems);
 	void replaceScene(cocos2d::Scene* scene);

@@ -316,6 +316,11 @@ bool Utils::isSoloGame()
 	return currentZoneName.substr(0, 4).compare("SoLo") == 0;
 }
 
+bool Utils::isTourGame()
+{
+	return currentZoneName.substr(0, 4).compare("Tour") == 0;
+}
+
 void Utils::setPmEByLogin(bool pme)
 {
 	gameConfig.pmE &= pme;
@@ -726,11 +731,15 @@ void Utils::createAppellations()
 	std::vector<cocos2d::Color3B> levelColors = { Color3B(200, 0, 0), Color3B(255, 0, 0), Color3B(255, 0, 60), Color3B(255, 0, 120), Color3B(255, 0, 180), Color3B(255, 0, 240),
 		Color3B(210, 0, 255), Color3B(0, 200, 255), Color3B(0, 255, 255), Color3B(0, 255, 200), Color3B(0, 255, 140), Color3B(0, 255, 80), Color3B(0, 255, 20),
 		Color3B(30, 255, 0), Color3B(80, 255, 0), Color3B(130, 255, 0), Color3B(80, 255, 0), Color3B(225, 255, 0), Color3B(255, 225, 0) };
+	std::vector<cocos2d::Color4B> levelOutlineColors = { Color4B(51, 0, 0, 255), Color4B(51, 0, 0, 255), Color4B(51, 0, 12, 255), Color4B(51, 0, 24, 255), Color4B(51, 0, 36, 255), Color4B(51, 0, 48, 255),
+		Color4B(42, 0, 51, 255), Color4B(0, 40, 51, 255), Color4B(0, 51, 51, 255), Color4B(0, 51, 40, 255), Color4B(0, 51, 28, 255), Color4B(0, 51, 16, 255), Color4B(0, 51, 4, 255),
+		Color4B(6, 51, 0, 255), Color4B(16, 51, 0, 255), Color4B(26, 51, 0, 255), Color4B(16, 51, 0, 255), Color4B(45, 51, 0, 255), Color4B(51, 51, 0, 255) };
 	ValueMap aplMap = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/level.xml");
 	for (int i = 0; i < levelStones.size(); i++) {
 		AppellationData apl;
 		apl.Level = levelStones[i];
 		apl.Color = levelColors[i];
+		apl.ColorOutline = levelOutlineColors[i];
 		apl.Name = aplMap["level_" + to_string(i)].asString();
 		appellations.push_back(apl);
 	}

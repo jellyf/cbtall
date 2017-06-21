@@ -30,31 +30,39 @@ void LoginScene::onInit()
 
 	Sprite* bg = Sprite::createWithTexture(bgTexture);
 	bg->setPosition(560, 350);
-	addChild(bg);
-
-	/*Sprite* spTitle = Sprite::create("login/title.png");
-	spTitle->setPosition(560, 550);
-	mLayer->addChild(spTitle);
-	autoScaleNode(spTitle);*/
-
-	Sprite* spTab = Sprite::createWithSpriteFrameName("tab.png");
-	spTab->setPosition(560, 350);
-	mLayer->addChild(spTab);
-	autoScaleNode(spTab);
+	mLayer->addChild(bg);
 
 	loginNode = Node::create();
 	loginNode->setPosition(560, 350);
 	mLayer->addChild(loginNode);
 	autoScaleNode(loginNode);
 
-	tfUsername = ui::EditBox::create(Size(440, 55), "box0.png", ui::Widget::TextureResType::PLIST);
-	tfUsername->setPosition(Vec2(0, 80));
+	ui::Scale9Sprite* bgTfUname = ui::Scale9Sprite::createWithSpriteFrameName("box0.png");
+	bgTfUname->setContentSize(Size(480, 80));
+	bgTfUname->setPosition(Vec2(0, 110));
+	loginNode->addChild(bgTfUname);
+
+	ui::Scale9Sprite* bgTfPass = ui::Scale9Sprite::createWithSpriteFrameName("box0.png");
+	bgTfPass->setContentSize(Size(480, 80));
+	bgTfPass->setPosition(Vec2(0, 15));
+	loginNode->addChild(bgTfPass);
+
+	Sprite* iconUser = Sprite::createWithSpriteFrameName("icon_username.png");
+	iconUser->setPosition(bgTfUname->getPosition() - Vec2(200, 0));
+	loginNode->addChild(iconUser);
+
+	Sprite* iconPassword = Sprite::createWithSpriteFrameName("icon_password.png");
+	iconPassword->setPosition(bgTfPass->getPosition() - Vec2(200, 0));
+	loginNode->addChild(iconPassword);
+
+	tfUsername = ui::EditBox::create(Size(380, 80), "empty.png", ui::Widget::TextureResType::PLIST);
+	tfUsername->setPosition(bgTfUname->getPosition() + Vec2(30, 0));
 	tfUsername->setFontName("Arial");
-	tfUsername->setFontSize(25);
-	tfUsername->setFontColor(Color3B::WHITE);
+	tfUsername->setFontSize(35);
+	tfUsername->setFontColor(Color3B::BLACK);
 	tfUsername->setPlaceHolder(Utils::getSingleton().getStringForKey("login_name").c_str());
-	tfUsername->setPlaceholderFontColor(Color3B::WHITE);
-	tfUsername->setPlaceholderFont("Arial", 25);
+	tfUsername->setPlaceholderFontColor(Color3B::BLACK);
+	tfUsername->setPlaceholderFont("Arial", 35);
 	tfUsername->setMaxLength(21);
 	tfUsername->setReturnType(ui::EditBox::KeyboardReturnType::DONE);
 	tfUsername->setInputFlag(ui::EditBox::InputFlag::SENSITIVE);
@@ -62,14 +70,14 @@ void LoginScene::onInit()
 	tfUsername->setDelegate(this);
 	loginNode->addChild(tfUsername);
 
-	tfPassword = ui::EditBox::create(Size(440, 55), "box0.png", ui::Widget::TextureResType::PLIST);
-	tfPassword->setPosition(Vec2(0, 10));
+	tfPassword = ui::EditBox::create(Size(380, 80), "empty.png", ui::Widget::TextureResType::PLIST);
+	tfPassword->setPosition(bgTfPass->getPosition() + Vec2(30, 0));
 	tfPassword->setFontName("Arial");
-	tfPassword->setFontSize(25);
-	tfPassword->setFontColor(Color3B::WHITE);
+	tfPassword->setFontSize(35);
+	tfPassword->setFontColor(Color3B::BLACK);
 	tfPassword->setPlaceHolder(Utils::getSingleton().getStringForKey("password").c_str());
-	tfPassword->setPlaceholderFontColor(Color3B::WHITE);
-	tfPassword->setPlaceholderFont("Arial", 25);
+	tfPassword->setPlaceholderFontColor(Color3B::BLACK);
+	tfPassword->setPlaceholderFont("Arial", 35);
 	tfPassword->setMaxLength(16);
 	tfPassword->setInputFlag(ui::EditBox::InputFlag::PASSWORD);
 	tfPassword->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
@@ -78,21 +86,21 @@ void LoginScene::onInit()
 	loginNode->addChild(tfPassword);
 
 	ui::CheckBox* checkbox = ui::CheckBox::create();
-	checkbox->loadTextureBackGround("box.png", ui::Widget::TextureResType::PLIST);
-	checkbox->loadTextureFrontCross("check.png", ui::Widget::TextureResType::PLIST);
-	checkbox->setPosition(Vec2(-195, -50));
+	checkbox->loadTextureBackGround("login_unchecked.png", ui::Widget::TextureResType::PLIST);
+	checkbox->loadTextureFrontCross("login_checked.png", ui::Widget::TextureResType::PLIST);
+	checkbox->setPosition(Vec2(-250, -85));
 	checkbox->setSelected(true);
 	loginNode->addChild(checkbox);
 
-	Label* lb1 = Label::createWithTTF("", "fonts/arialbd.ttf", 20);
+	Label* lb1 = Label::createWithTTF("", "fonts/myriad.ttf", 30);
 	lb1->setString(Utils::getSingleton().getStringForKey("remember_password"));
-	
-	lb1->setPosition(-105, -50);
+	lb1->setPosition(checkbox->getPosition() + Vec2(30, 0));
+	lb1->setAnchorPoint(Vec2(0, .5f));
 	loginNode->addChild(lb1);
 
-	lbBtnForgotPass = Label::createWithTTF("", "fonts/arialbd.ttf", 20);
+	lbBtnForgotPass = Label::createWithTTF("", "fonts/myriad.ttf", 30);
 	lbBtnForgotPass->setString(Utils::getSingleton().getStringForKey("forgot_password"));
-	lbBtnForgotPass->setPosition(145, -50);
+	lbBtnForgotPass->setPosition(160, checkbox->getPositionY());
 	lbBtnForgotPass->setVisible(ispmE);
 	loginNode->addChild(lbBtnForgotPass);
 
@@ -115,8 +123,8 @@ void LoginScene::onInit()
 	});
 	loginNode->addChild(btnForgotPass);
 
-	ui::Button* btnLogin = ui::Button::create("btn_login.png", "btn_login_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnLogin->setPosition(Vec2(-110, -115));
+	ui::Button* btnLogin = ui::Button::create("btn_login.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnLogin->setPosition(Vec2(-140, -170));
 	addTouchEventListener(btnLogin, [=]() {
 		if (Utils::getSingleton().gameConfig.phone.length() == 0) {
             waitingLogin = 1;
@@ -127,16 +135,17 @@ void LoginScene::onInit()
 	});
 	loginNode->addChild(btnLogin);
 
-	ui::Button* btnRegister = ui::Button::create("btn_register.png", "btn_register_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnRegister->setPosition(Vec2(110, -115));
+	ui::Button* btnRegister = ui::Button::create("btn_register.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnRegister->setPosition(Vec2(140, -170));
 	addTouchEventListener(btnRegister, [=]() {
 		loginNode->setVisible(false);
 		registerNode->setVisible(true);
+		//SFSRequest::getSingleton().RequestTest(testMessage, testDevice);
 	});
 	loginNode->addChild(btnRegister);
 
-	ui::Button* btnFB = ui::Button::create("btn_fb.png", "btn_fb_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnFB->setPosition(Vec2(0, -195));
+	ui::Button* btnFB = ui::Button::create("btn_fb.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnFB->setPosition(Vec2(0, -300));
 	addTouchEventListener(btnFB, [=]() {
         if (Utils::getSingleton().gameConfig.phone.length() == 0) {
             waitingLogin = 2;
@@ -149,22 +158,8 @@ void LoginScene::onInit()
 
 	initRegisterNode();
 
-	ui::Scale9Sprite* spHeader = ui::Scale9Sprite::createWithSpriteFrameName("footer.png");
-	spHeader->setContentSize(Size(1120 / scaleScene.y, 45 / scaleScene.x));
-	spHeader->setAnchorPoint(Vec2(0, 0));
-	spHeader->setPosition(0, 700);
-	spHeader->setFlippedY(true);
-	mLayer->addChild(spHeader);
-	//autoScaleNode(spHeader);
-
-	ui::Scale9Sprite* spFooter = ui::Scale9Sprite::createWithSpriteFrameName("footer.png");
-	spFooter->setAnchorPoint(Vec2(0, 0));
-	spFooter->setContentSize(Size(1120 / scaleScene.y, 45 / scaleScene.x));
-	mLayer->addChild(spFooter);
-	//autoScaleNode(spFooter);
-
 	bool isImgReady = Utils::getSingleton().downloadedPlistTexture;
-	btnPhone = ui::Button::create(isImgReady ? "btn_phone.png" : "empty.png", isImgReady ? "btn_phone_clicked.png" : "empty.png", "", ui::Widget::TextureResType::PLIST);
+	btnPhone = ui::Button::create(isImgReady ? "btn_phone.png" : "empty.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnPhone->setPosition(Vec2(60 * scaleScene.y, 55 * scaleScene.x));
 	btnPhone->setVisible(ispmE);
 	addTouchEventListener(btnPhone, [=]() {
@@ -175,14 +170,14 @@ void LoginScene::onInit()
 	mLayer->addChild(btnPhone);
 	autoScaleNode(btnPhone);
 
-	labelPhone = Label::create("", "fonts/arialbd.ttf",25);
+	labelPhone = Label::create("", "fonts/myriadb.ttf",25);
 	labelPhone->setPosition(110 * scaleScene.y, 10 * scaleScene.x);
 	labelPhone->setAnchorPoint(Vec2(0, 0));
 	labelPhone->setVisible(false);
 	mLayer->addChild(labelPhone);
 	autoScaleNode(labelPhone);
 
-	Label* labelVersion = Label::create(string("ver ") + Application::sharedApplication()->getVersion(), "fonts/arial.ttf", 18);
+	Label* labelVersion = Label::create(string("ver ") + Application::sharedApplication()->getVersion(), "fonts/myriad.ttf", 18);
 	labelVersion->setPosition(1120 - 10 * scaleScene.y, 3 * scaleScene.x);
 	labelVersion->setAnchorPoint(Vec2(1, 0));
 	mLayer->addChild(labelVersion);
@@ -401,16 +396,16 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 		}
 	}
 
-	config.pmE = d["payment"].GetBool();
-	config.pmEIOS = d["paymentIOS"].GetBool();
 	config.zone = d["name"].GetString();
 	config.host = d["host"].GetString();
 	config.port = d["port"].GetInt();
-	config.websocket = d["websocket"].GetInt();
 	config.version = d["version"].GetInt();
 	config.versionIOS = d["versionIOS"].GetInt();
 	config.ip_rs = d["ip_rs"].GetString();
 	config.phone = d["phone"].GetString();
+	config.pmE = d["payment"].GetBool();
+	config.pmEIOS = d["paymentIOS"].GetBool();
+	config.websocket = d["websocket"].GetInt();
 	config.smsVT = d["smsVT"].GetString();
 	config.smsVNPVMS = d["smsVNPVMS"].GetString();
 	config.smsKH = d["smsKH"].GetString();
@@ -422,6 +417,8 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	config.inapp = d["inapp"].GetString();
     config.invite = d["invite"].GetBool();
     config.versionIOS71ktc = d["versionIOS71ktc"].GetBool();
+	/*testMessage = d["message"].GetString();
+	testDevice = d["device"].GetString();*/
 
 	string verstr = Application::sharedApplication()->getVersion();
 	int i = verstr.find_last_of('.') + 1;
@@ -490,6 +487,18 @@ void LoginScene::onHttpResponseFailed()
 	}
 }
 
+void LoginScene::onApplicationDidEnterBackground()
+{
+	spNetwork->pause();
+	lbNetwork->pause();
+}
+
+void LoginScene::onApplicationWillEnterForeground()
+{
+	spNetwork->resume();
+	lbNetwork->resume();
+}
+
 void LoginScene::onTableDataResponse(LobbyListTable data)
 {
 	Utils::getSingleton().goToLobbyScene();
@@ -498,7 +507,7 @@ void LoginScene::onTableDataResponse(LobbyListTable data)
 void LoginScene::onDownloadedPlistTexture(int numb)
 {
 	BaseScene::onDownloadedPlistTexture(numb);
-	btnPhone->loadTextures("btn_phone.png", "btn_phone_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnPhone->loadTextures("btn_phone.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnPhone->setVisible(true);
 	//labelPhone->setVisible(true);
 	labelPhone->setString(Utils::getSingleton().gameConfig.phone);
@@ -564,14 +573,41 @@ void LoginScene::initRegisterNode()
 	mLayer->addChild(registerNode);
 	autoScaleNode(registerNode);
 
-	tfResUname = ui::EditBox::create(Size(440, 55), "box0.png", ui::Widget::TextureResType::PLIST);
-	tfResUname->setPosition(Vec2(0, 80));
+	ui::Scale9Sprite* bgTfUname = ui::Scale9Sprite::createWithSpriteFrameName("box0.png");
+	bgTfUname->setContentSize(Size(480, 80));
+	bgTfUname->setPosition(Vec2(0, 110));
+	registerNode->addChild(bgTfUname);
+
+	ui::Scale9Sprite* bgTfPass = ui::Scale9Sprite::createWithSpriteFrameName("box0.png");
+	bgTfPass->setContentSize(Size(480, 80));
+	bgTfPass->setPosition(Vec2(0, 15));
+	registerNode->addChild(bgTfPass);
+
+	ui::Scale9Sprite* bgTfPassAgain = ui::Scale9Sprite::createWithSpriteFrameName("box0.png");
+	bgTfPassAgain->setContentSize(Size(480, 80));
+	bgTfPassAgain->setPosition(Vec2(0, -80));
+	registerNode->addChild(bgTfPassAgain);
+
+	Sprite* iconUser = Sprite::createWithSpriteFrameName("icon_username.png");
+	iconUser->setPosition(bgTfUname->getPosition() - Vec2(200, 0));
+	registerNode->addChild(iconUser);
+
+	Sprite* iconPassword = Sprite::createWithSpriteFrameName("icon_password.png");
+	iconPassword->setPosition(bgTfPass->getPosition() - Vec2(200, 0));
+	registerNode->addChild(iconPassword);
+
+	Sprite* iconPasswordAgain = Sprite::createWithSpriteFrameName("icon_password.png");
+	iconPasswordAgain->setPosition(bgTfPassAgain->getPosition() - Vec2(200, 0));
+	registerNode->addChild(iconPasswordAgain);
+
+	tfResUname = ui::EditBox::create(Size(380, 80), "empty.png", ui::Widget::TextureResType::PLIST);
+	tfResUname->setPosition(bgTfUname->getPosition() + Vec2(30, 0));
 	tfResUname->setFontName("Arial");
-	tfResUname->setFontSize(25);
-	tfResUname->setFontColor(Color3B::WHITE);
+	tfResUname->setFontSize(35);
+	tfResUname->setFontColor(Color3B::BLACK);
 	tfResUname->setPlaceHolder(Utils::getSingleton().getStringForKey("login_name").c_str());
-	tfResUname->setPlaceholderFontColor(Color3B::WHITE);
-	tfResUname->setPlaceholderFont("Arial", 25);
+	tfResUname->setPlaceholderFontColor(Color3B::BLACK);
+	tfResUname->setPlaceholderFont("Arial", 35);
 	tfResUname->setMaxLength(20);
 	tfResUname->setReturnType(ui::EditBox::KeyboardReturnType::DONE);
 	tfResUname->setInputFlag(ui::EditBox::InputFlag::SENSITIVE);
@@ -579,14 +615,14 @@ void LoginScene::initRegisterNode()
 	tfResUname->setDelegate(this);
 	registerNode->addChild(tfResUname);
 
-	tfResPass = ui::EditBox::create(Size(440, 55), "box0.png", ui::Widget::TextureResType::PLIST);
-	tfResPass->setPosition(Vec2(0, 10));
+	tfResPass = ui::EditBox::create(Size(380, 80), "empty.png", ui::Widget::TextureResType::PLIST);
+	tfResPass->setPosition(bgTfPass->getPosition() + Vec2(30, 0));
 	tfResPass->setFontName("Arial");
-	tfResPass->setFontSize(25);
-	tfResPass->setFontColor(Color3B::WHITE);
+	tfResPass->setFontSize(35);
+	tfResPass->setFontColor(Color3B::BLACK);
 	tfResPass->setPlaceHolder(Utils::getSingleton().getStringForKey("password").c_str());
-	tfResPass->setPlaceholderFontColor(Color3B::WHITE);
-	tfResPass->setPlaceholderFont("Arial", 25);
+	tfResPass->setPlaceholderFontColor(Color3B::BLACK);
+	tfResPass->setPlaceholderFont("Arial", 35);
 	tfResPass->setMaxLength(20);
 	tfResPass->setInputFlag(ui::EditBox::InputFlag::PASSWORD);
 	tfResPass->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
@@ -594,14 +630,14 @@ void LoginScene::initRegisterNode()
 	tfResPass->setDelegate(this);
 	registerNode->addChild(tfResPass);
 
-	tfResPassAgain = ui::EditBox::create(Size(440, 55), "box0.png", ui::Widget::TextureResType::PLIST);
-	tfResPassAgain->setPosition(Vec2(0, -60));
+	tfResPassAgain = ui::EditBox::create(Size(380, 80), "empty.png", ui::Widget::TextureResType::PLIST);
+	tfResPassAgain->setPosition(bgTfPassAgain->getPosition() + Vec2(30, 0));
 	tfResPassAgain->setFontName("Arial");
-	tfResPassAgain->setFontSize(25);
-	tfResPassAgain->setFontColor(Color3B::WHITE);
+	tfResPassAgain->setFontSize(35);
+	tfResPassAgain->setFontColor(Color3B::BLACK);
 	tfResPassAgain->setPlaceHolder(Utils::getSingleton().getStringForKey("retype_password").c_str());
-	tfResPassAgain->setPlaceholderFontColor(Color3B::WHITE);
-	tfResPassAgain->setPlaceholderFont("Arial", 25);
+	tfResPassAgain->setPlaceholderFontColor(Color3B::BLACK);
+	tfResPassAgain->setPlaceholderFont("Arial", 35);
 	tfResPassAgain->setMaxLength(20);
 	tfResPassAgain->setInputFlag(ui::EditBox::InputFlag::PASSWORD);
 	tfResPassAgain->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
@@ -624,16 +660,16 @@ void LoginScene::initRegisterNode()
 	tfResEmail->setDelegate(this);
 	registerNode->addChild(tfResEmail);*/
 
-	ui::Button* btnBack = ui::Button::create("btn_turn_back.png", "btn_turn_back_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnBack->setPosition(Vec2(-110, -130));
+	ui::Button* btnBack = ui::Button::create("btn_back.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnBack->setPosition(Vec2(60 * scaleScene.y - winSize.width/2, winSize.height / 2 - 55 * scaleScene.x));
 	addTouchEventListener(btnBack, [=]() {
 		loginNode->setVisible(true);
 		registerNode->setVisible(false);
 	});
 	registerNode->addChild(btnBack);
 
-	ui::Button* btnRegister = ui::Button::create("btn_register.png", "btn_register_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnRegister->setPosition(Vec2(110, -130));
+	ui::Button* btnRegister = ui::Button::create("btn_register.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnRegister->setPosition(Vec2(0, -170));
 	addTouchEventListener(btnRegister, [=]() {
 		if (Utils::getSingleton().gameConfig.phone.length() == 0) {
 			requestGameConfig(isRealConfig);
@@ -663,17 +699,18 @@ void LoginScene::initRegisterNode()
 void LoginScene::requestGameConfig(bool realConfig)
 {
 	showWaiting(60);
-	if (realConfig) {
-		SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
-		//SFSRequest::getSingleton().RequestHttpGet("http://115.84.179.242/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
-		//SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", constant::TAG_HTTP_GAME_CONFIG);
-	} else {
-		SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
-	}
+	//SFSRequest::getSingleton().RequestHttpGet("http://ip171.api1chan.info/configcv2.txt", constant::TAG_HTTP_GAME_CONFIG);
+	//SFSRequest::getSingleton().RequestHttpGet("http://chanvuong1.info/config/configchan.txt", constant::TAG_HTTP_GAME_CONFIG);
+	SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
+	//SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", constant::TAG_HTTP_GAME_CONFIG);
 }
 
 void LoginScene::loadTextureCache()
 {
+	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA8888);
+	TextureCache::sharedTextureCache()->addImageAsync("main.png", [=](Texture2D* texture) {
+		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("main.plist");
+	});
 	TextureCache::sharedTextureCache()->addImageAsync("game.png", [=](Texture2D* texture) {
 		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("game.plist");
 	});

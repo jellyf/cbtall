@@ -130,26 +130,6 @@ void GameScene::onInit()
 	bg->setPosition(560, 350);
 	mLayer->addChild(bg);
 
-	//Sprite* centerBg = Sprite::create("center.png");
-	Sprite* centerBg = Sprite::createWithSpriteFrameName("center.png");
-	centerBg->setPosition(560, 350);
-	//centerBg->setVisible(!isSolo);
-	mLayer->addChild(centerBg);
-	autoScaleNode(centerBg);
-
-	if (isSolo) {
-		Sprite* dragon1 = Sprite::create("dragon.png");
-		dragon1->setPosition(310, 350);
-		mLayer->addChild(dragon1);
-		autoScaleNode(dragon1);
-
-		Sprite* dragon2 = Sprite::create("dragon.png");
-		dragon2->setPosition(810, 350);
-		dragon2->setFlippedX(true);
-		mLayer->addChild(dragon2);
-		autoScaleNode(dragon2);
-	}
-
 	playLayer = Layer::create();
 	mLayer->addChild(playLayer, 10);
 	autoScaleNode(playLayer);
@@ -164,7 +144,7 @@ void GameScene::onInit()
 	Vec2 topLeft = Vec2(0, winSize.height);
 	Vec2 topRight = Vec2(winSize.width, winSize.height);
 
-	btnSettings = ui::Button::create("btn_settings.png", "btn_settings_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnSettings = ui::Button::create("btn_settings.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnSettings->setPosition(topRight + getScaleSceneDistance(Vec2(-50, -50)));
 	btnSettings->setTouchEnabled(false);
 	addTouchEventListener(btnSettings, [=]() {
@@ -218,7 +198,7 @@ void GameScene::onInit()
 	autoScaleNode(btnSettings);
 	vecMenuBtns.push_back(btnSettings);
 
-	btnChat = ui::Button::create("btn_chat.png", "btn_chat_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnChat = ui::Button::create("btn_chat.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnChat->setPosition(topRight + getScaleSceneDistance(Vec2(-50, -50)));// Vec2(975, 650));
 	btnChat->setTouchEnabled(false);
 	addTouchEventListener(btnChat, [=]() {
@@ -229,11 +209,8 @@ void GameScene::onInit()
 	autoScaleNode(btnChat);
 	vecMenuBtns.push_back(btnChat);
 
-	btnBack = ui::Button::create("btn_back.png", "btn_back_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	//btnBack = ui::Button::create("btn_exit.png", "btn_exit_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	//btnBack->setPosition(topRight + getScaleSceneDistance(Vec2(-50, -50)));
+	btnBack = ui::Button::create("btn_back.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnBack->setPosition(topLeft + getScaleSceneDistance(Vec2(50, -50)));
-	//btnBack->setTouchEnabled(false);
 	addTouchEventListener(btnBack, [=]() {
 		onBackScene();
 	});
@@ -241,18 +218,7 @@ void GameScene::onInit()
 	autoScaleNode(btnBack);
 	//vecMenuBtns.push_back(btnBack);
 
-	btnBag = ui::Button::create("btn_bag.png", "btn_bag_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnBag->setPosition(topRight + getScaleSceneDistance(Vec2(-50, -50)));
-	//btnBag->setTouchEnabled(false);
-	btnBag->setVisible(false);
-	addTouchEventListener(btnBag, [=]() {
-
-	});
-	mLayer->addChild(btnBag, constant::ZORDER_POPUP - 5);
-	autoScaleNode(btnBag);
-	//vecMenuBtns.push_back(btnBag);
-
-	btnUp = ui::Button::create("btn_up.png", "btn_up_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnUp = ui::Button::create("btn_up.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnUp->setPosition(topRight + getScaleSceneDistance(Vec2(-50, -50)));
 	btnUp->setVisible(false);
 	addTouchEventListener(btnUp, [=]() {
@@ -261,7 +227,7 @@ void GameScene::onInit()
 	mLayer->addChild(btnUp, constant::ZORDER_POPUP - 1);
 	autoScaleNode(btnUp);
 
-	btnDown = ui::Button::create("btn_down.png", "btn_down_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnDown = ui::Button::create("btn_down.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnDown->setPosition(topRight + getScaleSceneDistance(Vec2(-50, -50)));
 	addTouchEventListener(btnDown, [=]() {
 		showMenuButtons();
@@ -271,14 +237,14 @@ void GameScene::onInit()
 
 	initCofferView(topRight + getScaleSceneDistance(Vec2(-150, -50)), constant::GAME_ZORDER_BUTTON, .8f);
 
-	iconGa = Sprite::createWithSpriteFrameName("btn_ga_on.png");
+	iconGa = Sprite::createWithSpriteFrameName("ga_off.png");
 	//iconGa->setPosition(topLeft + getScaleSceneDistance(Vec2(260, -50)));// 880, 650);
 	//iconGa->setPosition(topLeft + getScaleSceneDistance(Vec2(340, -50)));
 	iconGa->setPosition(topRight + getScaleSceneDistance(Vec2(Utils::getSingleton().ispmE() ? -240 : -150, -50)));
 	mLayer->addChild(iconGa, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(iconGa);
 
-	lbMoneyGa = Label::create("", "fonts/arial.ttf", 20);
+	lbMoneyGa = Label::create("", "fonts/myriad.ttf", 20);
 	lbMoneyGa->setPosition(iconGa->getPosition() - getScaleSceneDistance(Vec2(0, 40)));
 	mLayer->addChild(lbMoneyGa, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(lbMoneyGa);
@@ -286,7 +252,11 @@ void GameScene::onInit()
 	//spNetwork->setPosition(topRight + getScaleSceneDistance(Vec2(pmE ? -240 : -150, -50)));
 	spNetwork->setPosition(Vec2(winSize.width, 0) + getScaleSceneDistance(Vec2(-40, 35)));
 
-	btnReady = ui::Button::create("btn_ready.png", "btn_ready_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnReady = ui::Button::create("btn.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnReady->setTitleText(Utils::getSingleton().getStringForKey("ready"));
+	btnReady->setTitleFontName("fonts/myriadb.ttf");
+	btnReady->setTitleFontSize(40);
+	btnReady->setTitleDeviation(Vec2(0, -5));
 	btnReady->setPosition(Vec2(560, 350));
 	btnReady->setVisible(false);
 	addTouchEventListener(btnReady, [=]() {
@@ -299,7 +269,11 @@ void GameScene::onInit()
 	mLayer->addChild(btnReady);
 	autoScaleNode(btnReady);
 
-	btnCancelReady = ui::Button::create("btn_unready.png", "btn_unready_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnCancelReady = ui::Button::create("btn.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnCancelReady->setTitleText(Utils::getSingleton().getStringForKey("cancel_ready"));
+	btnCancelReady->setTitleFontName("fonts/myriadb.ttf");
+	btnCancelReady->setTitleFontSize(40);
+	btnCancelReady->setTitleDeviation(Vec2(0, -5));
 	//btnCancelReady->setContentSize(Size(200, 65));
 	btnCancelReady->setPosition(Vec2(560, 350));
 	//btnCancelReady->setScale9Enabled(true);
@@ -313,7 +287,11 @@ void GameScene::onInit()
 	mLayer->addChild(btnCancelReady);
 	autoScaleNode(btnCancelReady);
 
-	btnBash = ui::Button::create("btn_danh.png", "btn_danh_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnBash = ui::Button::create("btn_small.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnBash->setTitleText(Utils::getSingleton().getStringForKey("danh"));
+	btnBash->setTitleFontName("fonts/myriadb.ttf");
+	btnBash->setTitleFontSize(40);
+	btnBash->setTitleDeviation(Vec2(0, -5));
 	btnBash->setPosition(Vec2(900, 35));
 	btnBash->setVisible(false);
 	addTouchEventListener(btnBash, [=]() {
@@ -333,7 +311,11 @@ void GameScene::onInit()
 	mLayer->addChild(btnBash, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(btnBash);
 
-	btnForward = ui::Button::create("btn_duoi.png", "btn_duoi_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnForward = ui::Button::create("btn_small.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnForward->setTitleText(Utils::getSingleton().getStringForKey("duoi"));
+	btnForward->setTitleFontName("fonts/myriadb.ttf");
+	btnForward->setTitleFontSize(40);
+	btnForward->setTitleDeviation(Vec2(0, -5));
 	btnForward->setPosition(Vec2(900, 35));
 	btnForward->setVisible(false);
 	addTouchEventListener(btnForward, [=]() {
@@ -343,7 +325,11 @@ void GameScene::onInit()
 	mLayer->addChild(btnForward, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(btnForward);
 
-	btnBashBack = ui::Button::create("btn_danh.png", "btn_danh_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnBashBack = ui::Button::create("btn_small.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnBashBack->setTitleText(Utils::getSingleton().getStringForKey("danh"));
+	btnBashBack->setTitleFontName("fonts/myriadb.ttf");
+	btnBashBack->setTitleFontSize(40);
+	btnBashBack->setTitleDeviation(Vec2(0, -5));
 	btnBashBack->setPosition(Vec2(900, 35));
 	btnBashBack->setVisible(false);
 	addTouchEventListener(btnBashBack, [=]() {
@@ -364,7 +350,11 @@ void GameScene::onInit()
 	mLayer->addChild(btnBashBack, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(btnBashBack);
 
-	btnHold = ui::Button::create("btn_an.png", "btn_an_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnHold = ui::Button::create("btn_small.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnHold->setTitleText(Utils::getSingleton().getStringForKey("an"));
+	btnHold->setTitleFontName("fonts/myriadb.ttf");
+	btnHold->setTitleFontSize(40);
+	btnHold->setTitleDeviation(Vec2(0, -5));
 	btnHold->setPosition(Vec2(220, 35));
 	btnHold->setVisible(false);
 	addTouchEventListener(btnHold, [=]() {
@@ -399,7 +389,11 @@ void GameScene::onInit()
 	mLayer->addChild(btnHold, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(btnHold);
 
-	btnPick = ui::Button::create("btn_boc.png", "btn_boc_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnPick = ui::Button::create("btn_small.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnPick->setTitleText(Utils::getSingleton().getStringForKey("boc"));
+	btnPick->setTitleFontName("fonts/myriadb.ttf");
+	btnPick->setTitleFontSize(40);
+	btnPick->setTitleDeviation(Vec2(0, -5));
 	btnPick->setPosition(Vec2(900, 35));
 	btnPick->setVisible(false);
 	addTouchEventListener(btnPick, [=]() {
@@ -423,7 +417,11 @@ void GameScene::onInit()
 	mLayer->addChild(btnPick, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(btnPick);
 
-	btnPenet = ui::Button::create("btn_chiu.png", "btn_chiu_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnPenet = ui::Button::create("btn_small.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnPenet->setTitleText(Utils::getSingleton().getStringForKey("chiu"));
+	btnPenet->setTitleFontName("fonts/myriadb.ttf");
+	btnPenet->setTitleFontSize(40);
+	btnPenet->setTitleDeviation(Vec2(0, -5));
 	btnPenet->setPosition(Vec2(900, 35));
 	btnPenet->setVisible(false);
 	addTouchEventListener(btnPenet, [=]() {
@@ -458,7 +456,11 @@ void GameScene::onInit()
 	mLayer->addChild(btnPenet, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(btnPenet);
     
-    btnDropPenet = ui::Button::create("btn_bo_chiu.png", "btn_bo_chiu_clicked.png", "", ui::Widget::TextureResType::PLIST);
+    btnDropPenet = ui::Button::create("btn_small.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnDropPenet->setTitleText(Utils::getSingleton().getStringForKey("bo_chiu"));
+	btnDropPenet->setTitleFontName("fonts/myriadb.ttf");
+	btnDropPenet->setTitleFontSize(40);
+	btnDropPenet->setTitleDeviation(Vec2(0, -5));
     btnDropPenet->setPosition(Vec2(220, 35));
     btnDropPenet->setVisible(false);
     addTouchEventListener(btnDropPenet, [=]() {
@@ -487,7 +489,11 @@ void GameScene::onInit()
 	mLayer->addChild(btnWin, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(btnWin);
 
-	btnDropWin = ui::Button::create("btn_bou.png", "btn_bou_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnDropWin = ui::Button::create("btn_small.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnDropWin->setTitleText(Utils::getSingleton().getStringForKey("bo_u"));
+	btnDropWin->setTitleFontName("fonts/myriadb.ttf");
+	btnDropWin->setTitleFontSize(40);
+	btnDropWin->setTitleDeviation(Vec2(0, -5));
 	btnDropWin->setPosition(Vec2(220, 35));
 	btnDropWin->setVisible(false);
 	addTouchEventListener(btnDropWin, [=]() {
@@ -496,37 +502,33 @@ void GameScene::onInit()
 	mLayer->addChild(btnDropWin, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(btnDropWin);
 
-	btnXemNoc = ui::Button::create("btn_xem_noc.png", "btn_xem_noc_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnXemNoc->setPosition(Vec2(560, 280));
+	btnXemNoc = ui::Button::create("btn.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnXemNoc->setTitleText(Utils::getSingleton().getStringForKey("xem_noc"));
+	btnXemNoc->setTitleFontName("fonts/myriadb.ttf");
+	btnXemNoc->setTitleFontSize(40);
+	btnXemNoc->setTitleDeviation(Vec2(0, -5));
+	btnXemNoc->setPosition(Vec2(560, 300));
 	btnXemNoc->setVisible(false);
 	addTouchEventListener(btnXemNoc, [=]() {
 		showStiltCards();
 	});
-	mLayer->addChild(btnXemNoc, constant::GAME_ZORDER_SPLASH + 1);
+	mLayer->addChild(btnXemNoc, constant::GAME_ZORDER_SPLASH + 2);
 	autoScaleNode(btnXemNoc);
 
-	btnDongNoc = ui::Button::create("btn_dong_noc.png", "btn_dong_noc_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnDongNoc->setPosition(Vec2(560, 280));
+	btnDongNoc = ui::Button::create("btn.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnDongNoc->setTitleText(Utils::getSingleton().getStringForKey("dong_noc"));
+	btnDongNoc->setTitleFontName("fonts/myriadb.ttf");
+	btnDongNoc->setTitleFontSize(40);
+	btnDongNoc->setTitleDeviation(Vec2(0, -5));
+	btnDongNoc->setPosition(btnXemNoc->getPosition());
 	btnDongNoc->setVisible(false);
 	addTouchEventListener(btnDongNoc, [=]() {
 		showWinnerCards();
 	});
-	mLayer->addChild(btnDongNoc, constant::GAME_ZORDER_SPLASH + 1);
+	mLayer->addChild(btnDongNoc, constant::GAME_ZORDER_SPLASH + 2);
 	autoScaleNode(btnDongNoc);
 
-	/*Label* lbBtnReady = Label::createWithTTF(Utils::getSingleton().getStringForKey("ready"), "fonts/UTM AZUKI.ttf", 30);
-	lbBtnReady->setPosition(btnReady->getContentSize().width/2, btnReady->getContentSize().height/2);
-	lbBtnReady->setColor(Color3B::YELLOW);
-	lbBtnReady->enableOutline(Color4B::BLACK, 2);
-	btnReady->addChild(lbBtnReady);
-
-	Label* lbBtnCancelReady = Label::createWithTTF(Utils::getSingleton().getStringForKey("cancel_ready"), "fonts/UTM AZUKI.ttf", 30);
-	lbBtnCancelReady->setPosition(btnCancelReady->getContentSize().width / 2, btnCancelReady->getContentSize().height / 2);
-	lbBtnCancelReady->setColor(Color3B::YELLOW);
-	lbBtnCancelReady->enableOutline(Color4B::BLACK, 2);
-	btnCancelReady->addChild(lbBtnCancelReady);*/
-
-	lbNoticeAction = Label::createWithTTF("", "fonts/UTM AZUKI.ttf", 35);
+	lbNoticeAction = Label::createWithTTF("", "fonts/myriadb.ttf", 35);
 	lbNoticeAction->setPosition(560, 350);
 	lbNoticeAction->setColor(Color3B::YELLOW);
 	lbNoticeAction->enableOutline(Color4B::BLACK, 2);
@@ -534,25 +536,11 @@ void GameScene::onInit()
 	mLayer->addChild(lbNoticeAction);
 	autoScaleNode(lbNoticeAction);
 
-	/*Sprite* bgDiaNoc = Sprite::create("board/bg_dianoc.png");
-	bgDiaNoc->setPosition(564, 422);
-	mLayer->addChild(bgDiaNoc);
-	bgDiaNoc->setVisible(false);
-	autoScaleNode(bgDiaNoc);*/
-
 	Sprite* bgDiaNoc = Sprite::createWithSpriteFrameName("bg_dianoc.png");
-	//ui::Button* bgDiaNoc = ui::Button::create("bg_dianoc.png", "", "", ui::Widget::TextureResType::PLIST);
 	bgDiaNoc->setPosition(Vec2(564, 422));
 	mLayer->addChild(bgDiaNoc);
 	bgDiaNoc->setVisible(false);
 	autoScaleNode(bgDiaNoc);
-	/*addTouchEventListener(bgDiaNoc, [=]() {
-		if (btnPick->isVisible()) {
-			SFSRequest::getSingleton().RequestGamePick();
-			progressTimer->setVisible(false);
-			progressTimer->stopAllActions();
-		}
-	});*/
 
 	Sprite* spCardNoc = Sprite::createWithSpriteFrameName("bg_card_up.png");
 	spCardNoc->setRotation(-20);
@@ -612,8 +600,8 @@ void GameScene::onInit()
 		playLayer->addChild(user, constant::GAME_ZORDER_USER);
 		vecUsers.push_back(user);
 
-		Sprite* spSS = Sprite::createWithSpriteFrameName("txt_sansang.png");
-		spSS->setPosition(vecUserPos[i]);
+		Sprite* spSS = Sprite::createWithSpriteFrameName("icon_sansang.png");
+		spSS->setPosition(vecUserPos[i] + getScaleSceneDistance(Vec2(-35, -35)));
 		spSS->setVisible(false);
 		mLayer->addChild(spSS, constant::GAME_ZORDER_USER + 9);
 		spSanSangs.push_back(spSS);
@@ -626,7 +614,16 @@ void GameScene::onInit()
 		spBatBaos.push_back(spBB);
 		autoScaleNode(spBB);
 
-		Label* lb1 = Label::createWithTTF("100,000", "fonts/UTM AZUKI.ttf", 45);
+		Label* lbSS = Label::createWithTTF(Utils::getSingleton().getStringForKey("ready"), "fonts/myriadb.ttf", 40);
+		lbSS->setPosition(vecUserPos[i] + getScaleSceneDistance(Vec2(0, i == 0 ? 100 : -115)));
+		lbSS->setColor(Color3B(78, 248, 126));
+		lbSS->enableOutline(Color4B(2, 49, 15, 255), 2);
+		lbSS->setVisible(false);
+		mLayer->addChild(lbSS, constant::GAME_ZORDER_USER + 9);
+		lbSanSangs.push_back(lbSS);
+		autoScaleNode(lbSS);
+
+		Label* lb1 = Label::createWithTTF("100,000", "fonts/myriadb.ttf", 45);
 		mLayer->addChild(lb1, constant::GAME_ZORDER_USER + 11);
 		lb1->setPosition(vecUserPos[i]);
 		lb1->setOpacity(0);
@@ -635,17 +632,16 @@ void GameScene::onInit()
 
 		ui::Button* btnKick = ui::Button::create("empty.png", "empty.png", "", ui::Widget::TextureResType::PLIST);
 		mLayer->addChild(btnKick, constant::GAME_ZORDER_USER + 12);
-		btnKick->setPosition(vecUserPos[i] + Vec2(45, 40));
+		btnKick->setPosition(vecUserPos[i] + getScaleSceneDistance(Vec2(40, 35)));
 		btnKick->setContentSize(Size(70, 70));
 		btnKick->setScale9Enabled(true);
 		btnKick->setVisible(false);
 		vecBtnKicks.push_back(btnKick);
 		autoScaleNode(btnKick);
 
-		Sprite* spKick = Sprite::createWithSpriteFrameName("btn_dong.png");
+		Sprite* spKick = Sprite::createWithSpriteFrameName("btn_kick.png");
 		spKick->setPosition(btnKick->getContentSize().width / 2, btnKick->getContentSize().height / 2);
 		btnKick->addChild(spKick);
-		spKick->setScale(.45f);
 
 		addTouchEventListener(btnKick, [=](){
 			showPopupNotice(Utils::getSingleton().getStringForKey("ban_muon_da_nguoi_nay_ra"), [=]() {
@@ -663,20 +659,38 @@ void GameScene::onInit()
 	playLayer->addChild(progressTimer, constant::GAME_ZORDER_USER + 9);
 
 	spChuPhong = Sprite::createWithSpriteFrameName("chuphong.png");
+	spChuPhong->setScale(.6f);
 	spChuPhong->setVisible(false);
 	mLayer->addChild(spChuPhong, constant::GAME_ZORDER_USER + 10);
 	autoScaleNode(spChuPhong);
 
-	spChonCai = Sprite::createWithSpriteFrameName("txt_choncai.png");
+	/*spChonCai = Sprite::createWithSpriteFrameName("txt_choncai.png");
 	spChonCai->setVisible(false);
 	mLayer->addChild(spChonCai, constant::GAME_ZORDER_USER + 9);
-	autoScaleNode(spChonCai);
+	autoScaleNode(spChonCai);*/
 
-	lbCrestTime = Label::create("", "fonts/arialbd.ttf", 50);
-	lbCrestTime->setPosition(btnXemNoc->getPosition() + getScaleSceneDistance(Vec2(190, 0)));
-	lbCrestTime->setVisible(false);
-	mLayer->addChild(lbCrestTime, constant::GAME_ZORDER_SPLASH + 1);
-	autoScaleNode(lbCrestTime);
+	lbChonCai = Label::createWithTTF(Utils::getSingleton().getStringForKey("choose_host"), "fonts/myriadb.ttf", 40);
+	lbChonCai->enableOutline(Color4B(77, 74, 0, 255), 2);
+	lbChonCai->setColor(Color3B(255, 246, 0));
+	lbChonCai->setOpacity(0);
+	lbChonCai->setVisible(false);
+	mLayer->addChild(lbChonCai, constant::GAME_ZORDER_USER + 9);
+	autoScaleNode(lbChonCai);
+
+	FadeOut* fadeOutChonCai = FadeOut::create(.7f);
+	FadeIn* fadeInChonCai = FadeIn::create(.7f);
+	lbChonCai->runAction(RepeatForever::create(Sequence::createWithTwoActions(fadeInChonCai, fadeOutChonCai)));
+	lbChonCai->stopAllActions();
+
+	Sprite* bgCrestTime = Sprite::createWithSpriteFrameName("bg_countdown.png");
+	bgCrestTime->setPosition(btnXemNoc->getPosition() + getScaleSceneDistance(Vec2(170, 0)));
+	bgCrestTime->setVisible(false);
+	mLayer->addChild(bgCrestTime, constant::GAME_ZORDER_SPLASH + 2);
+	autoScaleNode(bgCrestTime);
+
+	lbCrestTime = Label::create("", "fonts/myriadb.ttf", 50);
+	lbCrestTime->setPosition(bgCrestTime->getContentSize().width/2, bgCrestTime->getContentSize().height/2 - 5);
+	bgCrestTime->addChild(lbCrestTime);
 
 	DelayTime* delay = DelayTime::create(1);
 	CallFunc* func = CallFunc::create([=]() {
@@ -686,7 +700,7 @@ void GameScene::onInit()
 			endLayer->removeAllChildren();
 		}
 		if (lbCrestTime->getString().compare("0") == 0) {
-			lbCrestTime->setVisible(false);
+			lbCrestTime->getParent()->setVisible(false);
 			lbCrestTime->pauseSchedulerAndActions();
 			return;
 		}
@@ -716,7 +730,7 @@ void GameScene::onInit()
 	Sprite* bgError = Sprite::createWithSpriteFrameName("popup_bg.png");
 	nodeError->addChild(bgError);
 
-	lbError = Label::createWithTTF("", "fonts/arialbd.ttf", 30);
+	lbError = Label::createWithTTF("", "fonts/myriadb.ttf", 30);
 	lbError->setAlignment(TextHAlignment::CENTER);
 	lbError->setColor(Color3B::YELLOW);
 	lbError->setWidth(600);
@@ -893,69 +907,6 @@ bool GameScene::onTouchBegan(Touch * touch, Event * _event)
 	if (!BaseScene::onTouchBegan(touch, _event) && !splash->isVisible() && !gameSplash->isVisible()) {
 		Point pos = touch->getLocation();
 		pos = mLayer->convertToNodeSpace(pos);
-
-		/*if (tableCrest->isVisible()) {
-			Node* scroll = tableCrest->getChildByName("scroll");
-			Point pos2 = touch->getLocation();
-			pos2 = scroll->convertToNodeSpace(pos2);
-			CCLOG("%.0f %.0f", pos2.x, pos2.y);
-			for (Label* lb : vecCrests) {
-				if (lb->getBoundingBox().containsPoint(pos2)) {
-					int i = lb->getTag();
-					if (i == 33) {
-						if (chosenCuocs.size() == 1 && chosenCuocs[0] == 33) {
-							chosenCuocs.clear();
-							chosenCuocNumbs.clear();
-							vecCrests[0]->setColor(Color3B::WHITE);
-							lbChonCuoc->setString("");
-							return true;
-						}
-
-						for (int j = 1; j < vecCrests.size(); j++) {
-							vecCrests[j]->setColor(Color3B::WHITE);
-						}
-						vecCrests[0]->setColor(Color3B::YELLOW);
-						chosenCuocs.clear();
-						chosenCuocNumbs.clear();
-						chosenCuocs.push_back(33);
-						chosenCuocNumbs.push_back(0);
-						lbChonCuoc->setString(Utils::getSingleton().getStringForKey("cuoc_33"));
-					} else {
-						if (chosenCuocs.size() == 1 && chosenCuocs[0] == 33) {
-							chosenCuocs.clear();
-							chosenCuocNumbs.clear();
-							vecCrests[0]->setColor(Color3B::WHITE);
-						}
-
-						int index = 0;
-						while (index < chosenCuocs.size() && chosenCuocs[index] != i) index++;
-						if (index == chosenCuocs.size()) {
-							chosenCuocs.push_back(i);
-							chosenCuocNumbs.push_back(0);
-							lb->setColor(Color3B::YELLOW);
-						} else {
-							chosenCuocNumbs[index] ++;
-							if (chosenCuocNumbs[index] > maxChosenCuocs[i]) {
-								chosenCuocs.erase(chosenCuocs.begin() + index);
-								chosenCuocNumbs.erase(chosenCuocNumbs.begin() + index);
-								lb->setColor(Color3B::WHITE);
-							}
-						}
-
-						string strcuoc = "";
-						for (int j = 0; j < chosenCuocs.size(); j++) {
-							if (strcuoc.length() > 0) {
-								strcuoc += ", ";
-							}
-							strcuoc += Utils::getSingleton().getStringForKey("cuoc_" + to_string(chosenCuocs[j] + chosenCuocNumbs[j]));
-						}
-						lbChonCuoc->setString(strcuoc);
-					}
-					return true;
-				}
-			}
-			return false;
-		}*/
 
 		if (myServerSlot == 0 && (state == NONE || state == READY)
 			&& iconGa->getBoundingBox().containsPoint(pos)) {
@@ -1162,8 +1113,12 @@ void GameScene::dealCards()
 			lbNoticeAction->setVisible(true);
 			lbNoticeAction->setString(Utils::getSingleton().getStringForKey("choose_stilt"));
 		}
-		spChonCai->setVisible(true);
-		spChonCai->setPosition(vecUserPos[userIndexs[startGameData.LastWinner]]);
+		//spChonCai->setVisible(true);
+		//spChonCai->setPosition(vecUserPos[userIndexs[startGameData.LastWinner]]);
+		int index = userIndexs[startGameData.LastWinner];
+		lbChonCai->setVisible(true);
+		lbChonCai->resumeSchedulerAndActions();
+		lbChonCai->setPosition(vecUserPos[index] + getScaleSceneDistance(Vec2(0, index == 0 ? 100 : -115)));
 
 		runTimeWaiting(startGameData.LastWinner, timeChooseHost);
 	});
@@ -1614,6 +1569,11 @@ void GameScene::showCofferEffects(std::string money)
 	//cofferEffect->runAction(Sequence::create(scaleTo1, scaleTo2, delay, scaleTo3, func, nullptr));
 	cofferEffect->runAction(Sequence::createWithTwoActions(scaleTo1, scaleTo2));
 	cofferSplash->setVisible(true);
+
+	ParticleSystemQuad *m_emitter = ParticleSystemQuad::create("nohu_particle.plist");
+	m_emitter->setPosition(0, 100);
+	cofferEffect->addChild(m_emitter);
+	m_emitter->runAction(Sequence::create(DelayTime::create(10), RemoveSelf::create(), NULL));
 }
 
 void GameScene::showMenuButtons()
@@ -1827,6 +1787,7 @@ void GameScene::onUserExitRoom(long sfsUId)
 		vecUsers[index]->setVisible(false);
 		spInvites[index]->setVisible(state == NONE || state == READY);
 		spSanSangs[index]->setVisible(false);
+		lbSanSangs[index]->setVisible(false);
 		vecBtnKicks[index]->setVisible(false);
 	}
 	if (progressTimer->getTag() == index) {
@@ -1927,6 +1888,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 		vecUsers[i]->setVisible(false);
 		spBatBaos[i]->setVisible(false);
 		spSanSangs[i]->setVisible(false);
+		lbSanSangs[i]->setVisible(false);
 		vecBtnKicks[i]->setVisible(false);
 	}
 	spInvites[0]->setVisible(true);
@@ -1953,9 +1915,10 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 				vecUsers[index]->setName(player.Info.Name);
 				vecUsers[index]->setSfsId(player.Info.SfsUserId);
 				spSanSangs[index]->setVisible(player.Ready);
+				lbSanSangs[index]->setVisible(player.Ready);
 				if (player.Index == 0) {
 					spChuPhong->setVisible(true);
-					spChuPhong->setPosition(vecUserPos[index] + Vec2(50 * scaleScene.y, 0));
+					spChuPhong->setPosition(vecUserPos[index] + getScaleSceneDistance(Vec2(-38, 35)));
 					spChuPhong->setTag(player.Info.SfsUserId == sfsIdMe ? 1 : 0);
 				}
 				if (player.Info.SfsUserId == sfsIdMe) {
@@ -1977,16 +1940,14 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 	}
 
 	if (roomData.Players.size() == 1) {
-		lbCrestTime->setVisible(false);
+		lbCrestTime->getParent()->setVisible(false);
 		btnReady->setVisible(false);
 		btnCancelReady->setVisible(false);
 		spSanSangs[0]->setVisible(false);
+		lbSanSangs[0]->setVisible(false);
 	} else if(roomData.Players.size() > 0){
-		if (roomData.TimeStart > 0 && !lbCrestTime->isVisible()) {
-			Vec2 lbscale = getScaleSmoothly(1.5f);
-			lbCrestTime->setVisible(true);
-			lbCrestTime->setScale(lbscale.x, lbscale.y);
-			lbCrestTime->setColor(Color3B::RED);
+		if (roomData.TimeStart > 0 && !lbCrestTime->getParent()->isVisible()) {
+			lbCrestTime->getParent()->setVisible(true);
 			lbCrestTime->setString(to_string((int)timeStart));
 			lbCrestTime->resumeSchedulerAndActions();
 		}
@@ -2009,6 +1970,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 	btnDongNoc->setVisible(false);
 	btnHold->setVisible(false);
 	btnForward->setVisible(false);
+	btnCrest->setVisible(false);
 	tableCrest->setVisible(false);
 	tableEndMatch->setVisible(false);
 	lbCardNoc->getParent()->setVisible(false);
@@ -2076,7 +2038,7 @@ void GameScene::onRoomDataGaResponse(bool isGa, double gaMoney)
 		hideWaiting();
 	}
 	iconGa->setTag(isGa);
-	iconGa->initWithSpriteFrameName(isGa ? "btn_ga_on.png" : "btn_ga_off.png");
+	iconGa->initWithSpriteFrameName(isGa ? "ga_on.png" : "ga_off.png");
 	if (isGa) {
 		lbMoneyGa->setString(Utils::getSingleton().formatMoneyWithComma(gaMoney));
 	} else {
@@ -2091,10 +2053,13 @@ void GameScene::onStartGameDataResponse(StartGameData data)
 	this->myCardHand = data.CardHand;
 	btnReady->setVisible(false);
 	btnCancelReady->setVisible(false);
-	lbCrestTime->setVisible(false);
+	lbCrestTime->getParent()->setVisible(false);
 	lbCrestTime->pauseSchedulerAndActions();
 	for (Sprite* sp : spSanSangs) {
 		sp->setVisible(false);
+	}
+	for (Label* lb : lbSanSangs) {
+		lb->setVisible(false);
 	}
 	for (Sprite* sp : spInvites) {
 		sp->setVisible(false);
@@ -2194,7 +2159,9 @@ void GameScene::onChooseHost(unsigned char stilt1, unsigned char stilt2, unsigne
 
 	DelayTime* delay1 = DelayTime::create(1);
 	CallFunc* func1 = CallFunc::create([=]() {
-		spChonCai->setVisible(false);
+		//spChonCai->setVisible(false);
+		lbChonCai->setVisible(false);
+		lbChonCai->pauseSchedulerAndActions();
 		state = PLAY;
 
 		//int p = 0;
@@ -2797,7 +2764,8 @@ void GameScene::onCrestResponse(CrestResponseData data)
 			}
 		}
 	}
-	lbCrestTime->setVisible(false);
+	lbCrestTime->getParent()->setVisible(false);
+	btnCrest->setVisible(false);
 	tableCrest->setVisible(false);
 	tableEndMatch->setVisible(true);
 	progressTimer->setVisible(false);
@@ -2810,11 +2778,14 @@ void GameScene::onCrestResponse(CrestResponseData data)
 		n->setLocalZOrder(constant::ZORDER_POPUP - i++);
 	}*/
 
-	string strwin = vecUsers[userIndexs[data.UId]]->getPlayerName() + " " + Utils::getSingleton().getStringForKey("win") + ": ";
-	for (unsigned char c : data.CuocHo) {
-		strwin += Utils::getSingleton().getStringForKey(string("cuoc_") + to_string((int)c)) + " ";
-	}
+	string strwin = vecUsers[userIndexs[data.UId]]->getPlayerName() + " " + Utils::getSingleton().getStringForKey("win");
 	lbWinner->setString(strwin);
+
+	string strcCrest = "";
+	for (unsigned char c : data.CuocHo) {
+		strcCrest += Utils::getSingleton().getStringForKey(string("cuoc_") + to_string((int)c)) + " ";
+	}
+	lbCrestWin->setString(strcCrest);
 
 	string strPoint = to_string(data.Diem) + " " + Utils::getSingleton().getStringForKey("point");
 	if(data.Ga > 0) strPoint += " " + to_string(data.Ga) + " " + Utils::getSingleton().getStringForKey("chicken");
@@ -2868,11 +2839,8 @@ void GameScene::onEndMatch(EndMatchData data)
 	state = ENDING;
 	this->endMatchData = data;
 	gameSplash->setVisible(true);
-	lbCrestTime->setVisible(true);
+	lbCrestTime->getParent()->setVisible(true);
 	lbCrestTime->setString("40");
-	Vec2 lbscale = getScaleSmoothly(1);
-	lbCrestTime->setScale(lbscale.x, lbscale.y);
-	lbCrestTime->setColor(Color3B::WHITE);
 	lbCrestTime->resumeSchedulerAndActions();
 	lbCardNoc->getParent()->setVisible(false);
 	btnPick->setVisible(false);
@@ -2891,6 +2859,7 @@ void GameScene::onEndMatch(EndMatchData data)
 	showWinnerCards();
 	if (data.WinId == sfsIdMe) {
 		tableCrest->setVisible(true);
+		btnCrest->setVisible(true);
 	} else {
 		/*btnUp->setLocalZOrder(constant::ZORDER_POPUP);
 		btnDown->setLocalZOrder(constant::ZORDER_POPUP);
@@ -2976,6 +2945,7 @@ void GameScene::onPunishResponse(long UiD, std::string msg)
 void GameScene::onUserReadyResponse(long UiD, bool isReady)
 {
 	spSanSangs[userIndexs2[UiD]]->setVisible(isReady);
+	lbSanSangs[userIndexs2[UiD]]->setVisible(isReady);
 	if (UiD == playIdMe) {
 		btnReady->setVisible(!isReady);
 		btnCancelReady->setVisible(isReady);
@@ -3048,9 +3018,9 @@ void GameScene::onLobbyUserResponse(std::vector<UserData> listUser)
 			ui::Button* btn;
 			bool isNewBtn;
 			if (tag >= childCount) {
-				lb1 = Label::create();
-				lb1->setSystemFontSize(25);
+				lb1 = Label::createWithTTF("", "fonts/myriad.ttf", 30);
 				lb1->setAnchorPoint(Vec2(0, .5f));
+				lb1->setColor(Color3B::BLACK);
 				lb1->setWidth(sx - 350);
 				lb1->setHeight(30);
 				lb1->setTag(tag);
@@ -3061,13 +3031,17 @@ void GameScene::onLobbyUserResponse(std::vector<UserData> listUser)
 				sp->setTag(tag + 1);
 				scroll->addChild(sp);
 
-				lb2 = Label::create();
-				lb2->setSystemFontSize(25);
+				lb2 = Label::createWithTTF("", "fonts/myriad.ttf", 30);
 				lb2->setAnchorPoint(Vec2(0, .5f));
+				lb2->setColor(Color3B::BLACK);
 				lb2->setTag(tag + 2);
 				scroll->addChild(lb2);
 
-				btn = ui::Button::create("btn_moi.png", "btn_moi_clicked.png", "", ui::Widget::TextureResType::PLIST);
+				btn = ui::Button::create("btn_small.png", "", "", ui::Widget::TextureResType::PLIST);
+				btn->setTitleText(Utils::getSingleton().getStringForKey("moi"));
+				btn->setTitleFontName("fonts/myriadb.ttf");
+				btn->setTitleFontSize(40);
+				btn->setTitleDeviation(Vec2(0, -5));
 				btn->setScale(.7f);
 				btn->setTag(tag + 3);
 				scroll->addChild(btn);
@@ -3086,13 +3060,13 @@ void GameScene::onLobbyUserResponse(std::vector<UserData> listUser)
 			}
 
 			lb1->setPosition(0, posY);
-			sp->setPosition(sx - 360, posY);
+			sp->setPosition(sx - 360, posY + 5);
 			lb2->setPosition(sx - 340, posY);
 			btn->setPosition(Vec2(sx - 70, posY));
 
 			lb1->setString(listUser[i].DisplayName.length() > 0 ? listUser[i].DisplayName : listUser[i].Name);
 			lb2->setString(Utils::getSingleton().formatMoneyWithComma(isRealMoney ? listUser[i].MoneyReal : listUser[i].MoneyFree));
-			lb2->setColor(isRealMoney ? Color3B::YELLOW : Color3B(0, 255, 255));
+			lb2->setColor(Color3B::BLACK);// isRealMoney ? Color3B::YELLOW : Color3B(0, 255, 255));
 			if (isRealMoney) {
 				sp->initWithSpriteFrameName("icon_gold.png");
 			} else {
@@ -3155,7 +3129,7 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 				vecUsers[index]->setName(player.Info.Name);
 				if (player.Index == 0) {
 					spChuPhong->setVisible(true);
-					spChuPhong->setPosition(vecUserPos[index] + Vec2(50 * scaleScene.y, 0));
+					spChuPhong->setPosition(vecUserPos[index] + getScaleSceneDistance(Vec2(-40, 35)));
 				}
 
 				int index2 = index * 2;
@@ -3366,7 +3340,9 @@ void GameScene::onBackScene()
 
 void GameScene::reset()
 {
-	spChonCai->setVisible(false);
+	//spChonCai->setVisible(false);
+	lbChonCai->pauseSchedulerAndActions();
+	lbChonCai->setVisible(false);
 	btnBash->setVisible(false);
 	btnBashBack->setVisible(false);
 	btnHold->setVisible(false);
@@ -3411,14 +3387,19 @@ void GameScene::initChatTable()
 	//bg->setOpacity(150);
 	tableChat->addChild(bg);
 
-	ui::EditBox* input = ui::EditBox::create(Size(750, 65), "box_input.png", ui::Widget::TextureResType::PLIST);
-	input->setPosition(Vec2(-140, 150));
+	Sprite* bgInput = Sprite::create("bg_tabs.png");
+	bgInput->setPosition(Vec2(-110, 150));
+	bgInput->setScaleX(.9f);
+	tableChat->addChild(bgInput);
+
+	ui::EditBox* input = ui::EditBox::create(Size(750, 65), "empty.png", ui::Widget::TextureResType::PLIST);
+	input->setPosition(bgInput->getPosition());
 	input->setMaxLength(100);
 	input->setFontName("Arial");
-	input->setFontSize(25);
+	input->setFontSize(30);
 	input->setFontColor(Color3B::WHITE);
 	input->setPlaceholderFont("Arial", 30);
-	input->setPlaceholderFontColor(Color3B(150, 150, 150));
+	input->setPlaceholderFontColor(Color3B(200, 200, 200));
 	input->setPlaceHolder(Utils::getSingleton().getStringForKey("type_here_to_chat").c_str());
 	input->setReturnType(ui::EditBox::KeyboardReturnType::DONE);
 	input->setInputFlag(ui::EditBox::InputFlag::SENSITIVE);
@@ -3427,8 +3408,12 @@ void GameScene::initChatTable()
 	input->setName("tfinput");
 	tableChat->addChild(input);
 
-	ui::Button* btnSend = ui::Button::create("btn_send.png", "btn_send_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnSend->setPosition(Vec2(350, 150));
+	ui::Button* btnSend = ui::Button::create("btn_small.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnSend->setTitleText(Utils::getSingleton().getStringForKey("send"));
+	btnSend->setTitleFontName("fonts/myriadb.ttf");
+	btnSend->setTitleFontSize(40);
+	btnSend->setTitleDeviation(Vec2(0, -5));
+	btnSend->setPosition(Vec2(410, 150));
 	btnSend->setScale(1.1f);
 	addTouchEventListener(btnSend, [=]() {
 		if (string(input->getText()).length() == 0) return;
@@ -3445,9 +3430,9 @@ void GameScene::initChatTable()
 	});
 	tableChat->addChild(btnSend);
 
-	ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnClose->setPosition(Vec2(490, 150));
-	btnClose->setScale(.8f);
+	ui::Button* btnClose = ui::Button::create("btn_dong.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnClose->setPosition(Vec2(525, 170));
+	//btnClose->setScale(.8f);
 	addTouchEventListener(btnClose, [=]() {
 		input->setText("");
 		hidePopup(tableChat);
@@ -3468,12 +3453,15 @@ void GameScene::initChatTable()
 	int height = (plist.size() / 2 + 1) * 80 + 20;
 	scroll->setInnerContainerSize(Size(1120, height));
 	for (auto iter = plist.begin(); iter != plist.end(); iter++) {
-		ui::Button* btn = ui::Button::create("box_input.png", "", "", ui::Widget::TextureResType::PLIST);
-		btn->setScale9Enabled(true);
-		btn->setContentSize(Size(500, 64));
+		ui::Button* btn = ui::Button::create("bg_message.png", "", "");
+		//btn->setScale9Enabled(true);
+		//btn->setContentSize(Size(500, 64));
+		btn->setTitleFontName("fonts/myriadb.ttf");
 		btn->setTitleText(iter->second.asString());
-		btn->setTitleFontSize(20);
-		btn->setPosition(Vec2(290 + (i % 2) * 540, height - 50 - (i / 2) * 80));
+		btn->setTitleFontSize(25);
+		btn->setTitleColor(Color3B::BLACK);
+		btn->setTitleDeviation(Vec2(0, -5));
+		btn->setPosition(Vec2(280 + (i % 2) * 560, height - 50 - (i / 2) * 80));
 		btn->setName(iter->first);
 		addTouchEventListener(btn, [=]() {
 			SFSRequest::getSingleton().SendPublicMessage(btn->getName());
@@ -3489,35 +3477,38 @@ void GameScene::initCrestTable()
 	vector<unsigned char> ids = { 33, 0, 3, 15, 11, 4, 5, 2, 6, 8, 28, 1, 37, 10, 9, 19, 20, 7, 24, 32, 35, 38, 34, 39, 36 };
 
 	tableCrest = Node::create();
-	tableCrest->setPosition(560, 490);
+	tableCrest->setPosition(560, 540);
 	tableCrest->setVisible(false);
 	mLayer->addChild(tableCrest, constant::GAME_ZORDER_SPLASH + 1);
 	autoScaleNode(tableCrest);
 
-	ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("popup_bg.png");
+	/*ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("popup_bg.png");
 	bg->setContentSize(Size(1040, 360));
 	bg->setInsetLeft(300);
 	bg->setInsetRight(30);
 	bg->setInsetTop(30);
 	bg->setInsetBottom(320);
+	tableCrest->addChild(bg);*/
+
+	Sprite* bg = Sprite::create("popup_bg1.png");
+	bg->setPosition(0, 35);
+	bg->setScale(.9f);
 	tableCrest->addChild(bg);
 
-	Sprite* light = Sprite::createWithSpriteFrameName("btn_light.png");
-	//light->setScale(20, 4);
-	light->setScale(4, .09f);
-	light->setPosition(0, 105);
-	//light->setOpacity(100);
-	tableCrest->addChild(light);
+	Sprite* bgChosen = Sprite::create("bg_tabs.png");
+	bgChosen->setPosition(0, 110);
+	bgChosen->setScaleX(.8f);
+	tableCrest->addChild(bgChosen);
 
-	lbChonCuoc = Label::create("", "fonts/guanine.ttf", 25);
-	lbChonCuoc->setPosition(0, 130);
-	lbChonCuoc->setColor(Color3B::YELLOW);
+	lbChonCuoc = Label::create("", "fonts/myriadb.ttf", 40);
+	lbChonCuoc->setPosition(bgChosen->getPositionX(), bgChosen->getPositionY() - 5);
+	lbChonCuoc->setColor(Color3B::WHITE);
 	lbChonCuoc->setAlignment(TextHAlignment::CENTER);
 	lbChonCuoc->setWidth(900);
 	lbChonCuoc->setHeight(40);
 	tableCrest->addChild(lbChonCuoc);
 
-	Size size1 = Size(1000, 225);
+	Size size1 = Size(1000, 235);
 	Size size2 = Size(1000, ((ids.size() - 2) / 4 + 2) * 46);
 	ui::ScrollView* scroll = ui::ScrollView::create();
 	scroll->setDirection(ui::ScrollView::Direction::VERTICAL);
@@ -3528,32 +3519,22 @@ void GameScene::initCrestTable()
 	scroll->setBounceEnabled(true);
 	scroll->setContentSize(size1);
 	scroll->setName("scroll");
-	tableCrest->addChild(scroll);
 	scroll->setInnerContainerSize(size2);
-	scroll->setPosition(Vec2(-size1.width / 2, -size1.height / 2 - 30));
+	scroll->setPosition(Vec2(-size1.width / 2, -size1.height / 2 - 60));
+	tableCrest->addChild(scroll);
 
-	int x = 130;
+	int x = 160;
 	int y = size2.height - 20;
 	for (int i = 0; i < ids.size(); i++) {
 		string name = String::createWithFormat("cuoc_%d", ids[i])->getCString();
-		/*Label* lb = Label::createWithTTF(Utils::getSingleton().getStringForKey(name), "fonts/guanine.ttf", 25);
-		lb->setPosition(x + (i % 4) * 250, y - (i/4) * 45);
-		lb->setColor(Color3B::WHITE);
-		lb->setTag(ids[i]);
-		scroll->addChild(lb);
-		vecCrests.push_back(lb);
-
-		if (i == ids.size() - 1) {
-			lb->setPosition(x + 80, y - (i / 4) * 45);
-		}*/
-
 		ui::Button* btn = ui::Button::create("", "");
 		btn->setTitleText(Utils::getSingleton().getStringForKey(name));
-		btn->setTitleFontName("fonts/guanine.ttf");
-		btn->setTitleColor(Color3B::WHITE);
-		btn->setTitleFontSize(23);
-		btn->setPosition(Vec2(x + (i % 4) * 250, y - (i / 4) * 46));
-		btn->setContentSize(Size(240, 40));
+		btn->setTitleFontName("fonts/myriadb.ttf");
+		btn->setTitleColor(Color3B::BLACK);
+		btn->setTitleFontSize(30);
+		btn->setTitleDeviation(Vec2(0, -5));
+		btn->setPosition(Vec2(x + (i % 4) * 230, y - (i / 4) * 46));
+		btn->setContentSize(Size(220, 50));
 		btn->setScale9Enabled(true);
 		btn->setBright(false);
 		btn->setTag(ids[i]);
@@ -3571,15 +3552,15 @@ void GameScene::initCrestTable()
 				if (chosenCuocs.size() == 1 && chosenCuocs[0] == 33) {
 					chosenCuocs.clear();
 					chosenCuocNumbs.clear();
-					vecCrests[0]->setTitleColor(Color3B::WHITE);
+					vecCrests[0]->setTitleColor(Color3B::BLACK);
 					lbChonCuoc->setString("");
 					return true;
 				}
 
 				for (int j = 1; j < vecCrests.size(); j++) {
-					vecCrests[j]->setTitleColor(Color3B::WHITE);
+					vecCrests[j]->setTitleColor(Color3B::BLACK);
 				}
-				vecCrests[0]->setTitleColor(Color3B::YELLOW);
+				vecCrests[0]->setTitleColor(Color3B::RED);
 				chosenCuocs.clear();
 				chosenCuocNumbs.clear();
 				chosenCuocs.push_back(33);
@@ -3589,7 +3570,7 @@ void GameScene::initCrestTable()
 				if (chosenCuocs.size() == 1 && chosenCuocs[0] == 33) {
 					chosenCuocs.clear();
 					chosenCuocNumbs.clear();
-					vecCrests[0]->setTitleColor(Color3B::WHITE);
+					vecCrests[0]->setTitleColor(Color3B::BLACK);
 				}
 
 				int index = 0;
@@ -3597,13 +3578,13 @@ void GameScene::initCrestTable()
 				if (index == chosenCuocs.size()) {
 					chosenCuocs.push_back(i);
 					chosenCuocNumbs.push_back(0);
-					btn->setTitleColor(Color3B::YELLOW);
+					btn->setTitleColor(Color3B::RED);
 				} else {
 					chosenCuocNumbs[index] ++;
 					if (chosenCuocNumbs[index] > maxChosenCuocs[i]) {
 						chosenCuocs.erase(chosenCuocs.begin() + index);
 						chosenCuocNumbs.erase(chosenCuocNumbs.begin() + index);
-						btn->setTitleColor(Color3B::WHITE);
+						btn->setTitleColor(Color3B::BLACK);
 					}
 				}
 
@@ -3619,8 +3600,13 @@ void GameScene::initCrestTable()
 		});
 	}
 
-	ui::Button* btnCrest = ui::Button::create("btn_xuong.png", "btn_xuong_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnCrest->setPosition(Vec2(370, -210));
+	btnCrest = ui::Button::create("btn.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnCrest->setTitleText(Utils::getSingleton().getStringForKey("xuong"));
+	btnCrest->setTitleFontName("fonts/myriadb.ttf");
+	btnCrest->setTitleFontSize(40);
+	btnCrest->setTitleDeviation(Vec2(0, -5));
+	btnCrest->setPosition(btnXemNoc->getPosition() + getScaleSceneDistance(Vec2(340, 0)));
+	btnCrest->setVisible(false);
 	addTouchEventListener(btnCrest, [=]() {
 		vector<unsigned char> crestIds;
 		for (int i = 0; i < chosenCuocs.size();i++) {
@@ -3628,14 +3614,16 @@ void GameScene::initCrestTable()
 		}
 		lbChonCuoc->setString("");
 		tableCrest->setVisible(false);
-		lbCrestTime->setVisible(false);
+		btnCrest->setVisible(false);
+		lbCrestTime->getParent()->setVisible(false);
 		lbCrestTime->pauseSchedulerAndActions();
 		SFSRequest::getSingleton().RequestGameWinCrest(crestIds);
 		for (ui::Button* btn : vecCrests) {
-			btn->setTitleColor(Color3B::WHITE);
+			btn->setTitleColor(Color3B::BLACK);
 		}
 	});
-	tableCrest->addChild(btnCrest);
+	mLayer->addChild(btnCrest, constant::GAME_ZORDER_SPLASH + 2);
+	autoScaleNode(btnCrest);
 }
 
 void GameScene::initEndMatchTable()
@@ -3646,45 +3634,52 @@ void GameScene::initEndMatchTable()
 	mLayer->addChild(tableEndMatch, constant::GAME_ZORDER_SPLASH + 1);
 	autoScaleNode(tableEndMatch);
 
-	Sprite* bg = Sprite::createWithSpriteFrameName("popup_bg.png");
-	bg->setScaleY(.85f);
-	bg->setFlipY(true);
+	Sprite* bg = Sprite::createWithSpriteFrameName("bg_detail.png");
+	//bg->setScaleY(.85f);
+	//bg->setFlipY(true);
 	tableEndMatch->addChild(bg);
 
-	lbWinner = Label::createWithTTF("Stormus: Nha lau xe hoi hoa roi cua phat", "fonts/guanine.ttf", 25);
-	lbWinner->setPosition(0, 80);
-	lbWinner->setColor(Color3B(255, 255, 102));
+	lbWinner = Label::createWithTTF("Stormus U", "fonts/myriadb.ttf", 35);
+	lbWinner->setPosition(0, 110);
+	lbWinner->setColor(Color3B::BLACK);
 	lbWinner->setAlignment(TextHAlignment::CENTER);
-	lbWinner->setWidth(600);
+	lbWinner->setWidth(500);
 	tableEndMatch->addChild(lbWinner);
 
-	lbCuocSai = Label::createWithTTF("Hoa roi cua phat", "fonts/arialbd.ttf", 25);
-	lbCuocSai->setPosition(-300, -40);
+	lbCrestWin = Label::createWithTTF("Nha lau xe hoi hoa roi cua phat Ngu ong bat ca Chua do nat hoa", "fonts/myriadb.ttf", 30);
+	lbCrestWin->setPosition(0, 55);
+	lbCrestWin->setColor(Color3B::RED);
+	lbCrestWin->setAlignment(TextHAlignment::CENTER);
+	lbCrestWin->setWidth(550);
+	tableEndMatch->addChild(lbCrestWin);
+
+	lbCuocSai = Label::createWithTTF("Hoa roi cua phat", "fonts/myriad.ttf", 30);
+	lbCuocSai->setPosition(-280, -50);
 	lbCuocSai->setAnchorPoint(Vec2(0, .5f));
-	lbCuocSai->setColor(Color3B(255, 102, 0));
+	lbCuocSai->setColor(Color3B::BLACK);
 	lbCuocSai->setWidth(600);
 	lbCuocSai->setHeight(30);
 	tableEndMatch->addChild(lbCuocSai);
 
-	lbDiem = Label::createWithTTF("33", "fonts/arialbd.ttf", 25);
-	lbDiem->setPosition(0, 0);
-	lbDiem->setColor(Color3B(102, 255, 51));
+	lbDiem = Label::createWithTTF("33", "fonts/myriadb.ttf", 35);
+	lbDiem->setPosition(0, -10);
+	lbDiem->setColor(Color3B::RED);
 	tableEndMatch->addChild(lbDiem);
 
-	lbNoted = Label::createWithTTF("Reno bi den lang", "fonts/arial.ttf", 20);
+	lbNoted = Label::createWithTTF("Reno bi den lang", "fonts/myriad.ttf", 25);
 	lbNoted->setVerticalAlignment(TextVAlignment::CENTER);
-	lbNoted->setPosition(-300, -75);
-	lbNoted->setColor(Color3B(255, 204, 102));
+	lbNoted->setPosition(-280, -85);
+	lbNoted->setColor(Color3B::BLACK);
 	lbNoted->setAnchorPoint(Vec2(0, .5f));
-	lbNoted->setWidth(600);
+	lbNoted->setWidth(550);
 	lbNoted->setHeight(50);
 	tableEndMatch->addChild(lbNoted);
 
-	lbNotedGa = Label::createWithTTF("Stoemus an ga", "fonts/arial.ttf", 20);
-	lbNotedGa->setPosition(-235, -112);
-	lbNotedGa->setColor(Color3B(255, 204, 102));
+	lbNotedGa = Label::createWithTTF("Stoemus an ga", "fonts/myriad.ttf", 25);
+	lbNotedGa->setPosition(-235, -122);
+	lbNotedGa->setColor(Color3B::BLACK);
 	lbNotedGa->setAnchorPoint(Vec2(0, .5f));
-	lbNotedGa->setWidth(600);
+	lbNotedGa->setWidth(550);
 	lbNotedGa->setHeight(25);
 	tableEndMatch->addChild(lbNotedGa);
 }
@@ -3702,17 +3697,12 @@ void GameScene::initInviteTable()
 	tableInvite->addChild(bg);*/
 
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("popup_bg.png");
-	bg->setInsetBottom(320);
-	bg->setInsetTop(30);
-	bg->setInsetLeft(300);
-	bg->setInsetRight(30);
+	bg->setInsetBottom(160);
+	bg->setInsetTop(160);
+	bg->setInsetLeft(169);
+	bg->setInsetRight(128);
 	bg->setContentSize(Size(750, 550));
 	tableInvite->addChild(bg);
-
-	Sprite* bgTitle = Sprite::createWithSpriteFrameName("title_bg.png");
-	bgTitle->setPosition(0, bg->getContentSize().height / 2 - 5);
-	bgTitle->setName("spbgtitle");
-	tableInvite->addChild(bgTitle);
 
 	Sprite* title = Sprite::createWithSpriteFrameName("title_moichoi.png");
 	title->setPosition(0, bg->getContentSize().height / 2 - 5);
@@ -3731,15 +3721,15 @@ void GameScene::initInviteTable()
 	ui::ScrollView* scroll = ui::ScrollView::create();
 	scroll->setDirection(ui::ScrollView::Direction::VERTICAL);
 	scroll->setBounceEnabled(true);
-	scroll->setPosition(Vec2(-(sx - 20)/2, -240));
-	scroll->setContentSize(Size(sx - 20, 450));
+	scroll->setPosition(Vec2(-(sx - 20)/2, -220));
+	scroll->setContentSize(Size(sx - 20, 430));
 	scroll->setScrollBarEnabled(false);
 	scroll->setName("scroll");
 	tableInvite->addChild(scroll);
 
-	ui::Button* btnDong = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnDong->setPosition(Vec2(bg->getContentSize().width / 2 - 5, bg->getContentSize().height / 2 - 5));
-	btnDong->setScale(.8f);
+	ui::Button* btnDong = ui::Button::create("btn_dong.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnDong->setPosition(Vec2(bg->getContentSize().width / 2 - 55, bg->getContentSize().height / 2 - 35));
+	//btnDong->setScale(.8f);
 	addTouchEventListener(btnDong, [=]() {
 		hidePopup(tableInvite);
 	});
@@ -3759,14 +3749,9 @@ void GameScene::initSettingsPopup()
 	bg->setScale(scale.x, scale.y);
 	popupSettings->addChild(bg);
 
-	Sprite* bgTitle = Sprite::createWithSpriteFrameName("title_bg.png");
-	bgTitle->setPosition(0, (bg->getContentSize().height / 2 - 5) * scale.y);
-	bgTitle->setName("spbgtitle");
-	popupSettings->addChild(bgTitle);
-
 	Sprite* title = Sprite::createWithSpriteFrameName("title_caidat.png");
-	title->setPosition(0, 205);
-	//title->setScale(.8f);
+	title->setPosition(0, (bg->getContentSize().height / 2 - 35) * scale.y);
+	title->setScale(scale.x, scale.y);
 	popupSettings->addChild(title);
 
 	vector<Vec2> vecPos;
@@ -3780,8 +3765,8 @@ void GameScene::initSettingsPopup()
 	vector<ui::CheckBox*> cbs;
 	for (int i = 0; i < 5; i++) {
 		ui::CheckBox* checkbox = ui::CheckBox::create();
-		checkbox->loadTextureBackGround("box0.png", ui::Widget::TextureResType::PLIST);
-		checkbox->loadTextureFrontCross("check.png", ui::Widget::TextureResType::PLIST);
+		checkbox->loadTextureBackGround("unchecked.png", ui::Widget::TextureResType::PLIST);
+		checkbox->loadTextureFrontCross("checked.png", ui::Widget::TextureResType::PLIST);
 		checkbox->setPosition(vecPos[i]);
 		checkbox->setSelected(false);
 		checkbox->setTag(i);
@@ -3793,7 +3778,7 @@ void GameScene::initSettingsPopup()
 		lb->setSystemFontSize(30);
 		lb->setPosition(vecPos[i] + Vec2(40, 0));
 		lb->setAnchorPoint(Vec2(0, .5f));
-		lb->setColor(Color3B::WHITE);
+		lb->setColor(Color3B::BLACK);
 		popupSettings->addChild(lb);
 		lbs.push_back(lb);
 	}
@@ -3822,8 +3807,13 @@ void GameScene::initSettingsPopup()
 	lbs[3]->setString(Utils::getSingleton().getStringForKey("auto_ready"));
 	lbs[4]->setString(Utils::getSingleton().getStringForKey("sound"));
 
-	ui::Button* btnOK = ui::Button::create("btn_submit.png", "btn_submit_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnOK->setPosition(Vec2(0, -205));
+	ui::Button* btnOK = ui::Button::create("btn.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnOK->setTitleText(Utils::getSingleton().getStringForKey("xac_nhan"));
+	btnOK->setTitleFontName("fonts/myriadb.ttf");
+	btnOK->setTitleFontSize(40);
+	btnOK->setTitleDeviation(Vec2(0, -5));
+	btnOK->setPosition(Vec2(0, -215));
+	btnOK->setScale(scale.x, scale.y);
 	addTouchEventListener(btnOK, [=]() {
 		hidePopup(popupSettings);
 		isAutoReady = cbs[3]->isSelected();
@@ -3839,9 +3829,9 @@ void GameScene::initSettingsPopup()
 	});
 	popupSettings->addChild(btnOK);
 
-	ui::Button* btnClose = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnClose->setPosition(Vec2((bg->getContentSize().width / 2 - 10) * scale.x, (bg->getContentSize().height / 2 - 5) * scale.y));
-	//btnClose->setScale(.8f);
+	ui::Button* btnClose = ui::Button::create("btn_dong.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnClose->setPosition(Vec2((bg->getContentSize().width / 2 - 55) * scale.x, (bg->getContentSize().height / 2 - 35) * scale.y));
+	btnClose->setScale(scale.x, scale.y);
 	addTouchEventListener(btnClose, [=]() {
 		hidePopup(popupSettings);
 	});
@@ -3868,30 +3858,28 @@ void GameScene::initTableInfo()
 	bg->setScaleX(.85f);
 	tableInfo->addChild(bg);*/
 
+	Label* lbTableName = Label::create("", "fonts/myriad.ttf", 25);
+	lbTableName->setPosition(-90, 15);
+	lbTableName->setAnchorPoint(Vec2(0, .5f));
+	lbTableName->setName("lbname");
+	tableInfo->addChild(lbTableName);
+
+	Label* lbTableBet = Label::create("", "fonts/myriad.ttf", 25);
+	lbTableBet->setPosition(lbTableName->getPosition() + Vec2(100, 0));
+	lbTableBet->setAnchorPoint(Vec2(0, .5f));
+	lbTableBet->setColor(Color3B::YELLOW);
+	lbTableBet->setName("lbbet");
+	tableInfo->addChild(lbTableBet);
+
 	Sprite* icMoney = Sprite::createWithSpriteFrameName("icon_gold.png");
-	icMoney->setPosition(-5, 15);
+	icMoney->setPosition(lbTableBet->getPosition() - Vec2(20, -3));
 	icMoney->setScale(.5f);
 	icMoney->setName("icmoney");
 	tableInfo->addChild(icMoney);
 
-	Label* lbTableName = Label::create("", "fonts/arialbd.ttf", 18);
-	lbTableName->setPosition(-90, 15);
-	lbTableName->setAnchorPoint(Vec2(0, .5f));
-	lbTableName->setColor(Color3B(255, 200, 0));
-	lbTableName->setName("lbname");
-	tableInfo->addChild(lbTableName);
-
-	Label* lbTableBet = Label::create("", "fonts/arialbd.ttf", 18);
-	lbTableBet->setPosition(8, 15);
-	lbTableBet->setAnchorPoint(Vec2(0, .5f));
-	lbTableBet->setColor(Color3B(255, 200, 0));
-	lbTableBet->setName("lbbet");
-	tableInfo->addChild(lbTableBet);
-
-	Label* lbType = Label::create("", "fonts/arialbd.ttf", 18);
-	lbType->setPosition(-90, -15);
+	Label* lbType = Label::create("", "fonts/myriad.ttf", 25);
+	lbType->setPosition(lbTableName->getPosition() + Vec2(0, -30));
 	lbType->setAnchorPoint(Vec2(0, .5f));
-	lbType->setColor(Color3B(255, 200, 0));
 	lbType->setName("lbtype");
 	tableInfo->addChild(lbType);
 }
@@ -3907,7 +3895,7 @@ void GameScene::initCofferEffects()
 	mLayer->addChild(cofferSplash, constant::ZORDER_COFFER);
 
 	cofferEffect = Node::create();
-	cofferEffect->setPosition(560, 350);
+	cofferEffect->setPosition(560, 380);
 	cofferEffect->setVisible(false);
 	mLayer->addChild(cofferEffect, constant::ZORDER_COFFER + 1);
 
@@ -3920,16 +3908,16 @@ void GameScene::initCofferEffects()
 	Sprite* spCoffer = Sprite::create();
 	cofferEffect->addChild(spCoffer);
 
-	Label* lbMoney = Label::create("123.456", "fonts/arialbd.ttf", 50);
+	Label* lbMoney = Label::createWithBMFont("fonts/sonohu.fnt", "123.456");
 	lbMoney->setColor(Color3B::YELLOW);
-	lbMoney->setPosition(0, -150);
+	lbMoney->setPosition(0, -210);
 	lbMoney->setName("lbmoney");
 	cofferEffect->addChild(lbMoney);
 
-	Label* lbName = Label::create("Stormus", "fonts/arialbd.ttf", 40);
+	Label* lbName = Label::create("Stormus", "fonts/myriadb.ttf", 60);
 	lbName->enableOutline(Color4B::BLACK, 2);
 	lbName->setColor(Color3B::WHITE);
-	lbName->setPosition(0, -210);
+	lbName->setPosition(0, lbMoney->getPositionY() - 70);
 	lbName->setName("lbname");
 	cofferEffect->addChild(lbName);
 

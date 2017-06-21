@@ -32,6 +32,8 @@ public:
 	void ForceIPv6(bool value);
 	void EnableLagMonitor();
 
+	void RequestTest(std::string str1, std::string str2);
+
 	void RequestRegister(std::string username, std::string password, std::string email);
 	void RequestLogin(std::string username, std::string password);
 	void RequestLoginFacebook(std::string token);

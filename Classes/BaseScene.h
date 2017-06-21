@@ -81,6 +81,7 @@ protected:
     void delayFunction(Node* node, float time, std::function<void()> func);
 
 	cocos2d::Node* createPopup(std::string stitle, bool isBig, bool isHidden);
+	cocos2d::Node* createPopupDetail();
 	cocos2d::Node* createPopupNotice();
 	cocos2d::Vec2 getScaleSmoothly(float scale);
 
@@ -98,9 +99,10 @@ protected:
 	cocos2d::Size winSize;
 
 	cocos2d::ui::Scale9Sprite* splash;
+	cocos2d::ui::Scale9Sprite* chosenBg;
+	cocos2d::ui::Scale9Sprite* spMoneyBg;
 	cocos2d::ui::Button* moneyBg0;
 	cocos2d::ui::Button* moneyBg1;
-	cocos2d::Sprite* chosenBg;
 	cocos2d::Sprite* spWaiting;
 	cocos2d::Sprite* spNetwork;
 	cocos2d::Layer* mLayer;
@@ -124,10 +126,8 @@ protected:
 	std::vector<cocos2d::ui::Button*> blockedButtons;
 	std::vector<cocos2d::Node*> popups;
 
-	//cocos2d::Color3B pageColor1 = cocos2d::Color3B(201, 191, 119);
-	//cocos2d::Color3B pageColor2 = cocos2d::Color3B(229, 222, 174);
-	cocos2d::Color3B pageColor1 = cocos2d::Color3B(100, 100, 100);
-	cocos2d::Color3B pageColor2 = cocos2d::Color3B(220, 220, 220);
+	cocos2d::Color3B colorGold = cocos2d::Color3B(179, 179, 0);
+	cocos2d::Color3B colorSilver = cocos2d::Color3B(0, 179, 179);
 
 	cocos2d::Vector<Node*> tmps;
 	int tmpIndex;
@@ -138,5 +138,6 @@ private:
 	std::vector<RankWinData> listRankWin;
 	std::vector<std::vector<RankData>> listRanks;
 	cocos2d::Vector<Node*> vecPopupNotices;
+	cocos2d::Vector<Node*> vecPopupDetails;
 };
 

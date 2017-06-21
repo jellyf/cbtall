@@ -122,7 +122,7 @@ private:
 	std::vector<cocos2d::Vec2> dealPos;
 	std::vector<cocos2d::Vec2> handPos;
 	std::vector<cocos2d::Node*> vecStilts;
-	//std::vector<cocos2d::Label*> vecCrests;
+	std::vector<cocos2d::Label*> lbSanSangs;
 	std::vector<cocos2d::Label*> lbWinMoneys;
 	std::vector<cocos2d::Sprite*> spCards;
 	std::vector<cocos2d::Sprite*> spHandCards;
@@ -144,7 +144,6 @@ private:
 	cocos2d::ProgressTimer* progressTimer;
 	cocos2d::ui::Button* btnUp;
 	cocos2d::ui::Button* btnDown;
-	cocos2d::ui::Button* btnBag;
 	cocos2d::ui::Button* btnBack;
 	cocos2d::ui::Button* btnChat;
 	cocos2d::ui::Button* btnSettings;
@@ -161,13 +160,15 @@ private:
 	cocos2d::ui::Button* btnDropWin;
 	cocos2d::ui::Button* btnXemNoc;
 	cocos2d::ui::Button* btnDongNoc;
+	cocos2d::ui::Button* btnCrest;
 	cocos2d::ui::Scale9Sprite* gameSplash;
 	cocos2d::ui::Scale9Sprite* cofferSplash;
 	cocos2d::Sprite* hostCard = NULL;
 	cocos2d::Sprite* runningSpCard;
 	cocos2d::Sprite* iconGa;
 	cocos2d::Sprite* spChuPhong;
-	cocos2d::Sprite* spChonCai;
+	//cocos2d::Sprite* spChonCai;
+	cocos2d::Label* lbChonCai;
 	cocos2d::Label* lbError;
 	cocos2d::Label* lbNoticeAction;
 	cocos2d::Label* lbCardNoc;
@@ -179,6 +180,7 @@ private:
 	cocos2d::Label* lbCrestTime;
 	cocos2d::Label* lbChonCuoc;
 	cocos2d::Label* lbMoneyGa;
+	cocos2d::Label* lbCrestWin;
 	cocos2d::Node* tableCrest;
 	cocos2d::Node* tableEndMatch;
 	cocos2d::Node* tableInvite;

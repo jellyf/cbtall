@@ -14,7 +14,7 @@
 
 USING_NS_CC;
 
-static cocos2d::Size designResolutionSize = cocos2d::Size(800, 500);
+static cocos2d::Size designResolutionSize = cocos2d::Size(1280, 720);
 static cocos2d::Size smallResolutionSize = cocos2d::Size(480, 300);
 static cocos2d::Size mediumResolutionSize = cocos2d::Size(800, 500);
 static cocos2d::Size largeResolutionSize = cocos2d::Size(1120, 700);

@@ -100,6 +100,16 @@ void SFSRequest::EnableLagMonitor()
 	SFSConnector::getSingleton().EnableLagMonitor();
 }
 
+void SFSRequest::RequestTest(std::string str1, std::string str2)
+{
+	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+	boost::shared_ptr<ByteArray> data = boost::shared_ptr<ByteArray>(new ByteArray());
+	data->WriteUTF(str1);
+	data->WriteUTF(str2);
+	parameters->PutByteArray("d", data);
+	SFSConnector::getSingleton().SendExtensionRequest("53", parameters);
+}
+
 void SFSRequest::RequestLeaveRoom()
 {
 	SFSConnector::getSingleton().RequestLeaveRoom();

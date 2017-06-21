@@ -9,6 +9,7 @@ bool UserNode::init()
 	}
 
 	Sprite* bg = Sprite::createWithSpriteFrameName("bg_avatar.png");
+	bg->setPosition(0, -4);
 	addChild(bg);
 
 	Sprite* avatar = Sprite::createWithSpriteFrameName("avatar_default.png");
@@ -17,14 +18,14 @@ bool UserNode::init()
 	Sprite* mask = Sprite::createWithSpriteFrameName("mask_avar.png");
 	addChild(mask);
 
-	lbName = Label::createWithTTF("Stormus", "fonts/arial.ttf", 20);
+	lbName = Label::createWithTTF("Stormus", "fonts/myriad.ttf", 30);
 	lbName->setHorizontalAlignment(TextHAlignment::CENTER);
-	lbName->setPosition(0, 65);
+	lbName->setPosition(0, 67);
 	lbName->setHeight(25);
 	addChild(lbName);
 
-	lbMoney = Label::createWithTTF("100,000", "fonts/arial.ttf", 20);
-	lbMoney->setPosition(0, -68);
+	lbMoney = Label::createWithTTF("100,000,000", "fonts/myriad.ttf", 30);
+	lbMoney->setPosition(0, -72);
 	lbMoney->setColor(Color3B::YELLOW);
 	addChild(lbMoney);
 

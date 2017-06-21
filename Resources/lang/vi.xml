@@ -16,6 +16,16 @@
 	<key>table</key><string>Bàn</string>
 	<key>bet</key><string>Cược</string>
 	<key>win</key><string>Ù</string>
+	<key>an</key><string>Ăn</string>
+	<key>boc</key><string>Bốc</string>
+	<key>duoi</key><string>Dưới</string>
+	<key>danh</key><string>Đánh</string>
+	<key>chiu</key><string>Chíu</string>
+	<key>bo_chiu</key><string>Bỏ Chíu</string>
+	<key>bo_u</key><string>Bỏ Ù</string>
+	<key>dong_noc</key><string>Đóng nọc</string>
+	<key>xem_noc</key><string>Xem nọc</string>
+	<key>xuong</key><string>Xướng</string>
 	<key>chicken</key><string>Gà</string>
     <key>noted</key><string>Chú ý</string>
     <key>level</key><string>Cấp độ</string>
@@ -114,8 +124,13 @@
 	<key>xac_nhan</key><string>Xác nhận</string>
 	<key>hoan_tat</key><string>Hoàn tất</string>
 	<key>huy</key><string>Hủy</string>
+	<key>hop_thu</key><string>Hộp thư</string>
+	<key>tin_tuc</key><string>Tin tức</string>
+	<key>nap_quan</key><string>Nạp quan</string>
+	<key>moi</key><string>Mời</string>
+	<key>moi_ban</key><string>Mời bạn</string>
+	<key>su_kien</key><string>Sự kiện</string>
 	<key>hoan_tra</key><string>Hoàn trả</string>
-	<key>xac_nhan</key><string>Xác nhận</string>
 	<key>nguoi_gui</key><string>Người gửi</string>
 	<key>cua_hang</key><string>Cửa hàng</string>
 	<key>huong_dan</key><string>Hướng dẫn</string>
@@ -157,7 +172,7 @@
 	<key>u_to_nhat</key><string>Cước ù to nhất</string>
 	<key>ban_muon_thoat_khoi_phong_cho</key><string>Bạn muốn thoát khỏi phòng chờ?</string>
 	<key>ban_muon_dang_xuat</key><string>Bạn muốn trở về đăng nhập?</string>
-	<key>ban_muon_thoat_game</key><string>Bạn muốn thoát Kính Tứ Chi?</string>
+	<key>ban_muon_thoat_game</key><string>Bạn muốn thoát game?</string>
 	<key>ban_muon_da_nguoi_nay_ra</key><string>Bạn muốn đá người này ra khỏi bàn chơi?</string>
 	<key>ban_muon_huy_don_hang_nay</key><string>Bạn muốn hủy đơn hàng này?</string>
 </dict>
