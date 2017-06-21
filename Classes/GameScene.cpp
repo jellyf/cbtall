@@ -607,13 +607,6 @@ void GameScene::onInit()
 		spSanSangs.push_back(spSS);
 		autoScaleNode(spSS);
 
-		Sprite* spBB = Sprite::createWithSpriteFrameName("txt_bat_bao.png");
-		spBB->setPosition(vecUserPos[i]);
-		spBB->setVisible(false);
-		mLayer->addChild(spBB, constant::GAME_ZORDER_USER + 9);
-		spBatBaos.push_back(spBB);
-		autoScaleNode(spBB);
-
 		Label* lbSS = Label::createWithTTF(Utils::getSingleton().getStringForKey("ready"), "fonts/myriadb.ttf", 40);
 		lbSS->setPosition(vecUserPos[i] + getScaleSceneDistance(Vec2(0, i == 0 ? 100 : -115)));
 		lbSS->setColor(Color3B(78, 248, 126));
@@ -622,6 +615,22 @@ void GameScene::onInit()
 		mLayer->addChild(lbSS, constant::GAME_ZORDER_USER + 9);
 		lbSanSangs.push_back(lbSS);
 		autoScaleNode(lbSS);
+
+		/*Sprite* spBB = Sprite::createWithSpriteFrameName("txt_bat_bao.png");
+		spBB->setPosition(vecUserPos[i]);
+		spBB->setVisible(false);
+		mLayer->addChild(spBB, constant::GAME_ZORDER_USER + 9);
+		spBatBaos.push_back(spBB);
+		autoScaleNode(spBB);*/
+
+		Label* lbBB = Label::createWithTTF(Utils::getSingleton().getStringForKey("bat_bao"), "fonts/myriadb.ttf", 40);
+		lbBB->setPosition(vecUserPos[i] + getScaleSceneDistance(Vec2(0, i == 0 ? 90 : -110)));
+		lbBB->setColor(Color3B(120, 120, 120));
+		lbBB->enableOutline(Color4B(50, 50, 50, 255), 2);
+		lbBB->setVisible(false);
+		mLayer->addChild(lbBB, constant::GAME_ZORDER_USER + 9);
+		lbBatBaos.push_back(lbBB);
+		autoScaleNode(lbBB);
 
 		Label* lb1 = Label::createWithTTF("100,000", "fonts/myriadb.ttf", 45);
 		mLayer->addChild(lb1, constant::GAME_ZORDER_USER + 11);
@@ -672,15 +681,16 @@ void GameScene::onInit()
 	lbChonCai = Label::createWithTTF(Utils::getSingleton().getStringForKey("choose_host"), "fonts/myriadb.ttf", 40);
 	lbChonCai->enableOutline(Color4B(77, 74, 0, 255), 2);
 	lbChonCai->setColor(Color3B(255, 246, 0));
-	lbChonCai->setOpacity(0);
 	lbChonCai->setVisible(false);
 	mLayer->addChild(lbChonCai, constant::GAME_ZORDER_USER + 9);
 	autoScaleNode(lbChonCai);
 
-	FadeOut* fadeOutChonCai = FadeOut::create(.7f);
-	FadeIn* fadeInChonCai = FadeIn::create(.7f);
-	lbChonCai->runAction(RepeatForever::create(Sequence::createWithTwoActions(fadeInChonCai, fadeOutChonCai)));
-	lbChonCai->stopAllActions();
+	Vec2 scale1 = getScaleSmoothly(1.1f);
+	Vec2 scale2 = getScaleSmoothly(1);
+	ScaleTo* scaleChonCai1 = ScaleTo::create(.5f, scale1.x, scale1.y);
+	ScaleTo* scaleChonCai2 = ScaleTo::create(.5f, scale2.x, scale2.y);
+	lbChonCai->runAction(RepeatForever::create(Sequence::create(scaleChonCai1, scaleChonCai2, nullptr)));
+	lbChonCai->pauseSchedulerAndActions();
 
 	Sprite* bgCrestTime = Sprite::createWithSpriteFrameName("bg_countdown.png");
 	bgCrestTime->setPosition(btnXemNoc->getPosition() + getScaleSceneDistance(Vec2(170, 0)));
@@ -1888,7 +1898,8 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 	}
 	for (int i = 0; i < 4; i++) {
 		vecUsers[i]->setVisible(false);
-		spBatBaos[i]->setVisible(false);
+		//spBatBaos[i]->setVisible(false);
+		lbBatBaos[i]->setVisible(false);
 		spSanSangs[i]->setVisible(false);
 		lbSanSangs[i]->setVisible(false);
 		vecBtnKicks[i]->setVisible(false);
@@ -2045,6 +2056,10 @@ void GameScene::onRoomDataGaResponse(bool isGa, double gaMoney)
 		lbMoneyGa->setString(Utils::getSingleton().formatMoneyWithComma(gaMoney));
 	} else {
 		lbMoneyGa->setString("");
+	}
+
+	for (Node* n : lbBatBaos) {
+		n->setVisible(true);
 	}
 }
 
@@ -2932,7 +2947,8 @@ void GameScene::onEndMatchTie(std::vector<unsigned char> stiltCards)
 
 void GameScene::onPunishResponse(long UiD, std::string msg)
 {
-	spBatBaos[userIndexs[UiD]]->setVisible(true);
+	//spBatBaos[userIndexs[UiD]]->setVisible(true);
+	lbBatBaos[userIndexs[UiD]]->setVisible(true);
 	if (UiD != sfsIdMe) return;
 	showError(msg);
 

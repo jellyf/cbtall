@@ -42,6 +42,7 @@
 	<key>invite_content</key><string>%s muốn mời bạn vào bàn %d, cược: %s, thời gian: %d</string>
 	<key>choose_stilt</key><string>Chọn nọc</string>
 	<key>choose_host</key><string>Chọn cái</string>
+	<key>bat_bao</key><string>Bắt báo</string>
 	<key>cuoc_ho</key><string>Cước hô</string>
 	<key>cuoc_sai</key><string>Cước sai</string>
 	<key>cuoc_0</key><string>Thông</string>

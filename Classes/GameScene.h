@@ -123,12 +123,13 @@ private:
 	std::vector<cocos2d::Vec2> handPos;
 	std::vector<cocos2d::Node*> vecStilts;
 	std::vector<cocos2d::Label*> lbSanSangs;
+	std::vector<cocos2d::Label*> lbBatBaos;
 	std::vector<cocos2d::Label*> lbWinMoneys;
 	std::vector<cocos2d::Sprite*> spCards;
 	std::vector<cocos2d::Sprite*> spHandCards;
 	std::vector<cocos2d::Sprite*> spDealCards;
 	std::vector<cocos2d::Sprite*> spSanSangs;
-	std::vector<cocos2d::Sprite*> spBatBaos;
+	//std::vector<cocos2d::Sprite*> spBatBaos;
 	std::vector<cocos2d::Sprite*> spInvites;
 	std::vector<cocos2d::Sprite*> runningCards;
 	std::vector<cocos2d::ui::Button*> vecCrests;
