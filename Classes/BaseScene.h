@@ -47,6 +47,7 @@ protected:
 	virtual bool onKeyBack();
 	virtual void onKeyHome();
 
+	void pauseApplication();
 	void handleClientDisconnectionReason(std::string reason);
 	void addTouchEventListener(cocos2d::ui::Button* btn, std::function<void()> func, bool isNew = true);
 	void hideSplash();

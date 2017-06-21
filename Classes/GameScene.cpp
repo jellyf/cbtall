@@ -3326,6 +3326,7 @@ bool GameScene::onKeyBack()
 
 void GameScene::onKeyHome()
 {
+	//Need to do NOthing
 }
 
 void GameScene::onBackScene()

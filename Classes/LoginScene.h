@@ -13,9 +13,6 @@ public:
 	virtual void onHttpResponse(int tag, std::string content);
 	virtual void onHttpResponseFailed();
 
-	virtual void onApplicationDidEnterBackground();
-	virtual void onApplicationWillEnterForeground();
-
 	void onConnected();
 	void onLoginZone();
     void onConnectionException();

@@ -230,8 +230,6 @@ void BaseScene::onApplicationDidEnterBackground()
 {
 	spNetwork->pause();
 	lbNetwork->pause();
-    isPauseApp = true;
-    SFSRequest::getSingleton().Disconnect();
 }
 
 void BaseScene::onApplicationWillEnterForeground()
@@ -672,6 +670,12 @@ void BaseScene::setMoneyType(int type)
 	//UserDefault::getInstance()->setBoolForKey(constant::KEY_MONEY_TYPE.c_str(), type == 1);
 }
 
+void BaseScene::pauseApplication()
+{
+	isPauseApp = true;
+	SFSRequest::getSingleton().Disconnect();
+}
+
 void BaseScene::handleClientDisconnectionReason(std::string reason)
 {
     if(isPauseApp){
@@ -1026,6 +1030,7 @@ bool BaseScene::onKeyBack()
 
 void BaseScene::onKeyHome()
 {
+	pauseApplication();
 }
 
 void BaseScene::hideSplash()

@@ -487,18 +487,6 @@ void LoginScene::onHttpResponseFailed()
 	}
 }
 
-void LoginScene::onApplicationDidEnterBackground()
-{
-	spNetwork->pause();
-	lbNetwork->pause();
-}
-
-void LoginScene::onApplicationWillEnterForeground()
-{
-	spNetwork->resume();
-	lbNetwork->resume();
-}
-
 void LoginScene::onTableDataResponse(LobbyListTable data)
 {
 	Utils::getSingleton().goToLobbyScene();
