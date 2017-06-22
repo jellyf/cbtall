@@ -39,6 +39,7 @@ Utils::Utils()
 	currentEventPosX = constant::EVENT_START_POSX;
     //textureHost = "http://115.84.179.242/main_kinhtuchi/";
     textureHost = "http://ip171.api1chan.info/tamdo2leo/";
+	feedbackUrl = "http://ip171.api1chan.info/feadback/add";
 	cofferGuide = "";
 	viLang = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/vi.xml");
 	SFSRequest::getSingleton().onLoadTextureResponse = std::bind(&Utils::onLoadTextureResponse, this, std::placeholders::_1, std::placeholders::_2);
@@ -226,6 +227,16 @@ std::string Utils::getCurrentZoneName()
 	else if (currentZoneName == "SoLoQuan")
 		return "NhaTranhQuan";*/
 	return currentZoneName;
+}
+
+std::string Utils::getFeedbackUrl()
+{
+	std::string key = "#asa367GH!@$^^#})pQ";
+	std::string suid = "?uid=" + to_string(userDataMe.UserID);
+	std::string sname = "&username=" + userDataMe.Name;
+	std::string smd5 = "&sign=" + md5(suid + userDataMe.Name + key);
+	std::string url = feedbackUrl + suid + sname + smd5;
+	return url;
 }
 
 double Utils::getCurrentSystemTimeInSecs()

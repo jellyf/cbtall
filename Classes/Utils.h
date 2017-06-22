@@ -28,6 +28,7 @@ public:
 	std::string getPlatformOS();
 	std::string getDeviceId();
 	std::string getCurrentZoneName();
+	std::string getFeedbackUrl();
 	double getCurrentSystemTimeInSecs();
 	int getCurrentZoneIndex();
 	bool isEmailValid(std::string email);
@@ -88,6 +89,7 @@ public:
 	std::string currentZoneIp;
 	std::string textureHost;
 	std::string cofferGuide;
+	std::string feedbackUrl;
 	double timeStartReconnect;
 	long cofferMoney;
 	long currentZonePort;
