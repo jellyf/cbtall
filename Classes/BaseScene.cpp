@@ -1973,6 +1973,18 @@ void BaseScene::onPlayLogDataResponse(std::vector<PlayLogData> logs)
 	vector<int> posX = { -440, -340, -90, 170, 325, 440 };
 	vector<int> widths = { 70, 120, 340, 150, 150, 70 };
 	ui::ScrollView* scroll = (ui::ScrollView*)popupHistory->getChildByName("scroll");
+
+	int tag = scroll->getTag();
+	if (tag > 0) {
+		tag -= 6;
+		for (int j = 0; j < 6; j++) {
+			Label* lb = (Label*)scroll->getChildByTag(tag + j);
+			lb->setColor(Color3B::BLACK);
+			lb->getChildByTag(0)->setVisible(true);
+			lb->getChildByTag(1)->setVisible(false);
+		}
+	}
+
 	int height = logs.size() * 90;
 	if (height < scroll->getContentSize().height) {
 		height = scroll->getContentSize().height;

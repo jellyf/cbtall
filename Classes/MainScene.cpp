@@ -828,6 +828,19 @@ void MainScene::onListMailDataResponse(std::vector<MailData> list)
 	vector<int> posX = { -390, -290, 30, 340 };
 	vector<int> widths = { 50, 130, 460, 120 };
 	ui::ScrollView* scroll = (ui::ScrollView*)popupMail->getChildByName("scroll");
+
+	scroll->getChildByTag(9999)->setPosition(0, -500);
+	int tag = scroll->getTag();
+	if (tag > 0) {
+		tag -= 4;
+		for (int j = 0; j < 4; j++) {
+			Label* lb = (Label*)scroll->getChildByTag(tag + j);
+			lb->setColor(Color3B::BLACK);
+			lb->getChildByTag(0)->setVisible(true);
+			lb->getChildByTag(1)->setVisible(false);
+		}
+	}
+
 	int height = list.size() * 70;
 	if (height < scroll->getContentSize().height) {
 		height = scroll->getContentSize().height;
@@ -1660,7 +1673,7 @@ void MainScene::initPopupMail()
 	popupMail->addChild(scroll);
 
 	Sprite* bgChosen = Sprite::createWithSpriteFrameName("bg_tabs.png");
-	bgChosen->setPosition(scroll->getContentSize().width / 2, 0);
+	bgChosen->setPosition(0, -500);
 	bgChosen->setTag(9999);
 	scroll->addChild(bgChosen);
 
