@@ -1877,69 +1877,6 @@ void MainScene::initPopupShop()
 		//onShopHistoryDataResponse(vector<ShopHistoryData>());
 	});
 }
-void MainScene::initWebView()
-{
-	nodeWebview = Node::create();
-	nodeWebview->setPosition(winSize.width/2, winSize.height/2);
-	nodeWebview->setVisible(false);
-	mLayer->addChild(nodeWebview, constant::ZORDER_POPUP);
-	autoScaleNode(nodeWebview);
-
-	ui::Scale9Sprite* webSplash = ui::Scale9Sprite::createWithSpriteFrameName("white.png");
-	webSplash->setContentSize(Size(1500, 1000));
-	webSplash->setColor(Color3B::BLACK);
-	webSplash->setOpacity(150);
-	nodeWebview->addChild(webSplash);
-
-	Sprite* bg = Sprite::create("popup_bg1.png");
-	bg->setName("spbg");
-	nodeWebview->addChild(bg);
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-	Size wSize = bg->getContentSize() - Size(80, 80);
-	auto webView = experimental::ui::WebView::create();
-	webView->setContentSize(wSize);
-	webView->setScalesPageToFit(true);
-	webView->setName("webview");
-	webView->setVisible(false);
-	nodeWebview->addChild(webView);
-#endif
-
-	ui::CheckBox* checkbox = ui::CheckBox::create();
-	checkbox->loadTextureBackGround("unchecked.png", ui::Widget::TextureResType::PLIST);
-	checkbox->loadTextureFrontCross("checked.png", ui::Widget::TextureResType::PLIST);
-	checkbox->setPosition(Vec2(-500, -320));
-	checkbox->setSelected(false);
-	checkbox->setVisible(false);
-	nodeWebview->addChild(checkbox);
-	checkbox->addEventListener([=](Ref* ref, ui::CheckBox::EventType type) {
-		if (type == ui::CheckBox::EventType::SELECTED) {
-			Utils::getSingleton().allowEventPopup = false;
-		} else if (type == ui::CheckBox::EventType::UNSELECTED) {
-			Utils::getSingleton().allowEventPopup = true;
-		}
-	});
-
-	Label* lb = Label::create(Utils::getSingleton().getStringForKey("khong_hien_lai"), "fonts/myriad.ttf", 30);
-	lb->setPosition(checkbox->getPosition() + Vec2(40, 0));
-	lb->setAnchorPoint(Vec2(0, .5f));
-	lb->setColor(Color3B::WHITE);
-	lb->setVisible(false);
-	nodeWebview->addChild(lb);
-
-	ui::Button* btnClose = ui::Button::create("btn_dong.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnClose->setPosition(Vec2(bg->getContentSize().width / 2 - 50, bg->getContentSize().height / 2 - 35));
-	//btnClose->setScale(.8f);
-	addTouchEventListener(btnClose, [=]() {
-		//hideSplash();
-		nodeWebview->setVisible(false);
-		//nodeWebview->removeChildByName("webview");
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-		webView->setVisible(false);
-#endif
-	});
-	nodeWebview->addChild(btnClose);
-}
 
 void MainScene::initPopupGiftcode()
 {
@@ -2096,16 +2033,6 @@ void MainScene::showPopupNews()
 			btn->setColor(pageColor1);
 		}
 	}*/
-}
-
-void MainScene::showWebView(std::string url)
-{
-	nodeWebview->setVisible(true);
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-	experimental::ui::WebView* webView = (experimental::ui::WebView*)nodeWebview->getChildByName("webview");
-	webView->loadURL(url);
-	webView->setVisible(true);
-#endif
 }
 
 void MainScene::checkProviderToCharge()

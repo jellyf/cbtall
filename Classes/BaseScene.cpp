@@ -267,6 +267,16 @@ void BaseScene::showSplash()
 	splash->setVisible(true);
 }
 
+void BaseScene::showWebView(std::string url)
+{
+	nodeWebview->setVisible(true);
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+	experimental::ui::WebView* webView = (experimental::ui::WebView*)nodeWebview->getChildByName("webview");
+	webView->loadURL(url);
+	webView->setVisible(true);
+#endif
+}
+
 void BaseScene::showWaiting(int time)
 {
 	isWaiting = true;
@@ -1387,8 +1397,9 @@ void BaseScene::initPopupUserInfo()
 	popupUserInfo->setVisible(false);
 	mLayer->addChild(popupUserInfo, constant::ZORDER_POPUP);
 
+	Size psize = Size(800, 550);
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("popup_bg.png");
-	bg->setContentSize(Size(800, 550));
+	bg->setContentSize(psize);
 	bg->setInsetLeft(169);
 	bg->setInsetRight(128);
 	bg->setInsetTop(160);
@@ -1396,11 +1407,11 @@ void BaseScene::initPopupUserInfo()
 	popupUserInfo->addChild(bg);
 
 	Sprite* title = Sprite::createWithSpriteFrameName("title_thongtin.png");
-	title->setPosition(0, bg->getContentSize().height / 2 - 30);
+	title->setPosition(0, psize.height / 2 - 30);
 	popupUserInfo->addChild(title);
 
 	ui::Button* btnClose = ui::Button::create("btn_dong.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnClose->setPosition(Vec2(bg->getContentSize().width / 2 - 50, bg->getContentSize().height / 2 - 35));
+	btnClose->setPosition(Vec2(psize.width / 2 - 50, psize.height / 2 - 35));
 	addTouchEventListener(btnClose, [=]() {
 		hidePopup(popupUserInfo);
 	});
@@ -1583,7 +1594,7 @@ void BaseScene::initPopupUserInfo()
 	Label* lbBigWin1 = Label::create("1111", "fonts/myriad.ttf", 30);
 	lbBigWin1->setPosition(lbBigWin->getPositionX() + lbBigWin->getContentSize().width + 10, lbBigWin->getPositionY());
 	lbBigWin1->setAnchorPoint(Vec2(0, .5f));
-	lbBigWin1->setColor(Color3B::YELLOW);
+	lbBigWin1->setColor(Color3B::BLACK);
 	lbBigWin1->setName("lbbigwin");
 	lbBigWin1->setVisible(false);
 	nodeInfo->addChild(lbBigWin1);
@@ -1605,6 +1616,22 @@ void BaseScene::initPopupUserInfo()
 	//lbBigCrest1->setWidth(380);
 	//lbBigCrest1->setName("lbbigcrest");
 	//popupUserInfo->addChild(lbBigCrest1);
+
+	ui::Button* btnChangeInfo = ui::Button::create("btn_settings.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnChangeInfo->setPosition(Vec2(psize.width / 2 - 80, psize.height / 2 - 150));
+	btnChangeInfo->setName("btnchangeinfo");
+	addTouchEventListener(btnChangeInfo, [=]() {
+		
+	});
+	popupUserInfo->addChild(btnChangeInfo);
+
+	ui::Button* btnFeedback = ui::Button::create("btn_chat.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnFeedback->setPosition(Vec2(btnChangeInfo->getPositionX(), btnChangeInfo->getPositionY() - 100));
+	btnFeedback->setName("btnfeedback");
+	addTouchEventListener(btnFeedback, [=]() {
+		showWebView(Utils::getSingleton().getFeedbackUrl());
+	});
+	popupUserInfo->addChild(btnFeedback);
 }
 
 void BaseScene::initPopupHistory()
@@ -1860,6 +1887,70 @@ void BaseScene::initPopupIAP()
 		spCoin->setPosition(lb1->getPositionX() + lb1->getContentSize().width / 2
 			+ spCoin->getContentSize().width * spCoin->getScale() / 2 + 5, lb1->getPositionY() + 10);
 	}
+}
+
+void BaseScene::initWebView()
+{
+	nodeWebview = Node::create();
+	nodeWebview->setPosition(winSize.width / 2, winSize.height / 2);
+	nodeWebview->setVisible(false);
+	mLayer->addChild(nodeWebview, constant::ZORDER_WEBVIEW);
+	autoScaleNode(nodeWebview);
+
+	ui::Scale9Sprite* webSplash = ui::Scale9Sprite::createWithSpriteFrameName("white.png");
+	webSplash->setContentSize(Size(1500, 1000));
+	webSplash->setColor(Color3B::BLACK);
+	webSplash->setOpacity(150);
+	nodeWebview->addChild(webSplash);
+
+	/*Sprite* bg = Sprite::create("popup_bg1.png");
+	bg->setName("spbg");
+	nodeWebview->addChild(bg);*/
+
+	auto vsize = Director::getInstance()->getVisibleSize();
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+	Size wSize = vsize - Size(0, 160);
+	auto webView = experimental::ui::WebView::create();
+	webView->setContentSize(wSize);
+	webView->setScalesPageToFit(true);
+	webView->setName("webview");
+	webView->setVisible(false);
+	nodeWebview->addChild(webView);
+#endif
+
+	ui::CheckBox* checkbox = ui::CheckBox::create();
+	checkbox->loadTextureBackGround("unchecked.png", ui::Widget::TextureResType::PLIST);
+	checkbox->loadTextureFrontCross("checked.png", ui::Widget::TextureResType::PLIST);
+	checkbox->setPosition(Vec2(250, winSize.height / 2 - 35));
+	checkbox->setSelected(false);
+	checkbox->setVisible(false);
+	nodeWebview->addChild(checkbox);
+	checkbox->addEventListener([=](Ref* ref, ui::CheckBox::EventType type) {
+		if (type == ui::CheckBox::EventType::SELECTED) {
+			Utils::getSingleton().allowEventPopup = false;
+		} else if (type == ui::CheckBox::EventType::UNSELECTED) {
+			Utils::getSingleton().allowEventPopup = true;
+		}
+	});
+
+	Label* lb = Label::create(Utils::getSingleton().getStringForKey("khong_hien_lai"), "fonts/myriad.ttf", 30);
+	lb->setPosition(checkbox->getPosition() + Vec2(40, -5));
+	lb->setAnchorPoint(Vec2(0, .5f));
+	lb->setColor(Color3B::WHITE);
+	lb->setVisible(false);
+	nodeWebview->addChild(lb);
+
+	float xscale = winSize.height / vsize.height;
+	float yscale = winSize.width / vsize.width;
+	ui::Button* btnClose = ui::Button::create("btn_dong.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnClose->setPosition(Vec2((winSize.width / 2 - 35) * xscale, (winSize.height / 2 - 33) * yscale));
+	addTouchEventListener(btnClose, [=]() {
+		nodeWebview->setVisible(false);
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+		webView->setVisible(false);
+#endif
+	});
+	nodeWebview->addChild(btnClose);
 }
 
 void BaseScene::initCofferView(Vec2 pos, int zorder, float scale)

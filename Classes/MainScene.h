@@ -40,13 +40,11 @@ private:
 	void initPopupMail();
 	void initPopupNews();
 	void initPopupShop();
-	void initWebView();
 	void initPopupGiftcode();
 	void initPopupDisplayName();
 
 	void showPopupMail();
 	void showPopupNews();
-	void showWebView(std::string url);
 	void checkProviderToCharge();
 	void updateChargeRateCard(bool isQuan);
 	void updateSmsInfo(bool isQuan);
@@ -58,7 +56,6 @@ private:
 	cocos2d::Node* popupCharge;
 	cocos2d::Node* popupGiftcode;
 	cocos2d::Node* popupDisplayName;
-	cocos2d::Node* nodeWebview;
 
 	cocos2d::Label* lbNewMail;
 	cocos2d::ui::Button* btnEvent;

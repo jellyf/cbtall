@@ -60,6 +60,7 @@ protected:
 	void initPopupHistory();
 	void initPopupCoffer();
 	void initPopupIAP();
+	void initWebView();
 	void initCofferView(cocos2d::Vec2 pos, int zorder, float scale = 1.0f);
 	void setMoneyType(int type);
 	void showPopupNotice(std::string msg, std::function<void()> func, bool showBtnClose = true, int timeToHide = -1);
@@ -69,6 +70,7 @@ protected:
 	void showPopupHistory();
 	void showPopupCoffer();
 	void showSplash();
+	void showWebView(std::string url);
 	void showToast(std::string tag, std::string msg, cocos2d::Vec2 pos, cocos2d::Color3B textColor = cocos2d::Color3B::WHITE, cocos2d::Color3B bgColor = cocos2d::Color3B(80, 80, 80), int bgOpacity = 200);
 	void showWaiting(int time = 10);
 	void showPopup(cocos2d::Node* popup, bool runEffect = true);
@@ -122,6 +124,7 @@ protected:
 	cocos2d::Node* popupCoffer;
 	cocos2d::Node* popupIAP;
 	cocos2d::Node* eventView;
+	cocos2d::Node* nodeWebview;
 
 	std::vector<cocos2d::ui::Button*> buttons;
 	std::vector<cocos2d::ui::Button*> blockedButtons;
