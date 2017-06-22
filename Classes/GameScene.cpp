@@ -3445,8 +3445,11 @@ void GameScene::initChatTable()
 	});
 	tableChat->addChild(btnSend);
 
+	auto vsize = Director::getInstance()->getVisibleSize();
+	float xscale = winSize.height / vsize.height;
+	float yscale = winSize.width / vsize.width;
 	ui::Button* btnClose = ui::Button::create("btn_dong.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnClose->setPosition(Vec2(525, 170));
+	btnClose->setPosition(Vec2((winSize.width / 2 - 35) * xscale, 170));
 	//btnClose->setScale(.8f);
 	addTouchEventListener(btnClose, [=]() {
 		input->setText("");
