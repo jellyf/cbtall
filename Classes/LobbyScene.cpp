@@ -336,21 +336,21 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 			spStilt->setPosition(bsize.width / 2 + 5, bsize.height / 2 + 7);
 			btn->addChild(spStilt);
 
-			Label* lb411 = Label::createWithTTF("4-11", "fonts/myriadb.ttf", 25);
-			lb411->setPosition(bsize.width / 2 - 2, 15);
+			Label* lb411 = Label::createWithTTF("4-11", "fonts/myriadb.ttf", 30);
+			lb411->setPosition(bsize.width / 2, 25);
 			lb411->setAnchorPoint(Vec2(.5f, 1));
-			lb411->setColor(Color3B::WHITE);
+			lb411->setColor(Color3B::BLACK);
 			lb411->setName("lb411");
 			btn->addChild(lb411);
 
 			Sprite* spGa = Sprite::createWithSpriteFrameName("ga_off.png");
-			spGa->setPosition(180, 10);
+			spGa->setPosition(180, 5);
 			spGa->setName("iconga");
 			spGa->setScale(.8f);
 			btn->addChild(spGa);
 
-			Label* lbName = Label::create(Utils::getSingleton().getStringForKey("table") + " " + to_string(i + 1), "fonts/myriadb.ttf", 25);
-			lbName->setColor(Color3B::WHITE);
+			Label* lbName = Label::create(Utils::getSingleton().getStringForKey("table") + " " + to_string(i + 1), "fonts/myriadb.ttf", 30);
+			lbName->setColor(Color3B::BLACK);
 			lbName->setPosition(0, 15);
 			lbName->setAnchorPoint(Vec2(0, 1));
 			btn->addChild(lbName);
@@ -459,8 +459,8 @@ void LobbyScene::onRoomTypeDataResponse(LobbyListRoomType data)
 			addTouchEventListener(btn, [=]() {
 				if (currentRoomType == btn->getTag()) return;
 				ui::Button* lastBtn = (ui::Button*)scrollListRoom->getChildByTag(currentRoomType);
-				//lastBtn->setColor(Color3B::GRAY);
-				//btn->setColor(Color3B::WHITE);
+				lastBtn->setTitleFontName("fonts/myriad.ttf");
+				btn->setTitleFontName("fonts/myriadb.ttf");
 				lastBtn->loadTextures(btnName1, btnName1, "", ui::Widget::TextureResType::PLIST);
 				btn->loadTextures(btnName, btnName, "", ui::Widget::TextureResType::PLIST);
 				currentRoomType = i;
@@ -476,11 +476,11 @@ void LobbyScene::onRoomTypeDataResponse(LobbyListRoomType data)
 		}
 		btn->setTitleText(data.ListRoomType[i].Description);
 		if (data.ListRoomType[i].Name.compare(currentRoom) != 0) {
-			//btn->setColor(Color3B::GRAY);
+			btn->setTitleFontName("fonts/myriad.ttf");
 			btn->loadTextureNormal(btnName1, ui::Widget::TextureResType::PLIST);
 		} else {
 			currentRoomType = i;
-			//btn->setColor(Color3B::WHITE);
+			btn->setTitleFontName("fonts/myriadb.ttf");
 			btn->loadTextureNormal(btnName, ui::Widget::TextureResType::PLIST);
 			Utils::getSingleton().currentLobbyId = data.ListRoomType[i].Id;
 			Utils::getSingleton().currentLobbyName = data.ListRoomType[i].Name;
