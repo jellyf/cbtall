@@ -946,6 +946,8 @@ void SFSResponse::onPlayLogResponse(boost::shared_ptr<ISFSObject> isfsObject)
 		byteArray->ReadInt(data.Money);
 		byteArray->ReadDouble(data.Balance);
 		byteArray->ReadInt(data.GameId);
+
+		data.Info = Utils::getSingleton().trim(data.Info);
 		list.push_back(data);
 		//CCLOG("%s %s %d %.0f %d", data.Date.c_str(), data.Info.c_str(), data.Money, data.Balance, data.GameId);
 	}
@@ -1099,6 +1101,8 @@ void SFSResponse::onListMailResponse(boost::shared_ptr<ISFSObject> isfsObject)
 		byteArray->ReadUTF(data.Title);
 		byteArray->ReadBool(data.IsRead);
 		byteArray->ReadUTF(data.Date);
+
+		data.Title = Utils::getSingleton().trim(data.Title);
 		list.push_back(data);
 		//CCLOG("%d %s %s %s %s", data.Id, data.Date.c_str(), data.Title.c_str(), data.Sender.c_str(), data.IsRead ? "true" : "false");
 	}
@@ -1118,6 +1122,8 @@ void SFSResponse::onMailContentResponse(boost::shared_ptr<ISFSObject> isfsObject
 			byteArray->ReadUTF(content);
 		}
 	}
+
+	content = Utils::getSingleton().trim(content);
 	if (EventHandler::getSingleton().onMailContentSFSResponse != NULL) {
 		EventHandler::getSingleton().onMailContentSFSResponse(content);
 	}

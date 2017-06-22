@@ -454,61 +454,72 @@ void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)
 		data.Status = rand() % 4 + 1;
 		list.push_back(data);
 	}*/
-
-	int dx = -25;
-	vector<int> posX = { -360, -210, -15, 180, 344 };
+	
 	vector<string> strStatus = { "dat_hang", "xac_nhan", "hoan_tat", "huy", "hoan_tra" };
 	ui::ScrollView* scrollHistory = (ui::ScrollView*)(popupShop->getChildByTag(12)->getChildByName("scrollhistory"));
+
+	scrollHistory->getChildByTag(9999)->setPosition(0, -500);
+	int tag = scrollHistory->getTag();
+	if (tag > 0) {
+		tag -= 5;
+		for (int j = 0; j < 5; j++) {
+			Label* lb = (Label*)scrollHistory->getChildByTag(tag + j);
+			lb->setColor(Color3B::BLACK);
+			lb->getChildByTag(0)->setVisible(true);
+			lb->getChildByTag(1)->setVisible(false);
+		}
+	}
+	scrollHistory->setTag(0);
+
 	int heightHistory = list.size() * 70;
 	if (heightHistory < scrollHistory->getContentSize().height) {
 		heightHistory = scrollHistory->getContentSize().height;
 	}
 	scrollHistory->setInnerContainerSize(Size(scrollHistory->getContentSize().width, heightHistory));
+	vector<int> lsize = { 100, 250, 220, 220, 150 };
 	for (int i = 0; i < list.size(); i++) {
 		int tag = i * 7;
 		ui::Button* btn, *btnCancel;
 		Label *lb1, *lb2, *lb3, *lb4, *lb5;
+		vector<Label*> lbs;
 		lb1 = (Label*)scrollHistory->getChildByTag(tag);
 		bool isNewBtn;
 		if (lb1 == nullptr) {
-			lb1 = Label::create("", "fonts/myriadb.ttf", 25);
-			lb1->setPosition(50, heightHistory - 40);
-			//lb1->setScaleX(.8f);
+			lb1 = Label::create("", "fonts/myriad.ttf", 25);
+			lb1->setColor(Color3B::BLACK);
 			lb1->setTag(tag);
 			scrollHistory->addChild(lb1);
+			lbs.push_back(lb1);
 
-			lb2 = Label::create("", "fonts/myriadb.ttf", 25);
-			lb2->setPosition(lb1->getPositionX() + 180, lb1->getPositionY());
+			lb2 = Label::create("", "fonts/myriad.ttf", 25);
 			lb2->setHorizontalAlignment(TextHAlignment::CENTER);
-			lb2->setColor(Color3B::YELLOW);
+			lb2->setColor(Color3B::BLACK);
 			lb2->setTag(tag + 1);
 			lb2->setWidth(210);
 			lb2->setHeight(27);
-			//lb2->setScaleX(.8f);
 			scrollHistory->addChild(lb2);
+			lbs.push_back(lb2);
 
-			lb3 = Label::create("", "fonts/myriadb.ttf", 25);
-			lb3->setPosition(lb2->getPositionX() + 220, lb2->getPositionY());
+			lb3 = Label::create("", "fonts/myriad.ttf", 25);
+			lb3->setColor(Color3B::BLACK);
 			lb3->setTag(tag + 2);
-			//lb3->setScaleX(.8f);
 			scrollHistory->addChild(lb3);
+			lbs.push_back(lb3);
 
-			lb4 = Label::create("", "fonts/myriadb.ttf", 25);
-			lb4->setPosition(lb3->getPositionX() + 190, lb3->getPositionY());
+			lb4 = Label::create("", "fonts/myriad.ttf", 25);
+			lb4->setColor(Color3B::BLACK);
 			lb4->setTag(tag + 3);
-			//lb4->setScaleX(.8f);
 			scrollHistory->addChild(lb4);
+			lbs.push_back(lb4);
 
-			lb5 = Label::create("", "fonts/myriadb.ttf", 25);
-			lb5->setPosition(lb4->getPositionX() + 185, lb4->getPositionY());
-			lb5->setColor(Color3B::YELLOW);
+			lb5 = Label::create("", "fonts/myriad.ttf", 25);
+			lb5->setColor(Color3B::BLACK);
 			lb5->setTag(tag + 4);
-			//lb5->setScaleX(.8f);
 			scrollHistory->addChild(lb5);
+			lbs.push_back(lb5);
 
 			btn = ui::Button::create("white.png", "", "", ui::Widget::TextureResType::PLIST);
-			btn->setContentSize(Size(scrollHistory->getContentSize().width, 35));
-			btn->setPosition(Vec2(scrollHistory->getContentSize().width / 2, heightHistory - 10));
+			btn->setContentSize(Size(scrollHistory->getContentSize().width, 60));
 			btn->setScale9Enabled(true);
 			btn->setOpacity(0);
 			btn->setTag(tag + 5);
@@ -517,44 +528,33 @@ void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)
 
 			btnCancel = ui::Button::create("empty.png", "empty.png", "", ui::Widget::TextureResType::PLIST);
 			btnCancel->setTitleText("[" + Utils::getSingleton().getStringForKey("huy") + "]");
-			btnCancel->setTitleFontName("fonts/myriadb.ttf");
+			btnCancel->setTitleFontName("fonts/myriad.ttf");
 			btnCancel->setTitleFontSize(25);
 			btnCancel->setTitleColor(Color3B::RED);
 			btnCancel->setTitleDeviation(Vec2(0, -5));
-			btnCancel->setPosition(Vec2(lb5->getPositionX() + 60, lb5->getPositionY() - 1));
 			btnCancel->setContentSize(Size(50, 30));
 			btnCancel->setScale9Enabled(true);
 			btnCancel->setTag(tag + 6);
 			scrollHistory->addChild(btnCancel);
 
-			ui::Scale9Sprite* spbg1 = ui::Scale9Sprite::createWithSpriteFrameName("box11.png");
-			spbg1->setContentSize(Size(100, 60));
-			spbg1->setTag(0);
-			lb1->addChild(spbg1, -1);
+			for (int j = 0; j < 5; j++) {
+				ui::Scale9Sprite* spbg1 = ui::Scale9Sprite::createWithSpriteFrameName("box11.png");
+				spbg1->setContentSize(Size(lsize[j], 60));
+				spbg1->setVisible(true);
+				spbg1->setTag(0);
+				lbs[j]->addChild(spbg1, -1);
 
-			ui::Scale9Sprite* spbg2 = ui::Scale9Sprite::createWithSpriteFrameName("box11.png");
-			spbg2->setContentSize(Size(250, 60));
-			spbg2->setTag(0);
-			lb2->addChild(spbg2, -1);
-
-			ui::Scale9Sprite* spbg3 = ui::Scale9Sprite::createWithSpriteFrameName("box11.png");
-			spbg3->setContentSize(Size(190, 60));
-			spbg3->setTag(0);
-			lb3->addChild(spbg3, -1);
-
-			ui::Scale9Sprite* spbg4 = ui::Scale9Sprite::createWithSpriteFrameName("box11.png");
-			spbg4->setContentSize(Size(190, 60));
-			spbg4->setTag(0);
-			lb4->addChild(spbg4, -1);
-
-			ui::Scale9Sprite* spbg5 = ui::Scale9Sprite::createWithSpriteFrameName("box11.png");
-			spbg5->setContentSize(Size(150, 60));
-			spbg5->setTag(0);
-			lb5->addChild(spbg5, -1);
-		} else {
-			for (int i = 0; i < 7; i++) {
-				scrollHistory->getChildByTag(tag + i)->setPositionY(heightHistory - (i == 6 ? 15 : 10));
+				ui::Scale9Sprite* spbg11 = ui::Scale9Sprite::createWithSpriteFrameName("box12.png");
+				spbg11->setContentSize(Size(lsize[j], 60));
+				spbg11->setVisible(false);
+				spbg11->setTag(1);
+				lbs[j]->addChild(spbg11, -1);
 			}
+
+		} else {
+			/*for (int i = 0; i < 7; i++) {
+				scrollHistory->getChildByTag(tag + i)->setPositionY(heightHistory - (i == 6 ? 15 : 10));
+			}*/
 			lb2 = (Label*)scrollHistory->getChildByTag(tag + 1);
 			lb3 = (Label*)scrollHistory->getChildByTag(tag + 2);
 			lb4 = (Label*)scrollHistory->getChildByTag(tag + 3);
@@ -563,8 +563,32 @@ void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)
 			btnCancel = (ui::Button*)scrollHistory->getChildByTag(tag + 6);
 			btn->setTouchEnabled(true);
 			isNewBtn = false;
+			lbs.push_back(lb1);
+			lbs.push_back(lb2);
+			lbs.push_back(lb3);
+			lbs.push_back(lb4);
+			lbs.push_back(lb5);
 		}
 		addTouchEventListener(btn, [=]() {
+			int tag = scrollHistory->getTag();
+			if (tag != btn->getTag()) {
+				scrollHistory->getChildByTag(9999)->setPosition(btn->getPosition());
+				for (int j = 0; j < 5; j++) {
+					lbs[j]->setColor(Color3B::WHITE);
+					lbs[j]->getChildByTag(0)->setVisible(false);
+					lbs[j]->getChildByTag(1)->setVisible(true);
+				}
+				if (tag > 0) {
+					tag -= 5;
+					for (int j = 0; j < 5; j++) {
+						Label* lb = (Label*)scrollHistory->getChildByTag(tag + j);
+						lb->setColor(Color3B::BLACK);
+						lb->getChildByTag(0)->setVisible(true);
+						lb->getChildByTag(1)->setVisible(false);
+					}
+				}
+				scrollHistory->setTag(btn->getTag());
+			}
 			showPopupNotice(list[i].Content, [=]() {}, false);
 		}, isNewBtn);
 		addTouchEventListener(btnCancel, [=]() {
@@ -573,16 +597,23 @@ void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)
 				SFSRequest::getSingleton().RequestCancelItemShop(list[i].Id);
 			});
 		}, isNewBtn);
+
+		btn->setPosition(Vec2(scrollHistory->getContentSize().width / 2, heightHistory - 35));
+		lb1->setPosition(65, btn->getPositionY() - 5);
+		lb2->setPosition(lb1->getPositionX() + 175, lb1->getPositionY());
+		lb3->setPosition(lb2->getPositionX() + 235, lb2->getPositionY());
+		lb4->setPosition(lb3->getPositionX() + 220, lb3->getPositionY());
+
 		if (list[i].Status < 1) {
 			list[i].Status = 1;
 		} else if (list[i].Status > strStatus.size()) {
 			list[i].Status = strStatus.size();
 		}
 		if (list[i].Status == 1) {
-			lb5->setPositionX(lb4->getPositionX() + 134);
-			btnCancel->setPosition(Vec2(lb5->getPositionX() + 65, lb5->getPositionY() - 1));
+			lb5->setPosition(lb4->getPositionX() + 160, lb4->getPositionY());
+			btnCancel->setPosition(Vec2(lb5->getPositionX() + 65, lb5->getPositionY() + 5));
 		} else {
-			lb5->setPositionX(lb4->getPositionX() + 164);
+			lb5->setPosition(lb4->getPositionX() + 185, lb4->getPositionY());
 		}
 		lb1->setString(to_string((int)list[i].Id));
 		lb2->setString(list[i].Name);
@@ -592,18 +623,20 @@ void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)
 		btnCancel->setName(to_string((int)list[i].ItemId));
 		btnCancel->setVisible(list[i].Status == 1);
 
-		lb1->getChildByTag(0)->setPosition(lb1->getContentSize().width / 2, lb1->getContentSize().height / 2);
-		lb2->getChildByTag(0)->setPosition(lb2->getContentSize().width / 2, lb2->getContentSize().height / 2);
-		lb3->getChildByTag(0)->setPosition(lb3->getContentSize().width / 2, lb3->getContentSize().height / 2);
-		lb4->getChildByTag(0)->setPosition(lb4->getContentSize().width / 2, lb4->getContentSize().height / 2);
-		lb5->getChildByTag(0)->setPosition(lb5->getContentSize().width / 2, lb5->getContentSize().height / 2);
+		for (int j = 0; j < 5; j++) {
+			lbs[j]->setVisible(true);
+			lbs[j]->getChildByTag(0)->setPosition(lbs[j]->getContentSize().width / 2, lbs[j]->getContentSize().height / 2 + 5);
+			lbs[j]->getChildByTag(1)->setPosition(lbs[j]->getContentSize().width / 2, lbs[j]->getContentSize().height / 2 + 5);
+		}
+		lb5->getChildByTag(0)->setPosition(lb5->getContentSize().width / 2 + (list[i].Status == 1 ? 25 : 0), lb5->getContentSize().height / 2 + 5);
+		lb5->getChildByTag(1)->setPosition(lb5->getContentSize().width / 2 + (list[i].Status == 1 ? 25 : 0), lb5->getContentSize().height / 2 + 5);
 
 		heightHistory -= 70;
 	}
-	int count = scrollHistory->getChildrenCount();
+	int count = scrollHistory->getChildrenCount() - 1;
 	for (int j = list.size() * 7; j < count; j++) {
 		if (j % 7 != 5 && j % 7 != 6) {
-			((Label*)scrollHistory->getChildByTag(j))->setString("");
+			((Label*)scrollHistory->getChildByTag(j))->setVisible(false);
 		} else {
 			((ui::Button*)scrollHistory->getChildByTag(j))->setTouchEnabled(false);
 		}
@@ -656,7 +689,7 @@ void MainScene::onShopItemsDataResponse(std::vector<ShopItemData> list)
 			string msg = String::createWithFormat(str.c_str(), cards[i][j].Name.c_str(), strMoney.c_str())->getCString();
 
 			ui::Button* btn = ui::Button::create("box_shop.png", "", "", ui::Widget::TextureResType::PLIST);
-			btn->setPosition(Vec2(80 + (count % 5) * 162, heightCard - 50 - (count/5) * 120));
+			btn->setPosition(Vec2(90 + (count % 5) * 162, heightCard - 45 - (count/5) * 120));
 			btn->setBright(false);
 			btn->setTag((i + 1) * 100 + j);
 			addTouchEventListener(btn, [=]() {
@@ -739,7 +772,7 @@ void MainScene::onShopItemsDataResponse(std::vector<ShopItemData> list)
 
 		ui::Button* btn = ui::Button::create("box_shop.png", "", "", ui::Widget::TextureResType::PLIST);
 		//btn->setPosition(Vec2(100 + (i % 4) * 200, scrollItem->getContentSize().height - 70 - (i / 4) * 170));
-		btn->setPosition(Vec2(105 + (i % 4) * 200, heightItem - 70 - (i / 4) * 170));
+		btn->setPosition(Vec2(115 + (i % 4) * 200, heightItem - 65 - (i / 4) * 170));
 		btn->setContentSize(Size(182, 128));
 		btn->setScale9Enabled(true);
 		btn->setBright(false);
@@ -825,7 +858,8 @@ void MainScene::onListMailDataResponse(std::vector<MailData> list)
 		showPopup(popupMail);
 	}
 
-	vector<int> posX = { -390, -290, 30, 340 };
+	int xx = -400;
+	vector<int> posX = { xx, xx + 120, xx + 445, xx + 765 };
 	vector<int> widths = { 50, 130, 460, 120 };
 	ui::ScrollView* scroll = (ui::ScrollView*)popupMail->getChildByName("scroll");
 
@@ -840,14 +874,13 @@ void MainScene::onListMailDataResponse(std::vector<MailData> list)
 			lb->getChildByTag(1)->setVisible(false);
 		}
 	}
+	scroll->setTag(0);
 
 	int height = list.size() * 70;
 	if (height < scroll->getContentSize().height) {
 		height = scroll->getContentSize().height;
 	}
 	scroll->setInnerContainerSize(Size(scroll->getContentSize().width, height));
-	scroll->getChildByTag(9999)->setPosition(0, -200);
-	scroll->setTag(0);
 	int count = scroll->getChildrenCount() - 1;
 	for (int i = 0; i < list.size(); i++) {
 		vector<Label*> lbs;
@@ -880,40 +913,42 @@ void MainScene::onListMailDataResponse(std::vector<MailData> list)
 				lbs.push_back(lbDetail);
 
 				ui::Scale9Sprite* spbg = ui::Scale9Sprite::createWithSpriteFrameName("box11.png");
-				spbg->setContentSize(Size(widths[j], 60));
+				spbg->setContentSize(Size(widths[j] + 30, 60));
 				spbg->setTag(0);
 				lbDetail->addChild(spbg, -1);
 
 				ui::Scale9Sprite* spbg2 = ui::Scale9Sprite::createWithSpriteFrameName("box12.png");
-				spbg2->setContentSize(Size(widths[j], 60));
+				spbg2->setContentSize(Size(widths[j] + 30, 60));
 				spbg2->setVisible(false);
 				spbg2->setTag(1);
 				lbDetail->addChild(spbg2, -1);
 			}
 
 			addTouchEventListener(btn, [=]() {
-				scroll->getChildByTag(9999)->setPosition(btn->getPosition());
-				for (int j = 0; j < 4; j++) {
-					lbs[j]->setColor(Color3B::WHITE);
-					lbs[j]->getChildByTag(0)->setVisible(false);
-					lbs[j]->getChildByTag(1)->setVisible(true);
-				}
 				int tag = scroll->getTag();
-				if (tag > 0) {
-					tag -= 4;
+				if (tag != btn->getTag()) {
+					scroll->getChildByTag(9999)->setPosition(btn->getPosition());
 					for (int j = 0; j < 4; j++) {
-						Label* lb = (Label*)scroll->getChildByTag(tag + j);
-						lb->setColor(Color3B::BLACK);
-						lb->getChildByTag(0)->setVisible(true);
-						lb->getChildByTag(1)->setVisible(false);
+						lbs[j]->setColor(Color3B::WHITE);
+						lbs[j]->getChildByTag(0)->setVisible(false);
+						lbs[j]->getChildByTag(1)->setVisible(true);
 					}
+					if (tag > 0) {
+						tag -= 4;
+						for (int j = 0; j < 4; j++) {
+							Label* lb = (Label*)scroll->getChildByTag(tag + j);
+							lb->setColor(Color3B::BLACK);
+							lb->getChildByTag(0)->setVisible(true);
+							lb->getChildByTag(1)->setVisible(false);
+						}
+					}
+					scroll->setTag(btn->getTag());
 				}
-				scroll->setTag(btn->getTag());
 				SFSRequest::getSingleton().RequestMailContent(atoi(btn->getName().c_str()));
 			});
 		}
 		btn->setName(to_string((int)list[i].Id));
-		btn->setPosition(Vec2(scroll->getContentSize().width / 2, height - 35 - i * 70));
+		btn->setPosition(Vec2(scroll->getContentSize().width / 2, height - 40 - i * 70));
 		lbs[0]->setString(to_string((popupMail->getChildByName("nodepage")->getTag() - 1) * 10 + i + 1));
 		lbs[1]->setString(list[i].Date);
 		lbs[2]->setString(list[i].Title);
@@ -1657,7 +1692,7 @@ void MainScene::initPopupMail()
 	if (!popupMail) return;
 
 	ui::Scale9Sprite* bgContent = ui::Scale9Sprite::createWithSpriteFrameName("empty.png");
-	bgContent->setContentSize(Size(960, 480));
+	bgContent->setContentSize(Size(980, 480));
 	bgContent->setPosition(0, 20);
 	popupMail->addChild(bgContent);
 
@@ -1817,38 +1852,27 @@ void MainScene::initPopupShop()
 	ui::ScrollView* scrollItem = ui::ScrollView::create();
 	scrollItem->setDirection(ui::ScrollView::Direction::VERTICAL);
 	scrollItem->setBounceEnabled(true);
-	scrollItem->setPosition(Vec2(bgContent->getPositionX() - bgContent->getContentSize().width / 2, bgContent->getPositionY() - bgContent->getContentSize().height / 2 + 5));
-	scrollItem->setContentSize(Size(bgContent->getContentSize().width, bgContent->getContentSize().height - 10));
+	scrollItem->setPosition(scrollCard->getPosition());
+	scrollItem->setContentSize(scrollCard->getContentSize());
 	scrollItem->setScrollBarEnabled(false);
 	scrollItem->setName("scrollitem");
 	nodeItem->addChild(scrollItem);
-
-	/*int py = bgContent->getPositionY() + size.height / 2 - 25;
-	vector<int> posX = { -380, -230, -35, 160, 320 };
-	vector<int> widths = { 120, 210, 210, 210, 150 };
-	vector<string> historyTitles = { "ma_dt", "san_pham_doi", "thoi_gian_doi", "thoi_gian_nhan", "trang_thai" };
-	for (int i = 0; i < historyTitles.size(); i++) {
-		Label* lb = Label::create(Utils::getSingleton().getStringForKey(historyTitles[i]), "fonts/myriadb.ttf", 30);
-		lb->setColor(Color3B::WHITE);
-		lb->setPosition(posX[i] + 100, py);
-		nodeHistory->addChild(lb);
-
-		ui::Scale9Sprite* bgTitle = ui::Scale9Sprite::createWithSpriteFrameName("empty.png");
-		bgTitle->setContentSize(Size(widths[i], 60));
-		bgTitle->setPosition(lb->getContentSize().width / 2, lb->getContentSize().height / 2);
-		lb->addChild(bgTitle, -1);
-	}*/
 	
 	ui::ScrollView* scrollHistory = ui::ScrollView::create();
 	scrollHistory->setDirection(ui::ScrollView::Direction::VERTICAL);
 	scrollHistory->setBounceEnabled(true);
-	scrollHistory->setPosition(Vec2(bgContent->getPositionX() - bgContent->getContentSize().width / 2, bgContent->getPositionY() - bgContent->getContentSize().height / 2 + 5));
-	scrollHistory->setContentSize(Size(bgContent->getContentSize().width + 50, bgContent->getContentSize().height - 60));
+	scrollHistory->setPosition(Vec2(bgContent->getPositionX() - bgContent->getContentSize().width / 2 - 70, bgContent->getPositionY() - bgContent->getContentSize().height / 2 + 30));
+	scrollHistory->setContentSize(Size(bgContent->getContentSize().width + 140, bgContent->getContentSize().height - 35));
 	scrollHistory->setScrollBarEnabled(false);
 	scrollHistory->setName("scrollhistory");
 	nodeHistory->addChild(scrollHistory);
 
-	addBtnChoosePage(0, -255, nodeHistory, [=](int page) {
+	Sprite* bgChosen = Sprite::createWithSpriteFrameName("bg_tabs.png");
+	bgChosen->setPosition(0, -500);
+	bgChosen->setTag(9999);
+	scrollHistory->addChild(bgChosen);
+
+	addBtnChoosePage(0, -265, nodeHistory, [=](int page) {
 		SFSRequest::getSingleton().RequestShopHistory(page);
 		//onShopHistoryDataResponse(vector<ShopHistoryData>());
 	});
