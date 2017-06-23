@@ -3,7 +3,7 @@
 #include "ui/CocosGUI.h"
 #include "Data.h"
 
-class BaseScene : public cocos2d::Scene
+class BaseScene : public cocos2d::Scene, public cocos2d::ui::EditBoxDelegate
 {
 public:
 	BaseScene();
@@ -18,6 +18,7 @@ public:
 	virtual void onDownloadedPlistTexture(int numb);
 	virtual void onHttpResponse(int tag, std::string content);
 	virtual void onHttpResponseFailed();
+	virtual void editBoxReturn(cocos2d::ui::EditBox* editBox);
 
 	CC_SYNTHESIZE(bool, mIsTouch, IsTouch);
 	virtual bool onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* _event);
@@ -72,7 +73,7 @@ protected:
 	void showSplash();
 	void showWebView(std::string url);
 	void showToast(std::string tag, std::string msg, cocos2d::Vec2 pos, cocos2d::Color3B textColor = cocos2d::Color3B::WHITE, cocos2d::Color3B bgColor = cocos2d::Color3B(80, 80, 80), int bgOpacity = 200);
-	void showWaiting(int time = 10);
+	void showWaiting(int time = 20);
 	void showPopup(cocos2d::Node* popup, bool runEffect = true);
 	void setDisplayName(std::string name);
 	void runEffectHidePopup(cocos2d::Node* popup);
@@ -83,18 +84,23 @@ protected:
     void autoScaleNode(cocos2d::Node* node);
     void delayFunction(Node* node, float time, std::function<void()> func);
 
-	cocos2d::Node* createPopup(std::string stitle, bool isBig, bool isHidden);
+	cocos2d::Node* createPopup(std::string stitle, bool isBig, bool isHidden, cocos2d::Size bgsize = cocos2d::Size(0, 0));
 	cocos2d::Node* createPopupDetail();
 	cocos2d::Node* createPopupNotice();
+	cocos2d::Node* getPopupNotice();
 	cocos2d::Vec2 getScaleSmoothly(float scale);
 
 	std::string chargingProvider = "";
+	std::string newPassword = "";
+	std::string tmpDisplayName = "";
 	bool isReconnecting = false;
 	bool isOverlapLogin = false;
 	bool hasHeader = false;
 	bool isWaiting = false;
 	bool isPopupReady = false;
 	bool isBackToLogin = false;
+	bool isChangingDisplayName = false;
+	bool isChangingPassword = false;
 	int pingId = 0;
 	double myRealMoney;
 
@@ -118,6 +124,7 @@ protected:
 	cocos2d::Label* lbCoffer;
 
 	cocos2d::Node* popupRank;
+	cocos2d::Node* popupDisplayName;
 	cocos2d::Node* popupMainSettings;
 	cocos2d::Node* popupUserInfo;
 	cocos2d::Node* popupHistory;

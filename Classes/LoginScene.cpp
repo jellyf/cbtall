@@ -29,11 +29,11 @@ void LoginScene::onInit()
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
 
 	Sprite* bg = Sprite::createWithTexture(bgTexture);
-	bg->setPosition(560, 350);
+	bg->setPosition(winSize.width / 2, winSize.height / 2);
 	mLayer->addChild(bg);
 
 	loginNode = Node::create();
-	loginNode->setPosition(560, 350);
+	loginNode->setPosition(winSize.width / 2, winSize.height / 2);
 	mLayer->addChild(loginNode);
 	autoScaleNode(loginNode);
 
@@ -57,12 +57,12 @@ void LoginScene::onInit()
 
 	tfUsername = ui::EditBox::create(Size(380, 80), "empty.png", ui::Widget::TextureResType::PLIST);
 	tfUsername->setPosition(bgTfUname->getPosition() + Vec2(30, 0));
-	tfUsername->setFontName("Arial");
+	tfUsername->setFontName("Myriad Pro Condensed");
 	tfUsername->setFontSize(35);
 	tfUsername->setFontColor(Color3B::BLACK);
 	tfUsername->setPlaceHolder(Utils::getSingleton().getStringForKey("login_name").c_str());
 	tfUsername->setPlaceholderFontColor(Color3B::BLACK);
-	tfUsername->setPlaceholderFont("Arial", 35);
+	tfUsername->setPlaceholderFont("Myriad Pro Condensed", 35);
 	tfUsername->setMaxLength(21);
 	tfUsername->setReturnType(ui::EditBox::KeyboardReturnType::DONE);
 	tfUsername->setInputFlag(ui::EditBox::InputFlag::SENSITIVE);
@@ -72,12 +72,12 @@ void LoginScene::onInit()
 
 	tfPassword = ui::EditBox::create(Size(380, 80), "empty.png", ui::Widget::TextureResType::PLIST);
 	tfPassword->setPosition(bgTfPass->getPosition() + Vec2(30, 0));
-	tfPassword->setFontName("Arial");
+	tfPassword->setFontName("Myriad Pro Condensed");
 	tfPassword->setFontSize(35);
 	tfPassword->setFontColor(Color3B::BLACK);
 	tfPassword->setPlaceHolder(Utils::getSingleton().getStringForKey("password").c_str());
 	tfPassword->setPlaceholderFontColor(Color3B::BLACK);
-	tfPassword->setPlaceholderFont("Arial", 35);
+	tfPassword->setPlaceholderFont("Myriad Pro Condensed", 35);
 	tfPassword->setMaxLength(16);
 	tfPassword->setInputFlag(ui::EditBox::InputFlag::PASSWORD);
 	tfPassword->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
@@ -178,12 +178,12 @@ void LoginScene::onInit()
 	autoScaleNode(labelPhone);
 
 	Label* labelVersion = Label::create(string("ver ") + Application::sharedApplication()->getVersion(), "fonts/myriad.ttf", 18);
-	labelVersion->setPosition(1120 - 10 * scaleScene.y, 3 * scaleScene.x);
+	labelVersion->setPosition(winSize.width - 10 * scaleScene.y, 3 * scaleScene.x);
 	labelVersion->setAnchorPoint(Vec2(1, 0));
 	mLayer->addChild(labelVersion);
 	autoScaleNode(labelVersion);
 
-	spNetwork->setPosition(1080, 660);
+	spNetwork->setPosition(winSize.width - 40 * scaleScene.y, winSize.height - 40 * scaleScene.x);
 
 	std::string lastUsername = UserDefault::getInstance()->getStringForKey(constant::KEY_USERNAME.c_str());
 	std::string lastPassword = UserDefault::getInstance()->getStringForKey(constant::KEY_PASSWORD.c_str());
@@ -229,10 +229,6 @@ void LoginScene::unregisterEventListenner()
 	EventHandler::getSingleton().onLobbyTableSFSResponse = NULL;
 }
 
-void LoginScene::editBoxReturn(ui::EditBox * editBox)
-{
-}
-
 void LoginScene::onConnected()
 {
     connectionExceptionSolved = false;
@@ -261,6 +257,7 @@ void LoginScene::onLoginZone()
 	} else {
 		hideWaiting();
 	}
+	showWaiting();
 }
 
 void LoginScene::onConnectionException()
@@ -556,7 +553,7 @@ void LoginScene::loginFacebook()
 void LoginScene::initRegisterNode()
 {
 	registerNode = Node::create();
-	registerNode->setPosition(560, 350);
+	registerNode->setPosition(winSize.width / 2, winSize.height / 2);
 	registerNode->setVisible(false);
 	mLayer->addChild(registerNode);
 	autoScaleNode(registerNode);
@@ -590,12 +587,12 @@ void LoginScene::initRegisterNode()
 
 	tfResUname = ui::EditBox::create(Size(380, 80), "empty.png", ui::Widget::TextureResType::PLIST);
 	tfResUname->setPosition(bgTfUname->getPosition() + Vec2(30, 0));
-	tfResUname->setFontName("Arial");
+	tfResUname->setFontName("Myriad Pro Condensed");
 	tfResUname->setFontSize(35);
 	tfResUname->setFontColor(Color3B::BLACK);
 	tfResUname->setPlaceHolder(Utils::getSingleton().getStringForKey("login_name").c_str());
 	tfResUname->setPlaceholderFontColor(Color3B::BLACK);
-	tfResUname->setPlaceholderFont("Arial", 35);
+	tfResUname->setPlaceholderFont("Myriad Pro Condensed", 35);
 	tfResUname->setMaxLength(20);
 	tfResUname->setReturnType(ui::EditBox::KeyboardReturnType::DONE);
 	tfResUname->setInputFlag(ui::EditBox::InputFlag::SENSITIVE);
@@ -605,12 +602,12 @@ void LoginScene::initRegisterNode()
 
 	tfResPass = ui::EditBox::create(Size(380, 80), "empty.png", ui::Widget::TextureResType::PLIST);
 	tfResPass->setPosition(bgTfPass->getPosition() + Vec2(30, 0));
-	tfResPass->setFontName("Arial");
+	tfResPass->setFontName("Myriad Pro Condensed");
 	tfResPass->setFontSize(35);
 	tfResPass->setFontColor(Color3B::BLACK);
 	tfResPass->setPlaceHolder(Utils::getSingleton().getStringForKey("password").c_str());
 	tfResPass->setPlaceholderFontColor(Color3B::BLACK);
-	tfResPass->setPlaceholderFont("Arial", 35);
+	tfResPass->setPlaceholderFont("Myriad Pro Condensed", 35);
 	tfResPass->setMaxLength(20);
 	tfResPass->setInputFlag(ui::EditBox::InputFlag::PASSWORD);
 	tfResPass->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
@@ -620,12 +617,12 @@ void LoginScene::initRegisterNode()
 
 	tfResPassAgain = ui::EditBox::create(Size(380, 80), "empty.png", ui::Widget::TextureResType::PLIST);
 	tfResPassAgain->setPosition(bgTfPassAgain->getPosition() + Vec2(30, 0));
-	tfResPassAgain->setFontName("Arial");
+	tfResPassAgain->setFontName("Myriad Pro Condensed");
 	tfResPassAgain->setFontSize(35);
 	tfResPassAgain->setFontColor(Color3B::BLACK);
 	tfResPassAgain->setPlaceHolder(Utils::getSingleton().getStringForKey("retype_password").c_str());
 	tfResPassAgain->setPlaceholderFontColor(Color3B::BLACK);
-	tfResPassAgain->setPlaceholderFont("Arial", 35);
+	tfResPassAgain->setPlaceholderFont("Myriad Pro Condensed", 35);
 	tfResPassAgain->setMaxLength(20);
 	tfResPassAgain->setInputFlag(ui::EditBox::InputFlag::PASSWORD);
 	tfResPassAgain->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);

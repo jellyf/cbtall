@@ -4,7 +4,9 @@
 <dict>
 	<key>login</key><string>Đăng nhập</string>
 	<key>login_name</key><string>Tên đăng nhập</string>
+	<key>new_login_name</key><string>Tên đăng nhập mới</string>
 	<key>password</key><string>Mật khẩu</string>
+	<key>new_password</key><string>Mật khẩu mới</string>
 	<key>retype_password</key><string>Nhập lại mật khẩu</string>
 	<key>remember_password</key><string>Nhớ mật khẩu</string>
 	<key>forgot_password</key><string>Quên mật khẩu?</string>
@@ -34,6 +36,8 @@
 	<key>quick</key><string>Nhanh</string>
 	<key>slow</key><string>Chậm</string>
 	<key>sound</key><string>Âm thanh</string>
+	<key>feedback</key><string>Góp ý</string>
+	<key>agree</key><string>Đồng ý</string>
 	<key>win_411</key><string>Ù 4-11</string>
 	<key>win_free</key><string>Ù tự do</string>
 	<key>type_here_to_chat</key><string>Gõ vào đây để chat</string>
@@ -98,14 +102,16 @@
 	<key>tinh_diem</key><string>Tính điểm</string>
 	<key>van_dau</key><string>Ván đấu</string>
 	<key>khac</key><string>Khác</string>
-	<key>reject_all_invitation</key><string>Từ chối tất cả mời chơi</string>
+	<key>reject_all_invitation</key><string>Không nhận lời mời</string>
 	<key>thang</key><string>Thắng</string>
 	<key>cap_do</key><string>Cấp độ</string>
 	<key>tong</key><string>Tổng</string>
 	<key>lich_su</key><string>Lịch sử</string>
 	<key>kich_hoat</key><string>Kích hoạt</string>
 	<key>so_seri</key><string>Số Seri</string>
+	<key>nhap_so_seri</key><string>Nhập số Seri</string>
 	<key>ma_the</key><string>Mã thẻ</string>
+	<key>nhap_ma_the</key><string>Nhập mã thẻ</string>
 	<key>nap</key><string>Nạp</string>
 	<key>the_cao</key><string>Thẻ cào</string>
 	<key>vat_pham</key><string>Vật phẩm</string>
@@ -139,9 +145,13 @@
 	<key>top_quan</key><string>Top đại gia(Quan)</string>
 	<key>top_xu</key><string>Top đại gia(Xu)</string>
 	<key>top_u</key><string>Top cao thủ</string>
+	<key>doi_mat_khau</key><string>Đổi mật khẩu</string>
+	<key>doi_ten</key><string>Đổi tên</string>
 	<key>hay_nhap_tai_khoan</key><string>Vui lòng nhập tài khoản</string>
 	<key>hay_nhap_mat_khau</key><string>Vui lòng nhập mật khẩu</string>
 	<key>bi_day_khoi_ban</key><string>Bạn đã bị đẩy ra khỏi phòng</string>
+	<key>chu_y_chi_doi_ten_1_lan</key><string>Chú ý: Bạn chỉ được đổi tên hiển thị 1 lần duy nhất</string>
+	<key>quy_dinh_mat_khau</key><string>Mật khẩu dài từ 6 đến 16 ký tự, nên chứa ít nhất 1 chữ cái in hoa và 1 chữ số</string>
 	<key>khong_du_tien_vao_ban</key><string>Bàn cược %s. Bạn cần có tối thiểu là %s để vào bàn. Bạn đang có %s</string>
 	<key>khong_du_tien_doi_thuong</key><string>Bạn không đủ tiền để đổi vật phẩm này</string>
 	<key>xac_nhan_mua_vat_pham</key><string>Bạn có chắc chắn muốn đổi vật phẩm %s giá %s Quan</string>
@@ -179,5 +189,7 @@
 	<key>ban_muon_thoat_game</key><string>Bạn muốn thoát game?</string>
 	<key>ban_muon_da_nguoi_nay_ra</key><string>Bạn muốn đá người này ra khỏi bàn chơi?</string>
 	<key>ban_muon_huy_don_hang_nay</key><string>Bạn muốn hủy đơn hàng này?</string>
+	<key>hien_chua_co_su_kien</key><string>Hiện tại chưa có sự kiện nào</string>
+	<key>khong_nhan_duoc_phan_hoi_tu_server</key><string>Không nhận được phản hồi từ server. Bạn muốn đăng nhập lại?</string>
 </dict>
 </plist>

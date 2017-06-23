@@ -284,6 +284,20 @@ void SFSRequest::RequestCancelItemShop(int itemId)
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::CANCEL_ITEM_SHOP, parameters);
 }
 
+void SFSRequest::RequestChangeDisplayname(std::string displayname)
+{
+	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+	parameters->PutUtfString("1", displayname);
+	SFSConnector::getSingleton().SendExtensionRequest(cmd::CHANGE_DISPLAYNAME, parameters);
+}
+
+void SFSRequest::RequestChangePassword(std::string password, std::string passwordRetype)
+{
+	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+	parameters->PutUtfString("1", password);
+	SFSConnector::getSingleton().SendExtensionRequest(cmd::CHANGE_PASSWORD, parameters);
+}
+
 void SFSRequest::RequestRegister(std::string username, std::string password, std::string email)
 {
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());

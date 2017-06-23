@@ -24,10 +24,6 @@ void LobbyScene::onInit()
 	initPopupUserInfo();
 	initPopupHistory();*/
 
-	Sprite* bg = Sprite::create("bg.jpg");
-	bg->setPosition(560, 350);
-	addChild(bg);
-
 	bool isSolo = Utils::getSingleton().isSoloGame();
 	bool isTour = Utils::getSingleton().isTourGame();
 	string zone = Utils::getSingleton().getCurrentZoneName();
@@ -36,30 +32,40 @@ void LobbyScene::onInit()
 		if (index >= 0 && index < zone.length()) {
 			zone = zone.substr(0, index);
 		}
-	} else if (isSolo) {
-		zone = "SoLo";
-	} else if (isTour) {
-		zone = "Tour";
 	} else {
 		zone = "VuongPhu";
 	}
+	if (isSolo) {
+		zone = "SoLo";
+	} else if (isTour) {
+		zone = "Tour";
+	}
+
+	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB888);
+	Texture2D* bgTexture = TextureCache::getInstance()->addImage("bg" + zone + ".jpg");
+	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
+
+	Sprite* bg = Sprite::createWithTexture(bgTexture);
+	bg->setPosition(winSize.width / 2, winSize.height / 2);
+	addChild(bg);
+
 	Sprite* spName = Sprite::createWithSpriteFrameName(zone + ".png");
-	spName->setPosition(140, 530);
+	spName->setPosition(140, 560);
 	mLayer->addChild(spName);
 
 	scrollListRoom = ui::ScrollView::create();
 	scrollListRoom->setDirection(ui::ScrollView::Direction::VERTICAL);
 	scrollListRoom->setBounceEnabled(true);
 	scrollListRoom->setPosition(Vec2(15, 0));
-	scrollListRoom->setContentSize(Size(240, 490));
+	scrollListRoom->setContentSize(Size(240, 520));
 	scrollListRoom->setScrollBarEnabled(false);
 	mLayer->addChild(scrollListRoom);
 
 	scrollListTable = ui::ScrollView::create();
 	scrollListTable->setDirection(ui::ScrollView::Direction::VERTICAL);
 	scrollListTable->setBounceEnabled(true);
-	scrollListTable->setPosition(Vec2(270, 20));
-	scrollListTable->setContentSize(Size(820, 505));
+	scrollListTable->setPosition(Vec2(300, 20));
+	scrollListTable->setContentSize(Size(920, 515));
 	scrollListTable->setScrollBarEnabled(false);
 	mLayer->addChild(scrollListTable);
 
@@ -74,7 +80,7 @@ void LobbyScene::onInit()
 	lbLevel->setString(strLevel);
 
 	//initEventView(Vec2(270, 575), Size(850, 40));
-	initEventView(Vec2(0, 575), Size(winSize.width, 40));
+	initEventView(Vec2(0, winSize.height - 125), Size(winSize.width, 40));
 
 	if (Utils::getSingleton().lobbyListRoomType.ListRoomType.size() > 0) {
 		onRoomTypeDataResponse(Utils::getSingleton().lobbyListRoomType);
@@ -222,6 +228,41 @@ void LobbyScene::onErrorResponse(unsigned char code, std::string msg)
 	showPopupNotice(msg, [=]() {});
 }
 
+cocos2d::Node* LobbyScene::getPopupInvitation()
+{
+	for (Node* n : vecPopupInvitations) {
+		if (!n->isVisible()) {
+			ui::Button* btnClose = (ui::Button*)n->getChildByName("btnclose");
+			btnClose->setTouchEnabled(true);
+			return n;
+			break;
+		}
+	}
+	Node* popupInvitaion = createPopupNotice();
+	vecPopupInvitations.push_back(popupInvitaion);
+
+	/*ui::CheckBox* checkbox = ui::CheckBox::create();
+	checkbox->loadTextureBackGround("unchecked.png", ui::Widget::TextureResType::PLIST);
+	checkbox->loadTextureFrontCross("checked.png", ui::Widget::TextureResType::PLIST);
+	checkbox->setPosition(Vec2(-200, -90));
+	checkbox->setSelected(false);
+	popupInvitaion->addChild(checkbox);
+
+	checkbox->addEventListener([=](Ref* ref, ui::CheckBox::EventType type) {
+		bool isSelected = type == ui::CheckBox::EventType::SELECTED;
+		Utils::getSingleton().IgnoreInvitation = isSelected;
+		UserDefault::getInstance()->setBoolForKey(constant::KEY_INVITATION.c_str(), isSelected);
+	});
+
+	Label* lb = Label::createWithTTF(Utils::getSingleton().getStringForKey("reject_all_invitation"), "fonts/myriadb.ttf", 35);
+	lb->setPosition(checkbox->getPosition() + Vec2(40, -5));
+	lb->setAnchorPoint(Vec2(0, .5f));
+	lb->setColor(Color3B::BLACK);
+	popupInvitaion->addChild(lb);*/
+
+	return popupInvitaion;
+}
+
 void LobbyScene::onJoinRoom(long roomId, std::string roomName)
 {
 	if (roomName.at(0) == 'g' && roomName.at(2) == 'b') {
@@ -243,10 +284,24 @@ void LobbyScene::onInviteDataResponse(InviteData data)
 	string strformat = Utils::getSingleton().getStringForKey("invite_content");
 	string strmoney = Utils::getSingleton().formatMoneyWithComma(data.Money);
 	string content = String::createWithFormat(strformat.c_str(), data.InviterName.c_str(), tableId, strmoney.c_str(), data.RoomTime)->getCString();
-	showPopupNotice(content, [=]() {
-		SFSRequest::getSingleton().RequestJoinRoom(data.RoomName);
+
+	Node* popupInvitation = getPopupInvitation();
+	Label* lbcontent = (Label*)popupInvitation->getChildByName("lbcontent");
+	lbcontent->setString(content);
+	ui::Button* btnSubmit = (ui::Button*)popupInvitation->getChildByName("btnsubmit");
+	addTouchEventListener(btnSubmit, [=]() {
+		popupInvitation->stopAllActions();
+		hidePopup(popupInvitation);
 		showWaiting();
-	}, true, 15);
+		SFSRequest::getSingleton().RequestJoinRoom(data.RoomName);
+	}, false);
+
+	showPopup(popupInvitation);
+	DelayTime* delay = DelayTime::create(15);
+	CallFunc* funcHide = CallFunc::create([=]() {
+		hidePopup(popupInvitation);
+	});
+	popupInvitation->runAction(Sequence::createWithTwoActions(delay, funcHide));
 }
 
 void LobbyScene::onTableDataResponse(LobbyListTable data)
@@ -275,6 +330,7 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 	} else {
 		zone = "VuongPhu";
 	}
+	bool isNhaTranh = zone.compare("NhaTranh") == 0;
 	Color3B colorMoney = Utils::getSingleton().moneyType == 1 ? Color3B::YELLOW : Color3B(0, 255, 255);
 	vector<Vec2> ppos;
 	ppos.push_back(Vec2(65, 95));
@@ -294,7 +350,7 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 			btn = ui::Button::create(tbName, "", "", ui::Widget::TextureResType::PLIST);
 			//btn->setPosition(Vec2(100 + (i % 4) * 210, height - 70 - (i / 4) * 170));
 			btn->setTag(i + 1);
-			btn->setScale(.8f);
+			//btn->setScale(.8f);
 			scrollListTable->addChild(btn);
 			vecTables.push_back(btn);
 			autoScaleNode(btn);
@@ -339,7 +395,7 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 			Label* lb411 = Label::createWithTTF("4-11", "fonts/myriadb.ttf", 30);
 			lb411->setPosition(bsize.width / 2, 25);
 			lb411->setAnchorPoint(Vec2(.5f, 1));
-			lb411->setColor(Color3B::BLACK);
+			lb411->setColor(isNhaTranh ? Color3B::WHITE : Color3B::BLACK);
 			lb411->setName("lb411");
 			btn->addChild(lb411);
 
@@ -350,7 +406,7 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 			btn->addChild(spGa);
 
 			Label* lbName = Label::create(Utils::getSingleton().getStringForKey("table") + " " + to_string(i + 1), "fonts/myriadb.ttf", 30);
-			lbName->setColor(Color3B::BLACK);
+			lbName->setColor(lb411->getColor());
 			lbName->setPosition(0, 15);
 			lbName->setAnchorPoint(Vec2(0, 1));
 			btn->addChild(lbName);
@@ -364,7 +420,7 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 			btn->addChild(lbMoney);
 		}
 		btn->setVisible(true);
-		btn->setPosition(Vec2(100 + (i % 4) * 210, height - 70 - (i / 4) * 170));
+		btn->setPosition(Vec2(100 + (i % 4) * 240, height - 70 - (i / 4) * 175));
 		addTouchEventListener(btn, [=]() {
 			/*long requiredMoney = data.Money * 20;
 			if ((Utils::getSingleton().moneyType == 1 && Utils::getSingleton().userDataMe.MoneyReal < requiredMoney)

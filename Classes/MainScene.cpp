@@ -17,22 +17,19 @@ void MainScene::onInit()
 	bool pmE = Utils::getSingleton().ispmE();
 	currentMoneyType = Utils::getSingleton().moneyType;
 
-	std::vector<Vec2> vecPos;
-	vecPos.push_back(Vec2(80, 100));
-	vecPos.push_back(Vec2(200, 100));
-	vecPos.push_back(Vec2(320, 100));
-	vecPos.push_back(Vec2(440, 100));
-	vecPos.push_back(Vec2(560, 100));
-	vecPos.push_back(Vec2(680, 100));
-	vecPos.push_back(Vec2(800, 100));
-	vecPos.push_back(Vec2(920, 100));
-	vecPos.push_back(Vec2(1040, 100));
-	vecPos.push_back(Vec2(120, 350));
-	vecPos.push_back(Vec2(340, 350));
-	vecPos.push_back(Vec2(560, 350));
-	vecPos.push_back(Vec2(780, 350));
-	vecPos.push_back(Vec2(1000, 350));
-	int m = 0;
+	std::vector<Vec2> vecMenuPos;
+	int numbOfMenuBtns = 9;
+	float dx = winSize.width / numbOfMenuBtns;
+	for (int i = 0; i < numbOfMenuBtns; i++) {
+		vecMenuPos.push_back(Vec2(dx / 2 + i * dx, 100));
+	}
+
+	std::vector<Vec2> vecZonePos;
+	int numbOfZoneBtns = 5;
+	dx = winSize.width / numbOfZoneBtns;
+	for (int i = 0; i < numbOfZoneBtns; i++) {
+		vecZonePos.push_back(Vec2(dx / 2 + i * dx, winSize.height / 2));
+	}
 
 	initHeaderWithInfos();
 
@@ -41,15 +38,18 @@ void MainScene::onInit()
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
 
 	Sprite* bg = Sprite::createWithTexture(bgTexture);
-	bg->setPosition(560, 350);
+	bg->setPosition(winSize.width / 2, winSize.height / 2);
 	addChild(bg);
 
 	btnEvent = ui::Button::create("icon_event.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnEvent->setPosition(vecPos[0]);
-	btnEvent->setVisible(false);
+	btnEvent->setPosition(vecMenuPos[0]);
 	addTouchEventListener(btnEvent, [=]() {
-		Utils::getSingleton().hasShowEventPopup = true;
-		showWebView(Utils::getSingleton().dynamicConfig.PopupUrl);
+		if (isEventReady) {
+			Utils::getSingleton().hasShowEventPopup = true;
+			showWebView(Utils::getSingleton().dynamicConfig.PopupUrl);
+		} else {
+			showPopupNotice(Utils::getSingleton().getStringForKey("hien_chua_co_su_kien"), [=]() {});
+		}
 	});
 	mLayer->addChild(btnEvent);
 	autoScaleNode(btnEvent);
@@ -60,7 +60,7 @@ void MainScene::onInit()
 
 	bool canInvite = Utils::getSingleton().gameConfig.invite;
 	ui::Button* btnFBFriends = ui::Button::create("fb_friends.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnFBFriends->setPosition(vecPos[1]);
+	btnFBFriends->setPosition(vecMenuPos[1]);
 	btnFBFriends->setVisible(pmE && canInvite);
 	addTouchEventListener(btnFBFriends, [=]() {
 		Utils::getSingleton().inviteFacebookFriends();
@@ -73,7 +73,7 @@ void MainScene::onInit()
 	btnFBFriends->addChild(lbFBFriends);
 
 	ui::Button* btnGuide = ui::Button::create("icon_guide.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnGuide->setPosition(vecPos[2]);
+	btnGuide->setPosition(vecMenuPos[2]);
 	addTouchEventListener(btnGuide, [=]() {
 		if (popupGuide == nullptr) {
 			initPopupGuide();
@@ -88,7 +88,7 @@ void MainScene::onInit()
 	btnGuide->addChild(lbGuide);
 
 	ui::Button* btnCharge = ui::Button::create("icon_charge.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnCharge->setPosition(vecPos[3]);
+	btnCharge->setPosition(vecMenuPos[3]);
 	addTouchEventListener(btnCharge, [=]() {
 		if (pmE) {
 			if (popupCharge == nullptr) {
@@ -110,7 +110,7 @@ void MainScene::onInit()
 	btnCharge->addChild(lbCharge);
 
 	ui::Button* btnShop = ui::Button::create("icon_shop.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnShop->setPosition(vecPos[4]);
+	btnShop->setPosition(vecMenuPos[4]);
 	btnShop->setVisible(pmE);
 	addTouchEventListener(btnShop, [=]() {
 		if (popupShop == nullptr) {
@@ -129,7 +129,7 @@ void MainScene::onInit()
 	btnShop->addChild(lbShop);
 
 	ui::Button* btnNews = ui::Button::create("icon_news.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnNews->setPosition(vecPos[5]);
+	btnNews->setPosition(vecMenuPos[5]);
 	addTouchEventListener(btnNews, [=]() {
 		showPopupNews();
 		/*cocos2d::ValueMap plist = cocos2d::FileUtils::getInstance()->getValueMapFromFile("configs.xml");
@@ -144,7 +144,7 @@ void MainScene::onInit()
 	btnNews->addChild(lbNews);
 
 	ui::Button* btnMail = ui::Button::create("icon_mail.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnMail->setPosition(vecPos[6]);
+	btnMail->setPosition(vecMenuPos[6]);
 	addTouchEventListener(btnMail, [=]() {
 		showPopupMail();
 	});
@@ -166,7 +166,7 @@ void MainScene::onInit()
 	circleNewMail->addChild(lbNewMail);
 
 	ui::Button* btnGiftcode = ui::Button::create("icon_giftcode.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnGiftcode->setPosition(vecPos[7]);
+	btnGiftcode->setPosition(vecMenuPos[7]);
 	btnGiftcode->setVisible(pmE);
 	addTouchEventListener(btnGiftcode, [=]() {
 		if (popupGiftcode == nullptr) {
@@ -183,7 +183,7 @@ void MainScene::onInit()
 	btnGiftcode->addChild(lbGiftcode);
 
 	ui::Button* btnFacebook = ui::Button::create("facebook.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnFacebook->setPosition(vecPos[8]);
+	btnFacebook->setPosition(vecMenuPos[8]);
 	btnFacebook->setVisible(pmE);
 	addTouchEventListener(btnFacebook, [=]() {
 		Application::sharedApplication()->openURL(Utils::getSingleton().gameConfig.linkFb);
@@ -196,8 +196,8 @@ void MainScene::onInit()
 	btnFacebook->addChild(lbFacebook);
 
 	ui::Button* btnNhaTranh = ui::Button::create("nha_tranh.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnNhaTranh->setPosition(vecPos[9]);
-	btnNhaTranh->setScale(.95f);
+	btnNhaTranh->setPosition(vecZonePos[0]);
+	//btnNhaTranh->setScale(.95f);
 	addTouchEventListener(btnNhaTranh, [=]() {
 		if (isWaiting) return;
 		showWaiting();
@@ -209,8 +209,8 @@ void MainScene::onInit()
 	autoScaleNode(btnNhaTranh);
 
 	ui::Button* btnDinhLang = ui::Button::create("dinhlang.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnDinhLang->setPosition(vecPos[10]);
-	btnDinhLang->setScale(.95f);
+	btnDinhLang->setPosition(vecZonePos[1]);
+	//btnDinhLang->setScale(.95f);
 	addTouchEventListener(btnDinhLang, [=]() {
 		if (isWaiting) return;
 		showWaiting();
@@ -222,8 +222,8 @@ void MainScene::onInit()
 	autoScaleNode(btnDinhLang);
 
 	ui::Button* btnPhuChua = ui::Button::create("phuchua.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnPhuChua->setPosition(vecPos[11]);
-	btnPhuChua->setScale(.95f);
+	btnPhuChua->setPosition(vecZonePos[2]);
+	//btnPhuChua->setScale(.95f);
 	addTouchEventListener(btnPhuChua, [=]() {
 		if (isWaiting) return;
 		showWaiting();
@@ -235,8 +235,8 @@ void MainScene::onInit()
 	autoScaleNode(btnPhuChua);
 
 	ui::Button* btnLoiDai = ui::Button::create("dtd.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnLoiDai->setPosition(vecPos[12]);
-	btnLoiDai->setScale(.95f);
+	btnLoiDai->setPosition(vecZonePos[3]);
+	//btnLoiDai->setScale(.95f);
 	addTouchEventListener(btnLoiDai, [=]() {
 		if (isWaiting) return;
 		showWaiting();
@@ -248,8 +248,8 @@ void MainScene::onInit()
 	autoScaleNode(btnLoiDai);
 
 	ui::Button* btnGiaiDau = ui::Button::create("giaidau.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnGiaiDau->setPosition(vecPos[13]);
-	btnGiaiDau->setScale(.95f);
+	btnGiaiDau->setPosition(vecZonePos[4]);
+	//btnGiaiDau->setScale(.95f);
 	addTouchEventListener(btnGiaiDau, [=]() {
 		/*if (isWaiting) return;
 		showWaiting();
@@ -261,8 +261,7 @@ void MainScene::onInit()
 	mLayer->addChild(btnGiaiDau);
 	autoScaleNode(btnGiaiDau);
 
-	initEventView(Vec2(0, 575), Size(1120, 40));
-	initWebView();
+	initEventView(Vec2(0, winSize.height - 125), Size(winSize.width, 40));
 
 	if (Utils::getSingleton().userDataMe.Name.length() > 0 && Utils::getSingleton().userDataMe.DisplayName.length() == 0) {
 		if (popupDisplayName == nullptr) {
@@ -320,10 +319,6 @@ void MainScene::unregisterEventListenner()
 	EventHandler::getSingleton().onExchangeItemSFSResponse = NULL;
 	EventHandler::getSingleton().onPurchaseSuccess = NULL;
 	EventHandler::getSingleton().onFacebookInvite = NULL;
-}
-
-void MainScene::editBoxReturn(cocos2d::ui::EditBox * editBox)
-{
 }
 
 bool MainScene::onKeyBack()
@@ -397,11 +392,6 @@ void MainScene::onErrorResponse(unsigned char code, std::string msg)
 			content = Utils::getSingleton().replaceString(content, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
 			Utils::getSingleton().openSMS(number, content);
 		}, false);
-		return;
-	}
-	if (code == 51 && popupDisplayName->isVisible()) {
-		hidePopup(popupDisplayName);
-		setDisplayName(tmpDisplayName);
 		return;
 	}
 	if (code == 32) {
@@ -1087,7 +1077,7 @@ void MainScene::onDynamicConfigReceived()
 		&& Utils::getSingleton().ispmE()) {
 		//Utils::getSingleton().hasShowEventPopup = true;
 		//showWebView(Utils::getSingleton().dynamicConfig.PopupUrl);
-		btnEvent->setVisible(true);
+		isEventReady = true;
 	}
 	GameLogger::getSingleton().setEnabled(Utils::getSingleton().dynamicConfig.Log);
 	GameLogger::getSingleton().setHost(Utils::getSingleton().dynamicConfig.LogHost);
@@ -1407,8 +1397,8 @@ void MainScene::initPopupCharge()
 	tfSeri->setFontColor(Color3B::WHITE);
 	tfSeri->setMaxLength(24);
 	tfSeri->setPlaceholderFont("Arial", 30);
-	tfSeri->setPlaceholderFontColor(Color3B::WHITE);
-	tfSeri->setPlaceHolder(Utils::getSingleton().getStringForKey("so_seri").c_str());
+	tfSeri->setPlaceholderFontColor(Color3B(200, 200, 200));
+	tfSeri->setPlaceHolder(Utils::getSingleton().getStringForKey("nhap_so_seri").c_str());
 	tfSeri->setReturnType(ui::EditBox::KeyboardReturnType::DONE);
 	tfSeri->setInputFlag(ui::EditBox::InputFlag::SENSITIVE);
 	tfSeri->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
@@ -1421,8 +1411,8 @@ void MainScene::initPopupCharge()
 	tfCode->setFontColor(Color3B::WHITE);
 	tfCode->setMaxLength(24);
 	tfCode->setPlaceholderFont("Arial", 30);
-	tfCode->setPlaceholderFontColor(Color3B::WHITE);
-	tfCode->setPlaceHolder(Utils::getSingleton().getStringForKey("ma_the").c_str());
+	tfCode->setPlaceholderFontColor(Color3B(200, 200, 200));
+	tfCode->setPlaceHolder(Utils::getSingleton().getStringForKey("nhap_ma_the").c_str());
 	tfCode->setReturnType(ui::EditBox::KeyboardReturnType::DONE);
 	tfCode->setInputFlag(ui::EditBox::InputFlag::SENSITIVE);
 	tfCode->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
@@ -1925,7 +1915,7 @@ void MainScene::initPopupGiftcode()
 void MainScene::initPopupDisplayName()
 {
 	popupDisplayName = Node::create();
-	popupDisplayName->setPosition(560, 350);
+	popupDisplayName->setPosition(winSize.width / 2, winSize.height / 2);
 	popupDisplayName->setVisible(false);
 	popupDisplayName->setName("popupdisplayname");
 	mLayer->addChild(popupDisplayName, constant::ZORDER_POPUP);
@@ -1969,6 +1959,7 @@ void MainScene::initPopupDisplayName()
 	addTouchEventListener(btnSubmit, [=]() {
 		tmpDisplayName = Utils::getSingleton().trim(tfDisplayName->getText());
 		if (Utils::getSingleton().isDisplayNameValid(tmpDisplayName)) {
+			isChangingDisplayName = true;
 			SFSRequest::getSingleton().RequestUpdateDisplayName(tmpDisplayName);
 		} else {
 			showPopupNotice(Utils::getSingleton().getStringForKey("error_displayname_format"), [=]() {});

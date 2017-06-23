@@ -275,7 +275,7 @@ bool Utils::isUsernameValid(std::string uname)
 	}
 	for (int i = 0; i < length; i++) {
 		char c = uname.at(i);
-		if (!((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))) {
+		if (!(c == '_' || (c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))) {
 			return false;
 		}
 	}
@@ -290,7 +290,8 @@ bool Utils::isPasswordValid(std::string pw)
 	}
 	for (int i = 0; i < length; i++) {
 		char c = pw.at(i);
-		if (!((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))) {
+		//if (!((c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))) {
+		if (c == ' ') {
 			return false;
 		}
 	}

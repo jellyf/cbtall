@@ -28,6 +28,8 @@ protected:
 	virtual void onChangeMoneyType(int type);
 	virtual void onErrorResponse(unsigned char code, std::string msg);
 
+	cocos2d::Node* getPopupInvitation();
+
 	bool isBackToMain = false;
 	bool isChangeMoney = false;
 	int currentRoomType;
@@ -38,6 +40,7 @@ protected:
 	cocos2d::ui::ScrollView* scrollListRoom;
 	cocos2d::ui::ScrollView* scrollListTable;
 	std::vector<cocos2d::ui::Button*> vecTables;
+	std::vector<cocos2d::Node*> vecPopupInvitations;
 	std::vector<cocos2d::Vec2> playerPos;
 };
 

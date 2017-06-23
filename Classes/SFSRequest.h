@@ -56,6 +56,8 @@ public:
 	void RequestCofferHistory();
 	void RequestVerifyFBInvite(std::string token);
 	void RequestCancelItemShop(int itemId);
+	void RequestChangeDisplayname(std::string displayname);
+	void RequestChangePassword(std::string password, std::string passwordRetype);
 
 	void RequestGameReady();
 	void RequestGameChooseStilt(int stilt);

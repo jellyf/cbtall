@@ -1,14 +1,13 @@
 #pragma once
 #include "BaseScene.h"
 #include "md5.h"
-class LoginScene : public BaseScene, public cocos2d::ui::EditBoxDelegate
+class LoginScene : public BaseScene
 {
 public:
 	CREATE_FUNC(LoginScene);
 	virtual void onInit();
 	virtual void registerEventListenner();
 	virtual void unregisterEventListenner();
-	virtual void editBoxReturn(cocos2d::ui::EditBox* editBox);
 	virtual void onDownloadedPlistTexture(int numb);
 	virtual void onHttpResponse(int tag, std::string content);
 	virtual void onHttpResponseFailed();

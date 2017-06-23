@@ -2,14 +2,13 @@
 #include "BaseScene.h"
 #include "Data.h"
 
-class MainScene : public BaseScene, public cocos2d::ui::EditBoxDelegate
+class MainScene : public BaseScene
 {
 public:
 	CREATE_FUNC(MainScene);
 	virtual void onInit();
 	virtual void registerEventListenner();
 	virtual void unregisterEventListenner();
-	virtual void editBoxReturn(cocos2d::ui::EditBox* editBox);
 	virtual void onDownloadedPlistTexture(int numb);
 
 	void onConfigZoneReceived();
@@ -55,7 +54,6 @@ private:
 	cocos2d::Node* popupGuide;
 	cocos2d::Node* popupCharge;
 	cocos2d::Node* popupGiftcode;
-	cocos2d::Node* popupDisplayName;
 
 	cocos2d::Label* lbNewMail;
 	cocos2d::ui::Button* btnEvent;
@@ -67,7 +65,7 @@ private:
 	bool isWaitPopupNews = false;
 	bool isWaitPopupMail = false;
 	bool isChargeQuan = true;
-	std::string tmpDisplayName;
+	bool isEventReady = false;
 	std::vector<ShopItemData> listItems;
 	std::map<std::string, cocos2d::Texture2D*> textures;
 	std::vector<int> moneys = { 10, 20, 50, 100, 200, 500 };

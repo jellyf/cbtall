@@ -13,14 +13,13 @@ enum GameState {
 	PLAY,
 	ENDING
 };
-class GameScene : public BaseScene, public cocos2d::ui::EditBoxDelegate
+class GameScene : public BaseScene
 {
 public:
 	CREATE_FUNC(GameScene);
 	virtual void onInit();
 	virtual void registerEventListenner();
 	virtual void unregisterEventListenner();
-	virtual void editBoxReturn(cocos2d::ui::EditBox* editBox);
 	virtual bool onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* _event);
 
 	virtual void onApplicationDidEnterBackground();
