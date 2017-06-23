@@ -1963,6 +1963,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 			lbCrestTime->getParent()->setVisible(true);
 			lbCrestTime->setString(to_string((int)timeStart));
 			lbCrestTime->resumeSchedulerAndActions();
+			lbCrestTime->getParent()->setPosition(btnReady->getPosition() + getScaleSceneDistance(Vec2(0, 80)));
 		}
 		if (isMeHost) {
 			for (int i = 1; i < 4; i++) {
@@ -2855,6 +2856,7 @@ void GameScene::onEndMatch(EndMatchData data)
 	lbCrestTime->getParent()->setVisible(true);
 	lbCrestTime->setString("40");
 	lbCrestTime->resumeSchedulerAndActions();
+	lbCrestTime->getParent()->setPosition(btnXemNoc->getPosition() + getScaleSceneDistance(Vec2(170, 0)));
 	lbCardNoc->getParent()->setVisible(false);
 	btnPick->setVisible(false);
 	btnBash->setVisible(false);
@@ -3657,7 +3659,7 @@ void GameScene::initEndMatchTable()
 	//bg->setFlipY(true);
 	tableEndMatch->addChild(bg);
 
-	lbWinner = Label::createWithTTF("Stormus U", "fonts/myriadb.ttf", 35);
+	lbWinner = Label::createWithTTF("Stormus U", "fonts/myriadb.ttf", 30);
 	lbWinner->setPosition(0, 110);
 	lbWinner->setColor(Color3B::BLACK);
 	lbWinner->setAlignment(TextHAlignment::CENTER);
@@ -3666,7 +3668,7 @@ void GameScene::initEndMatchTable()
 
 	lbCrestWin = Label::createWithTTF("Nha lau xe hoi hoa roi cua phat Ngu ong bat ca Chua do nat hoa", "fonts/myriadb.ttf", 30);
 	lbCrestWin->setPosition(0, 55);
-	lbCrestWin->setColor(Color3B::RED);
+	lbCrestWin->setColor(Color3B(233, 0, 0));
 	lbCrestWin->setAlignment(TextHAlignment::CENTER);
 	lbCrestWin->setWidth(550);
 	tableEndMatch->addChild(lbCrestWin);
@@ -3679,9 +3681,10 @@ void GameScene::initEndMatchTable()
 	lbCuocSai->setHeight(30);
 	tableEndMatch->addChild(lbCuocSai);
 
-	lbDiem = Label::createWithTTF("33", "fonts/myriadb.ttf", 35);
+	lbDiem = Label::createWithTTF("33 Diem", "fonts/myriadb.ttf", 30);
 	lbDiem->setPosition(0, -10);
-	lbDiem->setColor(Color3B::RED);
+	lbDiem->setColor(Color3B(0, 144, 10));
+	//lbDiem->enableOutline(Color4B(0, 90, 0, 255), 1);
 	tableEndMatch->addChild(lbDiem);
 
 	lbNoted = Label::createWithTTF("Reno bi den lang", "fonts/myriad.ttf", 25);
