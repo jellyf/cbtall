@@ -547,14 +547,14 @@ void GameScene::onInit()
 	autoScaleNode(bgDiaNoc);
 
 	Sprite* spCardNoc = Sprite::createWithSpriteFrameName("bg_card_up.png");
-	spCardNoc->setRotation(-20);
-	spCardNoc->setPosition(bgDiaNoc->getContentSize().width / 2 + 25, bgDiaNoc->getContentSize().height / 2 + 20);
+	//spCardNoc->setRotation(-20);
+	spCardNoc->setPosition(bgDiaNoc->getContentSize().width / 2 + 40, bgDiaNoc->getContentSize().height / 2 + 10);
 	spCardNoc->setName("spcardnoc");
 	bgDiaNoc->addChild(spCardNoc, 1);
 
-	ui::Button* spNapNoc = ui::Button::create("bg_napnoc.png", "bg_napnoc_hit.png", "", ui::Widget::TextureResType::PLIST);
+	ui::Button* spNapNoc = ui::Button::create("bg_napnoc.png", "", "", ui::Widget::TextureResType::PLIST);
 	//Sprite* spNapNoc = Sprite::createWithSpriteFrameName("bg_napnoc.png");
-	spNapNoc->setPosition(Vec2(bgDiaNoc->getContentSize().width / 2 - 6, bgDiaNoc->getContentSize().height / 2 + 8));
+	spNapNoc->setPosition(Vec2(bgDiaNoc->getContentSize().width / 2, bgDiaNoc->getContentSize().height / 2 + 3));
 	bgDiaNoc->addChild(spNapNoc, 2);
 	addTouchEventListener(spNapNoc, [=]() {
 		if (btnPick->isVisible()) {
@@ -564,10 +564,9 @@ void GameScene::onInit()
 		}
 	});
 
-	lbCardNoc = Label::create();
+	lbCardNoc = Label::createWithTTF("23", "fonts/myriad.ttf", 35);
 	lbCardNoc->setString("23");
-	lbCardNoc->setSystemFontSize(30);
-	lbCardNoc->setPosition(bgDiaNoc->getContentSize().width / 2 + 55, bgDiaNoc->getContentSize().height / 2 + 31);
+	lbCardNoc->setPosition(bgDiaNoc->getContentSize().width / 2 + 75, bgDiaNoc->getContentSize().height / 2 + 15);
 	bgDiaNoc->addChild(lbCardNoc, 3);
 
 	nodeStilt = Node::create();
@@ -2058,6 +2057,8 @@ void GameScene::onRoomDataGaResponse(bool isGa, double gaMoney)
 	} else {
 		lbMoneyGa->setString("");
 	}
+
+	lbCardNoc->getParent()->setVisible(true);
 }
 
 void GameScene::onStartGameDataResponse(StartGameData data)
