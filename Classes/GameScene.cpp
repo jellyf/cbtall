@@ -548,7 +548,7 @@ void GameScene::onInit()
 
 	Sprite* spCardNoc = Sprite::createWithSpriteFrameName("bg_card_up.png");
 	//spCardNoc->setRotation(-20);
-	spCardNoc->setPosition(bgDiaNoc->getContentSize().width / 2 + 40, bgDiaNoc->getContentSize().height / 2 + 10);
+	spCardNoc->setPosition(bgDiaNoc->getContentSize().width / 2 + 30, bgDiaNoc->getContentSize().height / 2 + 10);
 	spCardNoc->setName("spcardnoc");
 	bgDiaNoc->addChild(spCardNoc, 1);
 
@@ -566,7 +566,7 @@ void GameScene::onInit()
 
 	lbCardNoc = Label::createWithTTF("23", "fonts/myriad.ttf", 35);
 	lbCardNoc->setString("23");
-	lbCardNoc->setPosition(bgDiaNoc->getContentSize().width / 2 + 75, bgDiaNoc->getContentSize().height / 2 + 15);
+	lbCardNoc->setPosition(bgDiaNoc->getContentSize().width / 2 + 65, bgDiaNoc->getContentSize().height / 2 + 15);
 	bgDiaNoc->addChild(lbCardNoc, 3);
 
 	nodeStilt = Node::create();
