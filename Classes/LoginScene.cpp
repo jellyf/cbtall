@@ -257,7 +257,6 @@ void LoginScene::onLoginZone()
 	} else {
 		hideWaiting();
 	}
-	showWaiting();
 }
 
 void LoginScene::onConnectionException()
