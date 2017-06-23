@@ -2599,7 +2599,6 @@ void BaseScene::setSplashZOrder(int zorder)
 	bool increase = zorder > splash->getLocalZOrder();
 	splash->setLocalZOrder(zorder);
 	if (increase) {
-		CCLOG("\n\nincrease zorder");
 		for (ui::Button* btn : buttons) {
 			if (!btn->isTouchEnabled()) continue;
 			Node* n = btn;
@@ -2607,13 +2606,11 @@ void BaseScene::setSplashZOrder(int zorder)
 				n = n->getParent();
 			}
 			if (n->isVisible() && n->getLocalZOrder() < splash->getLocalZOrder()) {
-				CCLOG("touch enable false");
 				btn->setTouchEnabled(false);
 				blockedButtons.push_back(btn);
 			}
 		}
 	} else {
-		CCLOG("\n\ndecrease zorder");
 		int i = blockedButtons.size() - 1;
 		while (i >= 0) {
 			Node* n = blockedButtons[i];
@@ -2621,7 +2618,6 @@ void BaseScene::setSplashZOrder(int zorder)
 				n = n->getParent();
 			}
 			if (n->getLocalZOrder() >= splash->getLocalZOrder()) {
-				CCLOG("touch enable true");
 				blockedButtons[i]->setTouchEnabled(true);
 				//blockedButtons.erase(blockedButtons.begin() + i);
 				blockedButtons.pop_back();
