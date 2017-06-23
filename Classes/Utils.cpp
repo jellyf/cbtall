@@ -616,7 +616,7 @@ void Utils::queryIAPProduct()
 	std::vector<std::string> descs = { "21.000 ", "105.000 ", "210.000 " };
 	std::vector<double> prices = { 22000, 105000, 210000 };
     for(int i=0;i<ids.size();i++){
-        ids[i] = "com.chan.kinhtuchi.goi." + ids[i];
+        ids[i] = "com.chan.tamdohaileo.goi." + ids[i];
         ProductData data;
         data.Id = ids[i];
 		data.Price = prices[i];
