@@ -889,7 +889,7 @@ void BaseScene::initHeaderWithInfos()
 	mLayer->addChild(btnRank, constant::MAIN_ZORDER_HEADER);
 	autoScaleNode(btnRank);
 
-	int posMoney = (bgAvatar->getPositionX() + btnSettings->getPositionX() - 50) / 2;
+	int posMoney = (bgAvatar->getPositionX() + btnSettings->getPositionX() - 90) / 2;
 	Node* moneyNode = Node::create();
 	moneyNode->setPosition(posMoney, posY);
 	mLayer->addChild(moneyNode, constant::MAIN_ZORDER_HEADER);
@@ -970,9 +970,9 @@ void BaseScene::initHeaderWithInfos()
 	if (!ispmE) {
 		chosenBg->setOpacity(0);
 		//chosenBg->setPosition(spMoneyBg->getPosition() + Vec2(isRealMoney && ispmE ? -100 : 100, 0));
-		moneyNode->setPosition(posMoney - 180, posY);
+		moneyNode->setPosition(posMoney - 130, posY);
 		spMoneyBg->setContentSize(Size(250, 76));
-		spMoneyBg->setPositionX(100);
+		spMoneyBg->setPositionX(125);
 		moneyBg1->setVisible(false);
 		iconGold->setVisible(false);
 		lbGold->setVisible(false);
@@ -1831,8 +1831,8 @@ void BaseScene::initPopupHistory()
 	popupHistory->setTag(0);
 
 	ui::Scale9Sprite* bgContent = ui::Scale9Sprite::createWithSpriteFrameName("empty.png");
-	bgContent->setContentSize(Size(960, 406));
-	bgContent->setPosition(0, ispmE ? 0 : -40);
+	bgContent->setContentSize(Size(960, ispmE ? 406 : 500));
+	bgContent->setPosition(0, ispmE ? 0 : 30);
 	popupHistory->addChild(bgContent);
 
 	Size size = bgContent->getContentSize();
@@ -1848,6 +1848,7 @@ void BaseScene::initPopupHistory()
 
 	Sprite* bgMenu = Sprite::createWithSpriteFrameName("bg_tabs.png");
 	bgMenu->setPosition(0, 200);
+	bgMenu->setVisible(ispmE);
 	popupHistory->addChild(bgMenu);
 
 	vector<string> texts = { "quan" , "xu" };

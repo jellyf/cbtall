@@ -43,6 +43,7 @@ void MainScene::onInit()
 
 	btnEvent = ui::Button::create("icon_event.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnEvent->setPosition(vecMenuPos[0]);
+	btnEvent->setVisible(pmE);
 	addTouchEventListener(btnEvent, [=]() {
 		if (isEventReady) {
 			Utils::getSingleton().hasShowEventPopup = true;
