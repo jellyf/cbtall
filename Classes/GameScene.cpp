@@ -2057,8 +2057,6 @@ void GameScene::onRoomDataGaResponse(bool isGa, double gaMoney)
 	} else {
 		lbMoneyGa->setString("");
 	}
-
-	lbCardNoc->getParent()->setVisible(true);
 }
 
 void GameScene::onStartGameDataResponse(StartGameData data)
