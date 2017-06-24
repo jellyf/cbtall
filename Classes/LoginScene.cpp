@@ -412,9 +412,8 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	config.canUpdate = d["updatenow"].GetBool();
 	config.inapp = d["inapp"].GetString();
     config.invite = d["invite"].GetBool();
-    config.versionIOS71ktc = d["versionIOS71ktc"].GetBool();
-	/*testMessage = d["message"].GetString();
-	testDevice = d["device"].GetString();*/
+
+	config.linkAndroid = "https://play.google.com/store/apps/details?id=" + config.linkAndroid;
 
 	string verstr = Application::sharedApplication()->getVersion();
 	int i = verstr.find_last_of('.') + 1;
@@ -422,13 +421,6 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	int nver = atoi(verstr.c_str());
 	config.pmE &= config.version > nver;
 	config.pmEIOS &= config.versionIOS > nver;
-    
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-    if (!config.pmEIOS && config.versionIOS71ktc) {
-        config.ip_rs = "api4chan.info";
-        config.port = 843;
-    }
-#endif
 
 	Utils::getSingleton().gameConfig = config;
     Utils::getSingleton().queryIAPProduct();
