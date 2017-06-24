@@ -1398,7 +1398,7 @@ void MainScene::initPopupCharge()
 	tfSeri->setFontColor(Color3B::WHITE);
 	tfSeri->setMaxLength(24);
 	tfSeri->setPlaceholderFont("Arial", 30);
-	tfSeri->setPlaceholderFontColor(Color3B(200, 200, 200));
+	tfSeri->setPlaceholderFontColor(Color3B(250, 250, 250));
 	tfSeri->setPlaceHolder(Utils::getSingleton().getStringForKey("nhap_so_seri").c_str());
 	tfSeri->setReturnType(ui::EditBox::KeyboardReturnType::DONE);
 	tfSeri->setInputFlag(ui::EditBox::InputFlag::SENSITIVE);
@@ -1412,7 +1412,7 @@ void MainScene::initPopupCharge()
 	tfCode->setFontColor(Color3B::WHITE);
 	tfCode->setMaxLength(24);
 	tfCode->setPlaceholderFont("Arial", 30);
-	tfCode->setPlaceholderFontColor(Color3B(200, 200, 200));
+	tfCode->setPlaceholderFontColor(Color3B(250, 250, 250));
 	tfCode->setPlaceHolder(Utils::getSingleton().getStringForKey("nhap_ma_the").c_str());
 	tfCode->setReturnType(ui::EditBox::KeyboardReturnType::DONE);
 	tfCode->setInputFlag(ui::EditBox::InputFlag::SENSITIVE);

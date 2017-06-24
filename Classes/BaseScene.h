@@ -72,7 +72,7 @@ protected:
 	void showPopupCoffer();
 	void showSplash();
 	void showWebView(std::string url);
-	void showToast(std::string tag, std::string msg, cocos2d::Vec2 pos, cocos2d::Color3B textColor = cocos2d::Color3B::WHITE, cocos2d::Color3B bgColor = cocos2d::Color3B(80, 80, 80), int bgOpacity = 200);
+	void showToast(std::string tag, std::string msg, cocos2d::Vec2 pos);
 	void showWaiting(int time = 20);
 	void showPopup(cocos2d::Node* popup, bool runEffect = true);
 	void setDisplayName(std::string name);

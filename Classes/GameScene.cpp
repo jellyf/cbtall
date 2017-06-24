@@ -1242,16 +1242,14 @@ void GameScene::processWaitAction()
 	if (waitAction == constant::GAME_ACTION_BASH) {
 		btnPick->setVisible(true);
 		btnHold->setVisible(true);
-		waitAction = constant::GAME_ACTION_NONE;
 	} else if (waitAction == constant::GAME_ACTION_PICK) {
 		btnForward->setVisible(true);
 		btnHold->setVisible(true);
-		waitAction = constant::GAME_ACTION_NONE;
 	} else if (waitAction == constant::GAME_ACTION_FORWARD) {
 		btnForward->setVisible(true);
 		btnHold->setVisible(true);
-		waitAction = constant::GAME_ACTION_NONE;
 	}
+	waitAction = constant::GAME_ACTION_NONE;
 }
 
 void GameScene::syncHandCard(CardHandData cardHand)
@@ -1550,7 +1548,7 @@ void GameScene::showError(std::string msg)
 
 void GameScene::showSystemNotice(std::string msg)
 {
-	showToast("system", msg, Vec2(winSize.width / 2, winSize.height / 2 + 50), Color3B::BLACK, Color3B(200, 200, 200));
+	showToast("system", msg, Vec2(winSize.width / 2, winSize.height / 2 + 50));
 }
 
 void GameScene::showCofferEffects(std::string money)
@@ -1971,6 +1969,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 		}
 	}
 
+	waitAction = constant::GAME_ACTION_NONE;
 	state = roomData.TimeStart > 0 ? NONE : READY;
 	chosenStilt = -1;
 	chosenStiltHost = -1;
@@ -2706,6 +2705,7 @@ void GameScene::onUserPenet(PenetData data)
 		btnBashBack->setVisible(true);
 		updateCardHand(data.CardHand);
 		runTimeWaiting(data.UId, timeTurn);
+		waitAction = constant::GAME_ACTION_NONE;
 	} else {
 		btnHold->setVisible(false);
 		btnPick->setVisible(false);
@@ -3658,49 +3658,45 @@ void GameScene::initEndMatchTable()
 	//bg->setFlipY(true);
 	tableEndMatch->addChild(bg);
 
-	lbWinner = Label::createWithTTF("Stormus U", "fonts/myriadb.ttf", 30);
+	lbWinner = Label::createWithTTF("Buzzdesign U", "fonts/myriadb.ttf", 35);
 	lbWinner->setPosition(0, 110);
 	lbWinner->setColor(Color3B::BLACK);
 	lbWinner->setAlignment(TextHAlignment::CENTER);
 	lbWinner->setWidth(500);
 	tableEndMatch->addChild(lbWinner);
 
-	lbCrestWin = Label::createWithTTF("Nha lau xe hoi hoa roi cua phat Ngu ong bat ca Chua do nat hoa", "fonts/myriadb.ttf", 30);
-	lbCrestWin->setPosition(0, 55);
+	lbCrestWin = Label::createWithTTF("Xuong", "fonts/myriadb.ttf", 35);
+	lbCrestWin->setPosition(0, 60);
 	lbCrestWin->setColor(Color3B(233, 0, 0));
 	lbCrestWin->setAlignment(TextHAlignment::CENTER);
 	lbCrestWin->setWidth(550);
 	tableEndMatch->addChild(lbCrestWin);
 
-	lbCuocSai = Label::createWithTTF("Hoa roi cua phat", "fonts/myriad.ttf", 30);
-	lbCuocSai->setPosition(-280, -50);
-	lbCuocSai->setAnchorPoint(Vec2(0, .5f));
-	lbCuocSai->setColor(Color3B::BLACK);
-	lbCuocSai->setWidth(600);
-	lbCuocSai->setHeight(30);
-	tableEndMatch->addChild(lbCuocSai);
-
-	lbDiem = Label::createWithTTF("33 Diem", "fonts/myriadb.ttf", 30);
-	lbDiem->setPosition(0, -10);
+	lbDiem = Label::createWithTTF("-11 Diem", "fonts/myriadb.ttf", 35);
+	lbDiem->setPosition(0, 5);
 	lbDiem->setColor(Color3B(0, 144, 10));
-	//lbDiem->enableOutline(Color4B(0, 90, 0, 255), 1);
 	tableEndMatch->addChild(lbDiem);
 
-	lbNoted = Label::createWithTTF("Reno bi den lang", "fonts/myriad.ttf", 25);
-	lbNoted->setVerticalAlignment(TextVAlignment::CENTER);
-	lbNoted->setPosition(-280, -85);
+	lbCuocSai = Label::createWithTTF("Cuoc sai: Hoa roi cua phat", "fonts/myriad.ttf", 35);
+	lbCuocSai->setHorizontalAlignment(TextHAlignment::CENTER);
+	lbCuocSai->setPosition(0, -45);
+	lbCuocSai->setColor(Color3B::BLACK);
+	lbCuocSai->setWidth(600);
+	tableEndMatch->addChild(lbCuocSai);
+
+	lbNoted = Label::createWithTTF("Reno bi den lang. Loi u duoi 4 diem", "fonts/myriad.ttf", 35);
+	lbNoted->setHorizontalAlignment(TextHAlignment::CENTER);
+	lbNoted->setLineSpacing(-15);
+	lbNoted->setPosition(0, -95);
 	lbNoted->setColor(Color3B::BLACK);
-	lbNoted->setAnchorPoint(Vec2(0, .5f));
 	lbNoted->setWidth(550);
-	lbNoted->setHeight(50);
 	tableEndMatch->addChild(lbNoted);
 
-	lbNotedGa = Label::createWithTTF("Stoemus an ga", "fonts/myriad.ttf", 25);
-	lbNotedGa->setPosition(-235, -122);
+	lbNotedGa = Label::createWithTTF("Stormus an ga", "fonts/myriad.ttf", 35);
+	lbNotedGa->setHorizontalAlignment(TextHAlignment::CENTER);
+	lbNotedGa->setPosition(0, -140);
 	lbNotedGa->setColor(Color3B::BLACK);
-	lbNotedGa->setAnchorPoint(Vec2(0, .5f));
 	lbNotedGa->setWidth(550);
-	lbNotedGa->setHeight(25);
 	tableEndMatch->addChild(lbNotedGa);
 }
 

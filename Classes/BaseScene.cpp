@@ -375,7 +375,7 @@ void BaseScene::runEventView(std::vector<EventData> list, int currentPosX)
 	for (int i = 0; i < list.size(); i++) {
 		Label* lb = (Label*)nodelb->getChildByTag(i);
 		if (lb == nullptr) {
-			lb = Label::create("", "fonts/myriad.ttf", 30);
+			lb = Label::create("", "fonts/myriad.ttf", 21);
 			lb->setAnchorPoint(Vec2(0, .5f));
 			lb->setTag(i);
 			nodelb->addChild(lb);
@@ -942,12 +942,12 @@ void BaseScene::initHeaderWithInfos()
 	});
 
 	Sprite* iconGold = Sprite::createWithSpriteFrameName("icon_gold.png");
-	iconGold->setPosition(spMoneyBg->getPosition() + Vec2(-210, 0));
-	iconGold->setScale(.8f);
+	iconGold->setPosition(spMoneyBg->getPosition() + Vec2(-200, 0));
+	iconGold->setScale(1);
 	moneyNode->addChild(iconGold, 2);
 
-	lbGold = Label::create("0", "fonts/myriadb.ttf", 40);
-	lbGold->setPosition(iconGold->getPosition() + Vec2(30, -5));
+	lbGold = Label::create("0", "fonts/myriadb.ttf", 35);
+	lbGold->setPosition(iconGold->getPosition() + Vec2(40, -5));
 	lbGold->setAnchorPoint(Vec2(0, .5f));
 	lbGold->setColor(Color3B::YELLOW);
 	moneyNode->addChild(lbGold, 2);
@@ -957,8 +957,8 @@ void BaseScene::initHeaderWithInfos()
 	iconSilver->setScale(1);
 	moneyNode->addChild(iconSilver, 2);
 
-	lbSilver = Label::create("0", "fonts/myriadb.ttf", 40);
-	lbSilver->setPosition(iconSilver->getPosition() + Vec2(30, -5));
+	lbSilver = Label::create("0", "fonts/myriadb.ttf", 35);
+	lbSilver->setPosition(iconSilver->getPosition() + Vec2(40, -5));
 	lbSilver->setAnchorPoint(Vec2(0, .5f));
 	lbSilver->setColor(Color3B(0, 255, 255));
 	moneyNode->addChild(lbSilver, 2);
@@ -1121,7 +1121,7 @@ void BaseScene::initEventView(Vec2 pos, Size size)
 	scroll->addChild(nodelb);
 }
 
-void BaseScene::showToast(std::string tag, ::string msg, Vec2 pos, Color3B textColor, Color3B bgColor, int bgOpacity)
+void BaseScene::showToast(std::string tag, ::string msg, Vec2 pos)
 {
 	mLayer->removeChildByName(tag);
 	Node* nodeChat = Node::create();
@@ -1136,16 +1136,15 @@ void BaseScene::showToast(std::string tag, ::string msg, Vec2 pos, Color3B textC
 
 	Label* lb = Label::create();
 	lb->setString(msg);
-	lb->setSystemFontName("Arial");
-	lb->setSystemFontSize(25);
-	lb->setColor(textColor);
+	lb->setSystemFontName("Arial Bold");
+	lb->setSystemFontSize(27);
+	lb->setColor(Color3B(0, 203, 131));
 	nodeChat->addChild(lb, 2);
 
 	Size sizeContent = lb->getContentSize();
-	ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("box5.png");
-	bg->setContentSize(sizeContent + Size(20, 10));
-	bg->setColor(bgColor);
-	bg->setOpacity(bgOpacity);
+	ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("box12.png");
+	bg->setContentSize(sizeContent + Size(200, 40));
+	bg->setOpacity(200);
 	nodeChat->addChild(bg, 1);
 
 	float w = Director::getInstance()->getWinSize().width;
@@ -1485,7 +1484,7 @@ void BaseScene::initPopupSettings()
 	nodePass->addChild(lbPassRule);
 
 	Sprite* bgPass = Sprite::createWithSpriteFrameName("input_mathe.png");
-	bgPass->setPosition(-90, lbPassRule->getPositionY() - 80);
+	bgPass->setPosition(-135, lbPassRule->getPositionY() - 80);
 	nodePass->addChild(bgPass);
 
 	Sprite* bgPassRetype = Sprite::createWithSpriteFrameName("input_mathe.png");
@@ -1498,7 +1497,7 @@ void BaseScene::initPopupSettings()
 	tfPass->setFontColor(Color3B::WHITE);
 	tfPass->setMaxLength(24);
 	tfPass->setPlaceholderFont("Myriad Pro Condensed", 25);
-	tfPass->setPlaceholderFontColor(Color3B(200, 200, 200));
+	tfPass->setPlaceholderFontColor(Color3B(250, 250, 250));
 	tfPass->setPlaceHolder(Utils::getSingleton().getStringForKey("new_password").c_str());
 	tfPass->setReturnType(ui::EditBox::KeyboardReturnType::DONE);
 	tfPass->setInputFlag(ui::EditBox::InputFlag::PASSWORD);
@@ -1512,7 +1511,7 @@ void BaseScene::initPopupSettings()
 	tfPassRetype->setFontColor(Color3B::WHITE);
 	tfPassRetype->setMaxLength(24);
 	tfPassRetype->setPlaceholderFont("Myriad Pro Condensed", 25);
-	tfPassRetype->setPlaceholderFontColor(Color3B(200, 200, 200));
+	tfPassRetype->setPlaceholderFontColor(Color3B(250, 250, 250));
 	tfPassRetype->setPlaceHolder(Utils::getSingleton().getStringForKey("retype_password").c_str());
 	tfPassRetype->setReturnType(ui::EditBox::KeyboardReturnType::DONE);
 	tfPassRetype->setInputFlag(ui::EditBox::InputFlag::PASSWORD);
@@ -1520,8 +1519,8 @@ void BaseScene::initPopupSettings()
 	tfPassRetype->setDelegate(this);
 	nodePass->addChild(tfPassRetype);
 
-	ui::Button* btnChangePass = ui::Button::create("btn_small.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnChangePass->setPosition(Vec2(bgPass->getPositionX() + 300, bgPass->getPositionY() - 40));
+	ui::Button* btnChangePass = ui::Button::create("btn.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnChangePass->setPosition(Vec2(bgPass->getPositionX() + 330, bgPass->getPositionY() - 40));
 	btnChangePass->setTitleText(Utils::getSingleton().getStringForKey("agree"));
 	btnChangePass->setTitleFontName("fonts/myriadb.ttf");
 	btnChangePass->setTitleFontSize(40);
@@ -1554,7 +1553,7 @@ void BaseScene::initPopupSettings()
 	nodeName->addChild(lbNoteName);
 
 	Sprite* bgName = Sprite::createWithSpriteFrameName("input_mathe.png");
-	bgName->setPosition(-90, lbPassRule->getPositionY() - 80);
+	bgName->setPosition(-135, lbPassRule->getPositionY() - 80);
 	nodeName->addChild(bgName);
 
 	tfName->setPosition(bgName->getPosition());
@@ -1563,7 +1562,7 @@ void BaseScene::initPopupSettings()
 	tfName->setFontColor(Color3B::WHITE);
 	tfName->setMaxLength(16);
 	tfName->setPlaceholderFont("Myriad Pro Condensed", 25);
-	tfName->setPlaceholderFontColor(Color3B(200, 200, 200));
+	tfName->setPlaceholderFontColor(Color3B(250, 250, 250));
 	tfName->setPlaceHolder(Utils::getSingleton().getStringForKey("new_login_name").c_str());
 	tfName->setReturnType(ui::EditBox::KeyboardReturnType::DONE);
 	tfName->setInputFlag(ui::EditBox::InputFlag::SENSITIVE);
@@ -1571,8 +1570,8 @@ void BaseScene::initPopupSettings()
 	tfName->setDelegate(this);
 	nodeName->addChild(tfName);
 
-	ui::Button* btnChangeName = ui::Button::create("btn_small.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnChangeName->setPosition(Vec2(bgName->getPositionX() + 300, bgName->getPositionY()));
+	ui::Button* btnChangeName = ui::Button::create("btn.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnChangeName->setPosition(Vec2(bgName->getPositionX() + 330, bgName->getPositionY()));
 	btnChangeName->setTitleText(Utils::getSingleton().getStringForKey("agree"));
 	btnChangeName->setTitleFontName("fonts/myriadb.ttf");
 	btnChangeName->setTitleFontSize(40);
