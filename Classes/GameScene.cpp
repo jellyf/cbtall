@@ -656,7 +656,7 @@ void GameScene::onInit()
 		btnKick->addChild(spKick);
 
 		addTouchEventListener(btnKick, [=](){
-			showPopupNotice(Utils::getSingleton().getStringForKey("ban_muon_da_nguoi_nay_ra"), [=]() {
+			showPopupNotice(Utils::getSingleton().getStringForKey("ask_to_kick_player"), [=]() {
 				SFSRequest::getSingleton().RequestGameKickPlayer(user->getSfsId());
 			});
 		});
