@@ -117,8 +117,8 @@
 	<key>vat_pham</key><string>Vật phẩm</string>
 	<key>quay_lai</key><string>Quay lại</string>
 	<key>ma_dt</key><string>Mã ĐT</string>
-	<key>san_pham_doi</key><string>Sản phẩm đổi</string>
-	<key>thoi_gian_doi</key><string>Thời gian đổi</string>
+	<key>san_pham_doi</key><string>Sản phẩm</string>
+	<key>thoi_gian_doi</key><string>Thời gian mua</string>
 	<key>thoi_gian_nhan</key><string>Thời gian nhận</string>
 	<key>trang_thai</key><string>Trạng thái</string>
 	<key>thanh_cong</key><string>Thành công</string>
@@ -142,6 +142,7 @@
 	<key>cua_hang</key><string>Cửa hàng</string>
 	<key>huong_dan</key><string>Hướng dẫn</string>
 	<key>lich_su_no</key><string>Lịch sử nổ</string>
+	<key>top_money</key><string>Top đại gia</string>
 	<key>top_quan</key><string>Top đại gia(Quan)</string>
 	<key>top_xu</key><string>Top đại gia(Xu)</string>
 	<key>top_u</key><string>Top cao thủ</string>

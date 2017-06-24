@@ -1346,7 +1346,7 @@ void BaseScene::initPopupRank()
 	bgMenu->setPosition(0, 200);
 	popupRank->addChild(bgMenu);
 
-	vector<string> texts = { "top_quan", "top_xu", "top_u" };
+	vector<string> texts = { "top_quan", pmE ? "top_xu" : "top_money", "top_u" };
 	int x = -344;
 	int y = bgMenu->getPositionY();
 	for (int i = pmE ? 0 : 1; i < texts.size(); i++) {
