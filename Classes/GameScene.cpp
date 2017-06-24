@@ -2322,6 +2322,7 @@ void GameScene::onUserBashBack(BashBackData data)
 	bool isToMe = data.TurnId == sfsIdMe;
 	GameLogger::getSingleton().logUserBashBack(data);
 	int index = userIndexs[data.UId];
+	int index1 = userIndexs[data.BackId];
 	if (myServerSlot >= 0 && index == 0 && !isMe) {
 		disconnectToSync();
 		return;
@@ -2331,7 +2332,7 @@ void GameScene::onUserBashBack(BashBackData data)
 		isAutoBash = false;
 		if (isMe) updateCardHand(data.CardHand);
 	} else {
-		bool rightData = bashCardDown(index, data.CardId, isMe);
+		bool rightData = bashCardDown(index1, data.CardId, isMe);
 		if (!rightData) {
 			syncHandCard(data.CardHand);
 		} else if (isMe) {
@@ -2817,7 +2818,7 @@ void GameScene::onCrestResponse(CrestResponseData data)
 	if (data.Msg.length() > 0) {
 		string strnoted = Utils::getSingleton().getStringForKey("noted") + ": " + data.Msg;
 		lbNoted->setString(strnoted);
-		lbNotedGa->setPosition(-235, -112);
+		lbNotedGa->setPosition(0, -140);
 	} else {
 		lbNoted->setString("");
 		lbNotedGa->setPosition(lbNoted->getPosition());
