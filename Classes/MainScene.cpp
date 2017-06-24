@@ -590,7 +590,7 @@ void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)
 		}, isNewBtn);
 
 		btn->setPosition(Vec2(scrollHistory->getContentSize().width / 2, heightHistory - 35));
-		lb1->setPosition(65, btn->getPositionY() - 5);
+		lb1->setPosition(140, btn->getPositionY() - 5);
 		lb2->setPosition(lb1->getPositionX() + 175, lb1->getPositionY());
 		lb3->setPosition(lb2->getPositionX() + 235, lb2->getPositionY());
 		lb4->setPosition(lb3->getPositionX() + 220, lb3->getPositionY());
@@ -665,7 +665,8 @@ void MainScene::onShopItemsDataResponse(std::vector<ShopItemData> list)
 	}
 	scrollCard->setInnerContainerSize(Size(widthCard, scrollCard->getContentSize().height));*/
 
-	int heightCard = ((cards[0].size() + cards[1].size() + cards[2].size() + cards[3].size() - 1) / 5 + 1) * 120;
+	int cardPerRow = 6;
+	int heightCard = ((cards[0].size() + cards[1].size() + cards[2].size() + cards[3].size() - 1) / cardPerRow + 1) * 120;
 	if (heightCard < scrollCard->getContentSize().height) {
 		heightCard = scrollCard->getContentSize().height;
 	}
@@ -680,7 +681,7 @@ void MainScene::onShopItemsDataResponse(std::vector<ShopItemData> list)
 			string msg = String::createWithFormat(str.c_str(), cards[i][j].Name.c_str(), strMoney.c_str())->getCString();
 
 			ui::Button* btn = ui::Button::create("box_shop.png", "", "", ui::Widget::TextureResType::PLIST);
-			btn->setPosition(Vec2(90 + (count % 5) * 162, heightCard - 45 - (count/5) * 120));
+			btn->setPosition(Vec2(85 + (count % cardPerRow) * 162, heightCard - 45 - (count/cardPerRow) * 120));
 			btn->setBright(false);
 			btn->setTag((i + 1) * 100 + j);
 			addTouchEventListener(btn, [=]() {
@@ -751,7 +752,8 @@ void MainScene::onShopItemsDataResponse(std::vector<ShopItemData> list)
 	}
 	scrollItem->setInnerContainerSize(Size(widthItem, scrollItem->getContentSize().height));*/
 
-	int heightItem = ((items.size() - 1) / 4 + 1) * 170;
+	int itemPerRow = 5;
+	int heightItem = ((items.size() - 1) / itemPerRow + 1) * 160;
 	if (heightItem < scrollItem->getContentSize().width) {
 		heightItem = scrollItem->getContentSize().width;
 	}
@@ -763,12 +765,12 @@ void MainScene::onShopItemsDataResponse(std::vector<ShopItemData> list)
 
 		ui::Button* btn = ui::Button::create("box_shop.png", "", "", ui::Widget::TextureResType::PLIST);
 		//btn->setPosition(Vec2(100 + (i % 4) * 200, scrollItem->getContentSize().height - 70 - (i / 4) * 170));
-		btn->setPosition(Vec2(115 + (i % 4) * 200, heightItem - 65 - (i / 4) * 170));
+		btn->setPosition(Vec2(105 + (i % itemPerRow) * 192, heightItem - 65 - (i / itemPerRow) * 160));
 		btn->setContentSize(Size(182, 128));
 		btn->setScale9Enabled(true);
 		btn->setBright(false);
 		btn->setTag(i);
-		//btn->setScale(.95f);
+		btn->setScale(.9f);
 		addTouchEventListener(btn, [=]() {
 			if (Utils::getSingleton().userDataMe.MoneyReal < moneyItems[i]) {
 				showPopupNotice(Utils::getSingleton().getStringForKey("khong_du_tien_doi_thuong"), [=]() {});
@@ -849,9 +851,11 @@ void MainScene::onListMailDataResponse(std::vector<MailData> list)
 		showPopup(popupMail);
 	}
 
-	int xx = -400;
-	vector<int> posX = { xx, xx + 120, xx + 445, xx + 765 };
-	vector<int> widths = { 50, 130, 460, 120 };
+	vector<int> widths = { 50, 140, 460, 148 };
+	vector<int> posX = { -429 };
+	for (int i = 1; i < widths.size(); i++) {
+		posX.push_back(posX[i - 1] + widths[i - 1] / 2 + widths[i] / 2 + 37);
+	}
 	ui::ScrollView* scroll = (ui::ScrollView*)popupMail->getChildByName("scroll");
 
 	scroll->getChildByTag(9999)->setPosition(0, -500);
@@ -1156,7 +1160,7 @@ void MainScene::initPopupCharge()
 	ui::EditBox* tfCode = ui::EditBox::create(Size(320, 55), "empty.png", ui::Widget::TextureResType::PLIST);
 	ui::ScrollView* scrollProvider = ui::ScrollView::create();
 
-	int x = -250;
+	int x = -364;
 	int y = bgMenu->getPositionY();
 	vector<string> texts = { "nap_the", "nap_sms", "nap_iap" };
 	for (int i = 0; i < texts.size(); i++) {
@@ -1608,7 +1612,7 @@ void MainScene::initPopupGuide()
 	if (!popupGuide) return;
 	popupGuide->setTag(0);
 
-	Size size = Size(850, 416);
+	Size size = Size(960, 416);
 	Size scrollSize = size - Size(20, 20);
 
 	Sprite* bgScrollMenu = Sprite::createWithSpriteFrameName("bg_tabs.png");
@@ -1639,7 +1643,7 @@ void MainScene::initPopupGuide()
 	scroll->setInnerContainerSize(Size(scrollSize.width, height));
 
 	vector<string> texts = { "noi_quy" , "cuoc_u", "tinh_loi", "tinh_diem" };
-	int x = -300;
+	int x = -365;
 	int y = bgScrollMenu->getPositionY();
 	for (int i = 0; i < 4; i++) {
 		ui::Button* btn = ui::Button::create(i == 0 ? "box12.png" : "empty.png", "", "", ui::Widget::TextureResType::PLIST);
@@ -1715,7 +1719,7 @@ void MainScene::initPopupNews()
 	if (!popupNews) return;
 	popupNews->setTag(1);
 
-	Size size = Size(850, 386);
+	Size size = Size(950, 386);
 	Size scrollSize = size - Size(20, 20);
 
 	Sprite* bgScrollMenu = Sprite::createWithSpriteFrameName("bg_tabs.png");
@@ -1763,7 +1767,7 @@ void MainScene::initPopupShop()
 	popupShop->setTag(0);
 
 	ui::Scale9Sprite* bgContent = ui::Scale9Sprite::createWithSpriteFrameName("empty.png");
-	bgContent->setContentSize(Size(830, 420));
+	bgContent->setContentSize(Size(980, 420));
 	bgContent->setPosition(0, -50);
 	bgContent->setOpacity(200);
 	popupShop->addChild(bgContent);
@@ -1791,7 +1795,7 @@ void MainScene::initPopupShop()
 	bgMenu->setPosition(0, 200);
 	popupShop->addChild(bgMenu);
 
-	int x = -250;
+	int x = -364;
 	int y = bgMenu->getPositionY();
 	vector<string> texts = { "the_cao" , "vat_pham", "lich_su" };
 	for (int i = 0; i < texts.size(); i++) {

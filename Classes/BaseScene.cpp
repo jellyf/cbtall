@@ -439,7 +439,7 @@ void BaseScene::showPopupRank(int type)
 	ui::ScrollView* scrollWin = (ui::ScrollView*)popupRank->getChildByName("scrollwin");
 	scroll->setVisible(true);
 	scrollWin->setVisible(false);
-	int height = listRanks[type].size() * 70 + 80;
+	int height = listRanks[type].size() * 67 + 80;
 	int width = scroll->getContentSize().width;
 	scroll->setInnerContainerSize(Size(width, height));
 	for (int i = 0; i < listRanks[type].size(); i++) {
@@ -447,7 +447,7 @@ void BaseScene::showPopupRank(int type)
 		Node* node = scroll->getChildByTag(i);
 		if (node == nullptr) {
 			node = Node::create();
-			node->setPosition(scroll->getContentSize().width / 2, height - 40 - i * 70);
+			node->setPosition(scroll->getContentSize().width / 2, height - 40 - i * 67);
 			node->setTag(i);
 			scroll->addChild(node);
 
@@ -457,31 +457,31 @@ void BaseScene::showPopupRank(int type)
 
 			lb1 = Label::create(to_string(i + 1), i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 30);
 			//lb1->setAnchorPoint(Vec2(0, .5f));
-			lb1->setPosition(-width / 2 + 80, 0);
+			lb1->setPosition(-width / 2 + 43, 0);
 			lb1->setTag(1);
 			node->addChild(lb1);
 
 			lb2 = Label::create("", i < 3  ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 30);
 			lb2->setAnchorPoint(Vec2(0, .5f));
-			lb2->setPosition(lb1->getPositionX() + 145, 0);
-			lb2->setWidth(400);
+			lb2->setPosition(lb1->getPositionX() + 97, 0);
+			lb2->setWidth(540);
 			lb2->setHeight(30);
 			lb2->setTag(2);
 			node->addChild(lb2);
 
 			lb3 = Label::create("", i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 30);
 			//lb3->setAnchorPoint(Vec2(1, .5f));
-			lb3->setPosition(lb2->getPositionX() + 570, 0);
+			lb3->setPosition(lb2->getPositionX() + lb2->getWidth() + 147, 0);
 			lb3->setTag(3);
 			node->addChild(lb3);
 
 			ui::Scale9Sprite* spbg1 = ui::Scale9Sprite::createWithSpriteFrameName(i == 0 ? "box10.png" : "box11.png");
-			spbg1->setContentSize(Size(130, 60));
+			spbg1->setContentSize(Size(80, 60));
 			spbg1->setPosition(lb1->getPositionX(), lb1->getPositionY() + 5);
 			node->addChild(spbg1, -1);
 
 			ui::Scale9Sprite* spbg2 = ui::Scale9Sprite::createWithSpriteFrameName(i == 0 ? "box10.png" : "box11.png");
-			spbg2->setContentSize(Size(lb2->getWidth() + 110, 60));
+			spbg2->setContentSize(Size(lb2->getWidth() + 60, 60));
 			spbg2->setPosition(lb2->getPositionX() + lb2->getWidth() / 2 - 20, lb2->getPositionY() + 5);
 			node->addChild(spbg2, -1);
 
@@ -524,7 +524,7 @@ void BaseScene::showPopupRankWin()
 	ui::ScrollView* scrollWin = (ui::ScrollView*)popupRank->getChildByName("scrollwin");
 	scroll->setVisible(false);
 	scrollWin->setVisible(true);
-	int height = listRankWin.size() * 90 + 60;
+	int height = listRankWin.size() * 87 + 60;
 	int width = scrollWin->getContentSize().width;
 	if (height < scrollWin->getContentSize().height) {
 		height = scrollWin->getContentSize().height;
@@ -535,7 +535,7 @@ void BaseScene::showPopupRankWin()
 		Node* node = scrollWin->getChildByTag(i);
 		if (node == nullptr) {
 			node = Node::create();
-			node->setPosition(scrollWin->getContentSize().width / 2, height - 50 - i * 90);
+			node->setPosition(scrollWin->getContentSize().width / 2, height - 50 - i * 87);
 			node->setTag(i);
 			scrollWin->addChild(node);
 
@@ -544,23 +544,23 @@ void BaseScene::showPopupRankWin()
 			node->addChild(nbg);
 
 			lb1 = Label::create(to_string(i + 1), i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 27);
-			lb1->setPosition(-width / 2 + 65, 0);
+			lb1->setPosition(-width / 2 + 42, 0);
 			lb1->setTag(1);
 			node->addChild(lb1);
 
 			lb2 = Label::create("", i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 27);
-			lb2->setPosition(lb1->getPositionX() + 150, 0);
+			lb2->setPosition(lb1->getPositionX() + 160, 0);
 			lb2->setTag(2);
 			node->addChild(lb2);
 
 			lb3 = Label::create("", i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 27);
-			lb3->setPosition(lb2->getPositionX() + 365, 0);
+			lb3->setPosition(lb2->getPositionX() + 395, 0);
 			lb3->setWidth(450);
 			lb3->setTag(3);
 			node->addChild(lb3);
 
 			lb4 = Label::create("", i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 27);
-			lb4->setPosition(lb3->getPositionX() + 300, 0);
+			lb4->setPosition(lb3->getPositionX() + 320, 0);
 			lb4->setTag(4);
 			node->addChild(lb4);
 
@@ -570,12 +570,12 @@ void BaseScene::showPopupRankWin()
 			node->addChild(spbg1, -1);
 
 			ui::Scale9Sprite* spbg2 = ui::Scale9Sprite::createWithSpriteFrameName(i == 0 ? "box10.png" : "box11.png");
-			spbg2->setContentSize(Size(210, 80));
+			spbg2->setContentSize(Size(230, 80));
 			spbg2->setPosition(lb2->getPositionX(), lb2->getPositionY() + 5);
 			node->addChild(spbg2, -1);
 
 			ui::Scale9Sprite* spbg3 = ui::Scale9Sprite::createWithSpriteFrameName(i == 0 ? "box10.png" : "box11.png");
-			spbg3->setContentSize(Size(510, 80));
+			spbg3->setContentSize(Size(550, 80));
 			spbg3->setPosition(lb3->getPositionX(), lb3->getPositionY() + 5);
 			node->addChild(spbg3, -1);
 
@@ -1321,7 +1321,7 @@ void BaseScene::initPopupRank()
 	if (!popupRank) return;
 	popupRank->setTag(pmE ? 0 : 1);
 
-	Size size = Size(960, 440);
+	Size size = Size(980, 440);
 	Size scrollSize = size - Size(20, 20);
 
 	ui::ScrollView* scroll = ui::ScrollView::create();
@@ -1347,7 +1347,7 @@ void BaseScene::initPopupRank()
 	popupRank->addChild(bgMenu);
 
 	vector<string> texts = { "top_quan", "top_xu", "top_u" };
-	int x = -280;
+	int x = -344;
 	int y = bgMenu->getPositionY();
 	for (int i = pmE ? 0 : 1; i < texts.size(); i++) {
 		string strBtn = i == 0 ? "box12.png" : "empty.png";
@@ -1851,7 +1851,7 @@ void BaseScene::initPopupHistory()
 	popupHistory->addChild(bgMenu);
 
 	vector<string> texts = { "quan" , "xu" };
-	int x = -300;
+	int x = -365;
 	int y = bgMenu->getPositionY();
 	for (int i = 0; i < texts.size(); i++) {
 		ui::Button* btn = ui::Button::create(i == 0 ? "box12.png" : "empty.png", "", "", ui::Widget::TextureResType::PLIST);
@@ -1905,7 +1905,7 @@ void BaseScene::initPopupCoffer()
 	if (!popupCoffer) return;
 	popupCoffer->setTag(0);
 
-	Size size = Size(960, 440);
+	Size size = Size(980, 440);
 	Size scrollSize = size - Size(20, 20);
 
 	Node* nodeGuide = Node::create();
@@ -1926,7 +1926,7 @@ void BaseScene::initPopupCoffer()
 	popupCoffer->addChild(bgMenu);
 
 	vector<string> texts = { "huong_dan" , "lich_su_no" };
-	int x = -300;
+	int x = -343;
 	int y = bgMenu->getPositionY();
 	for (int i = 0; i < texts.size(); i++) {
 		ui::Button* btn = ui::Button::create(i == 0 ? "box12.png" : "empty.png", "", "", ui::Widget::TextureResType::PLIST);
@@ -1964,7 +1964,7 @@ void BaseScene::initPopupCoffer()
 	ui::ScrollView* scrollGuide = ui::ScrollView::create();
 	scrollGuide->setDirection(ui::ScrollView::Direction::VERTICAL);
 	scrollGuide->setBounceEnabled(true);
-	scrollGuide->setPosition(Vec2(-scrollSize.width / 2, -scrollSize.height / 2));
+	scrollGuide->setPosition(Vec2(-scrollSize.width / 2 + 10, -scrollSize.height / 2));
 	scrollGuide->setContentSize(scrollSize);
 	scrollGuide->setScrollBarEnabled(false);
 	scrollGuide->setName("scrollguide");
@@ -2407,7 +2407,7 @@ void BaseScene::onCofferHistoryResponse(std::vector<CofferWinnerData> list)
 			Label* lb1 = Label::create(list[i].Date, "fonts/myriad.ttf", 25);
 			//lb1->setAnchorPoint(Vec2(0, .5f));
 			lb1->setColor(Color3B::BLACK);
-			lb1->setPosition(-width / 2 + 20, 0);
+			lb1->setPosition(-width / 2 + 29, 0);
 			lb1->setWidth(100);
 			lb1->setTag(1);
 			lb1->setVisible(false);
@@ -2422,7 +2422,7 @@ void BaseScene::onCofferHistoryResponse(std::vector<CofferWinnerData> list)
 			Label* lb3 = Label::create(list[i].Cuocs, "fonts/myriad.ttf", 25);
 			lb3->setHorizontalAlignment(TextHAlignment::CENTER);
 			lb3->setColor(Color3B::BLACK);
-			lb3->setPosition(lb2->getPositionX() + 355, 0);
+			lb3->setPosition(lb2->getPositionX() + 360, 0);
 			lb3->setWidth(380);
 			lb3->setTag(3);
 			node->addChild(lb3);
@@ -2435,7 +2435,7 @@ void BaseScene::onCofferHistoryResponse(std::vector<CofferWinnerData> list)
 
 			Label* lb4 = Label::create(Utils::getSingleton().formatMoneyWithComma(list[i].Point), "fonts/myriad.ttf", 25);
 			lb4->setColor(Color3B::BLACK);
-			lb4->setPosition(lb5->getPositionX() + 115, 0);
+			lb4->setPosition(lb5->getPositionX() + 118, 0);
 			lb4->setTag(4);
 			node->addChild(lb4);
 
@@ -2446,7 +2446,7 @@ void BaseScene::onCofferHistoryResponse(std::vector<CofferWinnerData> list)
 			node->addChild(spbg1, -1);
 
 			ui::Scale9Sprite* spbg2 = ui::Scale9Sprite::createWithSpriteFrameName("box11.png");
-			spbg2->setContentSize(Size(200, 70));
+			spbg2->setContentSize(Size(210, 70));
 			spbg2->setPosition(lb2->getPositionX(), lb2->getPositionY() + 5);
 			node->addChild(spbg2, -1);
 
@@ -2456,7 +2456,7 @@ void BaseScene::onCofferHistoryResponse(std::vector<CofferWinnerData> list)
 			node->addChild(spbg3, -1);
 
 			ui::Scale9Sprite* spbg4 = ui::Scale9Sprite::createWithSpriteFrameName("box11.png");
-			spbg4->setContentSize(Size(70, 70));
+			spbg4->setContentSize(Size(76, 70));
 			spbg4->setPosition(lb4->getPositionX(), lb4->getPositionY() + 5);
 			node->addChild(spbg4, -1);
 
