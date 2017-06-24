@@ -2106,7 +2106,7 @@ void MainScene::updateSmsInfo(bool isQuan)
 	string smstg = smsct.substr(strid + 1, smsct.length() - strid);
 	smsct = smsct.substr(0, strid);
 	smsct = Utils::getSingleton().replaceString(smsct, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
-	if(!isQuan) smsct = Utils::getSingleton().replaceString(smsct, "T", "A");
+	if(!isQuan) smsct = Utils::getSingleton().replaceString(smsct, " T", " A");
 
 	Node* nodeSms = popupCharge->getChildByName("nodesms");
 	ui::ScrollView* scroll = (ui::ScrollView*)nodeSms->getChildByName("scrollsms");
