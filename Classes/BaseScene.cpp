@@ -2053,7 +2053,7 @@ void BaseScene::initPopupIAP()
 		sp->setName("itemimage");
 		btn->addChild(sp);
 
-		Sprite* spCoin = Sprite::createWithSpriteFrameName("icon_gold.png");
+		Sprite* spCoin = Sprite::createWithSpriteFrameName("icon_silver.png");
 		btn->addChild(spCoin);
 
 		Label* lb1 = Label::create(strValue, "fonts/myriadb.ttf", 50);
