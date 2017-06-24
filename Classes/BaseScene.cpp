@@ -1400,7 +1400,7 @@ void BaseScene::initPopupSettings()
 	checkboxInvite->loadTextureBackGround("unchecked.png", ui::Widget::TextureResType::PLIST);
 	checkboxInvite->loadTextureFrontCross("checked.png", ui::Widget::TextureResType::PLIST);
 	checkboxInvite->setPosition(Vec2(checkboxSound->getPositionX() + 300, checkboxSound->getPositionY()));
-	checkboxInvite->setSelected(Utils::getSingleton().SoundEnabled);
+	checkboxInvite->setSelected(Utils::getSingleton().IgnoreInvitation);
 	popupMainSettings->addChild(checkboxInvite);
 
 	checkboxInvite->addEventListener([=](Ref* ref, ui::CheckBox::EventType type) {
