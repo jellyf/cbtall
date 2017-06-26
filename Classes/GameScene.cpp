@@ -1996,7 +1996,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 			}
 		}
 	}
-
+	waitAction = constant::GAME_ACTION_NONE;
 	state = roomData.TimeStart > 0 ? NONE : READY;
 	chosenStilt = -1;
 	chosenStiltHost = -1;
@@ -2726,6 +2726,7 @@ void GameScene::onUserPenet(PenetData data)
 		btnBashBack->setVisible(true);
 		updateCardHand(data.CardHand);
 		runTimeWaiting(data.UId, timeTurn);
+		waitAction = constant::GAME_ACTION_NONE;
 	} else {
 		btnHold->setVisible(false);
 		btnPick->setVisible(false);
