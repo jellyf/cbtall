@@ -73,7 +73,7 @@ private:
 	void initTableInfo();
 	void initCofferEffects();
 
-	bool bashCardDown(int index, int cardId, bool isMe);
+	bool bashCardDown(int indexFrom, int indexTo, int cardId, bool isMe);
 	void autoBash(int card, int group);
 
 	void onUserBashToMe(BashData data);

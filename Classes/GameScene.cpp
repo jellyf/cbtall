@@ -2294,7 +2294,7 @@ void GameScene::onUserBash(BashData data)
 		isAutoBash = false;
 		if (isMe) updateCardHand(data.CardHand);
 	} else {
-		bool rightData = bashCardDown(index, data.CardId, isMe);
+		bool rightData = bashCardDown(index, index, data.CardId, isMe);
 		if (!rightData) {
 			syncHandCard(data.CardHand);
 		} else if (isMe) {
@@ -2343,6 +2343,7 @@ void GameScene::onUserBashBack(BashBackData data)
 	bool isToMe = data.TurnId == sfsIdMe;
 	GameLogger::getSingleton().logUserBashBack(data);
 	int index = userIndexs[data.UId];
+	int index1 = userIndexs[data.BackId];
 	if (myServerSlot >= 0 && index == 0 && !isMe) {
 		disconnectToSync();
 		return;
@@ -2352,7 +2353,7 @@ void GameScene::onUserBashBack(BashBackData data)
 		isAutoBash = false;
 		if (isMe) updateCardHand(data.CardHand);
 	} else {
-		bool rightData = bashCardDown(index, data.CardId, isMe);
+		bool rightData = bashCardDown(index, index1, data.CardId, isMe);
 		if (!rightData) {
 			syncHandCard(data.CardHand);
 		} else if (isMe) {
@@ -3952,13 +3953,13 @@ void GameScene::initCofferEffects()
 	}
 }
 
-bool GameScene::bashCardDown(int index, int cardId, bool isMe)
+bool GameScene::bashCardDown(int indexFrom, int indexTo, int cardId, bool isMe)
 {
 	bool rightData = true;
 	if (cardId > 100) cardId = 256 - cardId;
 	Sprite* spCard = NULL;
 	int zorder = 0;
-	int index2 = index * 2;
+	int index2 = indexTo * 2;
 	float scale = 1.0f;
 	if (tableCardNumb[index2] >= maxTableCardNumb[index2]) {
 		scale = ((float)maxTableCardNumb[index2] - 1) / tableCardNumb[index2];
@@ -3995,7 +3996,7 @@ bool GameScene::bashCardDown(int index, int cardId, bool isMe)
 			rightData = false;
 		}
 		int rot = spCard->getRotation();
-		Vec2 scaledUserPos = getScaleScenePosition(vecUserPos[index]);
+		Vec2 scaledUserPos = getScaleScenePosition(vecUserPos[indexFrom]);
 		float x = sin(CC_DEGREES_TO_RADIANS(rot)) * spCard->getContentSize().height + scaledUserPos.x;
 		float y = cos(CC_DEGREES_TO_RADIANS(rot)) * spCard->getContentSize().height + scaledUserPos.y;
 		spCard->setPosition(x, y);
@@ -4008,7 +4009,7 @@ bool GameScene::bashCardDown(int index, int cardId, bool isMe)
 		spCard = getCardSprite(cardId);
 		spCard->setRotation(0);
 		spCard->setScale(cardScaleTableNew);
-		spCard->setPosition(getScaleScenePosition(vecUserPos[index]));
+		spCard->setPosition(getScaleScenePosition(vecUserPos[indexFrom]));
 	}
 
 	spCard->setLocalZOrder(constant::GAME_ZORDER_TABLE_CARD + tableCardNumb[index2]);
@@ -4030,7 +4031,7 @@ bool GameScene::bashCardDown(int index, int cardId, bool isMe)
 void GameScene::autoBash(int card, int group)
 {
 	CCLOG("autoBash");
-	bashCardDown(0, card, true);
+	bashCardDown(0, 0, card, true);
 	isAutoBash = true;
 }
 
