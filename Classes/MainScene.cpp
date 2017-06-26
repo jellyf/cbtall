@@ -1143,6 +1143,8 @@ void MainScene::initPopupCharge()
 					//popupCharge->getChildByName("providerimg" + to_string(i))->setVisible(true);
 				}
 				checkProviderToCharge();
+				ui::CheckBox* cbQuan = (ui::CheckBox*)nodeMoneyType->getChildByTag(0);
+				updateSmsInfo(cbQuan->isSelected());
 			} else if(i == 2){
 				scrollProvider->setVisible(false);
 				nodeMoneyType->setPosition(-220, 150);
@@ -2322,33 +2324,6 @@ void MainScene::checkProviderToCharge()
 		btni->setVisible(false);
 		btni->setTag(0);
 		btni->setColor(Color3B::GRAY);
-	}
-
-	if (btnIndex == -1) {
-		for (int i = 1; i <= strProviders.size(); i++) {
-			ui::Button* btn = (ui::Button*)scrollProvider->getChildByName("btn" + to_string(i));
-			if (btn->getTag() == 1) {
-				btnIndex = i;
-				break;
-			}
-		}
-	}
-	string smsct = btnIndex == 1 ? Utils::getSingleton().gameConfig.smsVT : Utils::getSingleton().gameConfig.smsVNPVMS;
-	int strid = smsct.find_last_of(' ');
-	string smstg = smsct.substr(strid + 1, smsct.length() - strid);
-	smsct = smsct.substr(0, strid);
-	smsct = Utils::getSingleton().replaceString(smsct, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
-
-	ui::ScrollView* scroll = (ui::ScrollView*)(popupCharge->getChildByName("nodesms")->getChildByName("scrollsms"));
-	for (int i = 0; i < moneys.size(); i++) {
-		string strMoney = to_string(moneys[i]);
-		string smsStr = Utils::getSingleton().replaceString(smsct, "vnd", strMoney);
-
-		Node* node = scroll->getChildByName(strMoney);
-		Label* lbContent = (Label*)node->getChildByName("lbsmscontent");
-		Label* lbTarget = (Label*)node->getChildByName("lbsmstarget");
-		lbContent->setString(smsStr);
-		lbTarget->setString(smstg);
 	}
 }
 
