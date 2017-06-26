@@ -258,6 +258,13 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 		height = scrollListTable->getContentSize().height;
 	scrollListTable->setInnerContainerSize(Size(820, height));
 
+	auto vecChildren = scrollListTable->getChildren();
+	for (Node* c : vecChildren) {
+		if (c->getTag() > data.Size) {
+			c->setVisible(false);
+		}
+	}
+
 	bool isSolo = Utils::getSingleton().isSoloGame();
 	string zone = Utils::getSingleton().getCurrentZoneName();
 	if (zone.length() > 0) {
@@ -285,7 +292,7 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 			isNewBtn = true;
 			string tbName = isSolo ? "table_SoLo.png" : "table_" + zone + ".png";
 			btn = ui::Button::create(tbName, "", "", ui::Widget::TextureResType::PLIST);
-			btn->setPosition(Vec2(100 + (i % 4) * 210, height - 70 - (i / 4) * 170));
+			//btn->setPosition(Vec2(100 + (i % 4) * 210, height - 70 - (i / 4) * 170));
 			btn->setTag(i + 1);
 			btn->setScale(.8f);
 			scrollListTable->addChild(btn);
@@ -328,6 +335,12 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 			spStilt->setPosition(btn->getContentSize().width / 2 + 3, btn->getContentSize().height / 2 + 2);
 			btn->addChild(spStilt);
 
+			Label* lb411 = Label::createWithTTF("4-11", "fonts/arialbd.ttf", 20);
+			lb411->setPosition(btn->getContentSize().width / 2 - 2, 25);
+			lb411->setColor(Color3B::WHITE);
+			lb411->setName("lb411");
+			btn->addChild(lb411);
+
 			Sprite* spGa = Sprite::createWithSpriteFrameName("ga_off.png");
 			spGa->setPosition(btn->getContentSize().width / 2 - 5, -20);
 			spGa->setName("iconga");
@@ -347,6 +360,8 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 			lbMoney->setName("lbmoney");
 			btn->addChild(lbMoney);
 		}
+		btn->setVisible(true);
+		btn->setPosition(Vec2(100 + (i % 4) * 210, height - 70 - (i / 4) * 170));
 		addTouchEventListener(btn, [=]() {
 			/*long requiredMoney = data.Money * 20;
 			if ((Utils::getSingleton().moneyType == 1 && Utils::getSingleton().userDataMe.MoneyReal < requiredMoney)
@@ -367,8 +382,10 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 		}, isNewBtn);
 
 		Sprite* spga = (Sprite*)btn->getChildByName("iconga");
+		Label* lb411 = (Label*)btn->getChildByName("lb411");
 		Label* lbMoney = (Label*)btn->getChildByName("lbmoney");
 		spga->initWithSpriteFrameName("ga_off.png");
+		lb411->setVisible(false);
 		lbMoney->setColor(colorMoney);
 		lbMoney->setString(Utils::getSingleton().formatMoneyWithComma(data.Money));
 		if (data.Money < 1000000L) {
@@ -389,6 +406,7 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 
 		for (int k = 0; k < data.ListTable.size(); k++) {
 			if (btn->getTag() == data.ListTable[k].RoomId) {
+				lb411->setVisible(data.ListTable[k].IsU411);
 				spga->initWithSpriteFrameName(data.ListTable[k].HasPot ? "ga_on.png" : "ga_off.png");
 				for (int j = 0; j < (isSolo ? 2 : 4); j++) {
 					/*Sprite* sp0 = (Sprite*)btn->getChildByTag(j);

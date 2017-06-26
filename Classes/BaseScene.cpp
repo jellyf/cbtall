@@ -233,6 +233,8 @@ void BaseScene::onApplicationDidEnterBackground()
 {
 	spNetwork->pause();
 	lbNetwork->pause();
+    isPauseApp = true;
+    SFSRequest::getSingleton().Disconnect();
 }
 
 void BaseScene::onApplicationWillEnterForeground()
@@ -282,8 +284,12 @@ void BaseScene::showWaiting(int time)
 		if (isWaiting) {
 			hideWaiting();
 			showPopupNotice(Utils::getSingleton().getStringForKey("connection_failed"), [=]() {
-				isBackToLogin = true;
-				SFSRequest::getSingleton().Disconnect();
+				if (SFSRequest::getSingleton().IsConnected()) {
+					isBackToLogin = true;
+					SFSRequest::getSingleton().Disconnect();
+				} else {
+					Utils::getSingleton().goToLoginScene();
+				}
 			}, false);
 		}
 	});
@@ -491,7 +497,6 @@ void BaseScene::showPopupRankWin()
 		data.Date = "05/01/2016";
 		listRankWin.push_back(data);
 	}*/
-
 	ui::ScrollView* scroll = (ui::ScrollView*)popupRank->getChildByName("scroll");
 	ui::ScrollView* scrollWin = (ui::ScrollView*)popupRank->getChildByName("scrollwin");
 	scroll->setVisible(false);
@@ -632,6 +637,10 @@ void BaseScene::setMoneyType(int type)
 
 void BaseScene::handleClientDisconnectionReason(std::string reason)
 {
+    if(isPauseApp){
+        isPauseApp = false;
+        reason = constant::DISCONNECTION_REASON_SYNC;
+    }
 	if (isBackToLogin) {
 		Utils::getSingleton().goToLoginScene();
 		return;
@@ -652,18 +661,27 @@ void BaseScene::handleClientDisconnectionReason(std::string reason)
 	if (isOverlapLogin) {
 		reason = "overlap_login";
 	}
-	showPopupNotice(Utils::getSingleton().getStringForKey("disconnection_" + reason), [=]() {
-		if (reason.compare(constant::DISCONNECTION_REASON_UNKNOWN) == 0
-			|| reason.compare(constant::DISCONNECTION_REASON_IDLE) == 0) {
-			isReconnecting = true;
-			SFSGEvent::getSingleton().Reset();
-			Utils::getSingleton().reconnect();
-			showWaiting();
-			Utils::getSingleton().timeStartReconnect = Utils::getSingleton().getCurrentSystemTimeInSecs();
-		} else {
-			Utils::getSingleton().goToLoginScene();
-		}
-	}, false);
+    if(!isShowDisconnected){
+        isShowDisconnected = true;
+        showPopupNotice(Utils::getSingleton().getStringForKey("disconnection_" + reason), [=]() {
+            isShowDisconnected = false;
+			if (SFSRequest::getSingleton().IsConnected()) {
+				isPauseApp = true;
+				SFSRequest::getSingleton().Disconnect();
+			} else {
+				if (reason.compare(constant::DISCONNECTION_REASON_UNKNOWN) == 0
+					|| reason.compare(constant::DISCONNECTION_REASON_IDLE) == 0) {
+					showWaiting();
+					isReconnecting = true;
+					SFSGEvent::getSingleton().Reset();
+					Utils::getSingleton().reconnect();
+					Utils::getSingleton().timeStartReconnect = Utils::getSingleton().getCurrentSystemTimeInSecs();
+				} else {
+					Utils::getSingleton().goToLoginScene();
+				}
+			}
+        }, false);
+    }
 }
 
 void BaseScene::addTouchEventListener(ui::Button* btn, std::function<void()> func, bool isNew)
@@ -979,7 +997,9 @@ bool BaseScene::onKeyBack()
 		return true;
 	}
 	Node* popup = popups[popups.size() - 1];
-	hidePopup(popup);
+	if (popup->getName().compare("popupdisplayname") != 0) {
+		hidePopup(popup);
+	}
 	return false;
 }
 
@@ -2028,6 +2048,9 @@ void BaseScene::onRankDataResponse(std::vector<std::vector<RankData>> list)
 void BaseScene::onRankWinDataResponse(std::vector<RankWinData> list)
 {
 	this->listRankWin = list;
+	if (popupRank != nullptr && popupRank->isVisible() && popupRank->getTag() == 2) {
+		showPopupRankWin();
+	}
 }
 
 void BaseScene::onListEventDataResponse(std::vector<EventData> list)
@@ -2386,4 +2409,11 @@ void BaseScene::autoScaleNode(cocos2d::Node * node)
 	} else if (scaleScene.y < 1) {
 		node->setScaleX(node->getScaleX() * scaleScene.y);
 	}
+}
+
+void BaseScene::delayFunction(Node * node, float time, std::function<void()> func)
+{
+    DelayTime* delay = DelayTime::create(time);
+    CallFunc* callfunc = CallFunc::create(func);
+    node->runAction(Sequence::create(delay, callfunc, nullptr));
 }

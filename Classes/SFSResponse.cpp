@@ -118,7 +118,7 @@ void SFSResponse::onErrorResponse(boost::shared_ptr<ISFSObject> isfsObject)
 
 void SFSResponse::onConfigZoneResponse(boost::shared_ptr<ISFSObject> isfsObject)
 {
-	//std::vector<std::vector<ZoneData>> zones;
+	std::vector<std::vector<ZoneData>> zones;
 	std::vector<ZoneData> vecZone;
 	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
 	while (byteArray->Position() < byteArray->Length()) {
@@ -140,19 +140,20 @@ void SFSResponse::onConfigZoneResponse(boost::shared_ptr<ISFSObject> isfsObject)
 		}
 	}
 	std::vector<std::vector<std::string>> names = { {"NhaTranh", "SanDinh", "VuongPhu", "SoLoXu"}, { "NhaTranhQuan", "SanDinhQuan", "VuongPhuQuan", "SoLoQuan" } };
-	Utils::getSingleton().zones.push_back(std::vector<ZoneData>());
-	Utils::getSingleton().zones.push_back(std::vector<ZoneData>());
+	zones.push_back(std::vector<ZoneData>());
+	zones.push_back(std::vector<ZoneData>());
 	for (int i = 0; i < names.size(); i++) {
 		for (int j = 0; j < names[i].size(); j++) {
 			for (ZoneData d : vecZone) {
 				if (d.ZoneName.compare(names[i][j]) == 0) {
-					Utils::getSingleton().zones[i].push_back(d);
+					zones[i].push_back(d);
 					break;
 				}
 			}
 		}
 	}
-	
+
+	Utils::getSingleton().zones = zones;
 	if (EventHandler::getSingleton().onConfigZoneReceived != NULL) {
 		EventHandler::getSingleton().onConfigZoneReceived();
 	}
@@ -994,23 +995,47 @@ void SFSResponse::onGameUserReconnectResponse(boost::shared_ptr<ISFSObject> isfs
 
 void SFSResponse::onShopHistoryResponse(boost::shared_ptr<ISFSObject> isfsObject)
 {
-	long numb;
 	std::vector<ShopHistoryData> list;
-	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
-	byteArray->ReadInt(numb);
-	while (byteArray->Position() < byteArray->Length()) {
-		ShopHistoryData data;
-		byteArray->ReadByte(data.Id);
-		byteArray->ReadByte(data.ItemId);
-		byteArray->ReadInt(data.UserId);
-		byteArray->ReadUTF(data.Name);
-		byteArray->ReadByte(data.Price);
-		byteArray->ReadByte(data.Status);
-		byteArray->ReadUTF(data.CreateDate);
-		byteArray->ReadUTF(data.UpdateDate);
-		byteArray->ReadUTF(data.Content);
-		list.push_back(data);
-		//CCLOG("%d %d %s %d %d %s %s %s", data.Id, data.ItemId, data.Name.c_str(), data.Price, data.Status, data.CreateDate.c_str(), data.Content);
+	boost::shared_ptr<ByteArray> byteArray;
+	if (isfsObject->ContainsKey("dd")) {
+		byteArray = isfsObject->GetByteArray("dd");
+		while (byteArray->Position() < byteArray->Length()) {
+			ShopHistoryData data;
+			byteArray->ReadInt(data.Id);
+			byteArray->ReadInt(data.ItemId);
+			byteArray->ReadInt(data.UserId);
+			byteArray->ReadUTF(data.Name);
+			byteArray->ReadInt(data.Price);
+			byteArray->ReadByte(data.Status);
+			byteArray->ReadUTF(data.CreateDate);
+			byteArray->ReadUTF(data.UpdateDate);
+			byteArray->ReadUTF(data.Content);
+			list.push_back(data);
+			//CCLOG("%d %d %s %d %d %s %s %s", data.Id, data.ItemId, data.Name.c_str(), data.Price, data.Status, data.CreateDate.c_str(), data.Content);
+		}
+	} else {
+		long numb;
+		unsigned char id, itemid, price;
+		byteArray = isfsObject->GetByteArray("d");
+		byteArray->ReadInt(numb);
+		while (byteArray->Position() < byteArray->Length()) {
+			ShopHistoryData data;
+			byteArray->ReadByte(id);
+			byteArray->ReadByte(itemid);
+			byteArray->ReadInt(data.UserId);
+			byteArray->ReadUTF(data.Name);
+			byteArray->ReadByte(price);
+			byteArray->ReadByte(data.Status);
+			byteArray->ReadUTF(data.CreateDate);
+			byteArray->ReadUTF(data.UpdateDate);
+			byteArray->ReadUTF(data.Content);
+
+			data.Id = id;
+			data.ItemId = itemid;
+			data.Price = price;
+			list.push_back(data);
+			//CCLOG("%d %d %s %d %d %s %s %s", data.Id, data.ItemId, data.Name.c_str(), data.Price, data.Status, data.CreateDate.c_str(), data.Content);
+		}
 	}
 	if (EventHandler::getSingleton().onShopHistoryDataSFSResponse != NULL) {
 		EventHandler::getSingleton().onShopHistoryDataSFSResponse(list);
@@ -1215,6 +1240,16 @@ void SFSResponse::onPopupEventResponse(boost::shared_ptr<ISFSObject> isfsObject)
 			std::string str = d["CASH_VALUE"].GetString();
 			Utils::getSingleton().split(str, ',', config.CashValue);
 		}
+		if (d.FindMember("CLIENT_LOG") != d.MemberEnd()) {
+			std::string str = d["CLIENT_LOG"].GetString();
+			config.Log = str.compare("1") == 0;
+		} else config.Log = false;
+		if (d.FindMember("CLIENT_LOG_VALUE") != d.MemberEnd()) {
+			config.LogHost = d["CLIENT_LOG_VALUE"].GetString();
+		} else config.LogHost = "";
+	}
+	if (config.LogHost.length() == 0) {
+		config.LogHost = "http://125.212.192.96:8899/ktc/client-log?data=";
 	}
 	Utils::getSingleton().dynamicConfig = config;
 	if (EventHandler::getSingleton().onDynamicConfigReceived != NULL) {

@@ -29,8 +29,10 @@ public:
 	static void OnPublicMessage(unsigned long long ptrContext, boost::shared_ptr<Sfs2X::Core::BaseEvent> ptrEvent);
 	static void OnPingPong(unsigned long long ptrContext, boost::shared_ptr<Sfs2X::Core::BaseEvent> ptrEvent);*/
 
+	bool IsConnected();
 	void Connect(std::string host, int port);
 	void Disconnect();
+    void Dispose();
 	void ProcessEvents();
 	void LoginZone(std::string username, std::string password, std::string zone);
 	void LogoutZone();

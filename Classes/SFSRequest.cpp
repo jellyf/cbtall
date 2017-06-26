@@ -26,6 +26,11 @@ void SFSRequest::InitSmartFox()
 	SFSConnector::getSingleton().InitializeSmartFox();
 }
 
+bool SFSRequest::IsConnected()
+{
+	return SFSConnector::getSingleton().IsConnected();
+}
+
 void SFSRequest::Connect()
 {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
@@ -44,6 +49,11 @@ void SFSRequest::Connect(std::string host, int port)
 void SFSRequest::Disconnect()
 {
 	SFSConnector::getSingleton().Disconnect();
+}
+
+void SFSRequest::Dispose()
+{
+    SFSConnector::getSingleton().Dispose();
 }
 
 void SFSRequest::ProcessEvents()
@@ -255,6 +265,13 @@ void SFSRequest::RequestVerifyFBInvite(std::string token)
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
 	parameters->PutUtfString("1", token);
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::VERIFY_FB_INVITE, parameters);
+}
+
+void SFSRequest::RequestCancelItemShop(int itemId)
+{
+	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+	parameters->PutInt("1", itemId);
+	SFSConnector::getSingleton().SendExtensionRequest(cmd::CANCEL_ITEM_SHOP, parameters);
 }
 
 void SFSRequest::RequestRegister(std::string username, std::string password, std::string email)

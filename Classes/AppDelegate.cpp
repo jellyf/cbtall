@@ -10,6 +10,7 @@
 #include "Utils.h"
 #include "Tracker.h"
 #include "SFSGEvent.h"
+#include "GameLogger.h"
 
 USING_NS_CC;
 
@@ -70,6 +71,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	EventHandler* handler = new EventHandler();
 	Utils* utils = new Utils();
 	Tracker* tracker = new Tracker();
+	GameLogger* logger = new GameLogger();
 
 	auto scene = LoginScene::create();
 	//auto scene = GameScene::create();

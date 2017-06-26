@@ -5,6 +5,7 @@
 #include "Utils.h"
 #include "EventHandler.h"
 #include "Tracker.h"
+#include "GameLogger.h"
 
 using namespace cocos2d;
 using namespace std;
@@ -64,16 +65,6 @@ void MainScene::onInit()
 	mLayer->addChild(btnAgency);
 	autoScaleNode(btnAgency);
 
-	btnEvent = ui::Button::create("icon_event.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnEvent->setPosition(vecPos[0] + Vec2(110, 0));
-	btnEvent->setVisible(false);
-	addTouchEventListener(btnEvent, [=]() {
-		Utils::getSingleton().hasShowEventPopup = true;
-		showWebView(Utils::getSingleton().dynamicConfig.PopupUrl);
-	});
-	mLayer->addChild(btnEvent);
-	autoScaleNode(btnEvent);
-
 	ui::Button* btnGuide = ui::Button::create("icon_guide.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnGuide->setPosition(vecPos[1]);
 	addTouchEventListener(btnGuide, [=]() {
@@ -123,6 +114,16 @@ void MainScene::onInit()
 	});
 	mLayer->addChild(btnShop);
 	autoScaleNode(btnShop);
+
+	btnEvent = ui::Button::create("icon_event.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnEvent->setPosition(vecPos[3] + Vec2(110, 0));
+	btnEvent->setVisible(false);
+	addTouchEventListener(btnEvent, [=]() {
+		Utils::getSingleton().hasShowEventPopup = true;
+		showWebView(Utils::getSingleton().dynamicConfig.PopupUrl);
+	});
+	mLayer->addChild(btnEvent);
+	autoScaleNode(btnEvent);
 
 	ui::Button* btnNews = ui::Button::create("icon_news.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnNews->setPosition(pmE ? vecPos[4] : vecPos[5]);
@@ -418,8 +419,14 @@ void MainScene::onErrorResponse(unsigned char code, std::string msg)
 		setDisplayName(tmpDisplayName);
 		return;
 	}
-	if (code == 32 && msg.find("Quan") == string::npos) {
-		chargingProvider = "";
+	if (code == 32) {
+		if (popupShop != NULL && popupShop->isVisible()) {
+			Node* nodeHistory = popupShop->getChildByName("nodehistory");
+			int page = nodeHistory->getChildByName("nodepage")->getTag();
+			SFSRequest::getSingleton().RequestShopHistory(page);
+		}else if (popupCharge != NULL && popupCharge->isVisible() && msg.find("Quan") == string::npos) {
+			chargingProvider = "";
+		}
 	}
 	if (msg.length() == 0) return;
 	showPopupNotice(msg, [=]() {});
@@ -427,7 +434,9 @@ void MainScene::onErrorResponse(unsigned char code, std::string msg)
 
 void MainScene::onJoinRoom(long roomId, std::string roomName)
 {
-
+	if (roomName.at(0) == 'g' && roomName.at(2) == 'b') {
+		Utils::getSingleton().goToGameScene();
+	}
 }
 
 void MainScene::onJoinRoomError(std::string msg)
@@ -461,6 +470,7 @@ void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)
 		list.push_back(data);
 	}*/
 
+	int dx = -25;
 	vector<int> posX = { -360, -210, -15, 180, 344 };
 	vector<string> strStatus = { "dat_hang", "xac_nhan", "hoan_tat", "huy", "hoan_tra" };
 	ui::ScrollView* scrollHistory = (ui::ScrollView*)(popupShop->getChildByTag(12)->getChildByName("scrollhistory"));
@@ -470,20 +480,20 @@ void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)
 	}
 	scrollHistory->setInnerContainerSize(Size(scrollHistory->getContentSize().width, heightHistory));
 	for (int i = 0; i < list.size(); i++) {
-		int tag = i * 6;
-		ui::Button* btn;
+		int tag = i * 7;
+		ui::Button* btn, *btnCancel;
 		Label *lb1, *lb2, *lb3, *lb4, *lb5;
 		lb1 = (Label*)scrollHistory->getChildByTag(tag);
 		bool isNewBtn;
 		if (lb1 == nullptr) {
 			lb1 = Label::create("", "fonts/aurora.ttf", 25);
-			lb1->setPosition(posX[0] + scrollHistory->getContentSize().width / 2, heightHistory - 10);
+			lb1->setPosition(posX[0] + scrollHistory->getContentSize().width / 2 + dx, heightHistory - 10);
 			//lb1->setScaleX(.8f);
 			lb1->setTag(tag);
 			scrollHistory->addChild(lb1);
 
 			lb2 = Label::create("", "fonts/aurora.ttf", 25);
-			lb2->setPosition(posX[1] + scrollHistory->getContentSize().width / 2, heightHistory - 10);
+			lb2->setPosition(posX[1] + scrollHistory->getContentSize().width / 2 + dx, heightHistory - 10);
 			lb2->setHorizontalAlignment(TextHAlignment::CENTER);
 			lb2->setColor(Color3B::YELLOW);
 			lb2->setTag(tag + 1);
@@ -493,19 +503,19 @@ void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)
 			scrollHistory->addChild(lb2);
 
 			lb3 = Label::create("", "fonts/aurora.ttf", 25);
-			lb3->setPosition(posX[2] + scrollHistory->getContentSize().width / 2, heightHistory - 10);
+			lb3->setPosition(posX[2] + scrollHistory->getContentSize().width / 2 + dx, heightHistory - 10);
 			lb3->setTag(tag + 2);
 			//lb3->setScaleX(.8f);
 			scrollHistory->addChild(lb3);
 
 			lb4 = Label::create("", "fonts/aurora.ttf", 25);
-			lb4->setPosition(posX[3] + scrollHistory->getContentSize().width / 2, heightHistory - 10);
+			lb4->setPosition(posX[3] + scrollHistory->getContentSize().width / 2 + dx, heightHistory - 10);
 			lb4->setTag(tag + 3);
 			//lb4->setScaleX(.8f);
 			scrollHistory->addChild(lb4);
 
 			lb5 = Label::create("", "fonts/aurora.ttf", 25);
-			lb5->setPosition(posX[4] + scrollHistory->getContentSize().width / 2, heightHistory - 10);
+			lb5->setPosition(posX[4] + scrollHistory->getContentSize().width / 2 + dx, heightHistory - 10);
 			lb5->setColor(Color3B::YELLOW);
 			lb5->setTag(tag + 4);
 			//lb5->setScaleX(.8f);
@@ -519,39 +529,63 @@ void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)
 			btn->setTag(tag + 5);
 			scrollHistory->addChild(btn);
 			isNewBtn = true;
+
+			btnCancel = ui::Button::create("empty.png", "empty.png", "", ui::Widget::TextureResType::PLIST);
+			btnCancel->setTitleText("[" + Utils::getSingleton().getStringForKey("huy") + "]");
+			btnCancel->setTitleFontName("fonts/aurora.ttf");
+			btnCancel->setTitleFontSize(25);
+			btnCancel->setTitleColor(Color3B::RED);
+			btnCancel->setPosition(Vec2(lb5->getPositionX() + 60, heightHistory - 11));
+			btnCancel->setContentSize(Size(50, 30));
+			btnCancel->setScale9Enabled(true);
+			btnCancel->setTag(tag + 6);
+			scrollHistory->addChild(btnCancel);
 		} else {
+			for (int i = 0; i < 7; i++) {
+				scrollHistory->getChildByTag(tag + i)->setPositionY(heightHistory - (i == 6 ? 15 : 10));
+			}
 			lb2 = (Label*)scrollHistory->getChildByTag(tag + 1);
 			lb3 = (Label*)scrollHistory->getChildByTag(tag + 2);
 			lb4 = (Label*)scrollHistory->getChildByTag(tag + 3);
 			lb5 = (Label*)scrollHistory->getChildByTag(tag + 4);
 			btn = (ui::Button*)scrollHistory->getChildByTag(tag + 5);
+			btnCancel = (ui::Button*)scrollHistory->getChildByTag(tag + 6);
 			btn->setTouchEnabled(true);
 			isNewBtn = false;
 		}
 		addTouchEventListener(btn, [=]() {
 			showPopupNotice(list[i].Content, [=]() {}, false);
 		}, isNewBtn);
+		addTouchEventListener(btnCancel, [=]() {
+			showPopupNotice(Utils::getSingleton().getStringForKey("ban_muon_huy_don_hang_nay"), [=]() {
+				//int itemId = atoi(btnCancel->getName().c_str());
+				SFSRequest::getSingleton().RequestCancelItemShop(list[i].Id);
+			});
+		}, isNewBtn);
 		if (list[i].Status < 1) {
 			list[i].Status = 1;
 		} else if (list[i].Status > strStatus.size()) {
 			list[i].Status = strStatus.size();
+		}
+		if (list[i].Status == 1) {
+			lb5->setPositionX(posX[4] + scrollHistory->getContentSize().width / 2 + dx - 30);
+			btnCancel->setPosition(Vec2(lb5->getPositionX() + 65, lb5->getPositionY() - 1));
+		} else {
+			lb5->setPositionX(posX[4] + scrollHistory->getContentSize().width / 2 + dx);
 		}
 		lb1->setString(to_string((int)list[i].Id));
 		lb2->setString(list[i].Name);
 		lb3->setString(list[i].CreateDate);
 		lb4->setString(list[i].UpdateDate);
 		lb5->setString(Utils::getSingleton().getStringForKey(strStatus[list[i].Status - 1]));
-		lb1->setPosition(posX[0] + scrollHistory->getContentSize().width / 2, heightHistory - 10);
-		lb2->setPosition(posX[1] + scrollHistory->getContentSize().width / 2, heightHistory - 10);
-		lb3->setPosition(posX[2] + scrollHistory->getContentSize().width / 2, heightHistory - 10);
-		lb4->setPosition(posX[3] + scrollHistory->getContentSize().width / 2, heightHistory - 10);
-		lb5->setPosition(posX[4] + scrollHistory->getContentSize().width / 2, heightHistory - 10);
+		btnCancel->setName(to_string((int)list[i].ItemId));
+		btnCancel->setVisible(list[i].Status == 1);
 
 		heightHistory -= 40;
 	}
 	int count = scrollHistory->getChildrenCount();
-	for (int j = list.size() * 6; j < count; j++) {
-		if (j % 6 != 5) {
+	for (int j = list.size() * 7; j < count; j++) {
+		if (j % 7 != 5 && j % 7 != 6) {
 			((Label*)scrollHistory->getChildByTag(j))->setString("");
 		} else {
 			((ui::Button*)scrollHistory->getChildByTag(j))->setTouchEnabled(false);
@@ -962,6 +996,9 @@ void MainScene::onDynamicConfigReceived()
 		//showWebView(Utils::getSingleton().dynamicConfig.PopupUrl);
 		btnEvent->setVisible(true);
 	}
+	GameLogger::getSingleton().setEnabled(Utils::getSingleton().dynamicConfig.Log);
+	GameLogger::getSingleton().setHost(Utils::getSingleton().dynamicConfig.LogHost);
+	GameLogger::getSingleton().setUser(Utils::getSingleton().userDataMe);
 }
 
 void MainScene::onDownloadedPlistTexture(int numb)
@@ -1930,6 +1967,7 @@ void MainScene::initPopupShop()
 	Node* nodeHistory = Node::create();
 	nodeHistory->setTag(12);
 	nodeHistory->setVisible(false);
+	nodeHistory->setName("nodehistory");
 	popupShop->addChild(nodeHistory);
 
 	int x = -420;
@@ -2014,7 +2052,7 @@ void MainScene::initPopupShop()
 	scrollHistory->setDirection(ui::ScrollView::Direction::VERTICAL);
 	scrollHistory->setBounceEnabled(true);
 	scrollHistory->setPosition(Vec2(bgContent->getPositionX() - bgContent->getContentSize().width / 2, bgContent->getPositionY() - bgContent->getContentSize().height / 2 + 5));
-	scrollHistory->setContentSize(Size(bgContent->getContentSize().width, bgContent->getContentSize().height - 60));
+	scrollHistory->setContentSize(Size(bgContent->getContentSize().width + 50, bgContent->getContentSize().height - 60));
 	scrollHistory->setScrollBarEnabled(false);
 	scrollHistory->setName("scrollhistory");
 	nodeHistory->addChild(scrollHistory);
@@ -2159,6 +2197,7 @@ void MainScene::initPopupDisplayName()
 	popupDisplayName = Node::create();
 	popupDisplayName->setPosition(560, 350);
 	popupDisplayName->setVisible(false);
+	popupDisplayName->setName("popupdisplayname");
 	mLayer->addChild(popupDisplayName, constant::ZORDER_POPUP);
 	//autoScaleNode(popupDisplayName);
 

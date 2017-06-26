@@ -18,9 +18,11 @@ public:
 	std::function<void(std::string url, cocos2d::Texture2D*)> onLoadTextureResponse = NULL;
 
 	void InitSmartFox();
+	bool IsConnected();
 	void Connect();
 	void Connect(std::string host, int port);
 	void Disconnect();
+    void Dispose();
 	void ProcessEvents();
 	void LoginZone(std::string username, std::string password, std::string zone);
 	void LogoutZone();
@@ -51,6 +53,7 @@ public:
 	void RequestPayment(std::string token, bool isQuan);
 	void RequestCofferHistory();
 	void RequestVerifyFBInvite(std::string token);
+	void RequestCancelItemShop(int itemId);
 
 	void RequestGameReady();
 	void RequestGameChooseStilt(int stilt);

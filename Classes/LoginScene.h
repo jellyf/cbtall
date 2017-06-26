@@ -15,6 +15,7 @@ public:
 
 	void onConnected();
 	void onLoginZone();
+    void onConnectionException();
 	void onConnectionLost(std::string reason);
 	void onConfigZoneReceived();
 	void onUserDataMeResponse();
@@ -45,6 +46,7 @@ private:
 	bool isFirstLoadConfig = true;
 	bool isLoginFacebook = false;
 	bool isIPv4 = CC_TARGET_PLATFORM == CC_PLATFORM_IOS;
+    bool connectionExceptionSolved = false;
 
 	cocos2d::Node* loginNode;
 	cocos2d::Node* registerNode;

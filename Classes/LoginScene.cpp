@@ -55,7 +55,7 @@ void LoginScene::onInit()
 	tfUsername->setPlaceHolder(Utils::getSingleton().getStringForKey("login_name").c_str());
 	tfUsername->setPlaceholderFontColor(Color3B::WHITE);
 	tfUsername->setPlaceholderFont("Arial", 25);
-	tfUsername->setMaxLength(16);
+	tfUsername->setMaxLength(21);
 	tfUsername->setReturnType(ui::EditBox::KeyboardReturnType::DONE);
 	tfUsername->setInputFlag(ui::EditBox::InputFlag::SENSITIVE);
 	tfUsername->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
@@ -199,7 +199,7 @@ void LoginScene::onInit()
 	if (Utils::getSingleton().gameConfig.phone.length() == 0) {
 		requestGameConfig(isRealConfig);
 	} else {
-		showWaiting();
+		showWaiting(60);
 		SFSRequest::getSingleton().Connect();
 	}
 
@@ -211,7 +211,8 @@ void LoginScene::registerEventListenner()
 {
 	BaseScene::registerEventListenner();
 	EventHandler::getSingleton().onConnected = std::bind(&LoginScene::onConnected, this);
-	EventHandler::getSingleton().onLoginZone = std::bind(&LoginScene::onLoginZone, this);
+    EventHandler::getSingleton().onLoginZone = std::bind(&LoginScene::onLoginZone, this);
+    EventHandler::getSingleton().onConnectionException = std::bind(&LoginScene::onConnectionException, this);
 	EventHandler::getSingleton().onConnectionLost = std::bind(&LoginScene::onConnectionLost, this, std::placeholders::_1);
 	EventHandler::getSingleton().onConfigZoneReceived = std::bind(&LoginScene::onConfigZoneReceived, this);
 	EventHandler::getSingleton().onErrorSFSResponse = std::bind(&LoginScene::onErrorResponse, this, std::placeholders::_1, std::placeholders::_2);
@@ -239,6 +240,7 @@ void LoginScene::editBoxReturn(ui::EditBox * editBox)
 
 void LoginScene::onConnected()
 {
+    connectionExceptionSolved = false;
 	if (isReconnecting) {
 		Utils::getSingleton().loginZoneByIndex(tmpZoneIndex / 10, tmpZoneIndex % 10);
 	} else {
@@ -266,12 +268,30 @@ void LoginScene::onLoginZone()
 	}
 }
 
+void LoginScene::onConnectionException()
+{
+    if(!connectionExceptionSolved){
+        connectionExceptionSolved = true;
+        delayFunction(this, 3, [=](){
+            showWaiting(60);
+            SFSRequest::getSingleton().Connect();
+        });
+    }else{
+        hideWaiting();
+        connectionExceptionSolved = false;
+        showPopupNotice(Utils::getSingleton().getStringForKey("connection_failed"), [=]() {});
+    }
+}
+
 void LoginScene::onConnectionLost(std::string reason)
 {
 	isLogedInZone = false;
 	if (isReconnecting) {
 		Utils::getSingleton().connectZoneByIndex(tmpZoneIndex / 10, tmpZoneIndex % 10);
-	}
+    }else if(isRequesting){
+        hideWaiting();
+        showPopupNotice(Utils::getSingleton().getStringForKey("connection_failed"), [=]() {});
+    }
 }
 
 void LoginScene::onConnectionFailed()
@@ -336,7 +356,7 @@ void LoginScene::onLoginFacebook(std::string token)
 		
 	} else {
 		fbToken = token;
-		showWaiting();
+		showWaiting(60);
 		if (isLogedInZone) {
 			SFSRequest::getSingleton().RequestLoginFacebook(fbToken);
 		} else {
@@ -400,15 +420,8 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	config.linkIOS = d["i"].GetString();
 	config.canUpdate = d["updatenow"].GetBool();
 	config.inapp = d["inapp"].GetString();
-	config.invite = d["invite"].GetBool();
-    config.versionIOS71 = d["versionIOS71"].GetBool();
-		
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-    if (config.versionIOS71) {
-        config.ip_rs = "api4chan.info";
-        config.port = 843;
-	}
-#endif
+    config.invite = d["invite"].GetBool();
+    config.versionIOS71ktc = d["versionIOS71ktc"].GetBool();
 
 	string verstr = Application::sharedApplication()->getVersion();
 	int i = verstr.find_last_of('.') + 1;
@@ -416,6 +429,13 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	int nver = atoi(verstr.c_str());
 	config.pmE &= config.version > nver;
 	config.pmEIOS &= config.versionIOS > nver;
+    
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+    if (!config.pmEIOS && config.versionIOS71ktc) {
+        config.ip_rs = "api4chan.info";
+        config.port = 843;
+    }
+#endif
 
 	Utils::getSingleton().gameConfig = config;
     Utils::getSingleton().queryIAPProduct();
@@ -520,7 +540,7 @@ void LoginScene::loginNormal()
         showPopupNotice(Utils::getSingleton().getStringForKey("hay_nhap_mat_khau"), [=]() {});
         return;
     }
-    showWaiting();
+    showWaiting(60);
 	if (isLogedInZone) {
 		SFSRequest::getSingleton().RequestLogin(tfUsername->getText(), md5(tfPassword->getText()));
 	} else {
@@ -532,7 +552,7 @@ void LoginScene::loginFacebook()
 {
 	isRequesting = true;
 	isLoginFacebook = true;
-    showWaiting();
+    showWaiting(60);
 	Utils::getSingleton().loginFacebook();
 }
 
@@ -630,7 +650,7 @@ void LoginScene::initRegisterNode()
 			return;
 		}
 		isRequesting = true;
-		showWaiting();
+		showWaiting(60);
 		if (isLogedInZone) {
 			SFSRequest::getSingleton().RequestRegister(tfResUname->getText(), md5(tfResPass->getText()), md5(tfResPassAgain->getText()));
 		} else {
@@ -642,7 +662,7 @@ void LoginScene::initRegisterNode()
 
 void LoginScene::requestGameConfig(bool realConfig)
 {
-	showWaiting();
+	showWaiting(60);
 	if (realConfig) {
 		SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
 		//SFSRequest::getSingleton().RequestHttpGet("http://115.84.179.242/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);

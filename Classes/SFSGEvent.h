@@ -13,7 +13,8 @@ public:
 	static SFSGEvent* getSingletonPtr(void);
 
 	void Reset();
-	void ProcessEvents();
+    void ProcessEvents();
+    void DoWork(bool isWork);
 	void OnSFSEvent(unsigned long long ptrContext, boost::shared_ptr<Sfs2X::Core::BaseEvent> ptrEvent);
 	void OnConnection(map<string, boost::shared_ptr<void>> params);
 	void OnConnectionLost(map<string, boost::shared_ptr<void>> params);
@@ -27,10 +28,12 @@ public:
 	void OnExtensionResponse(map<string, boost::shared_ptr<void>> params);
 	void OnPublicMessage(map<string, boost::shared_ptr<void>> params);
 	void OnPingPong(map<string, boost::shared_ptr<void>> params);
+    void OnConnectionException(std::exception e);
 private:
 	map<string, function<void(map<string, boost::shared_ptr<void>>)>> mapFunctions;
 	vector<pair<string, map<string, boost::shared_ptr<void>>>> eventQueue;
 	int ptrQueue;
 	int sizeQueue;
+    bool isWork = true;
 };
 

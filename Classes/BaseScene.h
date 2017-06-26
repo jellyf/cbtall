@@ -24,8 +24,8 @@ public:
 	virtual void onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* _event);
 	virtual void onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* _event);
 
-	void onApplicationDidEnterBackground();
-	void onApplicationWillEnterForeground();
+	virtual void onApplicationDidEnterBackground();
+	virtual void onApplicationWillEnterForeground();
 
 	void onPingPong(long timems);
 	void onUserDataMeResponse();
@@ -77,7 +77,8 @@ protected:
 	void runEventView(std::vector<EventData> list, int currentPosX = 1500);
 	void addBtnChoosePage(int x, int y, cocos2d::Node* node, std::function<void(int)> funcPage);
 	void setSplashZOrder(int zorder);
-	void autoScaleNode(cocos2d::Node* node);
+    void autoScaleNode(cocos2d::Node* node);
+    void delayFunction(Node* node, float time, std::function<void()> func);
 
 	cocos2d::Node* createPopup(std::string stitle, bool isBig, bool isHidden);
 	cocos2d::Node* createPopupNotice();
@@ -132,6 +133,8 @@ protected:
 	int tmpIndex;
 
 private:
+    bool isPauseApp = false;
+    bool isShowDisconnected = false;
 	std::vector<RankWinData> listRankWin;
 	std::vector<std::vector<RankData>> listRanks;
 	cocos2d::Vector<Node*> vecPopupNotices;

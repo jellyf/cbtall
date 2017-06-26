@@ -255,6 +255,7 @@ struct GameConfig
 	bool canUpdate;
 	bool invite;
     bool versionIOS71;
+    bool versionIOS71ktc;
 	int port;
 	int websocket;
 	int version;
@@ -316,10 +317,10 @@ struct UserReconnectData
 
 struct ShopHistoryData
 {
+	long Id;
 	long UserId;
-	unsigned char Id;
-	unsigned char ItemId;
-	unsigned char Price;
+	long ItemId;
+	long Price;
 	unsigned char Status;
 	std::string Name;
 	std::string CreateDate;
@@ -392,6 +393,8 @@ struct DynamicConfig
 {
 	bool Kick;
 	bool Popup;
+	bool Log;
+	std::string LogHost;
 	std::string PopupUrl;
 	std::vector<std::string> CashValue;
 };

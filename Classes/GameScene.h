@@ -23,7 +23,8 @@ public:
 	virtual void editBoxReturn(cocos2d::ui::EditBox* editBox);
 	virtual bool onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* _event);
 
-	void onApplicationDidEnterBackground();
+	virtual void onApplicationDidEnterBackground();
+    virtual void onApplicationWillEnterForeground();
 
 	void onConnectionFailed();
 	void onConnectionLost(std::string reason);
@@ -56,6 +57,7 @@ public:
 	void onGameMyReconnectDataResponse(GameReconnectData data);
 	void onGameUserReconnectDataResponse(std::vector<UserReconnectData> list);
 	void onLobbyListTableResponse(LobbyListTable data);
+	void onTableReconnectDataResponse(TableReconnectData data);
 protected:
 	virtual bool onKeyBack();
 	virtual void onKeyHome();
@@ -71,6 +73,9 @@ private:
 	void initTableInfo();
 	void initCofferEffects();
 
+	bool bashCardDown(int indexFrom, int indexTo, int cardId, bool isMe);
+	void autoBash(int card, int group);
+
 	void onUserBashToMe(BashData data);
 	void onUserBashBackToMe(BashBackData data);
 	void onUserPickToMe(PickData data);
@@ -79,6 +84,7 @@ private:
 	void dropWin();
     void dropPenet();
 	void disconnectToSync();
+	void processWaitAction();
 	void syncHandCard(CardHandData cardHand);
 	void showMyCards(bool runEffect = true);
 	void runTimeWaiting(long uid, float time);
@@ -95,10 +101,10 @@ private:
 	void playSoundAction(unsigned char soundId);
 	void playSoundCuoc(unsigned char cuocId);
 	void changeZOrderAfterFly(cocos2d::Sprite* card, int zorder);
-	void delayFunction(Node* node, float time, std::function<void()> func);
 	void beatenNodeAndHide(cocos2d::Node* node, float scale1, float scale2, float timeToBeaten, float timeToHide);
 	bool isCardHandDataSync(CardHandData cardHand);
 	int getCardName(unsigned char cardId);
+	int getNextPlayerIndexFrom(int index);
 	std::vector<int>& getCardCount(CardHandData cardHand);
 	cocos2d::Sprite* getCardSprite(int id);
 	cocos2d::Vec2 getScaleScenePosition(cocos2d::Vec2 pos);
@@ -185,21 +191,22 @@ private:
 	cocos2d::Texture2D* textureHu;
 	cocos2d::Texture2D* textureLight;
 
-	char timeStart;
-	char timeDeal;
-	char timeChooseHost;
-	char timeTurn;
-	char myServerSlot;
-	char chosenStilt = -1;
-	char chosenStiltHost = -1;
-	char chosenHost = -1;
-	char chosenCard = -1;
-	char noaction = 0;
+	int timeStart;
+	int timeDeal;
+	int timeChooseHost;
+	int timeTurn;
+	int myServerSlot;
+	int chosenStilt = -1;
+	int chosenStiltHost = -1;
+	int chosenHost = -1;
+	int chosenCard = -1;
+	int noaction = 0;
 	int soundDealId = -1;
 	int waitAction = -1;
 	float cardSpeed = .35f;
 	float cardScaleTable = .85f;
 	float cardScaleTableNew = .9f;
+    double pauseTimeInSecs = 0;
 	long playIdMe;
 	long sfsIdMe;
 	bool isBatBao;
@@ -213,11 +220,13 @@ private:
 	bool isSolo = false;
 	bool isAutoReady = false;
 	bool isSynchronizing = false;
+	bool isAutoBash = false;
 	GameState state;
 	StartGameData startGameData;
 	CardHandData myCardHand;
 	EndMatchData endMatchData;
 	EndMatchMoneyData winMoneyData;
+	PlayerData playerMe;
 	std::vector<PlayerData> vecPlayers;
 	std::vector<PlayerData> vecSpectators;
 	//std::string tmpMessage;
