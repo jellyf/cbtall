@@ -622,7 +622,7 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 	Node* btnActive = popupUserInfo->getChildByName("btnactive");
     Node* btnFB = popupUserInfo->getChildByName("btnlogoutfb");
 	Node* nodeInfo = popupUserInfo->getChildByName("nodeinfo");
-	Label* lbName = (Label*)popupUserInfo->getChildByName("lbname");
+	Label* lbDName = (Label*)popupUserInfo->getChildByName("lbname");
 	Label* lbAppellation = (Label*)popupUserInfo->getChildByName("lbappellation");
 	Label* lbUname = (Label*)nodeInfo->getChildByName("lbuname");
 	Label* lbUname1 = (Label*)nodeInfo->getChildByName("lbuname1");
@@ -637,6 +637,8 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 	Label* lbBigCrest = (Label*)nodeInfo->getChildByName("lbbigcrest");
 	Sprite* iconGold = (Sprite*)nodeInfo->getChildByName("icongold");
 	Sprite* iconSilver = (Sprite*)nodeInfo->getChildByName("iconsilver");
+	Sprite* spAvar = (Sprite*)popupUserInfo->getChildByName("avatar");
+	Sprite* spOlAvar = (Sprite*)popupUserInfo->getChildByName("olavar");
 	AppellationData aplData = Utils::getSingleton().getAppellationByLevel(data.Level);
 
 	bool isMe = data.UserID == Utils::getSingleton().userDataMe.UserID;
@@ -646,7 +648,7 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 	lbUname->setVisible(isMe);
 	lbUname1->setVisible(isMe);
 	lbUname1->setString(data.Name);
-	lbName->setString(data.DisplayName);
+	lbDName->setString(data.DisplayName);
 	lbQuan->setString(Utils::getSingleton().formatMoneyWithComma(data.MoneyReal));
 	lbXu->setString(Utils::getSingleton().formatMoneyWithComma(data.MoneyFree));
 	lbId->setVisible(isMe);
@@ -662,7 +664,19 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 	//lbBigCrest->setString(data.BigCrest);
 	iconGold->setPosition(lbQuan->getPosition() + Vec2(lbQuan->getContentSize().width + 20, 5));
 	iconSilver->setPosition(lbXu->getPosition() + Vec2(lbXu->getContentSize().width + 20, 5));
-	nodeInfo->setPosition(isMe ? lbName->getPosition() - Vec2(0, 45) : lbName->getPosition() + Vec2(0, 20));
+	nodeInfo->setPosition(isMe ? lbDName->getPosition() - Vec2(0, 45) : lbDName->getPosition() + Vec2(0, 20));
+
+	if (data.AvatarUrl.length() > 0) {
+		Utils::getSingleton().LoadTextureFromURL(data.AvatarUrl, [=](Texture2D* texture) {
+			spOlAvar->initWithTexture(texture);
+			float originScale = spAvar->getScale();
+			Size fsize = spAvar->getContentSize();
+			Size spsize = spOlAvar->getContentSize();
+			float scaleX = fsize.width / spsize.width;
+			float scaleY = fsize.height / spsize.height;
+			spOlAvar->setScale(originScale * (scaleX < scaleY ? scaleY : scaleX) + .05f);
+		});
+	}
 }
 
 void BaseScene::setMoneyType(int type)
@@ -836,7 +850,7 @@ void BaseScene::initHeaderWithInfos()
 	mLayer->addChild(bgAvatar, constant::MAIN_ZORDER_HEADER);
 	autoScaleNode(bgAvatar);
 
-	ui::Button* btnAvar = ui::Button::create("avatar.png", "avatar.png", "", ui::Widget::TextureResType::PLIST);
+	btnAvar = ui::Button::create("avatar.png", "avatar.png", "", ui::Widget::TextureResType::PLIST);
 	btnAvar->setPosition(bgAvatar->getPosition());
 	btnAvar->setScale(.85f);
 	addTouchEventListener(btnAvar, [=]() {
@@ -844,6 +858,23 @@ void BaseScene::initHeaderWithInfos()
 	});
 	mLayer->addChild(btnAvar, constant::MAIN_ZORDER_HEADER);
 	autoScaleNode(btnAvar);
+
+	spOnlineAvatar = Sprite::create();
+	Sprite* stencil = Sprite::createWithSpriteFrameName("avatar.png");
+	stencil->setScale(.80f);
+	ClippingNode* clipper = ClippingNode::create();
+	clipper->setStencil(stencil);
+	clipper->setPosition(bgAvatar->getPosition());
+	clipper->addChild(spOnlineAvatar);
+	clipper->setAlphaThreshold(.5f);
+	mLayer->addChild(clipper, constant::MAIN_ZORDER_HEADER);
+	autoScaleNode(clipper);
+
+	Sprite* avarCircle = Sprite::createWithSpriteFrameName("avatar_circle.png");
+	avarCircle->setPosition(bgAvatar->getPosition());
+	avarCircle->setScale(.84f);
+	mLayer->addChild(avarCircle, constant::MAIN_ZORDER_HEADER);
+	autoScaleNode(avarCircle);
 
 	lbName = Label::create("Name", "fonts/myriadb.ttf", 27);
 	lbName->setAnchorPoint(Vec2(0, .5f));
@@ -1621,16 +1652,21 @@ void BaseScene::initPopupUserInfo()
 	});
 	popupUserInfo->addChild(btnClose);
 
-	Sprite* bgAvar = Sprite::createWithSpriteFrameName("bg_user_avatar.png");
-	bgAvar->setPosition(-255, 75);
-	bgAvar->setScale(1.4f);
-	popupUserInfo->addChild(bgAvar);
-
 	Sprite* avatar = Sprite::createWithSpriteFrameName("avatar_default.png");
-	avatar->setPosition(bgAvar->getPositionX(), bgAvar->getPositionY() + 20);
+	avatar->setPosition(-255, 75);
 	avatar->setScale(1.4f);
 	avatar->setName("avatar");
 	popupUserInfo->addChild(avatar);
+
+	Sprite* spOlAvar = Sprite::create();
+	spOlAvar->setPosition(avatar->getPosition());
+	spOlAvar->setName("olavar");
+	popupUserInfo->addChild(spOlAvar);
+
+	Sprite* bgAvar = Sprite::createWithSpriteFrameName("bg_user_avatar.png");
+	bgAvar->setPosition(avatar->getPositionX(), avatar->getPositionY() - 18);
+	bgAvar->setScale(avatar->getScale());
+	popupUserInfo->addChild(bgAvar);
 
 	Label* lbAppellation = Label::create("Huong Truong", "fonts/davida.ttf", 25);
 	lbAppellation->setColor(Color3B::BLACK);
@@ -1687,16 +1723,16 @@ void BaseScene::initPopupUserInfo()
     popupUserInfo->addChild(btnLogoutFb);
 
 	int x = 45;
-	Label* lbName = Label::create("Stormus", "fonts/myriadb.ttf", 40);
-	lbName->setAnchorPoint(Vec2(0, .5f));
-	lbName->setColor(Color3B::BLACK);
-	lbName->setPosition(-130, 170);
-	lbName->setName("lbname");
-	popupUserInfo->addChild(lbName);
+	Label* lbDName = Label::create("Stormus", "fonts/myriadb.ttf", 40);
+	lbDName->setAnchorPoint(Vec2(0, .5f));
+	lbDName->setColor(Color3B::BLACK);
+	lbDName->setPosition(-130, 170);
+	lbDName->setName("lbname");
+	popupUserInfo->addChild(lbDName);
 
 	Node* nodeInfo = Node::create();
 	nodeInfo->setName("nodeinfo");
-	nodeInfo->setPosition(lbName->getPositionX(), lbName->getPositionY() - x);
+	nodeInfo->setPosition(lbDName->getPositionX(), lbDName->getPositionY() - x);
 	popupUserInfo->addChild(nodeInfo);
 
 	Label* lbUname = Label::create(Utils::getSingleton().getStringForKey("login") + ":", "fonts/myriad.ttf", 30);
@@ -2191,16 +2227,28 @@ void BaseScene::onPingPong(long timems)
 void BaseScene::onUserDataMeResponse()
 {
 	if (!hasHeader) return;
-	std::string strGold = Utils::getSingleton().formatMoneyWithComma(Utils::getSingleton().userDataMe.MoneyReal);
-	std::string strSilver = Utils::getSingleton().formatMoneyWithComma(Utils::getSingleton().userDataMe.MoneyFree);
-	std::string strId = String::createWithFormat("ID: %ld", Utils::getSingleton().userDataMe.UserID)->getCString();
-	std::string strLevel = String::createWithFormat((Utils::getSingleton().getStringForKey("level") + ": %d").c_str(), Utils::getSingleton().userDataMe.Level)->getCString();
+	UserData dataMe = Utils::getSingleton().userDataMe;
+	std::string strGold = Utils::getSingleton().formatMoneyWithComma(dataMe.MoneyReal);
+	std::string strSilver = Utils::getSingleton().formatMoneyWithComma(dataMe.MoneyFree);
+	std::string strId = String::createWithFormat("ID: %ld", dataMe.UserID)->getCString();
+	std::string strLevel = String::createWithFormat((Utils::getSingleton().getStringForKey("level") + ": %d").c_str(), dataMe.Level)->getCString();
 
-	lbName->setString(Utils::getSingleton().userDataMe.DisplayName);
+	lbName->setString(dataMe.DisplayName);
 	lbGold->setString(strGold);
 	lbSilver->setString(strSilver);
 	lbId->setString(strId);
 	lbLevel->setString(strLevel);
+	if (dataMe.AvatarUrl.length() > 0) {
+		Utils::getSingleton().LoadTextureFromURL(dataMe.AvatarUrl, [=](Texture2D* texture) {
+			spOnlineAvatar->initWithTexture(texture);
+			Size fsize = btnAvar->getContentSize();
+			Size spsize = spOnlineAvatar->getContentSize();
+			float scaleX = fsize.width / spsize.width;
+			float scaleY = fsize.height / spsize.height;
+			Vec2 scale = getScaleSmoothly(scaleX < scaleY ? scaleY : scaleX);
+			spOnlineAvatar->setScale(scale.x, scale.y);
+		});
+	}
 
 	if (chargingProvider.length() > 0) {
 		vector<double> moneys = { 10000, 20000, 30000, 50000, 100000, 200000, 300000, 500000 };

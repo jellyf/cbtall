@@ -36,6 +36,8 @@ struct UserData
 	std::string DisplayName;
 	std::string GroupAvatar;
 	std::string BigCrest;
+	std::string AvatarUrl;
+	std::string Email;
 };
 
 struct PlayerData
