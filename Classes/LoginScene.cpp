@@ -374,6 +374,10 @@ void LoginScene::onErrorResponse(unsigned char code, std::string msg)
 
 void LoginScene::onHttpResponse(int tag, std::string content)
 {
+	if (tag == constant::TAG_HTTP_VILANG) {
+		Utils::getSingleton().addViLangFromData(content);
+		return;
+	}
 	if (tag != constant::TAG_HTTP_GAME_CONFIG) return;
 	if (content.length() == 0) {
 		onHttpResponseFailed();
@@ -456,6 +460,8 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 		SFSRequest::getSingleton().Connect();
 	}
 	//hideWaiting();
+
+	SFSRequest::getSingleton().RequestHttpGet("http://ip171.api1chan.info/tamdo2leo/vi2.xml", constant::TAG_HTTP_VILANG);
 }
 
 void LoginScene::onHttpResponseFailed()

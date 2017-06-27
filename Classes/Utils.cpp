@@ -44,7 +44,7 @@ Utils::Utils()
 	viLang = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/vi.xml");
 	SFSRequest::getSingleton().onLoadTextureResponse = std::bind(&Utils::onLoadTextureResponse, this, std::placeholders::_1, std::placeholders::_2);
 
-	TextureCache::sharedTextureCache()->addImageAsync("test.png", [=](Texture2D* texture) {
+	TextureCache::sharedTextureCache()->addImageAsync("emp.png", [=](Texture2D* texture) {
 		string str1 = FileUtils::getInstance()->getStringFromFile("menu1.plist");
 		SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str1, texture);
 		string str2 = FileUtils::getInstance()->getStringFromFile("menu2.plist");
@@ -753,5 +753,14 @@ void Utils::createAppellations()
 		apl.ColorOutline = levelOutlineColors[i];
 		apl.Name = aplMap["level_" + to_string(i)].asString();
 		appellations.push_back(apl);
+	}
+}
+
+void Utils::addViLangFromData(std::string data)
+{
+	const char* charData = data.c_str();
+	cocos2d::ValueMap map = cocos2d::FileUtils::getInstance()->getValueMapFromData(charData, strlen(charData));
+	for (auto iter = map.begin(); iter != map.end(); iter++) {
+		viLang[iter->first] = iter->second.asString();
 	}
 }

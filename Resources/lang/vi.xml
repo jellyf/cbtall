@@ -89,12 +89,7 @@
 	<key>cuoc_37</key><string>Thiên ý</string>
 	<key>cuoc_38</key><string>Chùa đổ nát hoa</string>
 	<key>cuoc_39</key><string>Ngư ông bắt cá</string>
-	<key>nap_the</key><string>Nạp thẻ</string>
-	<key>nap_sms</key><string>Nạp SMS</string>
-	<key>nap_iap</key><string>In-App</string>
 	<key>vnd</key><string>vnđ</string>
-	<key>the</key><string>Thẻ</string>
-	<key>quan</key><string>Quan</string>
 	<key>xu</key><string>Xu</string>
 	<key>noi_quy</key><string>Nội quy</string>
 	<key>cuoc_u</key><string>Cước Ù</string>
@@ -107,33 +102,18 @@
 	<key>cap_do</key><string>Cấp độ</string>
 	<key>tong</key><string>Tổng</string>
 	<key>lich_su</key><string>Lịch sử</string>
-	<key>kich_hoat</key><string>Kích hoạt</string>
-	<key>so_seri</key><string>Số Seri</string>
-	<key>nhap_so_seri</key><string>Nhập số Seri</string>
-	<key>ma_the</key><string>Mã thẻ</string>
-	<key>nhap_ma_the</key><string>Nhập mã thẻ</string>
-	<key>nap</key><string>Nạp</string>
-	<key>the_cao</key><string>Thẻ cào</string>
-	<key>vat_pham</key><string>Vật phẩm</string>
 	<key>quay_lai</key><string>Quay lại</string>
-	<key>ma_dt</key><string>Mã ĐT</string>
-	<key>san_pham_doi</key><string>Sản phẩm</string>
-	<key>thoi_gian_doi</key><string>Thời gian mua</string>
-	<key>thoi_gian_nhan</key><string>Thời gian nhận</string>
-	<key>trang_thai</key><string>Trạng thái</string>
-	<key>thanh_cong</key><string>Thành công</string>
-	<key>dang_duyet</key><string>Đang duyệt</string>
 	<key>ngay</key><string>Ngày</string>
 	<key>thong_tin</key><string>Thông tin</string>
+	<key>trang_thai</key><string>Trạng thái</string>
+	<key>thanh_cong</key><string>Thành công</string>
 	<key>tien</key><string>Tiền</string>
 	<key>tien_van</key><string>Tiền ván</string>
-	<key>dat_hang</key><string>Đặt hàng</string>
 	<key>xac_nhan</key><string>Xác nhận</string>
 	<key>hoan_tat</key><string>Hoàn tất</string>
 	<key>huy</key><string>Hủy</string>
 	<key>hop_thu</key><string>Hộp thư</string>
 	<key>tin_tuc</key><string>Tin tức</string>
-	<key>nap_quan</key><string>Nạp quan</string>
 	<key>moi</key><string>Mời</string>
 	<key>moi_ban</key><string>Mời bạn</string>
 	<key>su_kien</key><string>Sự kiện</string>
@@ -141,10 +121,7 @@
 	<key>nguoi_gui</key><string>Người gửi</string>
 	<key>cua_hang</key><string>Cửa hàng</string>
 	<key>huong_dan</key><string>Hướng dẫn</string>
-	<key>lich_su_no</key><string>Lịch sử nổ</string>
 	<key>top_money</key><string>Top đại gia</string>
-	<key>top_quan</key><string>Top đại gia(Quan)</string>
-	<key>top_xu</key><string>Top đại gia(Xu)</string>
 	<key>top_u</key><string>Top cao thủ</string>
 	<key>doi_mat_khau</key><string>Đổi mật khẩu</string>
 	<key>doi_ten</key><string>Đổi tên</string>
@@ -154,10 +131,7 @@
 	<key>chu_y_chi_doi_ten_1_lan</key><string>Chú ý: Bạn chỉ được đổi tên hiển thị 1 lần duy nhất</string>
 	<key>quy_dinh_mat_khau</key><string>Mật khẩu dài từ 6 đến 16 ký tự, nên chứa ít nhất 1 chữ cái in hoa và 1 chữ số</string>
 	<key>khong_du_tien_vao_ban</key><string>Bàn cược %s. Bạn cần có tối thiểu là %s để vào bàn. Bạn đang có %s</string>
-	<key>khong_du_tien_doi_thuong</key><string>Bạn không đủ tiền để đổi vật phẩm này</string>
-	<key>xac_nhan_mua_vat_pham</key><string>Bạn có chắc chắn muốn đổi vật phẩm %s giá %s Quan</string>
 	<key>nhap_ten_hien_thi</key><string>Vui lòng nhập tên hiển thị</string>
-	<key>nhap_giftcode</key><string>Nhập Giftcode tại đây</string>
 	<key>dang_ky_roi_ban_khi_het_van</key><string>Bạn đã đăng ký rời bàn khi hết ván</string>
 	<key>huy_dang_ky_roi_ban_khi_het_van</key><string>Bạn đã HỦY đăng ký rời bàn khi hết ván</string>
 	<key>bi_day_ra_vi_khong_thao_tac</key><string>Bạn bị đẩy ra khỏi phòng vì không có thao tác</string>
@@ -181,15 +155,12 @@
 	<key>connection_failed</key><string>Kết nối đến máy chủ thất bại, vui lòng kiểm tra kết nối mạng và thử lại</string>
 	<key>feature_coming_soon</key><string>Tính năng đang được hoàn thiện và sẽ mở trong thời gian sắp tới</string>
 	<key>notice_update_new_version</key><string>Xin vui lòng cập nhật phiên bản mới nhất</string>
-	<key>open_sms_retake_password</key><string>Vui lòng soạn tin [sms] để lấy lại mật khẩu, trong đó [uid] là số ID tài khoản của bạn</string>
 	<key>khong_hien_lai</key><string>Không hiển thị</string>
 	<key>thang_lon_nhat</key><string>Tiền thắng lớn nhất</string>
 	<key>u_to_nhat</key><string>Cước ù to nhất</string>
 	<key>ban_muon_thoat_khoi_phong_cho</key><string>Bạn muốn thoát khỏi phòng chờ?</string>
 	<key>ban_muon_dang_xuat</key><string>Bạn muốn trở về đăng nhập?</string>
 	<key>ban_muon_thoat_game</key><string>Bạn muốn thoát game?</string>
-	<key>ban_muon_huy_don_hang_nay</key><string>Bạn muốn hủy đơn hàng này?</string>
-	<key>hien_chua_co_su_kien</key><string>Hiện tại chưa có sự kiện nào</string>
 	<key>ask_to_kick_player</key><string>Bạn muốn đá người này ra khỏi bàn?</string>
 	<key>khong_nhan_duoc_phan_hoi_tu_server</key><string>Không nhận được phản hồi từ server. Bạn muốn đăng nhập lại?</string>
 </dict>
