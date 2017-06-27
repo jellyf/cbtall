@@ -8,15 +8,15 @@ bool UserNode::init()
 		return false;
 	}
 
+	spAvatar = Sprite::createWithSpriteFrameName("avatar_default.png");
+	addChild(spAvatar);
+
+	spOnlineAvatar = Sprite::create();
+	addChild(spOnlineAvatar);
+
 	Sprite* bg = Sprite::createWithSpriteFrameName("bg_avatar.png");
 	bg->setPosition(0, -3);
 	addChild(bg);
-
-	Sprite* avatar = Sprite::createWithSpriteFrameName("avatar_default.png");
-	addChild(avatar);
-
-	/*Sprite* mask = Sprite::createWithSpriteFrameName("mask_avar.png");
-	addChild(mask);*/
 
 	lbName = Label::createWithTTF("Stormus", "fonts/myriad.ttf", 30);
 	lbName->setHorizontalAlignment(TextHAlignment::CENTER);
@@ -67,6 +67,20 @@ void UserNode::setPlayerMoney(double money)
 void UserNode::setSfsId(long id)
 {
 	sfsId = id;
+}
+
+void UserNode::setAvatarUrl(std::string avarUrl)
+{
+	if (avarUrl.length() > 0) {
+		Utils::getSingleton().LoadTextureFromURL(avarUrl, [=](Texture2D* texture) {
+			spOnlineAvatar->initWithTexture(texture);
+			Size fsize = spAvatar->getContentSize();
+			Size spsize = spOnlineAvatar->getContentSize();
+			float scaleX = fsize.width / spsize.width;
+			float scaleY = fsize.height / spsize.height;
+			spOnlineAvatar->setScale((scaleX < scaleY ? scaleY : scaleX) + .05f);
+		});
+	}
 }
 
 std::string UserNode::getPlayerName()

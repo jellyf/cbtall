@@ -12,6 +12,7 @@ public:
 	void setPlayerName(std::string name);
 	void setPlayerMoney(double money);
 	void setSfsId(long id);
+	void setAvatarUrl(std::string avarUrl);
 	std::string getPlayerName();
 	double getPlayerMoney();
 	long getSfsId();
@@ -21,5 +22,7 @@ private:
 	std::string fullName;
 	cocos2d::Label* lbName;
 	cocos2d::Label* lbMoney;
+	cocos2d::Sprite* spAvatar;
+	cocos2d::Sprite* spOnlineAvatar;
 };
 
