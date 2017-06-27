@@ -326,7 +326,7 @@ bool MainScene::onKeyBack()
 {
 	bool canBack = BaseScene::onKeyBack();
 	if (canBack) {
-		if (nodeWebview->isVisible()) {
+		if (nodeWebview != nullptr && nodeWebview->isVisible()) {
 			nodeWebview->setVisible(false);
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 			experimental::ui::WebView* webView = (experimental::ui::WebView*)nodeWebview->getChildByName("webview");
