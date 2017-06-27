@@ -25,10 +25,12 @@ void MainScene::onInit()
 	}
 
 	std::vector<Vec2> vecZonePos;
-	int numbOfZoneBtns = 5;
-	dx = winSize.width / numbOfZoneBtns;
+	int numbOfZoneBtns = 4;
+	int padding = 200 * pow(scaleScene.x, 5);
+	float scaleZone = 1 / scaleScene.x;
+	dx = (winSize.width - padding) / numbOfZoneBtns;
 	for (int i = 0; i < numbOfZoneBtns; i++) {
-		vecZonePos.push_back(Vec2(dx / 2 + i * dx, winSize.height / 2));
+		vecZonePos.push_back(Vec2(dx / 2 + padding / 2 + i * dx, winSize.height / 2));
 	}
 
 	initHeaderWithInfos();
@@ -161,6 +163,7 @@ void MainScene::onInit()
 	circleNewMail->setScale(.7f);
 	circleNewMail->setVisible(false);
 	mLayer->addChild(circleNewMail);
+	autoScaleNode(circleNewMail);
 
 	lbNewMail = Label::create("", "fonts/myriad.ttf", 25);
 	lbNewMail->setPosition(circleNewMail->getContentSize().width / 2 - 4, circleNewMail->getContentSize().height / 2);
@@ -198,7 +201,7 @@ void MainScene::onInit()
 
 	ui::Button* btnNhaTranh = ui::Button::create("nha_tranh.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnNhaTranh->setPosition(vecZonePos[0]);
-	//btnNhaTranh->setScale(.95f);
+	btnNhaTranh->setScale(scaleZone);
 	addTouchEventListener(btnNhaTranh, [=]() {
 		if (isWaiting) return;
 		showWaiting();
@@ -211,7 +214,7 @@ void MainScene::onInit()
 
 	ui::Button* btnDinhLang = ui::Button::create("dinhlang.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnDinhLang->setPosition(vecZonePos[1]);
-	//btnDinhLang->setScale(.95f);
+	btnDinhLang->setScale(scaleZone);
 	addTouchEventListener(btnDinhLang, [=]() {
 		if (isWaiting) return;
 		showWaiting();
@@ -224,7 +227,7 @@ void MainScene::onInit()
 
 	ui::Button* btnPhuChua = ui::Button::create("phuchua.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnPhuChua->setPosition(vecZonePos[2]);
-	//btnPhuChua->setScale(.95f);
+	btnPhuChua->setScale(scaleZone);
 	addTouchEventListener(btnPhuChua, [=]() {
 		if (isWaiting) return;
 		showWaiting();
@@ -237,7 +240,7 @@ void MainScene::onInit()
 
 	ui::Button* btnLoiDai = ui::Button::create("dtd.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnLoiDai->setPosition(vecZonePos[3]);
-	//btnLoiDai->setScale(.95f);
+	btnLoiDai->setScale(scaleZone);
 	addTouchEventListener(btnLoiDai, [=]() {
 		if (isWaiting) return;
 		showWaiting();
@@ -248,19 +251,19 @@ void MainScene::onInit()
 	mLayer->addChild(btnLoiDai);
 	autoScaleNode(btnLoiDai);
 
-	ui::Button* btnGiaiDau = ui::Button::create("giaidau.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnGiaiDau->setPosition(vecZonePos[4]);
-	//btnGiaiDau->setScale(.95f);
-	addTouchEventListener(btnGiaiDau, [=]() {
-		/*if (isWaiting) return;
-		showWaiting();
-		tmpZoneId = 4;
-		isGoToLobby = true;
-		SFSRequest::getSingleton().Disconnect();*/
-		showPopupNotice(Utils::getSingleton().getStringForKey("feature_coming_soon"), [=] {});
-	});
-	mLayer->addChild(btnGiaiDau);
-	autoScaleNode(btnGiaiDau);
+	//ui::Button* btnGiaiDau = ui::Button::create("giaidau.png", "", "", ui::Widget::TextureResType::PLIST);
+	//btnGiaiDau->setPosition(vecZonePos[4]);
+	////btnGiaiDau->setScale(.95f);
+	//addTouchEventListener(btnGiaiDau, [=]() {
+	//	/*if (isWaiting) return;
+	//	showWaiting();
+	//	tmpZoneId = 4;
+	//	isGoToLobby = true;
+	//	SFSRequest::getSingleton().Disconnect();*/
+	//	showPopupNotice(Utils::getSingleton().getStringForKey("feature_coming_soon"), [=] {});
+	//});
+	//mLayer->addChild(btnGiaiDau);
+	//autoScaleNode(btnGiaiDau);
 
 	initEventView(Vec2(0, winSize.height - 125), Size(winSize.width, 40));
 
