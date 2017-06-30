@@ -38,6 +38,7 @@ public:
 	bool ispmE();
 	bool isSoloGame();
 	bool isTourGame();
+	void onHttpResponse(int tag, std::string content);
 	void setPmEByLogin(bool pme);
 	void split(const std::string &s, char delim, std::vector<std::string> &elems);
 	void replaceScene(cocos2d::Scene* scene);
@@ -70,6 +71,7 @@ public:
 	void inviteFacebookFriends();
 	void createAppellations();
 	void addViLangFromData(std::string data);
+	void requestViLangData();
 public:
 	cocos2d::Scene* currentScene;
 	UserData userDataMe;
@@ -106,6 +108,7 @@ public:
 	bool IgnoreInvitation;
 	bool allowEventPopup;
 	bool hasShowEventPopup;
+	bool isViLangReady;
 private:
 	cocos2d::ValueMap viLang;
 	std::vector<AppellationData> appellations;

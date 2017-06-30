@@ -82,9 +82,10 @@ protected:
 	void addBtnChoosePage(int x, int y, cocos2d::Node* node, std::function<void(int)> funcPage);
 	void setSplashZOrder(int zorder);
     void autoScaleNode(cocos2d::Node* node);
-    void delayFunction(Node* node, float time, std::function<void()> func);
+	void delayFunction(Node* node, float time, std::function<void()> func);
 
 	cocos2d::Node* createPopup(std::string stitle, bool isBig, bool isHidden, cocos2d::Size bgsize = cocos2d::Size(0, 0));
+	cocos2d::Node* createPopupChooseProvider(std::string stitle, std::vector<std::string> providers, std::function<void(std::string provider)> funcCallback);
 	cocos2d::Node* createPopupDetail();
 	cocos2d::Node* createPopupNotice();
 	cocos2d::Node* getPopupNotice();

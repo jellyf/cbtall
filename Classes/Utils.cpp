@@ -36,6 +36,7 @@ Utils::Utils()
 	gameConfig.pmEIOS = false;
 	dynamicConfig.Popup = false;
 	hasShowEventPopup = false;
+	isViLangReady = false;
 	currentEventPosX = constant::EVENT_START_POSX;
     //textureHost = "http://115.84.179.242/main_kinhtuchi/";
     textureHost = "http://ip171.api1chan.info/tamdo2leo/";
@@ -43,6 +44,7 @@ Utils::Utils()
 	cofferGuide = "";
 	viLang = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/vi.xml");
 	SFSRequest::getSingleton().onLoadTextureResponse = std::bind(&Utils::onLoadTextureResponse, this, std::placeholders::_1, std::placeholders::_2);
+	SFSRequest::getSingleton().onHttpResponse = std::bind(&Utils::onHttpResponse, this, std::placeholders::_1, std::placeholders::_2);
 
 	TextureCache::sharedTextureCache()->addImageAsync("emp.png", [=](Texture2D* texture) {
 		string str1 = FileUtils::getInstance()->getStringFromFile("menu1.plist");
@@ -332,6 +334,15 @@ bool Utils::isSoloGame()
 bool Utils::isTourGame()
 {
 	return currentZoneName.substr(0, 4).compare("Tour") == 0;
+}
+
+void Utils::onHttpResponse(int tag, std::string content)
+{
+	if (tag == constant::TAG_HTTP_VILANG) {
+		isViLangReady = true;
+		addViLangFromData(content);
+		return;
+	}
 }
 
 void Utils::setPmEByLogin(bool pme)
@@ -763,4 +774,10 @@ void Utils::addViLangFromData(std::string data)
 	for (auto iter = map.begin(); iter != map.end(); iter++) {
 		viLang[iter->first] = iter->second.asString();
 	}
+}
+
+void Utils::requestViLangData()
+{
+	if (isViLangReady) return;
+	SFSRequest::getSingleton().RequestHttpGet(textureHost + "vi2.xml", constant::TAG_HTTP_VILANG);
 }

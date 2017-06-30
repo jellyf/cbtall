@@ -2,9 +2,9 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>chat_0</key><string>Chào cả nhà!</string>
-	<key>chat_1</key><string>Chào các bạn, cho xin chân nhé!</string>
-	<key>chat_2</key><string>Xin lỗi! Mình có việc bận. Lúc khác chiến tiếp nhé</string>
+	<key>chat_0</key><string>Đánh nhanh nào</string>
+	<key>chat_1</key><string>Chào cả nhà!</string>
+	<key>chat_2</key><string>Chào các bạn, cho xin chân nhé!</string>
 	<key>chat_3</key><string>Hết ván mình nghỉ, hẹn cả nhà lúc khác nhé</string>
 	<key>chat_4</key><string>Hiện tại mình không tiện nói chuyện, các bạn thông cảm</string>
 	<key>chat_5</key><string>Gà to quá! Thịt thôi làng nước ơi</string>
@@ -16,7 +16,7 @@
 	<key>chat_11</key><string>Bị đè mới đau chứ!</string>
 	<key>chat_12</key><string>Thần tài gõ cửa rồi</string>
 	<key>chat_13</key><string>Đen vãi, làng nước ơi!</string>
-	<key>chat_14</key><string>Đánh nhanh nào</string>
+	<key>chat_14</key><string>Xin lỗi! Mình có việc bận. Lúc khác chiến tiếp nhé</string>
 	<key>chat_15</key><string>Xin lỗi! Đời quá đen</string>
 	<key>chat_16</key><string>Thần rùa xuất hiện haha</string>
 	<key>chat_17</key><string>Từ từ rồi khoai sẽ nhừ</string>

@@ -119,20 +119,6 @@ void SFSRequest::RequestChargeCard(std::string code, std::string seri, std::stri
 {
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
 	boost::shared_ptr<ByteArray> data = boost::shared_ptr<ByteArray>(new ByteArray());
-
-	/*boost::shared_ptr<ByteArray> data1 = boost::shared_ptr<ByteArray>(new ByteArray());
-	boost::shared_ptr<ByteArray> data2 = boost::shared_ptr<ByteArray>(new ByteArray());
-	boost::shared_ptr<ByteArray> data3 = boost::shared_ptr<ByteArray>(new ByteArray());
-	data1->WriteUTF(code);
-	data2->WriteUTF(seri);
-	data3->WriteUTF(serviceId);
-	data->WriteShort(data1->Length());
-	data->WriteBytes(data1->Bytes());
-	data->WriteShort(data2->Length());
-	data->WriteBytes(data2->Bytes());
-	data->WriteShort(data3->Length());
-	data->WriteBytes(data3->Bytes());*/
-
 	data->WriteUTF(code);
 	data->WriteUTF(seri);
 	data->WriteUTF(serviceId);
