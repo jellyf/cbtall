@@ -1234,7 +1234,7 @@ void MainScene::initPopupCharge()
 		btnProvider->setName(strProviders[i-1]);
 		addTouchEventListener(btnProvider, [=]() {
 			if (btnProvider->getTag() == 1) return;
-			onChooseProvider(strProviders[i - 1]);
+			onChooseProvider(btnProvider->getName());
 		});
 		scrollProvider->addChild(btnProvider);
 		xp += 190;
@@ -1410,8 +1410,8 @@ void MainScene::initPopupCharge()
 					showWaiting();
 					chargingProvider = chosenProvider;
 				});
-				showPopup(popupChooseCard);
 			}
+			showPopup(popupChooseCard);
 		} else {
 			SFSRequest::getSingleton().RequestChargeCard(code, seri, chosenProvider, moneyType);
 			tfCode->setText("");
@@ -1486,10 +1486,10 @@ void MainScene::initPopupCharge()
 			addTouchEventListener(btnItemSms, [=]() {
 				if (strProviders.size() == 0) return;
 				std::vector<std::string> smsProviders;
-				for (int j = 0; j < strProviders.size(); j++) {
-					if (strProviders[j].compare("viettel") == 0
-						|| strProviders[j].compare("mobifone") == 0
-						|| strProviders[j].compare("vinaphone") == 0) {
+				for (int j = 1; j <= strProviders.size(); j++) {
+					if (strProviders[j-1].compare("viettel") == 0
+						|| strProviders[j-1].compare("mobifone") == 0
+						|| strProviders[j-1].compare("vinaphone") == 0) {
 						smsProviders.push_back(strProviders[j]);
 					}
 				}
@@ -1500,8 +1500,8 @@ void MainScene::initPopupCharge()
 							Utils::getSingleton().openSMS(lbItemSms4->getString(), lbItemSms3->getString());
 							Tracker::getSingleton().trackPurchaseSuccess("ClickSMS", chosenProvider, "VND", moneys[i] * 1000);
 						});
-						showPopup(popupChooseSms);
 					}
+					showPopup(popupChooseSms);
 				} else {
 					Utils::getSingleton().openSMS(lbItemSms4->getString(), lbItemSms3->getString());
 					Tracker::getSingleton().trackPurchaseSuccess("ClickSMS", chosenProvider, "VND", moneys[i] * 1000);
@@ -2018,20 +2018,18 @@ void MainScene::checkProviderToCharge()
 {
 	int btnIndex = -1;
 	Node* scrollProvider = popupCharge->getChildByName("scrollprovider");
-	for (int i = 4; i <= strProviders.size(); i++) {
-		Node* btni = scrollProvider->getChildByName(strProviders[i - 1]);
-		if (btni->getTag() == 1) {
-			chosenProvider = "";
-			/*Node* btn1 = scrollProvider->getChildByName("btn1");
-			btn1->setTag(1);
-			btn1->setColor(Color3B::WHITE);
-			btn1->getChildByTag(1)->setVisible(true);
-			btnIndex = 1;*/
+	for (int i = 1; i <= strProviders.size(); i++) {
+		string btnName = strProviders[i - 1];
+		Node* btni = scrollProvider->getChildByName(btnName);
+		if (btnName.compare("viettel") != 0
+			&& btnName.compare("mobifone") != 0 && btnName.compare("vinaphone") != 0) {
+			if (btni->getTag() == 1) {
+				chosenProvider = "";
+			}
+			btni->setVisible(false);
+			btni->setTag(0);
+			btni->getChildByTag(1)->setVisible(false);
 		}
-		btni->setVisible(false);
-		btni->setTag(0);
-		//btni->setColor(Color3B::GRAY);
-		btni->getChildByTag(1)->setVisible(false);
 	}
 }
 
@@ -2049,16 +2047,8 @@ void MainScene::updateChargeRateCard(bool isQuan)
 void MainScene::updateSmsInfo(bool isQuan)
 {
 	Node* scrollProvider = popupCharge->getChildByName("scrollprovider");
-	int btnIndex = 0;
-	for (int j = 1; j <= strProviders.size(); j++) {
-		string strj = to_string(j);
-		ui::Button* btn = (ui::Button*)scrollProvider->getChildByName(strProviders[j - 1]);
-		if (btn->getTag() == 1) {
-			btnIndex = j;
-			break;
-		}
-	}
-	string smsct = btnIndex == 1 ? Utils::getSingleton().gameConfig.smsVT : Utils::getSingleton().gameConfig.smsVNPVMS;
+	bool isViettel = chosenProvider.compare("viettel") == 0;
+	string smsct = isViettel ? Utils::getSingleton().gameConfig.smsVT : Utils::getSingleton().gameConfig.smsVNPVMS;
 	int strid = smsct.find_last_of(' ');
 	string smstg = smsct.substr(strid + 1, smsct.length() - strid);
 	smsct = smsct.substr(0, strid);
@@ -2087,7 +2077,7 @@ void MainScene::onChooseProvider(std::string provider)
 	if (chosenProvider.compare(provider) == 0) return;
 	Node* scrollProvider = popupCharge->getChildByName("scrollprovider");
 	Node *lastBtn = nullptr, *curBtn;
-	for (int i = 1; i < strProviders.size(); i++) {
+	for (int i = 1; i <= strProviders.size(); i++) {
 		std::string btnName = strProviders[i - 1];
 		if (chosenProvider.compare(btnName) == 0) {
 			lastBtn = scrollProvider->getChildByName(btnName);
