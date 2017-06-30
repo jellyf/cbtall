@@ -1490,7 +1490,7 @@ void MainScene::initPopupCharge()
 					if (strProviders[j-1].compare("viettel") == 0
 						|| strProviders[j-1].compare("mobifone") == 0
 						|| strProviders[j-1].compare("vinaphone") == 0) {
-						smsProviders.push_back(strProviders[j]);
+						smsProviders.push_back(strProviders[j-1]);
 					}
 				}
 				if (chosenProvider.length() == 0) {
