@@ -997,6 +997,7 @@ void BaseScene::initHeaderWithInfos()
 	if (Utils::getSingleton().userDataMe.UserID > 0) {
 		onUserDataMeResponse();
 	}
+	loadOnlineAvatar();
 
 	if (!ispmE) {
 		chosenBg->setOpacity(0);
@@ -2325,17 +2326,6 @@ void BaseScene::onUserDataMeResponse()
 	lbSilver->setString(strSilver);
 	lbId->setString(strId);
 	lbLevel->setString(strLevel);
-	if (dataMe.AvatarUrl.length() > 0) {
-		Utils::getSingleton().LoadTextureFromURL(dataMe.AvatarUrl, [=](Texture2D* texture) {
-			spOnlineAvatar->initWithTexture(texture);
-			Size fsize = btnAvar->getContentSize();
-			Size spsize = spOnlineAvatar->getContentSize();
-			float scaleX = fsize.width / spsize.width;
-			float scaleY = fsize.height / spsize.height;
-			Vec2 scale = getScaleSmoothly(scaleX < scaleY ? scaleY : scaleX);
-			spOnlineAvatar->setScale(scale.x, scale.y);
-		});
-	}
 
 	if (chargingProvider.length() > 0) {
 		vector<double> moneys = { 10000, 20000, 30000, 50000, 100000, 200000, 300000, 500000 };
@@ -2776,4 +2766,20 @@ void BaseScene::delayFunction(Node * node, float time, std::function<void()> fun
     DelayTime* delay = DelayTime::create(time);
     CallFunc* callfunc = CallFunc::create(func);
     node->runAction(Sequence::create(delay, callfunc, nullptr));
+}
+
+void BaseScene::loadOnlineAvatar()
+{
+	UserData dataMe = Utils::getSingleton().userDataMe;
+	if (dataMe.AvatarUrl.length() > 0) {
+		Utils::getSingleton().LoadTextureFromURL(dataMe.AvatarUrl, [=](Texture2D* texture) {
+			spOnlineAvatar->initWithTexture(texture);
+			Size fsize = btnAvar->getContentSize();
+			Size spsize = spOnlineAvatar->getContentSize();
+			float scaleX = fsize.width / spsize.width;
+			float scaleY = fsize.height / spsize.height;
+			Vec2 scale = getScaleSmoothly(scaleX < scaleY ? scaleY : scaleX);
+			spOnlineAvatar->setScale(scale.x, scale.y);
+		});
+	}
 }

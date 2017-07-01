@@ -93,6 +93,8 @@ public:
 	std::string textureHost;
 	std::string cofferGuide;
 	std::string feedbackUrl;
+	std::string chosenProviderCard = "";
+	std::string chosenProviderSms = "";
 	double timeStartReconnect;
 	long cofferMoney;
 	long currentZonePort;

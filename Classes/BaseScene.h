@@ -83,6 +83,7 @@ protected:
 	void setSplashZOrder(int zorder);
     void autoScaleNode(cocos2d::Node* node);
 	void delayFunction(Node* node, float time, std::function<void()> func);
+	void loadOnlineAvatar();
 
 	cocos2d::Node* createPopup(std::string stitle, bool isBig, bool isHidden, cocos2d::Size bgsize = cocos2d::Size(0, 0));
 	cocos2d::Node* createPopupChooseProvider(std::string stitle, std::vector<std::string> providers, std::function<void(std::string provider)> funcCallback);
