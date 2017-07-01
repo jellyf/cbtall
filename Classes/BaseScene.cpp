@@ -666,6 +666,9 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 	iconSilver->setPosition(lbXu->getPosition() + Vec2(lbXu->getContentSize().width + 20, 5));
 	nodeInfo->setPosition(isMe ? lbDName->getPosition() - Vec2(0, 45) : lbDName->getPosition() + Vec2(0, 20));
 
+	if (data.UserID == Utils::getSingleton().userDataMe.UserID) {
+		data.AvatarUrl = Utils::getSingleton().userDataMe.AvatarUrl;
+	}
 	if (data.AvatarUrl.length() > 0) {
 		Utils::getSingleton().LoadTextureFromURL(data.AvatarUrl, [=](Texture2D* texture) {
 			spOlAvar->initWithTexture(texture);

@@ -1942,6 +1942,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 						btnCancelReady->setVisible(player.Ready);
 					}
 					isMeHost = player.Index == 0;
+					vecUsers[index]->setAvatarUrl(Utils::getSingleton().userDataMe.AvatarUrl);
 				}
 			}
 		}
