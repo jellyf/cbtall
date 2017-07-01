@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "600091456418",
-    "firebase_url": "https://kinh-tu-chi.firebaseio.com",
-    "project_id": "kinh-tu-chi",
-    "storage_bucket": "kinh-tu-chi.appspot.com"
+    "project_number": "1062076964421",
+    "firebase_url": "https://do-2-leo.firebaseio.com",
+    "project_id": "do-2-leo",
+    "storage_bucket": "do-2-leo.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:600091456418:android:1980c7331eacf25f",
+        "mobilesdk_app_id": "1:1062076964421:android:a33f7a59aae4b3d7",
         "android_client_info": {
-          "package_name": "com.chan.kinhtuchi"
+          "package_name": "com.chan.tamdohaileo"
         }
       },
       "oauth_client": [
         {
-          "client_id": "600091456418-ev5lvu5h63jcalu8f6g4bva1em63n2jd.apps.googleusercontent.com",
+          "client_id": "1062076964421-f6cb0klpaft4sajikk1ofb56d0ftl191.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCDlI0P0hOy8OXGFGiHLkvbqI5mFoBoa9U"
+          "current_key": "AIzaSyCKeP2z1QxGUvyh_Ss5Bim1LH6UyNlv3Ok"
         }
       ],
       "services": {
