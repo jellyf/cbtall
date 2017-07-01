@@ -94,23 +94,11 @@ void MainScene::onInit()
 	btnCharge->setPosition(vecMenuPos[3]);
 	addTouchEventListener(btnCharge, [=]() {
 		if (pmE) {
-			if (chosenProviderCard.length() == 0) {
-				if (popupChooseCard == NULL) {
-					popupChooseCard = createPopupChooseProvider("title_chonthe.png", strProviders, [=](string provider) {
-						chosenProviderCard = provider;
-						if (popupCharge == nullptr) {
-							initPopupCharge();
-						}
-						showPopup(popupCharge);
-					});
-				}
-				showPopup(popupChooseCard);
-			} else {
-				if (popupCharge == nullptr) {
-					initPopupCharge();
-				}
-				showPopup(popupCharge);
+			chosenProviderCard = "viettel";
+			if (popupCharge == nullptr) {
+				initPopupCharge();
 			}
+			showPopup(popupCharge);
 		} else {
 			if (popupIAP == nullptr) {
 				initPopupIAP();
@@ -1233,17 +1221,13 @@ void MainScene::initPopupCharge()
 					chosenBtn->setTag(1);
 					chosenBtn->getChildByTag(1)->setVisible(true);
 				}
-				if (chosenProviderSms.length() == 0) {
-					if (popupChooseSms == NULL) {
-						std::vector<std::string> smsProviders = { "viettel", "mobifone", "vinaphone" };
-						popupChooseSms = createPopupChooseProvider("title_chonsms.png", smsProviders, [=](string provider) {
-							onChooseProviderSms(provider);
-						});
-					}
-					showPopup(popupChooseSms);
-				} else {
-					onChooseProviderSms(chosenProviderSms);
+				if (popupChooseSms == NULL) {
+					std::vector<std::string> smsProviders = { "viettel", "mobifone", "vinaphone" };
+					popupChooseSms = createPopupChooseProvider("title_chonsms.png", smsProviders, [=](string provider) {
+						onChooseProviderSms(provider);
+					});
 				}
+				showPopup(popupChooseSms);
 			} else if(i == 2){
 				scrollProvider->setVisible(false);
 				nodeMoneyType->setPosition(0, 110);
