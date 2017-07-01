@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.chan.tamdohaileo"
-        manifestPlaceholders = [onesignal_app_id: "aeb84e64-5d9f-477e-9d85-5d045a80011a", onesignal_google_project_number: "600091456418"]
+        manifestPlaceholders = [onesignal_app_id: "aeb84e64-5d9f-477e-9d85-5d045a80011a", onesignal_google_project_number: "REMOTE"]
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 1000
