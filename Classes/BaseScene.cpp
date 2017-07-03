@@ -666,6 +666,9 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 	iconSilver->setPosition(lbXu->getPosition() + Vec2(lbXu->getContentSize().width + 20, 5));
 	nodeInfo->setPosition(isMe ? lbDName->getPosition() - Vec2(0, 45) : lbDName->getPosition() + Vec2(0, 20));
 
+	if (data.UserID == Utils::getSingleton().userDataMe.UserID) {
+		data.AvatarUrl = Utils::getSingleton().userDataMe.AvatarUrl;
+	}
 	if (data.AvatarUrl.length() > 0) {
 		Utils::getSingleton().LoadTextureFromURL(data.AvatarUrl, [=](Texture2D* texture) {
 			spOlAvar->initWithTexture(texture);
@@ -997,6 +1000,7 @@ void BaseScene::initHeaderWithInfos()
 	if (Utils::getSingleton().userDataMe.UserID > 0) {
 		onUserDataMeResponse();
 	}
+	loadOnlineAvatar();
 
 	if (!ispmE) {
 		chosenBg->setOpacity(0);
@@ -1217,7 +1221,7 @@ cocos2d::Node * BaseScene::createPopup(std::string stitle, bool isBig, bool isHi
 		}
 		ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("popup_bg.png");
 		bg->setContentSize(bgsize);
-		bg->setInsetLeft(169);
+		bg->setInsetLeft(131);
 		bg->setInsetRight(128);
 		bg->setInsetTop(160);
 		bg->setInsetBottom(160);
@@ -1237,6 +1241,93 @@ cocos2d::Node * BaseScene::createPopup(std::string stitle, bool isBig, bool isHi
 		hidePopup(popup);
 	});
 	popup->addChild(btnClose);
+
+	return popup;
+}
+
+cocos2d::Node * BaseScene::createPopupChooseProvider(std::string stitle, std::vector<std::string> providers, std::function<void(std::string chosenProvider)> funcCallback)
+{
+	if (!isPopupReady) {
+		showWaiting();
+		return nullptr;
+	}
+
+	Node* popup = Node::create();
+	popup->setPosition(winSize.width / 2, winSize.height / 2);
+	popup->setName(providers[0]);
+	popup->setVisible(false);
+	mLayer->addChild(popup, constant::ZORDER_POPUP);
+
+	Size bgsize = Size(718, 473);
+	ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("popup_bg.png");
+	bg->setContentSize(bgsize);
+	bg->setInsetLeft(131);
+	bg->setInsetRight(128);
+	bg->setInsetTop(160);
+	bg->setInsetBottom(160);
+	bg->setName("spbg");
+	popup->addChild(bg);
+
+	Sprite* title = Sprite::createWithSpriteFrameName(stitle);
+	title->setPosition(0, bgsize.height / 2 - 35);
+	title->setName("sptitle");
+	popup->addChild(title);
+
+	ui::Button* btnok = ui::Button::create("btn.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnok->setTitleText(Utils::getSingleton().getStringForKey("xac_nhan"));
+	btnok->setTitleFontName("fonts/myriadb.ttf");
+	btnok->setTitleFontSize(40);
+	btnok->setTitleDeviation(Vec2(0, -5));
+	btnok->setPosition(Vec2(0, -bgsize.height/2 + 20));
+	btnok->setName("btnsubmit");
+	addTouchEventListener(btnok, [=]() {
+		hidePopup(popup);
+		funcCallback(popup->getName()); 
+	});
+	popup->addChild(btnok);
+
+	Node* nodeProvider = Node::create();
+	popup->addChild(nodeProvider);
+
+	int numPerRow = 3;
+	int dx = 200;
+	int dy = 150;
+	int xp = - (numPerRow - 1) * dx / 2;
+	int yp = (providers.size() - 1) / numPerRow * dy / 2;
+	for (int i = 1; i <= providers.size(); i++) {
+		string stri = to_string(i);
+		string strimg = providers[i - 1] + ".png";
+		ui::Button* btnProvider = ui::Button::create(strimg, strimg, "", ui::Widget::TextureResType::PLIST);
+		btnProvider->setPosition(Vec2(xp + ((i-1) % numPerRow) * dx, yp - ((i-1) / numPerRow) * dy));
+		btnProvider->setTag(i == 1 ? 1 : 0);
+		btnProvider->setName("btn" + stri);
+		addTouchEventListener(btnProvider, [=]() {
+			if (btnProvider->getTag() == 1) return;
+			for (int j = 1; j <= providers.size(); j++) {
+				string strj = to_string(j);
+				ui::Button* btn = (ui::Button*)nodeProvider->getChildByName("btn" + strj);
+				if (btn != btnProvider) {
+					btn->setTag(0);
+					btn->getChildByTag(1)->setVisible(false);
+				} else {
+					btn->setTag(1);
+					btn->getChildByTag(1)->setVisible(true);
+					popup->setName(providers[j - 1]);
+				}
+			}
+		});
+		nodeProvider->addChild(btnProvider);
+
+		ui::Scale9Sprite* bgProvider = ui::Scale9Sprite::createWithSpriteFrameName("box8.png");
+		bgProvider->setContentSize(btnProvider->getContentSize() + Size(40, 40));
+		bgProvider->setPosition(btnProvider->getContentSize().width / 2, btnProvider->getContentSize().height / 2);
+		bgProvider->setTag(1);
+		btnProvider->addChild(bgProvider, -1);
+
+		if (i > 1) {
+			bgProvider->setVisible(false);
+		}
+	}
 
 	return popup;
 }
@@ -1584,7 +1675,7 @@ void BaseScene::initPopupSettings()
 	nodeName->addChild(lbNoteName);
 
 	Sprite* bgName = Sprite::createWithSpriteFrameName("input_mathe.png");
-	bgName->setPosition(-135, lbPassRule->getPositionY() - 80);
+	bgName->setPosition(-135, lbNoteName->getPositionY() - 80);
 	nodeName->addChild(bgName);
 
 	tfName->setPosition(bgName->getPosition());
@@ -1635,7 +1726,7 @@ void BaseScene::initPopupUserInfo()
 	Size psize = Size(800, 550);
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("popup_bg.png");
 	bg->setContentSize(psize);
-	bg->setInsetLeft(169);
+	bg->setInsetLeft(131);
 	bg->setInsetRight(128);
 	bg->setInsetTop(160);
 	bg->setInsetBottom(160);
@@ -2238,17 +2329,6 @@ void BaseScene::onUserDataMeResponse()
 	lbSilver->setString(strSilver);
 	lbId->setString(strId);
 	lbLevel->setString(strLevel);
-	if (dataMe.AvatarUrl.length() > 0) {
-		Utils::getSingleton().LoadTextureFromURL(dataMe.AvatarUrl, [=](Texture2D* texture) {
-			spOnlineAvatar->initWithTexture(texture);
-			Size fsize = btnAvar->getContentSize();
-			Size spsize = spOnlineAvatar->getContentSize();
-			float scaleX = fsize.width / spsize.width;
-			float scaleY = fsize.height / spsize.height;
-			Vec2 scale = getScaleSmoothly(scaleX < scaleY ? scaleY : scaleX);
-			spOnlineAvatar->setScale(scale.x, scale.y);
-		});
-	}
 
 	if (chargingProvider.length() > 0) {
 		vector<double> moneys = { 10000, 20000, 30000, 50000, 100000, 200000, 300000, 500000 };
@@ -2689,4 +2769,20 @@ void BaseScene::delayFunction(Node * node, float time, std::function<void()> fun
     DelayTime* delay = DelayTime::create(time);
     CallFunc* callfunc = CallFunc::create(func);
     node->runAction(Sequence::create(delay, callfunc, nullptr));
+}
+
+void BaseScene::loadOnlineAvatar()
+{
+	UserData dataMe = Utils::getSingleton().userDataMe;
+	if (dataMe.AvatarUrl.length() > 0) {
+		Utils::getSingleton().LoadTextureFromURL(dataMe.AvatarUrl, [=](Texture2D* texture) {
+			spOnlineAvatar->initWithTexture(texture);
+			Size fsize = btnAvar->getContentSize();
+			Size spsize = spOnlineAvatar->getContentSize();
+			float scaleX = fsize.width / spsize.width;
+			float scaleY = fsize.height / spsize.height;
+			Vec2 scale = getScaleSmoothly(scaleX < scaleY ? scaleY : scaleX);
+			spOnlineAvatar->setScale(scale.x, scale.y);
+		});
+	}
 }

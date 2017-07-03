@@ -16,6 +16,8 @@ void MainScene::onInit()
 	isChargeQuan = Utils::getSingleton().ispmE();
 	bool pmE = Utils::getSingleton().ispmE();
 	currentMoneyType = Utils::getSingleton().moneyType;
+	chosenProviderCard = Utils::getSingleton().chosenProviderCard;
+	chosenProviderSms = Utils::getSingleton().chosenProviderSms;
 
 	std::vector<Vec2> vecMenuPos;
 	int numbOfMenuBtns = 9;
@@ -94,6 +96,7 @@ void MainScene::onInit()
 	btnCharge->setPosition(vecMenuPos[3]);
 	addTouchEventListener(btnCharge, [=]() {
 		if (pmE) {
+			chosenProviderCard = "viettel";
 			if (popupCharge == nullptr) {
 				initPopupCharge();
 			}
@@ -356,6 +359,8 @@ void MainScene::onConnected()
 
 void MainScene::onConnectionLost(std::string reason)
 {
+	Utils::getSingleton().chosenProviderCard = chosenProviderCard;
+	Utils::getSingleton().chosenProviderSms = chosenProviderSms;
 	if (isBackToLogin) {
 		Utils::getSingleton().goToLoginScene();
 		return;
@@ -1079,6 +1084,7 @@ void MainScene::onFacebookInvite(std::string token)
 
 void MainScene::onDynamicConfigReceived()
 {
+	strProviders = Utils::getSingleton().dynamicConfig.CashValue;
 	if (Utils::getSingleton().allowEventPopup 
 		&& Utils::getSingleton().dynamicConfig.Popup
 		&& !Utils::getSingleton().hasShowEventPopup
@@ -1100,6 +1106,8 @@ void MainScene::onDownloadedPlistTexture(int numb)
 
 void MainScene::onBackScene()
 {
+	Utils::getSingleton().chosenProviderCard = chosenProviderCard;
+	Utils::getSingleton().chosenProviderSms = chosenProviderSms;
 	//showPopupNotice(Utils::getSingleton().getStringForKey("ban_muon_dang_xuat"), [=]() {
 		showWaiting();
 		isBackToLogin = true;
@@ -1116,7 +1124,6 @@ void MainScene::onChangeMoneyType(int type)
 
 void MainScene::initPopupCharge()
 {
-	strProviders = Utils::getSingleton().dynamicConfig.CashValue;
 	bool pmE = Utils::getSingleton().ispmE();
 
 	popupCharge = createPopup("title_naptien.png", true, true);
@@ -1191,19 +1198,39 @@ void MainScene::initPopupCharge()
 			if (i == 0) {
 				scrollProvider->setVisible(true);
 				nodeMoneyType->setPosition(0, -20);
-				for (int i = 1; i <= strProviders.size(); i++) {
-					scrollProvider->getChildByName("btn" + to_string(i))->setVisible(true);
+				for (Node* n : scrollProvider->getChildren()) {
+					n->setTag(0);
+					n->setVisible(true);
+					n->getChildByTag(1)->setVisible(false);
 				}
+				if (chosenProviderCard.length() > 0) {
+					Node* chosenBtn = scrollProvider->getChildByName(chosenProviderCard);
+					chosenBtn->setTag(1);
+					chosenBtn->getChildByTag(1)->setVisible(true);
+				}
+				onChooseProviderCard(chosenProviderCard);
 			} else if (i == 1) {
 				scrollProvider->scrollToLeft(.3f, true);
 				scrollProvider->setVisible(true);
 				nodeMoneyType->setPosition(0, -20);
-				for (int i = 1; i <= 3 && i <= strProviders.size(); i++) {
-					scrollProvider->getChildByName("btn" + to_string(i))->setVisible(true);
+				for (Node* n : scrollProvider->getChildren()) {
+					string name = n->getName();
+					n->setTag(0);
+					n->getChildByTag(1)->setVisible(false);
+					n->setVisible(name.compare("viettel") == 0 || name.compare("mobifone") == 0 || name.compare("vinaphone") == 0);
 				}
-				checkProviderToCharge();
-				ui::CheckBox* cbQuan = (ui::CheckBox*)nodeMoneyType->getChildByTag(0);
-				updateSmsInfo(cbQuan->isSelected());
+				if (chosenProviderSms.length() > 0) {
+					Node* chosenBtn = scrollProvider->getChildByName(chosenProviderSms);
+					chosenBtn->setTag(1);
+					chosenBtn->getChildByTag(1)->setVisible(true);
+				}
+				if (popupChooseSms == NULL) {
+					std::vector<std::string> smsProviders = { "viettel", "mobifone", "vinaphone" };
+					popupChooseSms = createPopupChooseProvider("title_chonsms.png", smsProviders, [=](string provider) {
+						onChooseProviderSms(provider);
+					});
+				}
+				showPopup(popupChooseSms);
 			} else if(i == 2){
 				scrollProvider->setVisible(false);
 				nodeMoneyType->setPosition(0, 110);
@@ -1230,50 +1257,17 @@ void MainScene::initPopupCharge()
 	smsContent = smsContent.substr(0, strIndex);
 	smsContent = Utils::getSingleton().replaceString(smsContent, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
 	for (int i = 1; i <= strProviders.size(); i++) {
-		string stri = to_string(i);
 		string strimg = strProviders[i-1] + ".png";
-
 		ui::Button* btnProvider = ui::Button::create(strimg, strimg, "", ui::Widget::TextureResType::PLIST);
 		btnProvider->setPosition(Vec2(xp, yp));
-		btnProvider->setTag(i == 1 ? 1 : 0);
-		btnProvider->setName("btn" + stri);
+		btnProvider->setTag(0);
+		btnProvider->setName(strProviders[i-1]);
 		addTouchEventListener(btnProvider, [=]() {
 			if (btnProvider->getTag() == 1) return;
-			int btnIndex;
-			int btnIndexLast;
-			for (int j = 1; j <= strProviders.size(); j++) {
-				string strj = to_string(j);
-				ui::Button* btn = (ui::Button*)scrollProvider->getChildByName("btn" + strj);
-				if (btn->getColor() == Color3B::WHITE) {
-					btnIndexLast = j;
-				}
-				if (btn != btnProvider) {
-					btn->setTag(0);
-					btn->setColor(Color3B::GRAY);
-					btn->getChildByTag(1)->setVisible(false);
-				} else {
-					btn->setTag(1);
-					btn->setColor(Color3B::WHITE);
-					btn->getChildByTag(1)->setVisible(true);
-					btnIndex = i;
-				}
-			}
-
-			if (i < strProviders.size() && nodeSms->isVisible()) {
-				ui::CheckBox* cbQuan = (ui::CheckBox*)nodeMoneyType->getChildByTag(0);
-				updateSmsInfo(cbQuan->isSelected());
-			}
-
-			if (i > 3) {
-				tfCode->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
-				tfSeri->setInputMode(ui::EditBox::InputMode::SINGLE_LINE);
+			if (nodeCard->isVisible()) {
+				onChooseProviderCard(btnProvider->getName());
 			} else {
-				if (btnIndexLast > 3) {
-					tfCode->setText("");
-					tfSeri->setText("");
-				}
-				tfCode->setInputMode(ui::EditBox::InputMode::NUMERIC);
-				tfSeri->setInputMode(ui::EditBox::InputMode::NUMERIC);
+				onChooseProviderSms(btnProvider->getName());
 			}
 		});
 		scrollProvider->addChild(btnProvider);
@@ -1282,12 +1276,12 @@ void MainScene::initPopupCharge()
 		ui::Scale9Sprite* bgProvider = ui::Scale9Sprite::createWithSpriteFrameName("box8.png");
 		bgProvider->setContentSize(btnProvider->getContentSize() + Size(40, 70));
 		bgProvider->setPosition(btnProvider->getContentSize().width / 2, btnProvider->getContentSize().height / 2 - 20);
+		bgProvider->setVisible(false);
 		bgProvider->setTag(1);
 		btnProvider->addChild(bgProvider, -1);
 
-		if (i > 1) {
-			btnProvider->setColor(Color3B::GRAY);
-			bgProvider->setVisible(false);
+		if (btnProvider->getName().compare(chosenProviderCard) == 0) {
+			bgProvider->setVisible(true);
 		}
 	}
 	
@@ -1437,21 +1431,27 @@ void MainScene::initPopupCharge()
 		string code = tfCode->getText();
 		string seri = tfSeri->getText();
 		if (code.length() == 0 || seri.length() == 0) return;
-		int providerId;
-		for (int i = 1; i <= strProviders.size(); i++) {
-			Node* n = scrollProvider->getChildByName("btn" + to_string(i));
-			if (n->getTag() == 1) {
-				providerId = i - 1;
-				break;
-			}
-		}
-		string provider = strProviders[providerId];
 		int moneyType = cbQuan->isSelected() ? 2 : 1;
-		SFSRequest::getSingleton().RequestChargeCard(code, seri, provider, moneyType);
-		tfCode->setText("");
-		tfSeri->setText("");
-		showWaiting();
-		chargingProvider = provider;
+
+		if (chosenProviderCard.length() == 0) {
+			if (popupChooseCard == NULL) {
+				popupChooseCard = createPopupChooseProvider("title_chonthe.png", strProviders, [=](string provider) {
+					onChooseProviderCard(provider);
+					SFSRequest::getSingleton().RequestChargeCard(code, seri, chosenProviderCard, moneyType);
+					tfCode->setText("");
+					tfSeri->setText("");
+					showWaiting();
+					chargingProvider = chosenProviderCard;
+				});
+			}
+			showPopup(popupChooseCard);
+		} else {
+			SFSRequest::getSingleton().RequestChargeCard(code, seri, chosenProviderCard, moneyType);
+			tfCode->setText("");
+			tfSeri->setText("");
+			showWaiting();
+			chargingProvider = chosenProviderCard;
+		}
 	});
 	nodeInput->addChild(btnCharge);
 
@@ -1518,16 +1518,27 @@ void MainScene::initPopupCharge()
 			btnItemSms->setPosition(Vec2(0, -85));
 			addTouchEventListener(btnItemSms, [=]() {
 				if (strProviders.size() == 0) return;
-				int btnIndex;
-				for (int i = 1; i < strProviders.size(); i++) {
-					ui::Button* btn = (ui::Button*)scrollProvider->getChildByName("btn" + to_string(i));
-					if (btn->getTag() == 1) {
-						btnIndex = i;
+				std::vector<std::string> smsProviders;
+				for (int j = 1; j <= strProviders.size(); j++) {
+					if (strProviders[j-1].compare("viettel") == 0
+						|| strProviders[j-1].compare("mobifone") == 0
+						|| strProviders[j-1].compare("vinaphone") == 0) {
+						smsProviders.push_back(strProviders[j-1]);
 					}
 				}
-				//CCLOG("%s %s", lbItemSms4->getString().c_str(), lbItemSms3->getString().c_str());
-				Utils::getSingleton().openSMS(lbItemSms4->getString(), lbItemSms3->getString());
-				Tracker::getSingleton().trackPurchaseSuccess("ClickSMS", strProviders[btnIndex - 1], "VND", moneys[i] * 1000);
+				if (chosenProviderSms.length() == 0) {
+					if (popupChooseSms == NULL) {
+						popupChooseSms = createPopupChooseProvider("title_chonsms.png", smsProviders, [=](string provider) {
+							onChooseProviderSms(provider);
+							Utils::getSingleton().openSMS(lbItemSms4->getString(), lbItemSms3->getString());
+							Tracker::getSingleton().trackPurchaseSuccess("ClickSMS", chosenProviderSms, "VND", moneys[i] * 1000);
+						});
+					}
+					showPopup(popupChooseSms);
+				} else {
+					Utils::getSingleton().openSMS(lbItemSms4->getString(), lbItemSms3->getString());
+					Tracker::getSingleton().trackPurchaseSuccess("ClickSMS", chosenProviderSms, "VND", moneys[i] * 1000);
+				}
 			});
 			itemSms->addChild(btnItemSms);
 		}
@@ -2036,23 +2047,22 @@ void MainScene::showPopupNews()
 	}*/
 }
 
-void MainScene::checkProviderToCharge()
+void MainScene::checkProviderToChargeSms()
 {
 	int btnIndex = -1;
 	Node* scrollProvider = popupCharge->getChildByName("scrollprovider");
-	for (int i = 4; i <= strProviders.size(); i++) {
-		Node* btni = scrollProvider->getChildByName("btn" + to_string(i));
-		if (btni->getTag() == 1) {
-			Node* btn1 = scrollProvider->getChildByName("btn1");
-			btn1->setTag(1);
-			btn1->setColor(Color3B::WHITE);
-			btn1->getChildByTag(1)->setVisible(true);
-			btnIndex = 1;
+	for (int i = 1; i <= strProviders.size(); i++) {
+		string btnName = strProviders[i - 1];
+		Node* btni = scrollProvider->getChildByName(btnName);
+		if (btnName.compare("viettel") != 0
+			&& btnName.compare("mobifone") != 0 && btnName.compare("vinaphone") != 0) {
+			if (btni->getTag() == 1) {
+				chosenProviderSms = "";
+			}
+			btni->setVisible(false);
+			btni->setTag(0);
+			btni->getChildByTag(1)->setVisible(false);
 		}
-		btni->setVisible(false);
-		btni->setTag(0);
-		btni->setColor(Color3B::GRAY);
-		btni->getChildByTag(1)->setVisible(false);
 	}
 }
 
@@ -2070,16 +2080,8 @@ void MainScene::updateChargeRateCard(bool isQuan)
 void MainScene::updateSmsInfo(bool isQuan)
 {
 	Node* scrollProvider = popupCharge->getChildByName("scrollprovider");
-	int btnIndex = 0;
-	for (int j = 1; j <= strProviders.size(); j++) {
-		string strj = to_string(j);
-		ui::Button* btn = (ui::Button*)scrollProvider->getChildByName("btn" + strj);
-		if (btn->getTag() == 1) {
-			btnIndex = j;
-			break;
-		}
-	}
-	string smsct = btnIndex == 1 ? Utils::getSingleton().gameConfig.smsVT : Utils::getSingleton().gameConfig.smsVNPVMS;
+	bool isViettel = chosenProviderSms.compare("viettel") == 0;
+	string smsct = isViettel ? Utils::getSingleton().gameConfig.smsVT : Utils::getSingleton().gameConfig.smsVNPVMS;
 	int strid = smsct.find_last_of(' ');
 	string smstg = smsct.substr(strid + 1, smsct.length() - strid);
 	smsct = smsct.substr(0, strid);
@@ -2100,5 +2102,58 @@ void MainScene::updateSmsInfo(bool isQuan)
 		lbMoney->setColor(isQuan ? Color3B::YELLOW : Color3B(0, 255, 255));
 		lbContent->setString(smsStr);
 		lbTarget->setString(smstg);
+	}
+}
+
+void MainScene::onChooseProviderCard(std::string provider)
+{
+	if (chosenProviderCard.compare(provider) == 0) return;
+	Node* scrollProvider = popupCharge->getChildByName("scrollprovider");
+	Node *lastBtn = nullptr, *curBtn;
+	for (int i = 1; i <= strProviders.size(); i++) {
+		std::string btnName = strProviders[i - 1];
+		if (chosenProviderCard.compare(btnName) == 0) {
+			lastBtn = scrollProvider->getChildByName(btnName);
+		}
+		if (provider.compare(btnName) == 0) {
+			curBtn = scrollProvider->getChildByName(btnName);
+		}
+	}
+	chosenProviderCard = provider;
+	if (lastBtn != NULL) {
+		lastBtn->setTag(0);
+		lastBtn->getChildByTag(1)->setVisible(false);
+	}
+	curBtn->setTag(1);
+	curBtn->getChildByTag(1)->setVisible(true);
+}
+
+void MainScene::onChooseProviderSms(std::string provider)
+{
+	if (chosenProviderSms.compare(provider) == 0) return;
+	Node* scrollProvider = popupCharge->getChildByName("scrollprovider");
+	Node *lastBtn = nullptr, *curBtn;
+	for (int i = 1; i <= strProviders.size(); i++) {
+		std::string btnName = strProviders[i - 1];
+		if (chosenProviderSms.compare(btnName) == 0) {
+			lastBtn = scrollProvider->getChildByName(btnName);
+		}
+		if (provider.compare(btnName) == 0) {
+			curBtn = scrollProvider->getChildByName(btnName);
+		}
+	}
+	chosenProviderSms = provider;
+	if (lastBtn != NULL) {
+		lastBtn->setTag(0);
+		lastBtn->getChildByTag(1)->setVisible(false);
+	}
+	curBtn->setTag(1);
+	curBtn->getChildByTag(1)->setVisible(true);
+
+	Node* nodeSms = popupCharge->getChildByName("nodesms");
+	if (nodeSms->isVisible()) {
+		Node* nodeMoneyType = popupCharge->getChildByName("nodemoneytype");
+		ui::CheckBox* cbQuan = (ui::CheckBox*)nodeMoneyType->getChildByTag(0);
+		updateSmsInfo(cbQuan->isSelected());
 	}
 }

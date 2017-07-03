@@ -200,6 +200,7 @@ void LoginScene::onInit()
 
 	loadTextureCache();
 	if (isPopupReady) isReadyToMain = 2;
+	Utils::getSingleton().requestViLangData();
 }
 
 void LoginScene::registerEventListenner()
@@ -460,8 +461,6 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 		SFSRequest::getSingleton().Connect();
 	}
 	//hideWaiting();
-
-	SFSRequest::getSingleton().RequestHttpGet("http://ip171.api1chan.info/tamdo2leo/vi2.xml", constant::TAG_HTTP_VILANG);
 }
 
 void LoginScene::onHttpResponseFailed()

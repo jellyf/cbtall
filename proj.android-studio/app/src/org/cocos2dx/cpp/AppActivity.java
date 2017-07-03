@@ -340,7 +340,7 @@ public class AppActivity extends Cocos2dxActivity {
             return;
         }
         GameRequestContent content = new GameRequestContent.Builder()
-                .setMessage("Vào chơi Kính Tứ Chi nào!")
+                .setMessage("Vào chơi 8 Đỏ 2 Lèo nào!")
                 .build();
         requestDialog.show(content);
 

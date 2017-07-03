@@ -1924,6 +1924,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 				vecUsers[index]->setPlayerMoney(player.PMoney);
 				vecUsers[index]->setName(player.Info.Name);
 				vecUsers[index]->setSfsId(player.Info.SfsUserId);
+				vecUsers[index]->setAvatarUrl(player.Info.AvatarUrl);
 				spSanSangs[index]->setVisible(player.Ready);
 				lbSanSangs[index]->setVisible(player.Ready);
 				if (player.Index == 0) {
@@ -1941,6 +1942,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 						btnCancelReady->setVisible(player.Ready);
 					}
 					isMeHost = player.Index == 0;
+					vecUsers[index]->setAvatarUrl(Utils::getSingleton().userDataMe.AvatarUrl);
 				}
 			}
 		}
