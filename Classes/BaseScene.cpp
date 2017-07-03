@@ -1221,7 +1221,7 @@ cocos2d::Node * BaseScene::createPopup(std::string stitle, bool isBig, bool isHi
 		}
 		ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("popup_bg.png");
 		bg->setContentSize(bgsize);
-		bg->setInsetLeft(169);
+		bg->setInsetLeft(131);
 		bg->setInsetRight(128);
 		bg->setInsetTop(160);
 		bg->setInsetBottom(160);
@@ -1261,7 +1261,7 @@ cocos2d::Node * BaseScene::createPopupChooseProvider(std::string stitle, std::ve
 	Size bgsize = Size(718, 473);
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("popup_bg.png");
 	bg->setContentSize(bgsize);
-	bg->setInsetLeft(169);
+	bg->setInsetLeft(131);
 	bg->setInsetRight(128);
 	bg->setInsetTop(160);
 	bg->setInsetBottom(160);
@@ -1675,7 +1675,7 @@ void BaseScene::initPopupSettings()
 	nodeName->addChild(lbNoteName);
 
 	Sprite* bgName = Sprite::createWithSpriteFrameName("input_mathe.png");
-	bgName->setPosition(-135, lbPassRule->getPositionY() - 80);
+	bgName->setPosition(-135, lbNoteName->getPositionY() - 80);
 	nodeName->addChild(bgName);
 
 	tfName->setPosition(bgName->getPosition());
@@ -1726,7 +1726,7 @@ void BaseScene::initPopupUserInfo()
 	Size psize = Size(800, 550);
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::createWithSpriteFrameName("popup_bg.png");
 	bg->setContentSize(psize);
-	bg->setInsetLeft(169);
+	bg->setInsetLeft(131);
 	bg->setInsetRight(128);
 	bg->setInsetTop(160);
 	bg->setInsetBottom(160);
