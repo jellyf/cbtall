@@ -63,6 +63,7 @@ import android.provider.Settings;
 import android.provider.Telephony;
 import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
+import android.view.View;
 import android.util.Log;
 
 import bolts.AppLinks;
@@ -197,6 +198,14 @@ public class AppActivity extends Cocos2dxActivity {
         Intent serviceIntent = new Intent("com.android.vending.billing.InAppBillingService.BIND");
         serviceIntent.setPackage("com.android.vending");
         bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
+		
+		getWindow().getDecorView().setSystemUiVisibility(
+          View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        | View.SYSTEM_UI_FLAG_FULLSCREEN
+        | View.SYSTEM_UI_FLAG_IMMERSIVE);
 
         setKeepScreenOn(true);
         _activity = this;
