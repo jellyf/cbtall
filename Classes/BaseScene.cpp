@@ -1170,7 +1170,7 @@ void BaseScene::showToast(std::string tag, ::string msg, Vec2 pos)
 	if (ss.length() > 0) msg = ss;
 
 	Label* lb = Label::createWithTTF(msg, "fonts/myriadb.ttf", 27);
-	lb->setColor(Color3B(0, 203, 131));
+	lb->setColor(Color3B(0, 255, 164));
 	nodeChat->addChild(lb, 2);
 
 	Size sizeContent = lb->getContentSize();
