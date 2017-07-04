@@ -159,7 +159,7 @@ void SFSGEvent::OnJoinRoom(map<string, boost::shared_ptr<void>> params)
 
 	Utils::getSingleton().currentRoomId = ptrNotifiedRoom->Id();
 	Utils::getSingleton().currentRoomName = *(ptrNotifiedRoom->Name());
-	CCLOG("RoomJoin: %d %s", ptrNotifiedRoom->Id(), ptrNotifiedRoom->Name()->c_str());
+	CCLOG("RoomJoin: %ld %s", ptrNotifiedRoom->Id(), ptrNotifiedRoom->Name()->c_str());
 	if (EventHandler::getSingleton().onJoinRoom != NULL) {
 		EventHandler::getSingleton().onJoinRoom(ptrNotifiedRoom->Id(), *(ptrNotifiedRoom->Name()));
 	}
