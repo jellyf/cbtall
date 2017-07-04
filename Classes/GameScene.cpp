@@ -1359,8 +1359,7 @@ void GameScene::updateCardHand(CardHandData data)
 		indexs.push_back(i);
 	}
 	int isize = indexs.size();
-	int ccsize = changedCards.size();
-	for (int i = 0; i < ccsize; i++) {
+	for (int i = 0; i < hcsize; i++) {
 		spHandCards[i]->setScale(1.2f);
 		int j = 0;
 		for (; j < isize; j++) {
@@ -1375,9 +1374,11 @@ void GameScene::updateCardHand(CardHandData data)
 			changedCards.push_back(i);
 		} else {
 			indexs.erase(indexs.begin() + j);
+			isize--;
 		}
 	}
 
+	int ccsize = changedCards.size();
 	for (int i = 0; i < ccsize; i++) {
 		for (int j = 0; j < isize; j++) {
 			if (atoi(spHandCards[changedCards[i]]->getName().c_str()) % 1000 == ids[indexs[j]]) {
@@ -3177,7 +3178,7 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 		for (PlayerData player : data.Players) {
 			int scsize = player.SingleCards.size();
 			int pcsize = player.PairCards.size();
-			if (player.Index == (myServerSlot + i) % usize) {
+			if (player.Index == ((myServerSlot < 0 ? 0 : myServerSlot) + i) % usize) {
 				index = i - num;
 				if (psize == 2 && (index == 1 || index == 3)) {
 					index = 2;
@@ -3196,12 +3197,6 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 
 				int index2 = index * 2;
 				float scale = 1;
-
-				//Test
-				/*for (int i = 0; i < 5; i++) {
-					player.SingleCards.push_back(0);
-				}*/
-				//endtest
 
 				if (scsize > maxTableCardNumb[index2]) {
 					scale = ((float)maxTableCardNumb[index2]) / scsize;
@@ -3225,15 +3220,6 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 
 				index2 = index * 2 + 1;
 				scale = 1;
-
-				//Test
-				/*for (int i = 0; i < 5; i++) {
-					vector<char> vec;
-					vec.push_back(0);
-					vec.push_back(0);
-					player.PairCards.push_back(vec);
-				}*/
-				//end test
 
 				if (pcsize > maxTableCardNumb[index2]) {
 					scale = ((float)maxTableCardNumb[index2] - 1) / (pcsize - 1);
@@ -3259,6 +3245,7 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 					}
 					tableCardNumb[index2] ++;
 				}
+				break;
 			}
 		}
 		if (index == -1) {
@@ -3660,6 +3647,7 @@ void GameScene::initCrestTable()
 				}
 
 				string strcuoc = "";
+				csize = chosenCuocs.size();
 				for (int j = 0; j < csize; j++) {
 					if (strcuoc.length() > 0) {
 						strcuoc += ", ";
