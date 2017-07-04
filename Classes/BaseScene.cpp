@@ -65,8 +65,8 @@ void BaseScene::onEnter()
 	mLayer = Layer::create();
 	addChild(mLayer, 10);
 
-	winSize = Director::sharedDirector()->getWinSize();
-	auto visibleSize = Director::sharedDirector()->getVisibleSize();
+	winSize = Director::getInstance()->getWinSize();
+	auto visibleSize = Director::getInstance()->getVisibleSize();
 	visibleSize.width = std::ceil(visibleSize.width);
 	visibleSize.height = std::ceil(visibleSize.height);
 	
@@ -98,14 +98,14 @@ void BaseScene::onEnter()
 
 	RotateBy* rotate = RotateBy::create(2, 360);
 	spWaiting->runAction(RepeatForever::create(rotate));
-	spWaiting->pauseSchedulerAndActions();
+	spWaiting->pause();
 
 	spNetwork = Sprite::createWithSpriteFrameName("wifi0.png");
 	spNetwork->setPosition(winSize.width - 260, winSize.height - 55);
 	mLayer->addChild(spNetwork, constant::GAME_ZORDER_SPLASH - 1);
 	autoScaleNode(spNetwork);
 
-	lbNetwork = Label::create("0ms", "fonts/myriad.ttf", 18);
+	lbNetwork = Label::createWithTTF("0ms", "fonts/myriad.ttf", 18);
 	lbNetwork->setColor(Color3B::GREEN);
 	lbNetwork->setAnchorPoint(Vec2(1, 0));
 	lbNetwork->setPosition(1115, 3);
@@ -285,7 +285,7 @@ void BaseScene::showWaiting(int time)
 {
 	isWaiting = true;
 	showPopup(spWaiting->getParent(), false);
-	spWaiting->resumeSchedulerAndActions();
+	spWaiting->resume();
 	spWaiting->getParent()->stopAllActions();
 
 	DelayTime* delay = DelayTime::create(time);
@@ -375,7 +375,7 @@ void BaseScene::runEventView(std::vector<EventData> list, int currentPosX)
 	for (int i = 0; i < list.size(); i++) {
 		Label* lb = (Label*)nodelb->getChildByTag(i);
 		if (lb == nullptr) {
-			lb = Label::create("", "fonts/myriad.ttf", 21);
+			lb = Label::createWithTTF("", "fonts/myriad.ttf", 21);
 			lb->setAnchorPoint(Vec2(0, .5f));
 			lb->setTag(i);
 			nodelb->addChild(lb);
@@ -455,13 +455,13 @@ void BaseScene::showPopupRank(int type)
 			nbg->setContentSize(Size(width, 65));
 			node->addChild(nbg);
 
-			lb1 = Label::create(to_string(i + 1), i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 30);
+			lb1 = Label::createWithTTF(to_string(i + 1), i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 30);
 			//lb1->setAnchorPoint(Vec2(0, .5f));
 			lb1->setPosition(-width / 2 + 43, 0);
 			lb1->setTag(1);
 			node->addChild(lb1);
 
-			lb2 = Label::create("", i < 3  ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 30);
+			lb2 = Label::createWithTTF("", i < 3  ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 30);
 			lb2->setAnchorPoint(Vec2(0, .5f));
 			lb2->setPosition(lb1->getPositionX() + 97, 0);
 			lb2->setWidth(540);
@@ -469,7 +469,7 @@ void BaseScene::showPopupRank(int type)
 			lb2->setTag(2);
 			node->addChild(lb2);
 
-			lb3 = Label::create("", i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 30);
+			lb3 = Label::createWithTTF("", i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 30);
 			//lb3->setAnchorPoint(Vec2(1, .5f));
 			lb3->setPosition(lb2->getPositionX() + lb2->getWidth() + 147, 0);
 			lb3->setTag(3);
@@ -543,23 +543,23 @@ void BaseScene::showPopupRankWin()
 			nbg->setContentSize(Size(width, 85));
 			node->addChild(nbg);
 
-			lb1 = Label::create(to_string(i + 1), i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 27);
+			lb1 = Label::createWithTTF(to_string(i + 1), i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 27);
 			lb1->setPosition(-width / 2 + 42, 0);
 			lb1->setTag(1);
 			node->addChild(lb1);
 
-			lb2 = Label::create("", i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 27);
+			lb2 = Label::createWithTTF("", i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 27);
 			lb2->setPosition(lb1->getPositionX() + 160, 0);
 			lb2->setTag(2);
 			node->addChild(lb2);
 
-			lb3 = Label::create("", i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 27);
+			lb3 = Label::createWithTTF("", i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 27);
 			lb3->setPosition(lb2->getPositionX() + 395, 0);
 			lb3->setWidth(450);
 			lb3->setTag(3);
 			node->addChild(lb3);
 
-			lb4 = Label::create("", i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 27);
+			lb4 = Label::createWithTTF("", i < 3 ? "fonts/myriadb.ttf" : "fonts/myriad.ttf", 27);
 			lb4->setPosition(lb3->getPositionX() + 320, 0);
 			lb4->setTag(4);
 			node->addChild(lb4);
@@ -879,7 +879,7 @@ void BaseScene::initHeaderWithInfos()
 	mLayer->addChild(avarCircle, constant::MAIN_ZORDER_HEADER);
 	autoScaleNode(avarCircle);
 
-	lbName = Label::create("Name", "fonts/myriadb.ttf", 27);
+	lbName = Label::createWithTTF("Name", "fonts/myriadb.ttf", 27);
 	lbName->setAnchorPoint(Vec2(0, .5f));
 	lbName->setPosition(btnAvar->getPositionX() + 50 * scaleScene.y, btnAvar->getPositionY() + 30);
 	lbName->setWidth(150);
@@ -887,13 +887,13 @@ void BaseScene::initHeaderWithInfos()
 	mLayer->addChild(lbName, constant::MAIN_ZORDER_HEADER);
 	autoScaleNode(lbName);
 
-	lbId = Label::create("ID: ", "fonts/myriadb.ttf", 27);
+	lbId = Label::createWithTTF("ID: ", "fonts/myriadb.ttf", 27);
 	lbId->setAnchorPoint(Vec2(0, .5f));
 	lbId->setPosition(btnAvar->getPositionX() + 50 * scaleScene.y, btnAvar->getPositionY() - 3);
 	mLayer->addChild(lbId, constant::MAIN_ZORDER_HEADER);
 	autoScaleNode(lbId);
 
-	lbLevel = Label::create(Utils::getSingleton().getStringForKey("level") + ": ", "fonts/myriadb.ttf", 27);
+	lbLevel = Label::createWithTTF(Utils::getSingleton().getStringForKey("level") + ": ", "fonts/myriadb.ttf", 27);
 	lbLevel->setAnchorPoint(Vec2(0, .5f));
 	lbLevel->setPosition(btnAvar->getPositionX() + 50 * scaleScene.y, btnAvar->getPositionY() - 30);
 	mLayer->addChild(lbLevel, constant::MAIN_ZORDER_HEADER);
@@ -980,7 +980,7 @@ void BaseScene::initHeaderWithInfos()
 	iconGold->setScale(1);
 	moneyNode->addChild(iconGold, 2);
 
-	lbGold = Label::create("0", "fonts/myriadb.ttf", 35);
+	lbGold = Label::createWithTTF("0", "fonts/myriadb.ttf", 35);
 	lbGold->setPosition(iconGold->getPosition() + Vec2(40, -5));
 	lbGold->setAnchorPoint(Vec2(0, .5f));
 	lbGold->setColor(Color3B::YELLOW);
@@ -991,7 +991,7 @@ void BaseScene::initHeaderWithInfos()
 	iconSilver->setScale(1);
 	moneyNode->addChild(iconSilver, 2);
 
-	lbSilver = Label::create("0", "fonts/myriadb.ttf", 35);
+	lbSilver = Label::createWithTTF("0", "fonts/myriadb.ttf", 35);
 	lbSilver->setPosition(iconSilver->getPosition() + Vec2(40, -5));
 	lbSilver->setAnchorPoint(Vec2(0, .5f));
 	lbSilver->setColor(Color3B(0, 255, 255));
@@ -1098,7 +1098,7 @@ void BaseScene::hideWaiting()
 {
 	isWaiting = false;
 	hidePopup(spWaiting->getParent(), false);
-	spWaiting->pauseSchedulerAndActions();
+	spWaiting->pause();
 	spWaiting->getParent()->stopAllActions();
 }
 
@@ -1169,10 +1169,7 @@ void BaseScene::showToast(std::string tag, ::string msg, Vec2 pos)
 	std::string ss = plist[msg].asString();
 	if (ss.length() > 0) msg = ss;
 
-	Label* lb = Label::create();
-	lb->setString(msg);
-	lb->setSystemFontName("Arial Bold");
-	lb->setSystemFontSize(27);
+	Label* lb = Label::createWithTTF(msg, "fonts/myriadb.ttf", 27);
 	lb->setColor(Color3B(0, 203, 131));
 	nodeChat->addChild(lb, 2);
 
@@ -1759,7 +1756,7 @@ void BaseScene::initPopupUserInfo()
 	bgAvar->setScale(avatar->getScale());
 	popupUserInfo->addChild(bgAvar);
 
-	Label* lbAppellation = Label::create("Huong Truong", "fonts/davida.ttf", 25);
+	Label* lbAppellation = Label::createWithTTF("Huong Truong", "fonts/davida.ttf", 25);
 	lbAppellation->setColor(Color3B::BLACK);
 	lbAppellation->setOpacity(200);
 	lbAppellation->setPosition(avatar->getPositionX(), avatar->getPositionY() - 95);
@@ -1814,7 +1811,7 @@ void BaseScene::initPopupUserInfo()
     popupUserInfo->addChild(btnLogoutFb);
 
 	int x = 45;
-	Label* lbDName = Label::create("Stormus", "fonts/myriadb.ttf", 40);
+	Label* lbDName = Label::createWithTTF("Stormus", "fonts/myriadb.ttf", 40);
 	lbDName->setAnchorPoint(Vec2(0, .5f));
 	lbDName->setColor(Color3B::BLACK);
 	lbDName->setPosition(-130, 170);
@@ -1826,42 +1823,42 @@ void BaseScene::initPopupUserInfo()
 	nodeInfo->setPosition(lbDName->getPositionX(), lbDName->getPositionY() - x);
 	popupUserInfo->addChild(nodeInfo);
 
-	Label* lbUname = Label::create(Utils::getSingleton().getStringForKey("login") + ":", "fonts/myriad.ttf", 30);
+	Label* lbUname = Label::createWithTTF(Utils::getSingleton().getStringForKey("login") + ":", "fonts/myriad.ttf", 30);
 	lbUname->setAnchorPoint(Vec2(0, .5f));
 	lbUname->setColor(Color3B::BLACK);
 	lbUname->setPosition(0, 0);
 	lbUname->setName("lbuname");
 	nodeInfo->addChild(lbUname);
 
-	Label* lbUname1 = Label::create("stormus", "fonts/myriad.ttf", 30);
+	Label* lbUname1 = Label::createWithTTF("stormus", "fonts/myriad.ttf", 30);
 	lbUname1->setAnchorPoint(Vec2(0, .5f));
 	lbUname1->setColor(Color3B::BLACK);
 	lbUname1->setPosition(lbUname->getPositionX() + 150, lbUname->getPositionY());
 	lbUname1->setName("lbuname1");
 	nodeInfo->addChild(lbUname1);
 
-	Label* lbId = Label::create("ID:", "fonts/myriad.ttf", 30);
+	Label* lbId = Label::createWithTTF("ID:", "fonts/myriad.ttf", 30);
 	lbId->setAnchorPoint(Vec2(0, .5f));
 	lbId->setColor(Color3B::BLACK);
 	lbId->setPosition(lbUname->getPositionX(), lbUname->getPositionY() - x);
 	lbId->setName("lbid");
 	nodeInfo->addChild(lbId);
 
-	Label* lbId1 = Label::create("847558", "fonts/myriad.ttf", 30);
+	Label* lbId1 = Label::createWithTTF("847558", "fonts/myriad.ttf", 30);
 	lbId1->setAnchorPoint(Vec2(0, .5f));
 	lbId1->setColor(Color3B::BLACK);
 	lbId1->setPosition(lbId->getPositionX() + 150, lbId->getPositionY());
 	lbId1->setName("lbid1");
 	nodeInfo->addChild(lbId1);
 
-	Label* lbQuan = Label::create(Utils::getSingleton().getStringForKey("quan") + ":", "fonts/myriad.ttf", 30);
+	Label* lbQuan = Label::createWithTTF(Utils::getSingleton().getStringForKey("quan") + ":", "fonts/myriad.ttf", 30);
 	lbQuan->setAnchorPoint(Vec2(0, .5f));
 	lbQuan->setColor(Color3B::BLACK);
 	lbQuan->setPosition(lbId->getPositionX(), lbId->getPositionY() - x);
 	lbQuan->setVisible(ispmE);
 	nodeInfo->addChild(lbQuan);
 
-	Label* lbQuan1 = Label::create("100,000", "fonts/myriad.ttf", 30);
+	Label* lbQuan1 = Label::createWithTTF("100,000", "fonts/myriad.ttf", 30);
 	lbQuan1->setAnchorPoint(Vec2(0, .5f));
 	lbQuan1->setColor(Color3B::BLACK);
 	lbQuan1->setPosition(lbQuan->getPositionX() + 150, lbQuan->getPositionY());
@@ -1875,13 +1872,13 @@ void BaseScene::initPopupUserInfo()
 	icGold->setName("icongold");
 	nodeInfo->addChild(icGold);
 
-	Label* lbXu = Label::create(Utils::getSingleton().getStringForKey("xu") + ":", "fonts/myriad.ttf", 30);
+	Label* lbXu = Label::createWithTTF(Utils::getSingleton().getStringForKey("xu") + ":", "fonts/myriad.ttf", 30);
 	lbXu->setAnchorPoint(Vec2(0, .5f));
 	lbXu->setColor(Color3B::BLACK);
 	lbXu->setPosition(lbQuan->getPositionX(), lbQuan->getPositionY() - x);
 	nodeInfo->addChild(lbXu);
 
-	Label* lbXu1 = Label::create("100,000", "fonts/myriad.ttf", 30);
+	Label* lbXu1 = Label::createWithTTF("100,000", "fonts/myriad.ttf", 30);
 	lbXu1->setAnchorPoint(Vec2(0, .5f));
 	lbXu1->setColor(Color3B::BLACK);
 	lbXu1->setPosition(lbXu->getPositionX() + 150, lbXu->getPositionY());
@@ -1894,35 +1891,35 @@ void BaseScene::initPopupUserInfo()
 	icSilver->setName("iconsilver");
 	nodeInfo->addChild(icSilver);
 	
-	/*Label* lbLevel = Label::create(Utils::getSingleton().getStringForKey("cap_do") + ":", "fonts/myriad.ttf", 30);
+	/*Label* lbLevel = Label::createWithTTF(Utils::getSingleton().getStringForKey("cap_do") + ":", "fonts/myriad.ttf", 30);
 	lbLevel->setAnchorPoint(Vec2(0, .5f));
 	lbLevel->setColor(Color3B::WHITE);
 	lbLevel->setPosition(-70, -70);
 	lbLevel->setName("lblevel");
 	popupUserInfo->addChild(lbLevel);*/
 
-	Label* lbWin = Label::create(Utils::getSingleton().getStringForKey("thang") + ": 12", "fonts/myriad.ttf", 30);
+	Label* lbWin = Label::createWithTTF(Utils::getSingleton().getStringForKey("thang") + ": 12", "fonts/myriad.ttf", 30);
 	lbWin->setAnchorPoint(Vec2(0, .5f));
 	lbWin->setColor(Color3B::BLACK);
 	lbWin->setPosition(lbXu->getPositionX(), lbXu->getPositionY() - x);
 	lbWin->setName("lbwin");
 	nodeInfo->addChild(lbWin);
 
-	Label* lbTotal = Label::create(Utils::getSingleton().getStringForKey("tong") + ": 20", "fonts/myriad.ttf", 30);
+	Label* lbTotal = Label::createWithTTF(Utils::getSingleton().getStringForKey("tong") + ": 20", "fonts/myriad.ttf", 30);
 	lbTotal->setAnchorPoint(Vec2(0, .5f));
 	lbTotal->setColor(Color3B::BLACK);
 	lbTotal->setPosition(lbWin->getPositionX() + 250, lbWin->getPositionY());
 	lbTotal->setName("lbtotal");
 	nodeInfo->addChild(lbTotal);
 
-	Label* lbBigWin = Label::create(Utils::getSingleton().getStringForKey("thang_lon_nhat") + ":", "fonts/myriad.ttf", 30);
+	Label* lbBigWin = Label::createWithTTF(Utils::getSingleton().getStringForKey("thang_lon_nhat") + ":", "fonts/myriad.ttf", 30);
 	lbBigWin->setPosition(lbWin->getPositionX(), lbWin->getPositionY() - x);
 	lbBigWin->setAnchorPoint(Vec2(0, .5f));
 	lbBigWin->setColor(Color3B::BLACK);
 	lbBigWin->setVisible(false);
 	nodeInfo->addChild(lbBigWin);
 
-	Label* lbBigWin1 = Label::create("1111", "fonts/myriad.ttf", 30);
+	Label* lbBigWin1 = Label::createWithTTF("1111", "fonts/myriad.ttf", 30);
 	lbBigWin1->setPosition(lbBigWin->getPositionX() + lbBigWin->getContentSize().width + 10, lbBigWin->getPositionY());
 	lbBigWin1->setAnchorPoint(Vec2(0, .5f));
 	lbBigWin1->setColor(Color3B::BLACK);
@@ -1930,7 +1927,7 @@ void BaseScene::initPopupUserInfo()
 	lbBigWin1->setVisible(false);
 	nodeInfo->addChild(lbBigWin1);
 
-	Label* lbBigCrest = Label::create(Utils::getSingleton().getStringForKey("u_to_nhat") + ": Nha lau xe hoi - Hoa roi cua pha t, a a a Ngu ong bat ca, Ca loi san dinh", "fonts/myriad.ttf", 30);
+	Label* lbBigCrest = Label::createWithTTF(Utils::getSingleton().getStringForKey("u_to_nhat") + ": Nha lau xe hoi - Hoa roi cua pha t, a a a Ngu ong bat ca, Ca loi san dinh", "fonts/myriad.ttf", 30);
 	lbBigCrest->setPosition(lbBigWin->getPositionX(), lbBigWin->getPositionY() - x + 20);
 	lbBigCrest->setAnchorPoint(Vec2(0, 1));
 	lbBigCrest->setColor(Color3B::BLACK);
@@ -1939,7 +1936,7 @@ void BaseScene::initPopupUserInfo()
 	lbBigCrest->setVisible(false);
 	nodeInfo->addChild(lbBigCrest);
 
-	//Label* lbBigCrest1 = Label::create("Nha lau xe hoi - Hoa roi cua pha t, a a a Ngu ong bat ca, Ca loi san dinh", "fonts/myriad.ttf", 25);
+	//Label* lbBigCrest1 = Label::createWithTTF("Nha lau xe hoi - Hoa roi cua pha t, a a a Ngu ong bat ca, Ca loi san dinh", "fonts/myriad.ttf", 25);
 	//lbBigCrest1->setPosition(lbBigCrest->getPositionX() + lbBigCrest->getContentSize().width + 10, lbBigCrest->getPositionY() + 15);
 	////lbBigCrest1->setAlignment(TextHAlignment::LEFT, TextVAlignment::TOP);
 	//lbBigCrest1->setAnchorPoint(Vec2(0, 1));
@@ -2103,7 +2100,7 @@ void BaseScene::initPopupCoffer()
 		cocos2d::ValueMap plist = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/tutorials.xml");
 		guideContent = plist["tutorial_5"].asString();
 	}
-	Label* lb = Label::create(guideContent, "fonts/myriad.ttf", 30);
+	Label* lb = Label::createWithTTF(guideContent, "fonts/myriad.ttf", 30);
 	lb->setAnchorPoint(Vec2(0, 1));
 	lb->setColor(Color3B::BLACK);
 	lb->setName("lbcontent");
@@ -2183,7 +2180,7 @@ void BaseScene::initPopupIAP()
 		Sprite* spCoin = Sprite::createWithSpriteFrameName("icon_silver.png");
 		btn->addChild(spCoin);
 
-		Label* lb1 = Label::create(strValue, "fonts/myriadb.ttf", 50);
+		Label* lb1 = Label::createWithTTF(strValue, "fonts/myriadb.ttf", 50);
 		lb1->setPosition(btn->getContentSize().width / 2 - spCoin->getContentSize().width * spCoin->getScale() / 2, btn->getContentSize().height / 2 - 80);
 		lb1->setColor(Color3B::YELLOW);
 		btn->addChild(lb1);
@@ -2193,7 +2190,7 @@ void BaseScene::initPopupIAP()
 		bglb2->setPosition(btn->getContentSize().width / 2, btn->getContentSize().height / 2 - 145);
 		btn->addChild(bglb2);
 
-		Label* lb2 = Label::create(strCost, "fonts/myriadb.ttf", 50);
+		Label* lb2 = Label::createWithTTF(strCost, "fonts/myriadb.ttf", 50);
 		lb2->enableOutline(Color4B::BLACK, 2);
 		lb2->setPosition(bglb2->getPosition() + Vec2(0, -10));
 		lb2->setColor(Color3B::WHITE);
@@ -2249,7 +2246,7 @@ void BaseScene::initWebView()
 		}
 	});
 
-	Label* lb = Label::create(Utils::getSingleton().getStringForKey("khong_hien_lai"), "fonts/myriad.ttf", 30);
+	Label* lb = Label::createWithTTF(Utils::getSingleton().getStringForKey("khong_hien_lai"), "fonts/myriad.ttf", 30);
 	lb->setPosition(checkbox->getPosition() + Vec2(40, -5));
 	lb->setAnchorPoint(Vec2(0, .5f));
 	lb->setColor(Color3B::WHITE);
@@ -2287,7 +2284,7 @@ void BaseScene::initCofferView(Vec2 pos, int zorder, float scale)
 	bgMoney->setContentSize(Size(111, 37));
 	btnCoffer->addChild(bgMoney);
 
-	lbCoffer = Label::create(Utils::getSingleton().formatMoneyWithComma(Utils::getSingleton().cofferMoney), "fonts/myriad.ttf", 25);
+	lbCoffer = Label::createWithTTF(Utils::getSingleton().formatMoneyWithComma(Utils::getSingleton().cofferMoney), "fonts/myriad.ttf", 25);
 	lbCoffer->setPosition(bgMoney->getPosition() + Vec2(0, -5));
 	lbCoffer->setColor(Color3B::YELLOW);
 	btnCoffer->addChild(lbCoffer);
@@ -2415,7 +2412,7 @@ void BaseScene::onPlayLogDataResponse(std::vector<PlayLogData> logs)
 			btn->setVisible(true);
 		} else {
 			for (int j = 0; j < 6; j++) {
-				Label* lbDetail = Label::create("", "fonts/myriad.ttf", 25);
+				Label* lbDetail = Label::createWithTTF("", "fonts/myriad.ttf", 25);
 				lbDetail->setWidth(widths[j]);
 				lbDetail->setHeight(50);
 				lbDetail->setAnchorPoint(Vec2(.5f, 1));
@@ -2532,7 +2529,7 @@ void BaseScene::onCofferHistoryResponse(std::vector<CofferWinnerData> list)
 			nbg->setContentSize(Size(width, 85));
 			node->addChild(nbg);
 
-			Label* lb1 = Label::create(list[i].Date, "fonts/myriad.ttf", 25);
+			Label* lb1 = Label::createWithTTF(list[i].Date, "fonts/myriad.ttf", 25);
 			//lb1->setAnchorPoint(Vec2(0, .5f));
 			lb1->setColor(Color3B::BLACK);
 			lb1->setPosition(-width / 2 + 29, 0);
@@ -2541,13 +2538,13 @@ void BaseScene::onCofferHistoryResponse(std::vector<CofferWinnerData> list)
 			lb1->setVisible(false);
 			node->addChild(lb1);
 
-			lb2 = Label::create(list[i].Name, "fonts/myriad.ttf", 25);
+			lb2 = Label::createWithTTF(list[i].Name, "fonts/myriad.ttf", 25);
 			lb2->setColor(Color3B::BLACK);
 			lb2->setPosition(lb1->getPositionX() + 80, 0);
 			lb2->setTag(2);
 			node->addChild(lb2);
 
-			Label* lb3 = Label::create(list[i].Cuocs, "fonts/myriad.ttf", 25);
+			Label* lb3 = Label::createWithTTF(list[i].Cuocs, "fonts/myriad.ttf", 25);
 			lb3->setHorizontalAlignment(TextHAlignment::CENTER);
 			lb3->setColor(Color3B::BLACK);
 			lb3->setPosition(lb2->getPositionX() + 360, 0);
@@ -2555,13 +2552,13 @@ void BaseScene::onCofferHistoryResponse(std::vector<CofferWinnerData> list)
 			lb3->setTag(3);
 			node->addChild(lb3);
 
-			Label* lb5 = Label::create(Utils::getSingleton().formatMoneyWithComma(list[i].Money), "fonts/myriad.ttf", 25);
+			Label* lb5 = Label::createWithTTF(Utils::getSingleton().formatMoneyWithComma(list[i].Money), "fonts/myriad.ttf", 25);
 			lb5->setColor(Color3B::BLACK);
 			lb5->setPosition(lb3->getPositionX() + 330, 0);
 			lb5->setTag(5);
 			node->addChild(lb5);
 
-			Label* lb4 = Label::create(Utils::getSingleton().formatMoneyWithComma(list[i].Point), "fonts/myriad.ttf", 25);
+			Label* lb4 = Label::createWithTTF(Utils::getSingleton().formatMoneyWithComma(list[i].Point), "fonts/myriad.ttf", 25);
 			lb4->setColor(Color3B::BLACK);
 			lb4->setPosition(lb5->getPositionX() + 118, 0);
 			lb4->setTag(4);

@@ -1,5 +1,4 @@
-﻿#pragma once
-#include "GameScene.h"
+﻿#include "GameScene.h"
 #include "Constant.h"
 #include "Data.h"
 #include "SFSRequest.h"
@@ -87,7 +86,8 @@ void GameScene::onInit()
 	vecUserPos.push_back(Vec2(winSize.width / 2, winSize.height - 90));
 	vecUserPos.push_back(Vec2(70, winSize.height / 2 - 30));
 
-	for (int i = 0; i < tableCardPos.size(); i++) {
+	int psize = tableCardPos.size();
+	for (auto i = 0; i < psize; i++) {
 		int k = (i / 2) % 4;
 		if (i == 1) k = 3;
 		Vec2 d = vecUserPos[k] - tableCardPos[i];
@@ -114,7 +114,7 @@ void GameScene::onInit()
 	bool isTour = Utils::getSingleton().isTourGame();
 	string zone = Utils::getSingleton().getCurrentZoneName();
 	if (zone.length() > 0) {
-		int index = zone.find_last_of("Q");
+		auto index = zone.find_last_of("Q");
 		if (index >= 0 && index < zone.length()) {
 			zone = zone.substr(0, index);
 		}
@@ -248,7 +248,7 @@ void GameScene::onInit()
 	mLayer->addChild(iconGa, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(iconGa);
 
-	lbMoneyGa = Label::create("", "fonts/myriad.ttf", 20);
+	lbMoneyGa = Label::createWithTTF("", "fonts/myriad.ttf", 20);
 	lbMoneyGa->setPosition(iconGa->getPosition() - getScaleSceneDistance(Vec2(0, 40)));
 	mLayer->addChild(lbMoneyGa, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(lbMoneyGa);
@@ -299,7 +299,8 @@ void GameScene::onInit()
 	btnBash->setPosition(Vec2(winSize.width / 2 + 340, 35));
 	btnBash->setVisible(false);
 	addTouchEventListener(btnBash, [=]() {
-		if (chosenCard < 0 || chosenCard >= spHandCards.size()) return;
+		int hcsize = spHandCards.size();
+		if (chosenCard < 0 || chosenCard >= hcsize) return;
 		int numb = atoi(spHandCards[chosenCard]->getName().c_str());
 		int card = numb % 1000;
 		int group = numb / 1000;
@@ -337,7 +338,8 @@ void GameScene::onInit()
 	btnBashBack->setPosition(btnBash->getPosition());
 	btnBashBack->setVisible(false);
 	addTouchEventListener(btnBashBack, [=]() {
-		if (chosenCard < 0 || chosenCard >= spHandCards.size()) return;
+		int hcsize = spHandCards.size();
+		if (chosenCard < 0 || chosenCard >= hcsize) return;
 		//btnBashBack->setVisible(false);
 		int numb = atoi(spHandCards[chosenCard]->getName().c_str());
 		int card = numb % 1000;
@@ -362,7 +364,8 @@ void GameScene::onInit()
 	btnHold->setPosition(Vec2(winSize.width / 2 - 340, 35));
 	btnHold->setVisible(false);
 	addTouchEventListener(btnHold, [=]() {
-		if (chosenCard < 0 || chosenCard >= spHandCards.size()) return;
+		int hcsize = spHandCards.size();
+		if (chosenCard < 0 || chosenCard >= hcsize) return;
 		//btnHold->setVisible(false);
 		//btnPick->setVisible(false);
 		//btnForward->setVisible(false);
@@ -590,7 +593,8 @@ void GameScene::onInit()
 		vecStilts.push_back(node);
 	}*/
 
-	for (int i = 0; i < vecUserPos.size(); i++) {
+	int usize = vecUserPos.size();
+	for (int i = 0; i < usize; i++) {
 		Sprite* spInvite = Sprite::createWithSpriteFrameName("btn_invite.png");
 		spInvite->setPosition(vecUserPos[i]);
 		mLayer->addChild(spInvite);
@@ -693,7 +697,7 @@ void GameScene::onInit()
 	ScaleTo* scaleChonCai1 = ScaleTo::create(.5f, scale1.x, scale1.y);
 	ScaleTo* scaleChonCai2 = ScaleTo::create(.5f, scale2.x, scale2.y);
 	lbChonCai->runAction(RepeatForever::create(Sequence::create(scaleChonCai1, scaleChonCai2, nullptr)));
-	lbChonCai->pauseSchedulerAndActions();
+	lbChonCai->pause();
 
 	Sprite* bgCrestTime = Sprite::createWithSpriteFrameName("bg_countdown.png");
 	bgCrestTime->setPosition(btnXemNoc->getPosition() + getScaleSceneDistance(Vec2(170, 0)));
@@ -701,7 +705,7 @@ void GameScene::onInit()
 	mLayer->addChild(bgCrestTime, constant::GAME_ZORDER_SPLASH + 2);
 	autoScaleNode(bgCrestTime);
 
-	lbCrestTime = Label::create("", "fonts/myriadb.ttf", 50);
+	lbCrestTime = Label::createWithTTF("", "fonts/myriadb.ttf", 50);
 	lbCrestTime->setPosition(bgCrestTime->getContentSize().width/2, bgCrestTime->getContentSize().height/2 - 5);
 	bgCrestTime->addChild(lbCrestTime);
 
@@ -714,7 +718,7 @@ void GameScene::onInit()
 		}
 		if (lbCrestTime->getString().compare("0") == 0) {
 			lbCrestTime->getParent()->setVisible(false);
-			lbCrestTime->pauseSchedulerAndActions();
+			lbCrestTime->pause();
 			return;
 		}
 		int time = atoi(lbCrestTime->getString().c_str());
@@ -722,7 +726,7 @@ void GameScene::onInit()
 		lbCrestTime->setString(to_string(time));
 	});
 	lbCrestTime->runAction(RepeatForever::create(Sequence::create(delay, func, nullptr)));
-	lbCrestTime->pauseSchedulerAndActions();
+	lbCrestTime->pause();
 
 	initChatTable();
 	initCrestTable();
@@ -732,7 +736,7 @@ void GameScene::onInit()
 	initTableInfo();
 	initPopupUserInfo();
 	initCofferEffects();
-	//initEventView(Vec2(0, 680), Size(Director::sharedDirector()->getVisibleSize().width, 40));
+	//initEventView(Vec2(0, 680), Size(Director::getInstance()->getVisibleSize().width, 40));
 
 	Node* nodeError = Node::create();
 	nodeError->setPosition(winSize.width / 2, winSize.height / 2);
@@ -924,8 +928,9 @@ bool GameScene::onTouchBegan(Touch * touch, Event * _event)
 		}
 
 		if (startGameData.LastWinner == sfsIdMe) {
+			int psize = dealPos.size();
 			if (state == CHOOSE_STILT && chosenStilt == -1) {
-				for (int i = 0; i < dealPos.size(); i++) {
+				for (int i = 0; i < psize; i++) {
 					if (pos.distance(Vec2(winSize.width / 2, winSize.height / 2) + dealPos[i]) < 100) {
 						chosenStilt = i;
 						state = CHOOSE_HOST;
@@ -936,7 +941,7 @@ bool GameScene::onTouchBegan(Touch * touch, Event * _event)
 			} else if (state == CHOOSE_HOST && chosenStiltHost == -1) {
 				Point pos2 = touch->getLocation();
 				pos2 = nodeStilt->convertToNodeSpace(pos2);
-				for (int i = 0; i < dealPos.size(); i++) {
+				for (int i = 0; i < psize; i++) {
 					if (i != chosenStilt && pos2.distance(vecStilts[i]->getPosition()) < 100) {
 						state = WAIT;
 						chosenStiltHost = i;
@@ -990,9 +995,10 @@ bool GameScene::onTouchBegan(Touch * touch, Event * _event)
 			if (pos2.distance(vecUsers[0]->getPosition()) < 300) {
 				float rot = CC_RADIANS_TO_DEGREES(Vec2::angle(pos2 - vecUsers[0]->getPosition(), Vec2(0, 1)));
 				if (pos2.x < vecUsers[0]->getPositionX()) rot *= -1;
-				for (int i = 0; i < spHandCards.size(); i++) {
+				int hcsize = spHandCards.size();
+				for (int i = 0; i < hcsize; i++) {
 					if (abs(rot - spHandCards[i]->getRotation()) < 5) {
-						if (chosenCard >= 0 && chosenCard < spHandCards.size()) {
+						if (chosenCard >= 0 && chosenCard < hcsize) {
 							spHandCards[chosenCard]->setAnchorPoint(Vec2(.5f, -.2f));
 						}
 						if (chosenCard != i) {
@@ -1064,17 +1070,19 @@ void GameScene::dealCards()
 	nodePos.push_back(Vec2(winSize.width / 2 - 240, winSize.height / 2));
 	nodePos.push_back(Vec2(winSize.width / 2 + 240, winSize.height / 2));
 
+	int psize = nodePos.size();
 	vector<Node*> nodes;
-	for (int i = 0; i < nodePos.size(); i++) {
+	for (int i = 0; i < psize; i++) {
 		Node* node = Node::create();
 		node->setPosition(getScaleScenePosition(nodePos[i]));
 		playLayer->addChild(node, constant::GAME_ZORDER_USER + 1);
 		nodes.push_back(node);
 	}
 
+	int dsize = dealPos.size();
 	for (int i = 0; i < 6; i++) {
-		for (int j = 0; j < dealPos.size(); j++) {
-			for (int k = 0; k < nodePos.size(); k++) {
+		for (int j = 0; j < dsize; j++) {
+			for (int k = 0; k < psize; k++) {
 				Sprite* sp = Sprite::createWithSpriteFrameName("100.png");
 				sp->setScale(.6f);
 				sp->setName(to_string(j));
@@ -1126,7 +1134,7 @@ void GameScene::dealCards()
 		//spChonCai->setPosition(vecUserPos[userIndexs[startGameData.LastWinner]]);
 		int index = userIndexs[startGameData.LastWinner];
 		lbChonCai->setVisible(true);
-		lbChonCai->resumeSchedulerAndActions();
+		lbChonCai->resume();
 		lbChonCai->setPosition(vecUserPos[index] + getScaleSceneDistance(Vec2(0, index == 0 ? 100 : -115)));
 
 		runTimeWaiting(startGameData.LastWinner, timeChooseHost);
@@ -1143,19 +1151,22 @@ void GameScene::showMyCards(bool runEffect)
 	spHandCards.clear();
 
 	int k = 0;
-	for (int i = 0; i < myCardHand.ThienKhai.size(); i++) {
+	int tksize = myCardHand.ThienKhai.size();
+	for (int i = 0; i < tksize; i++) {
 		for (int j = 0; j < 4; j++) {
 			getCardSpriteToHand(myCardHand.ThienKhai[i], constant::CARD_GROUP_THIENKHAI, k);
 			k++;
 		}
 	}
-	for (int i = 0; i < myCardHand.Chan.size(); i++) {
+	int chansize = myCardHand.Chan.size();
+	for (int i = 0; i < chansize; i++) {
 		for (int j = 0; j < 2; j++) {
 			getCardSpriteToHand(myCardHand.Chan[i], constant::CARD_GROUP_CHAN, k);
 			k++;
 		}
 	}
-	for (int i = 0; i < myCardHand.Ca.size(); i++) {
+	int casize = myCardHand.Ca.size();
+	for (int i = 0; i < casize; i++) {
 		int id1 = (myCardHand.Ca[i] - 1) * 3 + (myCardHand.Ca[i + 1] - 1);
 		getCardSpriteToHand(id1, constant::CARD_GROUP_CA, k);
 		k++;
@@ -1165,21 +1176,24 @@ void GameScene::showMyCards(bool runEffect)
 		k++;
 		i += 2;
 	}
-	for (int i = 0; i < myCardHand.BaDau.size(); i++) {
+	int bdsize = myCardHand.BaDau.size();
+	for (int i = 0; i < bdsize; i++) {
 		for (int j = 0; j < 3; j++) {
 			int id = (myCardHand.BaDau[i] - 1) * 3 + j;
 			getCardSpriteToHand(id, constant::CARD_GROUP_3DAU, k);
 			k++;
 		}
 	}
-	for (int i = 0; i < myCardHand.Que.size(); i++) {
+	int qsize = myCardHand.Que.size();
+	for (int i = 0; i < qsize; i++) {
 		getCardSpriteToHand(myCardHand.Que[i], constant::CARD_GROUP_QUE, k);
 		k++;
 	}
 
 	int rot = 11;
-	int startRot = -(rot * spHandCards.size() / 2) + rot / 2;
-	for (int i = 0; i < spHandCards.size(); i++) {
+	int startRot = rot / 2 - rot * spHandCards.size() / 2;
+	int hcsize = spHandCards.size();
+	for (int i = 0; i < hcsize; i++) {
 		if (runEffect) {
 			spHandCards[i]->setRotation(startRot);
 			RotateBy* rotate = RotateBy::create(i * .1f, i * rot);
@@ -1285,9 +1299,10 @@ void GameScene::updateCardHand(CardHandData data)
 	this->myCardHand = data;
 	int k = 0;
 	int rot = 11;
-	int startRot = -(rot * spHandCards.size() / 2) + rot / 2;
+	int startRot = rot / 2 - rot * spHandCards.size() / 2;
 	vector<int> ids, rots, groups;
-	for (int i = 0; i < myCardHand.ThienKhai.size(); i++) {
+	int tksize = myCardHand.ThienKhai.size();
+	for (int i = 0; i < tksize; i++) {
 		for (int j = 0; j < 4; j++) {
 			ids.push_back(myCardHand.ThienKhai[i]);
 			rots.push_back(startRot + k * rot);
@@ -1295,7 +1310,8 @@ void GameScene::updateCardHand(CardHandData data)
 			k++;
 		}
 	}
-	for (int i = 0; i < myCardHand.Chan.size(); i++) {
+	int chansize = myCardHand.Chan.size();
+	for (int i = 0; i < chansize; i++) {
 		for (int j = 0; j < 2; j++) {
 			ids.push_back(myCardHand.Chan[i]);
 			rots.push_back(startRot + k * rot);
@@ -1303,7 +1319,8 @@ void GameScene::updateCardHand(CardHandData data)
 			k++;
 		}
 	}
-	for (int i = 0; i < myCardHand.Ca.size(); i++) {
+	int casize = myCardHand.Ca.size();
+	for (int i = 0; i < casize; i++) {
 		int id1 = (myCardHand.Ca[i] - 1) * 3 + (myCardHand.Ca[i + 1] - 1);
 		ids.push_back(id1);
 		rots.push_back(startRot + k * rot);
@@ -1317,7 +1334,8 @@ void GameScene::updateCardHand(CardHandData data)
 		k++;
 		i += 2;
 	}
-	for (int i = 0; i < myCardHand.BaDau.size(); i++) {
+	int bdsize = myCardHand.BaDau.size();
+	for (int i = 0; i < bdsize; i++) {
 		for (int j = 0; j < 3; j++) {
 			int id = (myCardHand.BaDau[i] - 1) * 3 + j;
 			ids.push_back(id);
@@ -1326,7 +1344,8 @@ void GameScene::updateCardHand(CardHandData data)
 			k++;
 		}
 	}
-	for (int i = 0; i < myCardHand.Que.size(); i++) {
+	int qsize = myCardHand.Que.size();
+	for (int i = 0; i < qsize; i++) {
 		ids.push_back(myCardHand.Que[i]);
 		rots.push_back(startRot + k * rot);
 		groups.push_back(constant::CARD_GROUP_QUE);
@@ -1335,13 +1354,16 @@ void GameScene::updateCardHand(CardHandData data)
 
 	vector<int> changedCards;
 	vector<int> indexs;
-	for (int i = 0; i < spHandCards.size(); i++) {
+	int hcsize = spHandCards.size();
+	for (int i = 0; i < hcsize; i++) {
 		indexs.push_back(i);
 	}
-	for (int i = 0; i < spHandCards.size(); i++) {
+	int isize = indexs.size();
+	int ccsize = changedCards.size();
+	for (int i = 0; i < ccsize; i++) {
 		spHandCards[i]->setScale(1.2f);
 		int j = 0;
-		for (; j < indexs.size(); j++) {
+		for (; j < isize; j++) {
 			if (atoi(spHandCards[i]->getName().c_str()) == groups[indexs[j]] + ids[indexs[j]]) {
 				spHandCards[i]->setLocalZOrder(constant::GAME_ZORDER_HAND_CARD + indexs[j]);
 				RotateTo* rotate = RotateTo::create(.5f, rots[indexs[j]]);
@@ -1349,15 +1371,15 @@ void GameScene::updateCardHand(CardHandData data)
 				break;
 			}
 		}
-		if (j == indexs.size()) {
+		if (j == isize) {
 			changedCards.push_back(i);
 		} else {
 			indexs.erase(indexs.begin() + j);
 		}
 	}
 
-	for (int i = 0; i < changedCards.size(); i++) {
-		for (int j = 0; j < indexs.size(); j++) {
+	for (int i = 0; i < ccsize; i++) {
+		for (int j = 0; j < isize; j++) {
 			if (atoi(spHandCards[changedCards[i]]->getName().c_str()) % 1000 == ids[indexs[j]]) {
 				spHandCards[changedCards[i]]->setName(to_string(groups[indexs[j]] + ids[indexs[j]]));
 				spHandCards[changedCards[i]]->setLocalZOrder(constant::GAME_ZORDER_HAND_CARD + indexs[j]);
@@ -1377,9 +1399,10 @@ void GameScene::updateCardHand(CardHandData data)
 	DelayTime* delayCheck = DelayTime::create(1);
 	CallFunc* funcCheck = CallFunc::create([=]() {
 		int rot = 11;
-		int startRot = -(rot * spHandCards.size() / 2) + rot / 2;
+		int startRot = rot / 2  - rot * spHandCards.size() / 2;
 		bool ok = true;
-		for (int i = 0; i < spHandCards.size(); i++) {
+		int hcsize = spHandCards.size();
+		for (int i = 0; i < hcsize; i++) {
 			if (spHandCards[i]->getRotation() != startRot + i * rot) {
 				ok = false;
 				break;
@@ -1480,7 +1503,8 @@ void GameScene::showWinnerCards()
 	if (endMatchData.ListCardU.size() > 0) {
 		int x3 = x2 + (endMatchData.ListCaU.size() / 2 + 2) * 50;
 		int y3 = 150;
-		for (int i = 0; i < endMatchData.ListCardU.size(); i ++) {
+		int cusize = endMatchData.ListCardU.size();
+		for (int i = 0; i < cusize; i ++) {
 			Color3B color;
 			if (endMatchData.ListCardU[i] > 100) {
 				color = Color3B(200, 200, 255);
@@ -1557,7 +1581,7 @@ void GameScene::showCofferEffects(std::string money)
 	Label* lb = (Label*)cofferEffect->getChildByName("lbmoney");
 	Sprite* spLight = (Sprite*)cofferEffect->getChildByName("splight");
 	lb->setString(money);
-	spLight->resumeSchedulerAndActions();
+	spLight->resume();
 
 	Vec2 scale1 = getScaleSmoothly(1.1f);
 	Vec2 scale2 = getScaleSmoothly(1);
@@ -1569,7 +1593,7 @@ void GameScene::showCofferEffects(std::string money)
 	CallFunc* func = CallFunc::create([=]() {
 		cofferSplash->setVisible(false);
 		cofferEffect->setVisible(false);
-		cofferEffect->getChildByName("splight")->pauseSchedulerAndActions();
+		cofferEffect->getChildByName("splight")->pause();
 	});*/
 	cofferEffect->setScale(0);
 	cofferEffect->setVisible(true);
@@ -1665,9 +1689,11 @@ void GameScene::beatenNodeAndHide(cocos2d::Node * node, float scale1, float scal
 
 bool GameScene::isCardHandDataSync(CardHandData cardHand)
 {
-	vector<int> a = getCardCount(cardHand);
-	vector<int> b = getCardCount(myCardHand);
-	for (int i = 0; i < a.size(); i++) {
+	vector<int> a, b;
+	getCardCount(cardHand, a);
+	getCardCount(myCardHand, a);
+	int asize = a.size();
+	for (int i = 0; i < asize; i++) {
 		if (a[i] != b[i]) {
 			return false;
 		}
@@ -1693,38 +1719,40 @@ int GameScene::getNextPlayerIndexFrom(int index)
 	return (ret + 1) % 4;
 }
 
-std::vector<int>& GameScene::getCardCount(CardHandData cardHand)
+void GameScene::getCardCount(CardHandData cardHand, std::vector<int>& a)
 {
-	vector<int> a;
 	for (int i = 0; i < 30; i++) a.push_back(0);
-
-	for (int i = 0; i < cardHand.ThienKhai.size(); i++) {
+	int tksize = cardHand.ThienKhai.size();
+	for (int i = 0; i < tksize; i++) {
 		for (int j = 0; j < 4; j++) {
 			a[cardHand.ThienKhai[i]] ++;
 		}
 	}
-	for (int i = 0; i < cardHand.Chan.size(); i++) {
+	int chansize = cardHand.Chan.size();
+	for (int i = 0; i < chansize; i++) {
 		for (int j = 0; j < 2; j++) {
 			a[cardHand.Chan[i]] ++;
 		}
 	}
-	for (int i = 0; i < cardHand.Ca.size(); i++) {
+	int casize = cardHand.Ca.size();
+	for (int i = 0; i < casize; i++) {
 		int id1 = (cardHand.Ca[i] - 1) * 3 + (cardHand.Ca[i + 1] - 1);
 		int id2 = (cardHand.Ca[i] - 1) * 3 + (cardHand.Ca[i + 2] - 1);
 		a[id1] ++;
 		a[id2] ++;
 		i += 2;
 	}
-	for (int i = 0; i < cardHand.BaDau.size(); i++) {
+	int bdsize = cardHand.BaDau.size();
+	for (int i = 0; i < bdsize; i++) {
 		for (int j = 0; j < 3; j++) {
 			int id = (cardHand.BaDau[i] - 1) * 3 + j;
 			a[id] ++;
 		}
 	}
-	for (int i = 0; i < cardHand.Que.size(); i++) {
+	int qsize = cardHand.Que.size();
+	for (int i = 0; i < qsize; i++) {
 		a[cardHand.Que[i]] ++;
 	}
-	return a;
 }
 
 void GameScene::onConnectionFailed()
@@ -1961,7 +1989,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 		if (roomData.TimeStart > 0 && !lbCrestTime->getParent()->isVisible()) {
 			lbCrestTime->getParent()->setVisible(true);
 			lbCrestTime->setString(to_string((int)timeStart));
-			lbCrestTime->resumeSchedulerAndActions();
+			lbCrestTime->resume();
 			lbCrestTime->getParent()->setPosition(btnReady->getPosition() + getScaleSceneDistance(Vec2(0, 80)));
 		}
 		if (isMeHost) {
@@ -2005,14 +2033,16 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 	endLayer->removeAllChildren();
 	cofferSplash->setVisible(false);
 	cofferEffect->setVisible(false);
-	cofferEffect->getChildByName("splight")->pauseSchedulerAndActions();
-	for (int i = 0; i < tableCardNumb.size(); i++) {
+	cofferEffect->getChildByName("splight")->pause();
+	int tcsize = tableCardNumb.size();
+	for (int i = 0; i < tcsize; i++) {
 		tableCardNumb[i] = 0;
 	}
 	for (Sprite* sp : spCards) {
 		sp->setVisible(false);
 	}
-	for (int i = 0; i < vecStilts.size(); i++) {
+	int stsize = vecStilts.size();
+	for (int i = 0; i < stsize; i++) {
 		vecStilts[i]->setVisible(true);
 		//vecStilts[i]->setPosition(dealPos[i] + Vec2(winSize.width / 2, winSize.height / 2));
 		vecStilts[i]->setPosition(dealPos[i]);
@@ -2021,7 +2051,8 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 	nodeStilt->setRotation(0);
 
 	if (winMoneyData.ListUserId.size() > 0) {
-		for (int i = 0; i < winMoneyData.ListUserId.size(); i++) {
+		int usize = winMoneyData.ListUserId.size();
+		for (int i = 0; i < usize; i++) {
 			int index = userIndexs2[winMoneyData.ListUserId[i]];
 			FadeIn* fadeIn = FadeIn::create(.2f);
 			MoveTo* move = MoveTo::create(.5f, vecUserPos[index] + Vec2(0, 40));
@@ -2068,7 +2099,7 @@ void GameScene::onStartGameDataResponse(StartGameData data)
 	btnReady->setVisible(false);
 	btnCancelReady->setVisible(false);
 	lbCrestTime->getParent()->setVisible(false);
-	lbCrestTime->pauseSchedulerAndActions();
+	lbCrestTime->pause();
 	for (Sprite* sp : spSanSangs) {
 		sp->setVisible(false);
 	}
@@ -2095,12 +2126,13 @@ void GameScene::onChooseStilt(unsigned char stilt)
 		experimental::AudioEngine::stopAll();
 		this->stopAllActions();
 		if (spDealCards.size() > 0) {
+			int stsize = vecStilts.size();
 			Node* n1 = spDealCards[0]->getParent();
 			Node* n2 = spDealCards[1]->getParent();
 			for (Sprite* sp : spDealCards) {
 				sp->stopAllActions();
 				int i = atoi(sp->getName().c_str());
-				if (i < 0 || i >= vecStilts.size()) i = 0;
+				if (i < 0 || i >= stsize) i = 0;
 				sp->setRotation(rand() % 60 - 30);
 				sp->setPosition(rand() % 20 - 10, rand() % 20 - 10);
 				if (sp->getParent() != vecStilts[i]) {
@@ -2111,11 +2143,12 @@ void GameScene::onChooseStilt(unsigned char stilt)
 			n1->removeAllChildren();
 			n2->removeAllChildren();
 		}
-		state == CHOOSE_STILT;
+		state = CHOOSE_STILT;
 	}
 
 	chosenStilt = stilt - 1;
-	if (chosenStilt < 0 || chosenStilt >= vecStilts.size()) {
+	int stsize = vecStilts.size();
+	if (chosenStilt < 0 || chosenStilt >= stsize) {
 		chosenStilt = 0;
 	}
 	vecStilts[chosenStilt]->setVisible(false);
@@ -2143,7 +2176,8 @@ void GameScene::onChooseHost(unsigned char stilt1, unsigned char stilt2, unsigne
 		onChooseStilt(stilt1);
 	}
 
-	if (chosenStiltHost < 0 || chosenStiltHost >= vecStilts.size() || chosenStiltHost == chosenStilt) {
+	int stsize = vecStilts.size();
+	if (chosenStiltHost < 0 || chosenStiltHost >= stsize || chosenStiltHost == chosenStilt) {
 		while ((chosenStiltHost = rand() % vecStilts.size()) == chosenStilt);
 	}
 	//chosenHost = (startGameData.CardStilt / 3 + userIndexs[startGameData.LastWinner] - myServerSlot + vecPlayers.size()) % vecPlayers.size();
@@ -2175,7 +2209,7 @@ void GameScene::onChooseHost(unsigned char stilt1, unsigned char stilt2, unsigne
 	CallFunc* func1 = CallFunc::create([=]() {
 		//spChonCai->setVisible(false);
 		lbChonCai->setVisible(false);
-		lbChonCai->pauseSchedulerAndActions();
+		lbChonCai->pause();
 		state = PLAY;
 
 		//int p = 0;
@@ -2391,7 +2425,8 @@ void GameScene::onUserHold(HoldData data)
 			return;
 		}
 	}
-	if (runningSpCard == NULL && runningCards.size() > 0 && runningCards[index] != NULL) {
+	int rcsize = runningCards.size();
+	if (runningSpCard == NULL && rcsize > 0 && runningCards[index] != NULL) {
 		int cid = atoi(runningCards[index]->getName().c_str());
 		if (cid == data.CardIdHold || cid == 256 - data.CardIdHold) {
 			runningSpCard = runningCards[index];
@@ -2439,7 +2474,8 @@ void GameScene::onUserHold(HoldData data)
 				spHandCards[chosenCard]->setAnchorPoint(Vec2(.5f, -.2f));
 				chosenCard = -1;
 			}
-			for (int i = 0; i < spHandCards.size(); i++) {
+			int hcsize = spHandCards.size();
+			for (int i = 0; i < hcsize; i++) {
 				if (atoi(spHandCards[i]->getName().c_str()) % 1000 == data.CardId) {
 					spCard = spHandCards[i];
 					spHandCards.erase(spHandCards.begin() + i);
@@ -2649,7 +2685,8 @@ void GameScene::onUserPenet(PenetData data)
 	cards.push_back(runningSpCard);
 	runningSpCard = NULL;
 	if (data.UId == sfsIdMe) {
-		for (int i = spHandCards.size() - 1; i >= 0; i--) {
+		int hcsize = spHandCards.size();
+		for (int i = hcsize - 1; i >= 0; i--) {
 			if (atoi(spHandCards[i]->getName().c_str()) % 1000 == data.CardId) {
 				if (i == chosenCard) {
 					chosenCard = -1;
@@ -2682,7 +2719,8 @@ void GameScene::onUserPenet(PenetData data)
 		}
 	}
 
-	for (int i = 0; i < cards.size(); i++) {
+	int csize = cards.size();
+	for (int i = 0; i < csize; i++) {
 		cards[i]->setLocalZOrder(constant::GAME_ZORDER_TABLE_CARD + tableCardNumb[index2] * 4 + i);
 		cards[i]->setTag(constant::TAG_CARD_TABLE + index2);
 		cards[i]->setAnchorPoint(Vec2(.5f, .5f));
@@ -2772,7 +2810,7 @@ void GameScene::onUserWin(long uId, unsigned char sound)
 void GameScene::onCrestResponse(CrestResponseData data)
 {
 	if (!btnXemNoc->isVisible() && !btnDongNoc->isVisible()) {
-		state == ENDING;
+		state = ENDING;
 		gameSplash->setVisible(true);
 		for (Sprite* sp : spCards) {
 			if (sp->isVisible()) {
@@ -2786,7 +2824,7 @@ void GameScene::onCrestResponse(CrestResponseData data)
 	tableEndMatch->setVisible(true);
 	progressTimer->setVisible(false);
 	progressTimer->stopAllActions();
-	lbCrestTime->pauseSchedulerAndActions();
+	lbCrestTime->pause();
 	/*btnUp->setLocalZOrder(constant::ZORDER_POPUP);
 	btnDown->setLocalZOrder(constant::ZORDER_POPUP);
 	int i = 1;
@@ -2832,7 +2870,8 @@ void GameScene::onCrestResponse(CrestResponseData data)
 		lbNotedGa->setString("");
 	}
 
-	for (int i = 0; i < data.CuocHo.size(); i++) {
+	int chsize = data.CuocHo.size();
+	for (int i = 0; i < chsize; i++) {
 		DelayTime* delay = DelayTime::create(1 + i * 1);
 		CallFunc* func = CallFunc::create([=]() {
 			playSoundCuoc(data.CuocHo[i]);
@@ -2857,7 +2896,7 @@ void GameScene::onEndMatch(EndMatchData data)
 	gameSplash->setVisible(true);
 	lbCrestTime->getParent()->setVisible(true);
 	lbCrestTime->setString("40");
-	lbCrestTime->resumeSchedulerAndActions();
+	lbCrestTime->resume();
 	lbCrestTime->getParent()->setPosition(btnXemNoc->getPosition() + getScaleSceneDistance(Vec2(170, 0)));
 	lbCardNoc->getParent()->setVisible(false);
 	btnPick->setVisible(false);
@@ -3014,20 +3053,21 @@ void GameScene::onLobbyUserResponse(std::vector<UserData> listUser)
 		listUser.push_back(data);
 	}*/
 
+	int usize = listUser.size();
 	if (hasClickInvite) {
 		hasClickInvite = false;
 		showPopup(tableInvite);
 		ui::ScrollView* scroll = (ui::ScrollView*)tableInvite->getChildByName("scroll");
 		int sx = tableInvite->getChildByName("inside")->getContentSize().width;
 
-		int y = listUser.size() * 60;
+		int y = usize * 60;
 		if (y < scroll->getContentSize().height)
 			y = scroll->getContentSize().height - 25;
 		scroll->setInnerContainerSize(Size(sx, y + 25));
 
 		bool isRealMoney = Utils::getSingleton().moneyType == 1;
 		int childCount = scroll->getChildrenCount();
-		for (int i = 0; i < listUser.size(); i++) {
+		for (int i = 0; i < usize; i++) {
 			int posY = y - i * 60 - 5;
 			int tag = i * 4;
 			Label* lb1;
@@ -3096,7 +3136,7 @@ void GameScene::onLobbyUserResponse(std::vector<UserData> listUser)
 			}, isNewBtn);
 		}
 
-		int count = listUser.size() * 4;
+		int count = usize * 4;
 		for (int i = count; i < childCount; i++) {
 			scroll->getChildByTag(i)->setVisible(false);
 		}
@@ -3130,12 +3170,16 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 		n->setVisible(false);
 	}
 	int num = 0;
+	int usize = vecUsers.size();
+	int psize = data.Players.size();
 	for (int i = 0; i < 4; i++) {
 		int index = -1;
 		for (PlayerData player : data.Players) {
-			if (player.Index == (myServerSlot + i) % vecUsers.size()) {
+			int scsize = player.SingleCards.size();
+			int pcsize = player.PairCards.size();
+			if (player.Index == (myServerSlot + i) % usize) {
 				index = i - num;
-				if (data.Players.size() == 2 && (index == 1 || index == 3)) {
+				if (psize == 2 && (index == 1 || index == 3)) {
 					index = 2;
 				}
 				userIndexs[player.Info.SfsUserId] = index;
@@ -3159,10 +3203,10 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 				}*/
 				//endtest
 
-				if (player.SingleCards.size() > maxTableCardNumb[index2]) {
-					scale = ((float)maxTableCardNumb[index2]) / player.SingleCards.size();
+				if (scsize > maxTableCardNumb[index2]) {
+					scale = ((float)maxTableCardNumb[index2]) / scsize;
 				}
-				for (int j = 0; j < player.SingleCards.size(); j++) {
+				for (int j = 0; j < scsize; j++) {
 					Sprite* spCard = getCardSprite(player.SingleCards[j]);
 					spCard->setLocalZOrder(constant::GAME_ZORDER_TABLE_CARD + tableCardNumb[index2] + 1);
 					spCard->setTag(constant::TAG_CARD_TABLE + index2);
@@ -3174,7 +3218,7 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 					spCard->setScale(cardScaleTable);
 
 					tableCardNumb[index2] ++;
-					if (j == player.SingleCards.size() - 1) {
+					if (j == scsize - 1) {
 						runningCards[index] = spCard;
 					}
 				}
@@ -3191,23 +3235,24 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 				}*/
 				//end test
 
-				if (player.PairCards.size() > maxTableCardNumb[index2]) {
-					scale = ((float)maxTableCardNumb[index2] - 1) / (player.PairCards.size() - 1);
+				if (pcsize > maxTableCardNumb[index2]) {
+					scale = ((float)maxTableCardNumb[index2] - 1) / (pcsize - 1);
 				}
 				for (vector<char> v : player.PairCards) {
 					Vec2 pos;
-					if (v.size() == 2) {
+					int vsize = v.size();
+					if (vsize == 2) {
 						pos = tableCardPos[index2] + tableCardNumb[index2] * tableCardDistance[index2] * scale;
 					} else {
 						pos = tableCardPos[index2] + tableCardNumb[index2] * tableCardDistance[index2] * scale + Vec2(0, 5);
 					}
-					for (int i = 0; i < v.size(); i++) {
+					for (int i = 0; i < vsize; i++) {
 						Sprite* spCard = getCardSprite(v[i]);
 						spCard->setLocalZOrder(constant::GAME_ZORDER_TABLE_CARD + (tableCardNumb[index2] + 1) * 4 + i);
 						spCard->setTag(constant::TAG_CARD_TABLE + index2);
 						spCard->setName(to_string((int)std::abs(v[i])));
 						spCard->setAnchorPoint(Vec2(.5f, .5f));
-						spCard->setPosition(pos - (v.size() == 2 ? Vec2(0, 40) : Vec2(0, 15)) * i);
+						spCard->setPosition(pos - (vsize == 2 ? Vec2(0, 40) : Vec2(0, 15)) * i);
 						spCard->setColor(v[i] > 0 ? Color3B::WHITE : Color3B(200, 200, 255));
 						spCard->setRotation(0);
 						spCard->setScale(cardScaleTable);
@@ -3280,8 +3325,9 @@ void GameScene::onGameMyReconnectDataResponse(GameReconnectData data)
 		for (Node* n : vecStilts) {
 			n->setVisible(true);
 		}
+		int psize = dealPos.size();
 		for (int i = 0; i < 10; i++) {
-			for (int j = 0; j < dealPos.size(); j++) {
+			for (int j = 0; j < psize; j++) {
 				Sprite* sp = Sprite::createWithSpriteFrameName("100.png");
 				sp->setScale(.6f);
 				sp->setRotation(rand() % 60 - 30);
@@ -3307,7 +3353,8 @@ void GameScene::onGameMyReconnectDataResponse(GameReconnectData data)
 
 void GameScene::onGameUserReconnectDataResponse(std::vector<UserReconnectData> list)
 {
-	for (int i = 0; i < list.size(); i++) {
+	int lsize = list.size();
+	for (int i = 0; i < lsize; i++) {
 		for (PlayerData player : vecPlayers) {
 			if (list[i].Name.compare(player.Info.Name) == 0) {
 				userIndexs[list[i].SfsUserId] = userIndexs[player.Info.SfsUserId];
@@ -3360,7 +3407,7 @@ void GameScene::onBackScene()
 void GameScene::reset()
 {
 	//spChonCai->setVisible(false);
-	lbChonCai->pauseSchedulerAndActions();
+	lbChonCai->pause();
 	lbChonCai->setVisible(false);
 	btnBash->setVisible(false);
 	btnBashBack->setVisible(false);
@@ -3522,7 +3569,7 @@ void GameScene::initCrestTable()
 	bgChosen->setScaleX(.8f);
 	tableCrest->addChild(bgChosen);
 
-	lbChonCuoc = Label::create("", "fonts/myriadb.ttf", 40);
+	lbChonCuoc = Label::createWithTTF("", "fonts/myriadb.ttf", 40);
 	lbChonCuoc->setPosition(bgChosen->getPositionX(), bgChosen->getPositionY() - 5);
 	lbChonCuoc->setColor(Color3B::WHITE);
 	lbChonCuoc->setAlignment(TextHAlignment::CENTER);
@@ -3530,8 +3577,9 @@ void GameScene::initCrestTable()
 	lbChonCuoc->setHeight(40);
 	tableCrest->addChild(lbChonCuoc);
 
+	int idsize = ids.size();
 	Size size1 = Size(1000, 235);
-	Size size2 = Size(1000, ((ids.size() - 2) / 4 + 2) * 46);
+	Size size2 = Size(1000, ((idsize - 2) / 4 + 2) * 46);
 	ui::ScrollView* scroll = ui::ScrollView::create();
 	scroll->setDirection(ui::ScrollView::Direction::VERTICAL);
 	scroll->setScrollBarColor(Color3B::WHITE);
@@ -3547,7 +3595,7 @@ void GameScene::initCrestTable()
 
 	int x = 160;
 	int y = size2.height - 20;
-	for (int i = 0; i < ids.size(); i++) {
+	for (int i = 0; i < idsize; i++) {
 		string name = String::createWithFormat("cuoc_%d", ids[i])->getCString();
 		ui::Button* btn = ui::Button::create("", "");
 		btn->setTitleText(Utils::getSingleton().getStringForKey(name));
@@ -3563,23 +3611,24 @@ void GameScene::initCrestTable()
 		scroll->addChild(btn);
 		vecCrests.push_back(btn);
 
-		if (i == ids.size() - 1) {
+		if (i == idsize -1) {
 			btn->setContentSize(Size(430, 40));
 			btn->setPosition(Vec2(x + 75, y - (i / 4) * 46));
 		}
 
 		addTouchEventListener(btn, [=]() {
+			int csize = chosenCuocs.size();
 			int i = btn->getTag();
 			if (i == 33) {
-				if (chosenCuocs.size() == 1 && chosenCuocs[0] == 33) {
+				if (csize == 1 && chosenCuocs[0] == 33) {
 					chosenCuocs.clear();
 					chosenCuocNumbs.clear();
 					vecCrests[0]->setTitleColor(Color3B::BLACK);
 					lbChonCuoc->setString("");
-					return true;
 				}
 
-				for (int j = 1; j < vecCrests.size(); j++) {
+				int crsize = vecCrests.size();
+				for (int j = 1; j < crsize; j++) {
 					vecCrests[j]->setTitleColor(Color3B::BLACK);
 				}
 				vecCrests[0]->setTitleColor(Color3B::RED);
@@ -3589,15 +3638,15 @@ void GameScene::initCrestTable()
 				chosenCuocNumbs.push_back(0);
 				lbChonCuoc->setString(Utils::getSingleton().getStringForKey("cuoc_33"));
 			} else {
-				if (chosenCuocs.size() == 1 && chosenCuocs[0] == 33) {
+				if (csize == 1 && chosenCuocs[0] == 33) {
 					chosenCuocs.clear();
 					chosenCuocNumbs.clear();
 					vecCrests[0]->setTitleColor(Color3B::BLACK);
 				}
 
 				int index = 0;
-				while (index < chosenCuocs.size() && chosenCuocs[index] != i) index++;
-				if (index == chosenCuocs.size()) {
+				while (index < csize && chosenCuocs[index] != i) index++;
+				if (index == csize) {
 					chosenCuocs.push_back(i);
 					chosenCuocNumbs.push_back(0);
 					btn->setTitleColor(Color3B::RED);
@@ -3611,7 +3660,7 @@ void GameScene::initCrestTable()
 				}
 
 				string strcuoc = "";
-				for (int j = 0; j < chosenCuocs.size(); j++) {
+				for (int j = 0; j < csize; j++) {
 					if (strcuoc.length() > 0) {
 						strcuoc += ", ";
 					}
@@ -3631,14 +3680,15 @@ void GameScene::initCrestTable()
 	btnCrest->setVisible(false);
 	addTouchEventListener(btnCrest, [=]() {
 		vector<unsigned char> crestIds;
-		for (int i = 0; i < chosenCuocs.size();i++) {
+		int csize = chosenCuocs.size();
+		for (auto i = 0; i < csize;i++) {
 			crestIds.push_back(chosenCuocs[i] + chosenCuocNumbs[i]);
 		}
 		lbChonCuoc->setString("");
 		tableCrest->setVisible(false);
 		btnCrest->setVisible(false);
 		lbCrestTime->getParent()->setVisible(false);
-		lbCrestTime->pauseSchedulerAndActions();
+		lbCrestTime->pause();
 		SFSRequest::getSingleton().RequestGameWinCrest(crestIds);
 		for (ui::Button* btn : vecCrests) {
 			btn->setTitleColor(Color3B::BLACK);
@@ -3792,7 +3842,7 @@ void GameScene::initSettingsPopup()
 		popupSettings->addChild(checkbox);
 		cbs.push_back(checkbox);
 
-		Label* lb = Label::create("", "fonts/myriadb.ttf", 35);
+		Label* lb = Label::createWithTTF("", "fonts/myriadb.ttf", 35);
 		lb->setPosition(vecPos[i] + Vec2(40, -5));
 		lb->setAnchorPoint(Vec2(0, .5f));
 		lb->setColor(Color3B::BLACK);
@@ -3875,13 +3925,13 @@ void GameScene::initTableInfo()
 	bg->setScaleX(.85f);
 	tableInfo->addChild(bg);*/
 
-	Label* lbTableName = Label::create("", "fonts/myriad.ttf", 25);
+	Label* lbTableName = Label::createWithTTF("", "fonts/myriad.ttf", 25);
 	lbTableName->setPosition(-90, 15);
 	lbTableName->setAnchorPoint(Vec2(0, .5f));
 	lbTableName->setName("lbname");
 	tableInfo->addChild(lbTableName);
 
-	Label* lbTableBet = Label::create("", "fonts/myriad.ttf", 25);
+	Label* lbTableBet = Label::createWithTTF("", "fonts/myriad.ttf", 25);
 	lbTableBet->setPosition(lbTableName->getPosition() + Vec2(100, 0));
 	lbTableBet->setAnchorPoint(Vec2(0, .5f));
 	lbTableBet->setColor(Color3B::YELLOW);
@@ -3894,7 +3944,7 @@ void GameScene::initTableInfo()
 	icMoney->setName("icmoney");
 	tableInfo->addChild(icMoney);
 
-	Label* lbType = Label::create("", "fonts/myriad.ttf", 25);
+	Label* lbType = Label::createWithTTF("", "fonts/myriad.ttf", 25);
 	lbType->setPosition(lbTableName->getPosition() + Vec2(0, -30));
 	lbType->setAnchorPoint(Vec2(0, .5f));
 	lbType->setName("lbtype");
@@ -3920,7 +3970,7 @@ void GameScene::initCofferEffects()
 	spLight->setName("splight");
 	cofferEffect->addChild(spLight);
 	spLight->runAction(RepeatForever::create(RotateBy::create(1, 90)));
-	spLight->pauseSchedulerAndActions();
+	spLight->pause();
 
 	Sprite* spCoffer = Sprite::create();
 	cofferEffect->addChild(spCoffer);
@@ -3986,7 +4036,8 @@ bool GameScene::bashCardDown(int indexFrom, int indexTo, int cardId, bool isMe)
 			if (chosenCard >= 0) {
 				spHandCards[chosenCard]->setAnchorPoint(Vec2(.5f, -.2f));
 			}
-			for (int i = 0; i < spHandCards.size(); i++) {
+			int csize = spHandCards.size();
+			for (auto i = 0; i < csize; i++) {
 				if (atoi(spHandCards[i]->getName().c_str()) % 1000 == cardId) {
 					spCard = spHandCards[i];
 					spHandCards.erase(spHandCards.begin() + i);

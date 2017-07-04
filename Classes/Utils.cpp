@@ -1,4 +1,3 @@
-#pragma once
 #include "Utils.h"
 #include "LoginScene.h"
 #include "MainScene.h"
@@ -46,7 +45,7 @@ Utils::Utils()
 	SFSRequest::getSingleton().onLoadTextureResponse = std::bind(&Utils::onLoadTextureResponse, this, std::placeholders::_1, std::placeholders::_2);
 	SFSRequest::getSingleton().onHttpResponse = std::bind(&Utils::onHttpResponse, this, std::placeholders::_1, std::placeholders::_2);
 
-	TextureCache::sharedTextureCache()->addImageAsync("emp.png", [=](Texture2D* texture) {
+	Director::getInstance()->getTextureCache()->addImageAsync("emp.png", [=](Texture2D* texture) {
 		string str1 = FileUtils::getInstance()->getStringFromFile("menu1.plist");
 		SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str1, texture);
 		string str2 = FileUtils::getInstance()->getStringFromFile("menu2.plist");
@@ -103,7 +102,7 @@ string Utils::formatMoneyWithComma(long lmoney) {
 
 cocos2d::SpriteFrame* Utils::getDownloadedTextureAsSpriteFrame(std::string key)
 {
-	Texture2D* texture = TextureCache::getInstance()->getTextureForKey(key);
+	Texture2D* texture = Director::getInstance()->getTextureCache()->getTextureForKey(key);
 	Size size = texture->getContentSize();
 	return SpriteFrame::createWithTexture(texture, Rect(0, 0, size.width, size.height));
 }
@@ -185,7 +184,7 @@ std::string Utils::getCurrentSystemTimeString()
 {
 	timeval time;
 	gettimeofday(&time, NULL);
-	return String::createWithFormat("%d %d", time.tv_sec, time.tv_usec)->getCString();
+	return String::createWithFormat("%ld %ld", time.tv_sec, time.tv_usec)->getCString();
 }
 
 std::string Utils::getPlatformOS()
@@ -696,14 +695,14 @@ void Utils::downloadPlistTextures()
 	}
 #else
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA8888);
-	TextureCache::sharedTextureCache()->addImageAsync("menu1.png", [=](Texture2D* texture) {
+	Director::getInstance()->getTextureCache()->addImageAsync("menu1.png", [=](Texture2D* texture) {
 		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("menu1.plist");
 		downloadedPlistTexture = 1;
 		if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
 			EventHandler::getSingleton().onDownloadedPlistTexture(downloadedPlistTexture);
 		}
 		Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
-		TextureCache::sharedTextureCache()->addImageAsync("menu2.png", [=](Texture2D* texture) {
+		Director::getInstance()->getTextureCache()->addImageAsync("menu2.png", [=](Texture2D* texture) {
 			SpriteFrameCache::getInstance()->addSpriteFramesWithFile("menu2.plist");
 			downloadedPlistTexture = 2;
 			if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {

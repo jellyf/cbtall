@@ -101,10 +101,10 @@ private:
 	void playSoundCuoc(unsigned char cuocId);
 	void changeZOrderAfterFly(cocos2d::Sprite* card, int zorder);
 	void beatenNodeAndHide(cocos2d::Node* node, float scale1, float scale2, float timeToBeaten, float timeToHide);
+	void getCardCount(CardHandData cardHand, std::vector<int>& counts);
 	bool isCardHandDataSync(CardHandData cardHand);
 	int getCardName(unsigned char cardId);
 	int getNextPlayerIndexFrom(int index);
-	std::vector<int>& getCardCount(CardHandData cardHand);
 	cocos2d::Sprite* getCardSprite(int id);
 	cocos2d::Vec2 getScaleScenePosition(cocos2d::Vec2 pos);
 	cocos2d::Vec2 getScaleSceneDistance(cocos2d::Vec2 pos);

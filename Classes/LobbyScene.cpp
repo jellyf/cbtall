@@ -1,4 +1,3 @@
-#pragma once
 #include "LobbyScene.h"
 #include "SFSRequest.h"
 #include "Constant.h"
@@ -42,7 +41,7 @@ void LobbyScene::onInit()
 	}
 
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB888);
-	Texture2D* bgTexture = TextureCache::getInstance()->addImage("bg" + zone + ".jpg");
+	Texture2D* bgTexture = Director::getInstance()->getTextureCache()->addImage("bg" + zone + ".jpg");
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
 
 	Sprite* bg = Sprite::createWithTexture(bgTexture);
@@ -71,7 +70,7 @@ void LobbyScene::onInit()
 
 	string strGold = Utils::getSingleton().formatMoneyWithComma(Utils::getSingleton().userDataMe.MoneyReal);
 	string strSilver = Utils::getSingleton().formatMoneyWithComma(Utils::getSingleton().userDataMe.MoneyFree);
-	string strId = String::createWithFormat("ID: %d", Utils::getSingleton().userDataMe.UserID)->getCString();
+	string strId = String::createWithFormat("ID: %ld", Utils::getSingleton().userDataMe.UserID)->getCString();
 	string strLevel = String::createWithFormat((Utils::getSingleton().getStringForKey("level") + ": %d").c_str(), Utils::getSingleton().userDataMe.Level)->getCString();
 	lbName->setString(Utils::getSingleton().userDataMe.DisplayName);
 	lbGold->setString(strGold);
@@ -405,13 +404,13 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 			spGa->setScale(.8f);
 			btn->addChild(spGa);
 
-			Label* lbName = Label::create(Utils::getSingleton().getStringForKey("table") + " " + to_string(i + 1), "fonts/myriadb.ttf", 30);
+			Label* lbName = Label::createWithTTF(Utils::getSingleton().getStringForKey("table") + " " + to_string(i + 1), "fonts/myriadb.ttf", 30);
 			lbName->setColor(lb411->getColor());
 			lbName->setPosition(0, 15);
 			lbName->setAnchorPoint(Vec2(0, 1));
 			btn->addChild(lbName);
 
-			Label* lbMoney = Label::create("", "fonts/myriadb.ttf", 25);
+			Label* lbMoney = Label::createWithTTF("", "fonts/myriadb.ttf", 25);
 			lbMoney->setColor(colorMoney);
 			lbMoney->setPosition(210, 15);
 			lbMoney->setAnchorPoint(Vec2(1, 1));
