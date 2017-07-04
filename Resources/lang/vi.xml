@@ -163,5 +163,6 @@
 	<key>ban_muon_thoat_game</key><string>Bạn muốn thoát game?</string>
 	<key>ask_to_kick_player</key><string>Bạn muốn đá người này ra khỏi bàn?</string>
 	<key>khong_nhan_duoc_phan_hoi_tu_server</key><string>Không nhận được phản hồi từ server. Bạn muốn đăng nhập lại?</string>
+	<key>tai_khoan_khong_dung</key><string>Tài khoản hoặc mật khẩu không đúng</string>
 </dict>
 </plist>
