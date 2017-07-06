@@ -164,8 +164,8 @@ void MainScene::onInit()
 	circleNewMail->setVisible(false);
 	mLayer->addChild(circleNewMail);
 
-	lbNewMail = Label::createWithTTF("", "fonts/myriad.ttf", 25);
-	lbNewMail->setPosition(circleNewMail->getContentSize().width / 2 - 4, circleNewMail->getContentSize().height / 2);
+	lbNewMail = Label::createWithTTF("", "fonts/myriadb.ttf", 35);
+	lbNewMail->setPosition(circleNewMail->getContentSize().width / 2, circleNewMail->getContentSize().height / 2 - 5);
 	circleNewMail->addChild(lbNewMail);
 
 	ui::Button* btnGiftcode = ui::Button::create("icon_giftcode.png", "", "", ui::Widget::TextureResType::PLIST);
