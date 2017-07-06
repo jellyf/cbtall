@@ -283,6 +283,7 @@ void BaseScene::showWebView(std::string url)
 
 void BaseScene::showWaiting(int time)
 {
+	if (spWaiting == NULL) return;
 	isWaiting = true;
 	showPopup(spWaiting->getParent(), false);
 	spWaiting->resume();
@@ -1097,6 +1098,7 @@ void BaseScene::hideSplash()
 void BaseScene::hideWaiting()
 {
 	isWaiting = false;
+	if (spWaiting == NULL) return;
 	hidePopup(spWaiting->getParent(), false);
 	spWaiting->pause();
 	spWaiting->getParent()->stopAllActions();
