@@ -530,19 +530,24 @@ bool LoginScene::onKeyBack()
 void LoginScene::loginNormal()
 {
 	isRequesting = true;
-    string username = tfUsername->getText();// Utils::getSingleton().trim(tfUsername->getText());
+    string username = tfUsername->getText();
     if (username.length() == 0) {
         showPopupNotice(Utils::getSingleton().getStringForKey("hay_nhap_tai_khoan"), [=]() {});
         return;
     }
-    string password = tfPassword->getText();// Utils::getSingleton().trim(tfPassword->getText());
+    string password = tfPassword->getText();
     if (password.length() == 0) {
         showPopupNotice(Utils::getSingleton().getStringForKey("hay_nhap_mat_khau"), [=]() {});
         return;
     }
+	if (!Utils::getSingleton().isUsernameValid(username)
+		|| !Utils::getSingleton().isPasswordValid(password)) {
+		showPopupNotice(Utils::getSingleton().getStringForKey("tai_khoan_khong_dung"), [=]() {});
+		return;
+	}
     showWaiting(60);
 	if (isLogedInZone) {
-		SFSRequest::getSingleton().RequestLogin(tfUsername->getText(), md5(tfPassword->getText()));
+		SFSRequest::getSingleton().RequestLogin(username, md5(password));
 	} else {
 		SFSRequest::getSingleton().Connect();
 	}
@@ -663,13 +668,9 @@ void LoginScene::initRegisterNode()
 void LoginScene::requestGameConfig(bool realConfig)
 {
 	showWaiting(60);
-	if (realConfig) {
-		SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
-		//SFSRequest::getSingleton().RequestHttpGet("http://115.84.179.242/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
-		//SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", constant::TAG_HTTP_GAME_CONFIG);
-	} else {
-		SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
-	}
+	SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
+	//SFSRequest::getSingleton().RequestHttpGet("http://115.84.179.242/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
+	//SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", constant::TAG_HTTP_GAME_CONFIG);
 }
 
 void LoginScene::loadTextureCache()

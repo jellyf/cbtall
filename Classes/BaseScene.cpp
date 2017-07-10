@@ -274,6 +274,7 @@ void BaseScene::showSplash()
 
 void BaseScene::showWaiting(int time)
 {
+	if (spWaiting == NULL) return;
 	isWaiting = true;
 	showPopup(spWaiting->getParent(), false);
 	spWaiting->resumeSchedulerAndActions();
@@ -1021,6 +1022,7 @@ void BaseScene::hideSplash()
 void BaseScene::hideWaiting()
 {
 	isWaiting = false;
+	if (spWaiting == NULL) return;
 	hidePopup(spWaiting->getParent(), false);
 	spWaiting->pauseSchedulerAndActions();
 	spWaiting->getParent()->stopAllActions();

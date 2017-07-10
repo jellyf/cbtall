@@ -1075,6 +1075,7 @@ void GameScene::onApplicationWillEnterForeground()
     float pauseTime = curTime - pauseTimeInSecs;
     if(pauseTime > 120){
         float timeWait = pauseTime / 40;
+		if (timeWait > 20) timeWait = 20;
         showWaiting(timeWait + 10);
         SFSGEvent::getSingleton().DoWork(false);
         this->delayFunction(this, timeWait, [=](){

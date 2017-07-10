@@ -595,12 +595,18 @@ void Utils::queryIAPProduct()
 {
     std::vector<std::string> ids;
     split(gameConfig.inapp, ',', ids);
+	std::vector<std::string> descs = { "21.000 ", "105.000 ", "210.000 " };
+	std::vector<double> prices = { 22000, 105000, 210000 };
     for(int i=0;i<ids.size();i++){
         ids[i] = "com.chan.kinhtuchi.goi." + ids[i];
         ProductData data;
         data.Id = ids[i];
+		data.Price = prices[i];
+		data.Description = descs[i];
+		data.CurrencySymbol = "vnd";
         products.push_back(data);
     }
+
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
     IOSHelperCPlus::queryIAPProducts(ids);
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
@@ -616,14 +622,6 @@ void Utils::queryIAPProduct()
 	methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID, arr);
 	methodInfo.env->DeleteLocalRef(arr);
 	methodInfo.env->DeleteLocalRef(methodInfo.classID);
-#else
-	std::vector<std::string> descs = { "21.000 ", "105.000 ", "210.000 " };
-	std::vector<double> prices = { 22000, 105000, 210000 };
-	for (int i = 0; i < ids.size(); i++) {
-		products[i].Price = prices[i];
-		products[i].Description = descs[i];
-		products[i].CurrencySymbol = "vnd";
-	}
 #endif
 }
 
