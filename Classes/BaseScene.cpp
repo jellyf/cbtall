@@ -443,8 +443,11 @@ void BaseScene::showPopupRank(int type)
 	nodeTop->setVisible(true);
 	scrollWin->setVisible(false);
 	int rowHeight = 43;
-	int height = listRanks[type].size() * rowHeight;
 	int width = scroll->getContentSize().width;
+	int height = listRanks[type].size() * rowHeight;
+	if (height < scroll->getContentSize().height) {
+		height = scroll->getContentSize().height;
+	}
 	scroll->setInnerContainerSize(Size(width, height));
 	for (int i = 0; i < 3; i++) {
 		Node* topItem = nodeTop->getChildByTag(i);
