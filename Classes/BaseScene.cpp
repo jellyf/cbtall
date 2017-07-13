@@ -1252,6 +1252,7 @@ cocos2d::Node * BaseScene::createPopupChooseProvider(std::string stitle, std::ve
 		btnProvider->setPosition(Vec2(xp + ((i - 1) % numPerRow) * dx, yp - ((i - 1) / numPerRow) * dy));
 		btnProvider->setTag(i == 1 ? 1 : 0);
 		btnProvider->setName("btn" + stri);
+		btnProvider->setContentSize(Size(158, 99));
 		addTouchEventListener(btnProvider, [=]() {
 			if (btnProvider->getTag() == 1) return;
 			for (int j = 1; j <= providers.size(); j++) {
@@ -1268,6 +1269,11 @@ cocos2d::Node * BaseScene::createPopupChooseProvider(std::string stitle, std::ve
 			}
 		});
 		nodeProvider->addChild(btnProvider);
+
+		Label* lbName = Label::createWithTTF(providers[i - 1], "fonts/arialbd.ttf", 30);
+		lbName->setPosition(btnProvider->getContentSize().width / 2, btnProvider->getContentSize().height / 2);
+		lbName->setColor(Color3B::BLACK);
+		btnProvider->addChild(lbName, -1);
 
 		/*ui::Scale9Sprite* bgProvider = ui::Scale9Sprite::createWithSpriteFrameName("box8.png");
 		bgProvider->setContentSize(btnProvider->getContentSize() + Size(40, 40));
@@ -1580,12 +1586,25 @@ void BaseScene::initPopupUserInfo()
 	btnActive->setName("btnactive");
 	btnActive->setScale(.8f);
 	addTouchEventListener(btnActive, [=]() {
-		string str = Utils::getSingleton().gameConfig.smsKH;
-		int index = str.find_last_of(' ');
-		string number = str.substr(index + 1, str.length() - index);
-		string content = str.substr(0, index);
-		content = Utils::getSingleton().replaceString(content, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
-		Utils::getSingleton().openSMS(number, content);
+		if (popupChooseSmsKH == NULL) {
+			std::vector<std::string> smsProviders = { "viettel", "mobifone", "vinaphone" };
+			popupChooseSmsKH = createPopupChooseProvider(Utils::getSingleton().getStringForKey("chon_mang_sms"), smsProviders, [=](string provider) {
+				string str = "";
+				if (provider.compare("viettel") == 0) {
+					str = Utils::getSingleton().gameConfig.smsKHVT;
+				} else if (provider.compare("mobifone") == 0) {
+					str = Utils::getSingleton().gameConfig.smsKHVMS;
+				} else {
+					str = Utils::getSingleton().gameConfig.smsKHVNP;
+				}
+				int index = str.find_last_of(' ');
+				string number = str.substr(index + 1, str.length() - index);
+				string content = str.substr(0, index);
+				content = Utils::getSingleton().replaceString(content, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
+				Utils::getSingleton().openSMS(number, content);
+			});
+		}
+		showPopup(popupChooseSmsKH);
 	});
 	popupUserInfo->addChild(btnActive);
 

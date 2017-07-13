@@ -265,9 +265,14 @@ struct GameConfig
 	std::string ip_rs;
 	std::string phone;
 	std::string smsVT;
-	std::string smsVNPVMS;
-	std::string smsKH;
-	std::string smsMK;
+	std::string smsVNP;
+	std::string smsVMS;
+	std::string smsKHVT;
+	std::string smsKHVNP;
+	std::string smsKHVMS;
+	std::string smsMKVT;
+	std::string smsMKVNP;
+	std::string smsMKVMS;
 	std::string linkFb;
 	std::string linkAndroid;
 	std::string linkIOS;

@@ -95,15 +95,29 @@ void LoginScene::onInit()
 	btnForgotPass->setOpacity(0);
 	btnForgotPass->setVisible(ispmE);
 	addTouchEventListener(btnForgotPass, [=]() {
-		string str = Utils::getSingleton().gameConfig.smsMK;
-		string strMsg = Utils::getSingleton().getStringForKey("open_sms_retake_password");
-		strMsg = Utils::getSingleton().replaceString(strMsg, "sms", str);
-		showPopupNotice(strMsg, [=]() {
-			int i = str.find_last_of(' ');
-			string number = str.substr(i + 1, str.length() - i - 1);
-			string content = str.substr(0, i);
-			Utils::getSingleton().openSMS(number, content);
-		});
+		if (!Utils::getSingleton().ispmE()) return;
+		if (popupChooseSmsMK == NULL) {
+			std::vector<std::string> smsProviders = { "viettel", "mobifone", "vinaphone" };
+			popupChooseSmsMK = createPopupChooseProvider(Utils::getSingleton().getStringForKey("chon_mang_sms"), smsProviders, [=](string provider) {
+				string str = "";
+				if (provider.compare("viettel") == 0) {
+					str = Utils::getSingleton().gameConfig.smsKHVT;
+				} else if (provider.compare("mobifone") == 0) {
+					str = Utils::getSingleton().gameConfig.smsKHVMS;
+				} else {
+					str = Utils::getSingleton().gameConfig.smsKHVNP;
+				}
+				string strMsg = Utils::getSingleton().getStringForKey("open_sms_retake_password");
+				strMsg = Utils::getSingleton().replaceString(strMsg, "sms", str);
+				showPopupNotice(strMsg, [=]() {
+					int i = str.find_last_of(' ');
+					string number = str.substr(i + 1, str.length() - i - 1);
+					string content = str.substr(0, i);
+					Utils::getSingleton().openSMS(number, content);
+				});
+			});
+		}
+		showPopup(popupChooseSmsMK);
 	});
 	loginNode->addChild(btnForgotPass);
 
@@ -390,9 +404,9 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	config.ip_rs = d["ip_rs"].GetString();
 	config.phone = d["phone"].GetString();
 	config.smsVT = d["smsVT"].GetString();
-	config.smsVNPVMS = d["smsVNPVMS"].GetString();
-	config.smsKH = d["smsKH"].GetString();
-	config.smsMK = d["smsMK"].GetString();
+	string strSmsVNPVMS = d["smsVNPVMS"].GetString();
+	string strSmsKH = d["smsKH"].GetString();
+	string strSmsMK = d["smsMK"].GetString();
 	/*config.linkFb = d["fb"].GetString();
 	config.linkAndroid = d["a"].GetString();
 	config.linkIOS = d["i"].GetString();
@@ -400,6 +414,15 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	config.inapp = d["inapp"].GetString();
     config.invite = d["invite"].GetBool();
     config.versionIOS71ktc = d["versionIOS71ktc"].GetBool();*/
+
+	config.smsVNP = strSmsVNPVMS;
+	config.smsVMS = strSmsVNPVMS;
+	config.smsKHVT = strSmsKH;
+	config.smsKHVNP = strSmsKH;
+	config.smsKHVMS = strSmsKH;
+	config.smsMKVT = strSmsMK;
+	config.smsMKVNP = strSmsMK;
+	config.smsMKVMS = strSmsMK;
 
 	string verstr = Application::sharedApplication()->getVersion();
 	int i = verstr.find_last_of('.') + 1;

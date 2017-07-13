@@ -60,8 +60,8 @@ private:
 	cocos2d::Node* popupCharge;
 	cocos2d::Node* popupGiftcode;
 	cocos2d::Node* popupDisplayName;
-	cocos2d::Node* popupChooseSms;
 	cocos2d::Node* popupChooseCard;
+	cocos2d::Node* popupChooseSms;
 	cocos2d::Node* nodeWebview;
 
 	cocos2d::Label* lbNewMail;

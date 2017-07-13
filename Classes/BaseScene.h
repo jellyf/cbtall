@@ -120,6 +120,7 @@ protected:
 	cocos2d::Node* popupHistory;
 	cocos2d::Node* popupCoffer;
 	cocos2d::Node* popupIAP;
+	cocos2d::Node* popupChooseSmsKH;
 	cocos2d::Node* eventView;
 
 	std::vector<cocos2d::ui::Button*> buttons;

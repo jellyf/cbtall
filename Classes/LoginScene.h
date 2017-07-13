@@ -50,6 +50,7 @@ private:
 
 	cocos2d::Node* loginNode;
 	cocos2d::Node* registerNode;
+	cocos2d::Node* popupChooseSmsMK;
 	cocos2d::ui::Button* btnPhone;
 	cocos2d::ui::Button* btnForgotPass;
 	cocos2d::ui::EditBox* tfUsername;

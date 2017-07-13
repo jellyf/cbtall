@@ -440,12 +440,25 @@ void MainScene::onErrorResponse(unsigned char code, std::string msg)
 	hideWaiting();
 	if (code == 0 && popupShop->isVisible()) {
 		showPopupNotice(msg, [=]() {
-			string str = Utils::getSingleton().gameConfig.smsKH;
-			int index = str.find_last_of(' ');
-			string number = str.substr(index + 1, str.length() - index);
-			string content = str.substr(0, index);
-			content = Utils::getSingleton().replaceString(content, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
-			Utils::getSingleton().openSMS(number, content);
+			if (popupChooseSmsKH == NULL) {
+				std::vector<std::string> smsProviders = { "viettel", "mobifone", "vinaphone" };
+				popupChooseSmsKH = createPopupChooseProvider(Utils::getSingleton().getStringForKey("chon_mang_sms"), smsProviders, [=](string provider) {
+					string str = "";
+					if (provider.compare("viettel") == 0) {
+						str = Utils::getSingleton().gameConfig.smsKHVT;
+					} else if (provider.compare("mobifone") == 0) {
+						str = Utils::getSingleton().gameConfig.smsKHVMS;
+					} else {
+						str = Utils::getSingleton().gameConfig.smsKHVNP;
+					}
+					int index = str.find_last_of(' ');
+					string number = str.substr(index + 1, str.length() - index);
+					string content = str.substr(0, index);
+					content = Utils::getSingleton().replaceString(content, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
+					Utils::getSingleton().openSMS(number, content);
+				});
+			}
+			showPopup(popupChooseSmsKH);
 		}, false);
 		return;
 	}
@@ -2214,8 +2227,14 @@ void MainScene::updateChargeRateCard(bool isQuan)
 void MainScene::updateSmsInfo(bool isQuan)
 {
 	Node* scrollProvider = popupCharge->getChildByName("scrollprovider");
-	bool isViettel = chosenProviderSms.compare("viettel") == 0;
-	string smsct = isViettel ? Utils::getSingleton().gameConfig.smsVT : Utils::getSingleton().gameConfig.smsVNPVMS;
+	string smsct = "";
+	if (chosenProviderSms.compare("viettel") == 0) {
+		smsct = Utils::getSingleton().gameConfig.smsKHVT;
+	} else if (chosenProviderSms.compare("mobifone") == 0) {
+		smsct = Utils::getSingleton().gameConfig.smsKHVMS;
+	} else {
+		smsct = Utils::getSingleton().gameConfig.smsKHVNP;
+	}
 	int strid = smsct.find_last_of(' ');
 	string smstg = smsct.substr(strid + 1, smsct.length() - strid);
 	smsct = smsct.substr(0, strid);
