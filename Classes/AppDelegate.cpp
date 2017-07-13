@@ -14,10 +14,8 @@
 
 USING_NS_CC;
 
-static cocos2d::Size designResolutionSize = cocos2d::Size(800, 500);
-static cocos2d::Size smallResolutionSize = cocos2d::Size(480, 300);
-static cocos2d::Size mediumResolutionSize = cocos2d::Size(800, 500);
-static cocos2d::Size largeResolutionSize = cocos2d::Size(1120, 700);
+static cocos2d::Size viewResolutionSize = cocos2d::Size(1120, 700);
+static cocos2d::Size designResolutionSize = cocos2d::Size(1120, 700);
 
 AppDelegate::AppDelegate() {
 }
@@ -49,7 +47,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto glview = director->getOpenGLView();
     if(!glview) {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
-        glview = GLViewImpl::createWithRect("ChanBachThu", cocos2d::Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
+        glview = GLViewImpl::createWithRect("ChanBachThu", cocos2d::Rect(0, 0, viewResolutionSize.width, viewResolutionSize.height));
 #else
         glview = GLViewImpl::create("ChanBachThu");
 #endif
@@ -57,11 +55,11 @@ bool AppDelegate::applicationDidFinishLaunching() {
     }
     //director->setDisplayStats(true);
     director->setAnimationInterval(1.0f / 60);
-    glview->setDesignResolutionSize(largeResolutionSize.width, largeResolutionSize.height, ResolutionPolicy::NO_BORDER);
+    glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::NO_BORDER);
 
     register_all_packages();
 
-	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
+	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA8888);
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("login.plist");
 
 	SFSGEvent* sfsEvent = new SFSGEvent();

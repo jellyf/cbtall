@@ -12,14 +12,16 @@ bool UserNode::init()
 	addChild(bg);
 
 	Sprite* avatar = Sprite::createWithSpriteFrameName("avatar_default.png");
+	avatar->setPositionY(-3);
 	addChild(avatar);
 
 	Sprite* mask = Sprite::createWithSpriteFrameName("mask_avar.png");
+	mask->setPositionY(-3);
 	addChild(mask);
 
 	lbName = Label::createWithTTF("Stormus", "fonts/arial.ttf", 20);
 	lbName->setHorizontalAlignment(TextHAlignment::CENTER);
-	lbName->setPosition(0, 65);
+	lbName->setPosition(0, 62);
 	lbName->setHeight(25);
 	addChild(lbName);
 

@@ -5,12 +5,12 @@ android {
     buildToolsVersion '25.0.0'
 
     defaultConfig {
-        applicationId "com.chan.kinhtuchi"
-        manifestPlaceholders = [onesignal_app_id: "86615baf-bc50-4d73-851b-dc5b87668da3", onesignal_google_project_number: "600091456418"]
+        applicationId "com.chan.vuong.chanpro"
+        manifestPlaceholders = [onesignal_app_id: "0c005ee7-ebed-4409-8ab6-605b877cf4c4", onesignal_google_project_number: "1075420801136"]
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 1024
-        versionName "1.1.8"
+        versionName "1.2.0"
         multiDexEnabled = true
     }
 

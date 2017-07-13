@@ -26,6 +26,8 @@
  ****************************************************************************/
 package org.cocos2dx.cpp;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
@@ -55,6 +57,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -63,6 +68,7 @@ import android.provider.Settings;
 import android.provider.Telephony;
 import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
+import android.util.Base64;
 import android.view.View;
 import android.util.Log;
 
@@ -100,6 +106,7 @@ public class AppActivity extends Cocos2dxActivity {
                     }
 
                     public void onError(FacebookException e) {
+                        //Log.d("Kinhtuchi::", "exception");
                         e.printStackTrace();
                         callbackLoginFacebook("");
                     }

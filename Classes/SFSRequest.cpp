@@ -288,22 +288,26 @@ void SFSRequest::RequestRegister(std::string username, std::string password, std
 
 void SFSRequest::RequestLogin(std::string username, std::string password)
 {
+	int version = CC_TARGET_PLATFORM == CC_PLATFORM_IOS ? 120 : 8;
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
 	parameters->PutUtfString("1", username);
 	parameters->PutUtfString("2", password);
 	parameters->PutUtfString("3", Utils::getSingleton().getPlatformOS());
-	parameters->PutUtfString("4", cocos2d::Application::sharedApplication()->getVersion());
+	//parameters->PutUtfString("4", cocos2d::Application::sharedApplication()->getVersion());
+	parameters->PutInt("4", version);
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::LOGIN, parameters);
 }
 
 void SFSRequest::RequestLoginFacebook(std::string token)
 {
+	int version = CC_TARGET_PLATFORM == CC_PLATFORM_IOS ? 120 : 8;
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
 	boost::shared_ptr<ByteArray> data = boost::shared_ptr<ByteArray>(new ByteArray());
 	data->WriteUTF(token);
 	parameters->PutByteArray("d", data);
 	parameters->PutUtfString("3", Utils::getSingleton().getPlatformOS());
-	parameters->PutUtfString("4", cocos2d::Application::sharedApplication()->getVersion());
+	//parameters->PutUtfString("4", cocos2d::Application::sharedApplication()->getVersion());
+	parameters->PutInt("4", version);
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::LOGIN_FACEBOOK, parameters);
 }
 

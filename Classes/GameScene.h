@@ -161,6 +161,7 @@ private:
 	cocos2d::ui::Button* btnDropWin;
 	cocos2d::ui::Button* btnXemNoc;
 	cocos2d::ui::Button* btnDongNoc;
+	cocos2d::ui::Button* btnCrest;
 	cocos2d::ui::Scale9Sprite* gameSplash;
 	cocos2d::ui::Scale9Sprite* cofferSplash;
 	cocos2d::Sprite* hostCard = NULL;

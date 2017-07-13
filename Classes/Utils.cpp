@@ -123,7 +123,7 @@ string Utils::formatMoneyWithComma(double money) {
 	while (i < ret.length())
 	{
 		if (ret[ret.length() - i - 1] == '-') break;
-		ret.insert(ret.length() - i, ".");
+		ret.insert(ret.length() - i, ",");
 		i = i + 3 + 1;
 	}
 	return ret;
@@ -191,7 +191,7 @@ std::string Utils::getPlatformOS()
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 	return "android";
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
-	return "win32";
+	return "android";// "win32";
 #else
 	return "unknown";
 #endif
@@ -593,7 +593,7 @@ void Utils::setIAPProducts(std::vector<ProductData> vecProducts)
 
 void Utils::queryIAPProduct()
 {
-    std::vector<std::string> ids;
+	std::vector<std::string> ids = { "21", "105", "210" };
     split(gameConfig.inapp, ',', ids);
 	std::vector<std::string> descs = { "21.000 ", "105.000 ", "210.000 " };
 	std::vector<double> prices = { 22000, 105000, 210000 };
@@ -724,11 +724,15 @@ void Utils::createAppellations()
 	std::vector<cocos2d::Color3B> levelColors = { Color3B(200, 0, 0), Color3B(255, 0, 0), Color3B(255, 0, 60), Color3B(255, 0, 120), Color3B(255, 0, 180), Color3B(255, 0, 240),
 		Color3B(210, 0, 255), Color3B(0, 200, 255), Color3B(0, 255, 255), Color3B(0, 255, 200), Color3B(0, 255, 140), Color3B(0, 255, 80), Color3B(0, 255, 20),
 		Color3B(30, 255, 0), Color3B(80, 255, 0), Color3B(130, 255, 0), Color3B(80, 255, 0), Color3B(225, 255, 0), Color3B(255, 225, 0) };
+	std::vector<cocos2d::Color4B> levelOutlineColors = { Color4B(100, 0, 0, 255), Color4B(100, 0, 0, 255), Color4B(100, 0, 24, 255), Color4B(100, 0, 48, 255), Color4B(100, 0, 72, 255), Color4B(100, 0, 100, 255),
+		Color4B(84, 0, 100, 255), Color4B(0, 80, 100, 255), Color4B(0, 100, 100, 255), Color4B(0, 100, 80, 255), Color4B(0, 100, 60, 255), Color4B(0, 100, 30, 255), Color4B(0, 100, 10, 255),
+		Color4B(15, 100, 0, 255), Color4B(32, 100, 0, 255), Color4B(50, 100, 0, 255), Color4B(32, 100, 0, 255), Color4B(90, 100, 0, 255), Color4B(100, 100, 0, 255) };
 	ValueMap aplMap = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/level.xml");
 	for (int i = 0; i < levelStones.size(); i++) {
 		AppellationData apl;
 		apl.Level = levelStones[i];
 		apl.Color = levelColors[i];
+		apl.ColorOutline = levelOutlineColors[i];
 		apl.Name = aplMap["level_" + to_string(i)].asString();
 		appellations.push_back(apl);
 	}

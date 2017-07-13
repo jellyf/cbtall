@@ -120,6 +120,20 @@
 	<key>cua_hang</key><string>Cửa hàng</string>
 	<key>huong_dan</key><string>Hướng dẫn</string>
 	<key>lich_su_no</key><string>Lịch sử nổ</string>
+	<key>lich_su_danh</key><string>Lịch sử đánh</string>
+	<key>thong_bao</key><string>Thông báo</string>
+	<key>he_thong</key><string>Hệ thống</string>
+	<key>bang_xep_hang</key><string>Bảng xếp hạng</string>
+	<key>log_van_danh</key><string>Log ván đánh</string>
+	<key>cai_dat</key><string>Cài đặt</string>
+	<key>hop_thu</key><string>Hộp thư</string>
+	<key>hom_thu</key><string>Hòm thư</string>
+	<key>moi_choi</key><string>Mời chơi</string>
+	<key>nap_tien</key><string>Nạp tiền</string>
+	<key>tin_tuc</key><string>Tin tức</string>
+	<key>hu_vang</key><string>Hũ vàng</string>
+	<key>close</key><string>Đóng</string>
+	<key>thong_tin_nguoi_choi</key><string>Thông tin người chơi</string>
 	<key>hay_nhap_tai_khoan</key><string>Vui lòng nhập tài khoản</string>
 	<key>hay_nhap_mat_khau</key><string>Vui lòng nhập mật khẩu</string>
 	<key>bi_day_khoi_ban</key><string>Bạn đã bị đẩy ra khỏi phòng</string>
@@ -157,7 +171,7 @@
 	<key>u_to_nhat</key><string>Cước ù to nhất</string>
 	<key>ban_muon_thoat_khoi_phong_cho</key><string>Bạn muốn thoát khỏi phòng chờ?</string>
 	<key>ban_muon_dang_xuat</key><string>Bạn muốn trở về đăng nhập?</string>
-	<key>ban_muon_thoat_game</key><string>Bạn muốn thoát Kính Tứ Chi?</string>
+	<key>ban_muon_thoat_game</key><string>Bạn muốn thoát game?</string>
 	<key>ban_muon_da_nguoi_nay_ra</key><string>Bạn muốn đá người này ra khỏi bàn chơi?</string>
 	<key>ban_muon_huy_don_hang_nay</key><string>Bạn muốn hủy đơn hàng này?</string>
 	<key>tai_khoan_khong_dung</key><string>Tài khoản hoặc mật khẩu không đúng</string>
