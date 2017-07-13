@@ -87,6 +87,8 @@ public:
 	std::string currentZoneIp;
 	std::string textureHost;
 	std::string cofferGuide;
+	std::string chosenProviderCard = "";
+	std::string chosenProviderSms = "";
 	double timeStartReconnect;
 	long cofferMoney;
 	long currentZonePort;

@@ -1197,6 +1197,89 @@ cocos2d::Node * BaseScene::createPopup(std::string stitle, bool isBig, bool isHi
 	return popup;
 }
 
+cocos2d::Node * BaseScene::createPopupChooseProvider(std::string stitle, std::vector<std::string> providers, std::function<void(std::string chosenProvider)> funcCallback)
+{
+	if (!isPopupReady) {
+		showWaiting();
+		return nullptr;
+	}
+
+	Node* popup = Node::create();
+	popup->setPosition(winSize.width / 2, winSize.height / 2);
+	popup->setName(providers[0]);
+	popup->setVisible(false);
+	mLayer->addChild(popup, constant::ZORDER_POPUP);
+
+	Sprite* bg = Sprite::createWithSpriteFrameName("popup_bg.png");
+	popup->addChild(bg);
+	Size bgsize = bg->getContentSize();
+
+	ui::Scale9Sprite* spLine = ui::Scale9Sprite::createWithSpriteFrameName("popup_line.png");
+	spLine->setContentSize(Size(bg->getContentSize().width - 250, 1));
+	spLine->setPosition(0, bg->getContentSize().height / 2 - 90);
+	spLine->setColor(Color3B::BLACK);
+	popup->addChild(spLine);
+
+	Label* title = Label::createWithTTF(stitle, "fonts/azuki.ttf", 40);
+	title->setColor(Color3B::BLACK);
+	title->setPosition(0, bg->getContentSize().height / 2 - 65);
+	popup->addChild(title);
+
+	ui::Button* btnok = ui::Button::create("btn_submit.png", "btn_submit_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnok->setPosition(Vec2(0, -bg->getContentSize().height / 2 + 10));
+	btnok->setName("btnsubmit");
+	addTouchEventListener(btnok, [=]() {
+		hidePopup(popup);
+		funcCallback(popup->getName());
+	});
+	popup->addChild(btnok);
+
+	Node* nodeProvider = Node::create();
+	popup->addChild(nodeProvider);
+
+	int numPerRow = 3;
+	int dx = 170;
+	int dy = 150;
+	int xp = -(numPerRow - 1) * dx / 2;
+	int yp = (providers.size() - 1) / numPerRow * dy / 2;
+	for (int i = 1; i <= providers.size(); i++) {
+		string stri = to_string(i);
+		string strimg = providers[i - 1] + ".png";
+		ui::Button* btnProvider = ui::Button::create(strimg, strimg, "", ui::Widget::TextureResType::PLIST);
+		btnProvider->setPosition(Vec2(xp + ((i - 1) % numPerRow) * dx, yp - ((i - 1) / numPerRow) * dy));
+		btnProvider->setTag(i == 1 ? 1 : 0);
+		btnProvider->setName("btn" + stri);
+		addTouchEventListener(btnProvider, [=]() {
+			if (btnProvider->getTag() == 1) return;
+			for (int j = 1; j <= providers.size(); j++) {
+				string strj = to_string(j);
+				ui::Button* btn = (ui::Button*)nodeProvider->getChildByName("btn" + strj);
+				if (btn != btnProvider) {
+					btn->setTag(0);
+					btn->setColor(Color3B::GRAY);
+				} else {
+					btn->setTag(1);
+					btn->setColor(Color3B::WHITE);
+					popup->setName(providers[j - 1]);
+				}
+			}
+		});
+		nodeProvider->addChild(btnProvider);
+
+		/*ui::Scale9Sprite* bgProvider = ui::Scale9Sprite::createWithSpriteFrameName("box8.png");
+		bgProvider->setContentSize(btnProvider->getContentSize() + Size(40, 40));
+		bgProvider->setPosition(btnProvider->getContentSize().width / 2, btnProvider->getContentSize().height / 2);
+		bgProvider->setTag(1);
+		btnProvider->addChild(bgProvider, -1);*/
+
+		if (i > 1) {
+			btnProvider->setColor(Color3B::GRAY);
+		}
+	}
+
+	return popup;
+}
+
 Node* BaseScene::createPopupNotice()
 {
 	Node* popupNotice = nullptr;

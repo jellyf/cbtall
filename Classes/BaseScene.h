@@ -82,6 +82,7 @@ protected:
     void delayFunction(Node* node, float time, std::function<void()> func);
 
 	cocos2d::Node* createPopup(std::string stitle, bool isBig, bool isHidden);
+	cocos2d::Node* createPopupChooseProvider(std::string stitle, std::vector<std::string> providers, std::function<void(std::string provider)> funcCallback);
 	cocos2d::Node* createPopupNotice();
 	cocos2d::Vec2 getScaleSmoothly(float scale);
 

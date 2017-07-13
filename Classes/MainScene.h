@@ -47,9 +47,11 @@ private:
 	void showPopupMail();
 	void showPopupNews();
 	void showWebView(std::string url);
-	void checkProviderToCharge();
+	void checkProviderToChargeSms();
 	void updateChargeRateCard(bool isQuan);
 	void updateSmsInfo(bool isQuan);
+	void onChooseProviderCard(std::string provider);
+	void onChooseProviderSms(std::string provider);
 
 	cocos2d::Node* popupShop;
 	cocos2d::Node* popupMail;
@@ -58,6 +60,8 @@ private:
 	cocos2d::Node* popupCharge;
 	cocos2d::Node* popupGiftcode;
 	cocos2d::Node* popupDisplayName;
+	cocos2d::Node* popupChooseSms;
+	cocos2d::Node* popupChooseCard;
 	cocos2d::Node* nodeWebview;
 
 	cocos2d::Label* lbNewMail;
@@ -71,6 +75,8 @@ private:
 	bool isWaitPopupMail = false;
 	bool isChargeQuan = true;
 	std::string tmpDisplayName;
+	std::string chosenProviderCard = "";
+	std::string chosenProviderSms = "";
 	std::vector<ShopItemData> listItems;
 	std::map<std::string, cocos2d::Texture2D*> textures;
 	std::vector<int> moneys = { 10, 20, 50, 100, 200, 500 };
