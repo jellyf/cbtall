@@ -26,8 +26,6 @@
  ****************************************************************************/
 package org.cocos2dx.cpp;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
@@ -45,7 +43,6 @@ import com.facebook.FacebookSdk;
 import com.facebook.applinks.AppLinkData;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.facebook.share.model.AppInviteContent;
 import com.facebook.share.model.GameRequestContent;
 import com.facebook.share.widget.AppInviteDialog;
 import com.facebook.share.widget.GameRequestDialog;
@@ -57,18 +54,13 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.provider.Telephony;
-import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
-import android.util.Base64;
 import android.view.View;
 import android.util.Log;
 
@@ -206,13 +198,13 @@ public class AppActivity extends Cocos2dxActivity {
         serviceIntent.setPackage("com.android.vending");
         bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
 		
-		getWindow().getDecorView().setSystemUiVisibility(
-          View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-        | View.SYSTEM_UI_FLAG_FULLSCREEN
-        | View.SYSTEM_UI_FLAG_IMMERSIVE);
+//		getWindow().getDecorView().setSystemUiVisibility(
+//          View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+//        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+//        | View.SYSTEM_UI_FLAG_FULLSCREEN
+//        | View.SYSTEM_UI_FLAG_IMMERSIVE);
 
         setKeepScreenOn(true);
         _activity = this;

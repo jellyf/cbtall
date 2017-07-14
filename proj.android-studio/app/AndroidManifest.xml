@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.chan.kinhtuchi"
+    package="com.chan.vuong.chanpro"
       android:installLocation="auto">
 
     <uses-sdk android:minSdkVersion="16"/>
@@ -28,9 +28,9 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="kinhtuchi" android:host="applinks"/>
-                <data android:scheme="com.chan.kinhtuchi" android:host="applinks"/>
-                <!--<data android:scheme="market" android:host="details?id=com.chan.kinhtuchi" />-->
+                <data android:scheme="chanvuonggts" android:host="applinks"/>
+                <data android:scheme="com.chan.vuong.chanpro" android:host="applinks"/>
+                <!--<data android:scheme="market" android:host="details?id=com.chan.vuong.chanpro" />-->
             </intent-filter>
         </activity>
         <activity android:name="com.facebook.FacebookActivity"
