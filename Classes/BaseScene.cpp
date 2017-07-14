@@ -444,7 +444,7 @@ void BaseScene::showPopupRank(int type)
 	scrollWin->setVisible(false);
 	int rowHeight = 43;
 	int width = scroll->getContentSize().width;
-	int height = listRanks[type].size() * rowHeight;
+	int height = (listRanks[type].size() - 3) * rowHeight;
 	if (height < scroll->getContentSize().height) {
 		height = scroll->getContentSize().height;
 	}
@@ -454,20 +454,9 @@ void BaseScene::showPopupRank(int type)
 		Label* lbName = (Label*)topItem->getChildByName("lbname");
 		Label* lbMoney = (Label*)topItem->getChildByName("lbmoney");
 		if (i < listRanks[type].size()) {
-			string strName = listRanks[type][i].Name;
-			bool isCut = false;
-			if (strName.length() > 11) {
-				strName = strName.substr(0, 11);
-				isCut = true;
-			}
-			lbName->setString(strName);
-			while (lbName->getContentSize().width > 150) {
-				strName = strName.substr(0, strName.length() - 1);
-				lbName->setString(strName);
-				isCut = true;
-			}
-			if(isCut) lbName->setString(strName + "..");
 			lbMoney->setString(Utils::getSingleton().formatMoneyWithComma(listRanks[type][i].Money));
+			lbName->setString(listRanks[type][i].Name);
+			cropLabel(lbName, 150);
 		} else {
 			lbName->setString("");
 			lbMoney->setString("");
@@ -475,9 +464,9 @@ void BaseScene::showPopupRank(int type)
 	}
 	for (int i = 3; i < listRanks[type].size(); i++) {
 		Node* node = scroll->getChildByTag(i);
+		Label *lb2, *lb3;
 		if (node == nullptr) {
 			node = Node::create();
-			node->setPosition(scroll->getContentSize().width / 2, height - 20 - (i -3) * rowHeight);
 			node->setTag(i);
 			scroll->addChild(node);
 
@@ -488,26 +477,28 @@ void BaseScene::showPopupRank(int type)
 			lb1->setTag(1);
 			node->addChild(lb1);
 
-			Label* lb2 = Label::create(listRanks[type][i].Name, "fonts/arial.ttf", 22);
+			lb2 = Label::create("", "fonts/arial.ttf", 22);
 			lb2->setAnchorPoint(Vec2(0, .5f));
 			lb2->setColor(Color3B::BLACK);
 			lb2->setPosition(-width / 2 + 150, 0);
 			lb2->setTag(2);
 			node->addChild(lb2);
 
-			Label* lb3 = Label::create(Utils::getSingleton().formatMoneyWithComma(listRanks[type][i].Money), "fonts/arial.ttf", 22);
+			lb3 = Label::create("", "fonts/arial.ttf", 22);
 			lb3->setAnchorPoint(Vec2(0, .5f));
 			lb3->setColor(Color3B::BLACK);
 			lb3->setPosition(width / 2 - 160, 0);
 			lb3->setTag(3);
 			node->addChild(lb3);
 		} else {
-			node->setVisible(true);
-			Label* lb2 = (Label*)node->getChildByTag(2);
-			Label* lb3 = (Label*)node->getChildByTag(3);
-			lb2->setString(listRanks[type][i].Name);
-			lb3->setString(Utils::getSingleton().formatMoneyWithComma(listRanks[type][i].Money));
+			lb2 = (Label*)node->getChildByTag(2);
+			lb3 = (Label*)node->getChildByTag(3);
 		}
+		node->setVisible(true);
+		node->setPosition(scroll->getContentSize().width / 2, height - 20 - (i - 3) * rowHeight);
+		lb3->setString(Utils::getSingleton().formatMoneyWithComma(listRanks[type][i].Money));
+		lb2->setString(listRanks[type][i].Name);
+		cropLabel(lb2, 200);
 	}
 	int i = listRanks[type].size();
 	Node* n;
@@ -588,15 +579,8 @@ void BaseScene::showPopupRankWin()
 			lb4->setString(Utils::getSingleton().formatMoneyWithComma(listRankWin[i].Point));
 		}
 
-		string strName = listRankWin[i].Name;
-		/*if (strName.length() > 14) {
-			strName = strName.substr(0, 14);
-		}*/
-		lb2->setString(strName);
-		while (lb2->getContentSize().width > 200) {
-			strName = strName.substr(0, strName.length() - 1);
-			lb2->setString(strName);
-		}
+		lb2->setString(listRankWin[i].Name);
+		cropLabel(lb2, 200);
 	}
 	int i = listRankWin.size();
 	Node* n;
@@ -637,7 +621,6 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 	lbUname->setVisible(isMe);
 	lbUname1->setVisible(isMe);
 	lbUname1->setString(data.Name);
-	lbName->setString(data.DisplayName);
 	lbQuan->setString(Utils::getSingleton().formatMoneyWithComma(data.MoneyReal));
 	lbXu->setString(Utils::getSingleton().formatMoneyWithComma(data.MoneyFree));
 	lbId->setVisible(isMe);
@@ -652,6 +635,9 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 	//lbBigWin->setString(Utils::getSingleton().formatMoneyWithComma(data.BigWin));
 	//lbBigCrest->setString(data.BigCrest);
 	nodeInfo->setPosition(isMe ? lbName->getPosition() - Vec2(0, 45) : lbName->getPosition() + Vec2(0, 20));
+
+	lbName->setString(data.DisplayName);
+	cropLabel(lbName, 450);
 }
 
 void BaseScene::setMoneyType(int type)
@@ -925,8 +911,8 @@ void BaseScene::initHeaderWithInfos()
 	lbName = Label::create("Name", "fonts/arialbd.ttf", 23);
 	lbName->setAnchorPoint(Vec2(0, .5f));
 	lbName->setPosition(vecPos[10]);
-	lbName->setWidth(150);
-	lbName->setHeight(25);
+	//lbName->setWidth(150);
+	//lbName->setHeight(25);
 	mLayer->addChild(lbName, constant::MAIN_ZORDER_HEADER);
 	autoScaleNode(lbName);
 
@@ -1209,7 +1195,7 @@ cocos2d::Node * BaseScene::createPopupChooseProvider(std::string stitle, std::ve
 
 	Node* popup = Node::create();
 	popup->setPosition(winSize.width / 2, winSize.height / 2);
-	popup->setName(providers[0]);
+	popup->setName("");
 	popup->setVisible(false);
 	mLayer->addChild(popup, constant::ZORDER_POPUP);
 
@@ -1228,16 +1214,23 @@ cocos2d::Node * BaseScene::createPopupChooseProvider(std::string stitle, std::ve
 	title->setPosition(0, bg->getContentSize().height / 2 - 65);
 	popup->addChild(title);
 
+	Label* lbnote = Label::createWithTTF(Utils::getSingleton().getStringForKey("vui_long_chon_nha_cung_cap"), "fonts/arial.ttf", 25);
+	lbnote->setPosition(0, -bg->getContentSize().height / 2 + 80);
+	lbnote->setColor(Color3B::BLACK);
+	popup->addChild(lbnote);
+
 	ui::Button* btnok = ui::Button::create("btn_submit.png", "btn_submit_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnok->setPosition(Vec2(0, -bg->getContentSize().height / 2 + 10));
 	btnok->setName("btnsubmit");
 	addTouchEventListener(btnok, [=]() {
+		if (popup->getName().length() == 0) return;
 		hidePopup(popup);
 		funcCallback(popup->getName());
 	});
 	popup->addChild(btnok);
 
 	Node* nodeProvider = Node::create();
+	nodeProvider->setName("nodeprovider");
 	popup->addChild(nodeProvider);
 
 	int numPerRow = 3;
@@ -1250,9 +1243,10 @@ cocos2d::Node * BaseScene::createPopupChooseProvider(std::string stitle, std::ve
 		string strimg = providers[i - 1] + ".png";
 		ui::Button* btnProvider = ui::Button::create(strimg, strimg, "", ui::Widget::TextureResType::PLIST);
 		btnProvider->setPosition(Vec2(xp + ((i - 1) % numPerRow) * dx, yp - ((i - 1) / numPerRow) * dy));
-		btnProvider->setTag(i == 1 ? 1 : 0);
+		btnProvider->setTag(0);
 		btnProvider->setName("btn" + stri);
 		btnProvider->setContentSize(Size(158, 99));
+		btnProvider->setColor(Color3B::GRAY);
 		addTouchEventListener(btnProvider, [=]() {
 			if (btnProvider->getTag() == 1) return;
 			for (int j = 1; j <= providers.size(); j++) {
@@ -1280,10 +1274,6 @@ cocos2d::Node * BaseScene::createPopupChooseProvider(std::string stitle, std::ve
 		bgProvider->setPosition(btnProvider->getContentSize().width / 2, btnProvider->getContentSize().height / 2);
 		bgProvider->setTag(1);
 		btnProvider->addChild(bgProvider, -1);*/
-
-		if (i > 1) {
-			btnProvider->setColor(Color3B::GRAY);
-		}
 	}
 
 	return popup;
@@ -1603,6 +1593,8 @@ void BaseScene::initPopupUserInfo()
 				content = Utils::getSingleton().replaceString(content, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
 				Utils::getSingleton().openSMS(number, content);
 			});
+		} else {
+			resetPopupChooseProvider(popupChooseSmsKH);
 		}
 		showPopup(popupChooseSmsKH);
 	});
@@ -2110,7 +2102,10 @@ void BaseScene::onUserDataMeResponse()
 	std::string strId = String::createWithFormat("ID: %ld", Utils::getSingleton().userDataMe.UserID)->getCString();
 	std::string strLevel = String::createWithFormat((Utils::getSingleton().getStringForKey("level") + ": %d").c_str(), Utils::getSingleton().userDataMe.Level)->getCString();
 
-	lbName->setString(Utils::getSingleton().userDataMe.DisplayName);
+	string strName = Utils::getSingleton().userDataMe.DisplayName;
+	lbName->setString(strName);
+	cropLabel(lbName, 120);
+
 	lbGold->setString(strGold);
 	lbSilver->setString(strSilver);
 	lbId->setString(strId);
@@ -2253,7 +2248,7 @@ void BaseScene::onCofferHistoryResponse(std::vector<CofferWinnerData> list)
 	for (int i = 0; i < numb; i++) {
 		CofferWinnerData data;
 		data.Uid = 1000 + rand() % 10000;
-		data.Name = rand() % 2 == 0 ? "STORMUSQWERTYUIO" : ("stormusssss" + to_string(data.Uid));
+		data.Name = rand() % 2 == 0 ? "STORMUSadfsdfsdfgsfdgQWERTYUIO" : ("stormsdfgsdfgsdfgusssss" + to_string(data.Uid));
 		data.Point = rand() % 60;
 		data.Cuocs = rand() % 2 == 0 ? "Nha lau xe hoi Hoa roi cua phat Ca ca nhay dau thuyen ngu ong bat ca" : "Nha lau xe hoi Hoa roi cua phat";
 		data.Date = "05/01/2016 19::00:00";
@@ -2289,7 +2284,7 @@ void BaseScene::onCofferHistoryResponse(std::vector<CofferWinnerData> list)
 
 			lb2 = Label::create(list[i].Name, "fonts/arial.ttf", 22);
 			lb2->setColor(Color3B::BLACK);
-			lb2->setPosition(-width / 2 + 80, 0);
+			lb2->setPosition(-width / 2 + 95, 0);
 			lb2->setTag(2);
 			node->addChild(lb2);
 
@@ -2324,16 +2319,7 @@ void BaseScene::onCofferHistoryResponse(std::vector<CofferWinnerData> list)
 			lb4->setString(Utils::getSingleton().formatMoneyWithComma(list[i].Point));
 		}
 		node->setPosition(scroll->getContentSize().width / 2, height - 35 - i * rowHeight);
-
-		string strName = list[i].Name;
-		if (strName.length() > 14) {
-			strName = strName.substr(0, 14);
-		}
-		lb2->setString(strName);
-		while (lb2->getContentSize().width > 170) {
-			strName = strName.substr(0, strName.length() - 1);
-			lb2->setString(strName);
-		}
+		cropLabel(lb2, 170);
 	}
 	int i = list.size();
 	Node* n;
@@ -2506,4 +2492,30 @@ void BaseScene::delayFunction(Node * node, float time, std::function<void()> fun
     DelayTime* delay = DelayTime::create(time);
     CallFunc* callfunc = CallFunc::create(func);
     node->runAction(Sequence::create(delay, callfunc, nullptr));
+}
+
+void BaseScene::cropLabel(cocos2d::Label * label, int width)
+{
+	bool isCut = false;
+	string str = label->getString();
+	while (label->getContentSize().width > width) {
+		str = str.substr(0, str.length() - 1);
+		label->setString(str);
+		isCut = true;
+	}
+	if (isCut) {
+		str += "..";
+		label->setString(str);
+	}
+}
+
+void BaseScene::resetPopupChooseProvider(Node * popup)
+{
+	popup->setName("");
+	Node* nodeProvider = popup->getChildByName("nodeprovider");
+	for (int i = 1; i < 10; i++) {
+		Node* btn = nodeProvider->getChildByName("btn" + to_string(i));
+		if (btn == nullptr) return;
+		btn->setColor(Color3B::GRAY);
+	}
 }

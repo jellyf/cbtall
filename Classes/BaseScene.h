@@ -80,6 +80,8 @@ protected:
 	void setSplashZOrder(int zorder);
     void autoScaleNode(cocos2d::Node* node);
     void delayFunction(Node* node, float time, std::function<void()> func);
+	void cropLabel(cocos2d::Label* label, int width);
+	void resetPopupChooseProvider(Node* popup);
 
 	cocos2d::Node* createPopup(std::string stitle, bool isBig, bool isHidden);
 	cocos2d::Node* createPopupChooseProvider(std::string stitle, std::vector<std::string> providers, std::function<void(std::string provider)> funcCallback);

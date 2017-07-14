@@ -303,8 +303,9 @@ void SFSRequest::RequestLoginFacebook(std::string token)
 	int version = CC_TARGET_PLATFORM == CC_PLATFORM_IOS ? 120 : 8;
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
 	boost::shared_ptr<ByteArray> data = boost::shared_ptr<ByteArray>(new ByteArray());
-	data->WriteUTF(token);
-	parameters->PutByteArray("d", data);
+	//data->WriteUTF(token);
+	//parameters->PutByteArray("d", data);
+	parameters->PutUtfString("1", token);
 	parameters->PutUtfString("3", Utils::getSingleton().getPlatformOS());
 	//parameters->PutUtfString("4", cocos2d::Application::sharedApplication()->getVersion());
 	parameters->PutInt("4", version);

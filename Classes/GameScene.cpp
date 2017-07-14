@@ -659,7 +659,7 @@ void GameScene::onInit()
 	autoScaleNode(spChonCai);
 
 	lbCrestTime = Label::createWithBMFont("fonts/font-win.fnt", "");
-	lbCrestTime->setPosition(btnXemNoc->getPosition() + Vec2(190, 0));
+	lbCrestTime->setPosition(btnXemNoc->getPosition() + Vec2(160, 0));
 	lbCrestTime->setVisible(false);
 	mLayer->addChild(lbCrestTime, constant::GAME_ZORDER_SPLASH + 1);
 	autoScaleNode(lbCrestTime);
@@ -2048,12 +2048,12 @@ void GameScene::onRoomDataGaResponse(bool isGa, double gaMoney)
 		lbMoneyGa->setString("");
 	}
 
-	//tableEndMatch->setVisible(true);
-	//tableCrest->setVisible(true);
-	//btnXemNoc->setVisible(true);
-	//btnCrest->setVisible(true);
-	//lbCrestTime->setVisible(true);
-	//lbCrestTime->setString("22");
+	/*tableEndMatch->setVisible(true);
+	tableCrest->setVisible(true);
+	btnXemNoc->setVisible(true);
+	btnCrest->setVisible(true);
+	lbCrestTime->setVisible(true);
+	lbCrestTime->setString("22");*/
 
 	/*state = PLAY;
 	for (int i = 0; i < 7; i++) {
@@ -3490,7 +3490,7 @@ void GameScene::initCrestTable()
 	mLayer->addChild(tableCrest, constant::ZORDER_POPUP_NOTICE + 1);
 	autoScaleNode(tableCrest);
 
-	Size bgsize = Size(1080, 370);
+	Size bgsize = Size(1060, 370);
 	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("xuong_bg.png");
 	bg->setInsetLeft(62);
 	bg->setInsetRight(67);
@@ -3547,7 +3547,7 @@ void GameScene::initCrestTable()
 		btn->setTitleFontName("fonts/arialbd.ttf");
 		btn->setTitleColor(Color3B::BLACK);
 		btn->setTitleFontSize(22);
-		btn->setPosition(Vec2(x + (i % 4) * 250, y - (i / 4) * 46));
+		btn->setPosition(Vec2(x + (i % 4) * 240, y - (i / 4) * 46));
 		btn->setContentSize(Size(240, 40));
 		btn->setScale9Enabled(true);
 		btn->setBright(false);
@@ -3615,7 +3615,7 @@ void GameScene::initCrestTable()
 	}
 
 	btnCrest = ui::Button::create("btn_xuong.png", "btn_xuong_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnCrest->setPosition(Vec2(930, winSize.height / 2));
+	btnCrest->setPosition(Vec2(880, winSize.height / 2));
 	btnCrest->setVisible(false);
 	addTouchEventListener(btnCrest, [=]() {
 		vector<unsigned char> crestIds;
@@ -3632,7 +3632,7 @@ void GameScene::initCrestTable()
 			btn->setTitleColor(Color3B::BLACK);
 		}
 	});
-	mLayer->addChild(btnCrest);
+	mLayer->addChild(btnCrest, constant::GAME_ZORDER_SPLASH + 1);
 }
 
 void GameScene::initEndMatchTable()

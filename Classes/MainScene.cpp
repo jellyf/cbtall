@@ -29,10 +29,10 @@ void MainScene::onInit()
 	vecPos.push_back(Vec2(1040, 210));
 	vecPos.push_back(Vec2(1040, 70));
 
-	vecPos.push_back(Vec2(135, 215));
-	vecPos.push_back(Vec2(960, 255));
-	vecPos.push_back(Vec2(680, 400));
-	vecPos.push_back(Vec2(590, 210));
+	vecPos.push_back(Vec2(190, 230));
+	vecPos.push_back(Vec2(940, 255));
+	vecPos.push_back(Vec2(670, 400));
+	vecPos.push_back(Vec2(590, 215));
 	/*vecPos.push_back(Vec2(560 - 170 * scaleScene.y, 285 + 135 * scaleScene.x));
 	vecPos.push_back(Vec2(560 + 170 * scaleScene.y, 285 + 135 * scaleScene.x));
 	vecPos.push_back(Vec2(560 - 170 * scaleScene.y, 285 - 135 * scaleScene.x));
@@ -182,9 +182,28 @@ void MainScene::onInit()
 	mLayer->addChild(btnEvent);
 	autoScaleNode(btnEvent);
 
+	ui::Button* btnPhuChua = ui::Button::create("phuchua.png", "phuchua.png", "", ui::Widget::TextureResType::PLIST);
+	btnPhuChua->setPosition(vecPos[10]);
+	//btnPhuChua->setScale(.95f);
+	addTouchEventListener(btnPhuChua, [=]() {
+		if (isWaiting) return;
+		showWaiting();
+		tmpZoneId = 2;
+		isGoToLobby = true;
+		SFSRequest::getSingleton().Disconnect();
+	});
+	mLayer->addChild(btnPhuChua);
+	autoScaleNode(btnPhuChua);
+
+	Sprite* spTree1 = Sprite::createWithSpriteFrameName("cay_01.png");
+	spTree1->setPosition(520, 250);
+	spTree1->setAnchorPoint(Vec2(.5f, 0));
+	mLayer->addChild(spTree1);
+	autoScaleNode(spTree1);
+
 	ui::Button* btnNhaTranh = ui::Button::create("nha_tranh.png", "nha_tranh.png", "", ui::Widget::TextureResType::PLIST);
 	btnNhaTranh->setPosition(vecPos[8]);
-	btnNhaTranh->setScale(.95f);
+	btnNhaTranh->setScale(1.2f);
 	addTouchEventListener(btnNhaTranh, [=]() {
 		if (isWaiting) return;
 		showWaiting();
@@ -197,7 +216,7 @@ void MainScene::onInit()
 
 	ui::Button* btnDinhLang = ui::Button::create("dinhlang.png", "dinhlang.png", "", ui::Widget::TextureResType::PLIST);
 	btnDinhLang->setPosition(vecPos[9]);
-	btnDinhLang->setScale(.95f);
+	btnDinhLang->setScale(1.2f);
 	addTouchEventListener(btnDinhLang, [=]() {
 		if (isWaiting) return;
 		showWaiting();
@@ -208,22 +227,9 @@ void MainScene::onInit()
 	mLayer->addChild(btnDinhLang);
 	autoScaleNode(btnDinhLang);
 
-	ui::Button* btnPhuChua = ui::Button::create("phuchua.png", "phuchua.png", "", ui::Widget::TextureResType::PLIST);
-	btnPhuChua->setPosition(vecPos[10]);
-	btnPhuChua->setScale(.95f);
-	addTouchEventListener(btnPhuChua, [=]() {
-		if (isWaiting) return;
-		showWaiting();
-		tmpZoneId = 2;
-		isGoToLobby = true;
-		SFSRequest::getSingleton().Disconnect();
-	});
-	mLayer->addChild(btnPhuChua);
-	autoScaleNode(btnPhuChua);
-
 	ui::Button* btnLoiDai = ui::Button::create("dtd.png", "dtd.png", "", ui::Widget::TextureResType::PLIST);
 	btnLoiDai->setPosition(vecPos[11]);
-	btnLoiDai->setScale(.95f);
+	btnLoiDai->setScale(1.2f);
 	addTouchEventListener(btnLoiDai, [=]() {
 		//showPopupNotice(Utils::getSingleton().getStringForKey("feature_coming_soon"));
 		if (isWaiting) return;
@@ -236,12 +242,12 @@ void MainScene::onInit()
 	autoScaleNode(btnLoiDai);
 
 	Sprite* titleNhaTranh = Sprite::createWithSpriteFrameName("title_nhatranh.png");
-	titleNhaTranh->setPosition(btnNhaTranh->getPosition() + Vec2(0, 100));
+	titleNhaTranh->setPosition(btnNhaTranh->getPosition() + Vec2(0, 125));
 	mLayer->addChild(titleNhaTranh);
 	autoScaleNode(titleNhaTranh);
 
 	Sprite* titleDinhLang = Sprite::createWithSpriteFrameName("title_dinhlang.png");
-	titleDinhLang->setPosition(btnDinhLang->getPosition() + Vec2(20, 120));
+	titleDinhLang->setPosition(btnDinhLang->getPosition() + Vec2(25, 140));
 	mLayer->addChild(titleDinhLang);
 	autoScaleNode(titleDinhLang);
 
@@ -249,12 +255,6 @@ void MainScene::onInit()
 	titlePhuChua->setPosition(btnPhuChua->getPosition() + Vec2(0, 125));
 	mLayer->addChild(titlePhuChua);
 	autoScaleNode(titlePhuChua);
-
-	Sprite* spTree1 = Sprite::createWithSpriteFrameName("cay_01.png");
-	spTree1->setPosition(520, 250);
-	spTree1->setAnchorPoint(Vec2(.5f, 0));
-	mLayer->addChild(spTree1);
-	autoScaleNode(spTree1);
 
 	Sprite* spTree2 = Sprite::createWithSpriteFrameName("cay_02.png");
 	spTree2->setPosition(winSize.width, 150);
@@ -457,6 +457,8 @@ void MainScene::onErrorResponse(unsigned char code, std::string msg)
 					content = Utils::getSingleton().replaceString(content, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
 					Utils::getSingleton().openSMS(number, content);
 				});
+			} else {
+				resetPopupChooseProvider(popupChooseSmsKH);
 			}
 			showPopup(popupChooseSmsKH);
 		}, false);
@@ -1196,6 +1198,8 @@ void MainScene::initPopupCharge()
 					popupChooseSms = createPopupChooseProvider(Utils::getSingleton().getStringForKey("chon_mang_sms"), smsProviders, [=](string provider) {
 						onChooseProviderSms(provider);
 					});
+				} else {
+					resetPopupChooseProvider(popupChooseSms);
 				}
 				showPopup(popupChooseSms);
 			} else if(i == 2){
@@ -1452,6 +1456,8 @@ void MainScene::initPopupCharge()
 					showWaiting();
 					chargingProvider = chosenProviderCard;
 				});
+			} else {
+				resetPopupChooseProvider(popupChooseCard);
 			}
 			showPopup(popupChooseCard);
 		} else {
@@ -1558,6 +1564,8 @@ void MainScene::initPopupCharge()
 							Utils::getSingleton().openSMS(lbItemSms4->getString(), lbItemSms3->getString());
 							Tracker::getSingleton().trackPurchaseSuccess("ClickSMS", chosenProviderSms, "VND", moneys[i] * 1000);
 						});
+					} else {
+						resetPopupChooseProvider(popupChooseSms);
 					}
 					showPopup(popupChooseSms);
 				} else {

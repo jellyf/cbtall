@@ -310,28 +310,31 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 				sp->setFlippedX(flipX[j]);
 			}
 
+			int posY = 10;
+			if (zone.compare("SanDinh") == 0) posY = 5;
+			else if (zone.compare("VuongPhu") == 0) posY = 0;
 			Label* lb411 = Label::createWithTTF("4-11", "fonts/arialbd.ttf", 24);
 			lb411->setAnchorPoint(Vec2(1, .5f));
 			lb411->setColor(Color3B::WHITE);
-			lb411->setPosition(260, 15);
+			lb411->setPosition(260, posY);
 			lb411->setName("lb411");
 			btn->addChild(lb411);
 
 			Sprite* spGa = Sprite::createWithSpriteFrameName("ga_off.png");
-			spGa->setPosition(btn->getContentSize().width / 2, 15);
+			spGa->setPosition(btn->getContentSize().width / 2, posY);
 			spGa->setName("iconga");
 			btn->addChild(spGa);
 
 			Label* lbName = Label::create(Utils::getSingleton().getStringForKey("table") + " " + to_string(i + 1), "fonts/arialbd.ttf", 24);
 			lbName->setColor(Color3B::WHITE);
-			lbName->setPosition(40, 15);
+			lbName->setPosition(40, posY);
 			lbName->setAnchorPoint(Vec2(0, .5f));
 			lbName->setName("lbname");
 			btn->addChild(lbName);
 
 			/*Label* lbMoney = Label::create("", "fonts/arialbd.ttf", 24);
 			lbMoney->setColor(colorMoney);
-			lbMoney->setPositionY(10);
+			lbMoney->setPositionY(posY);
 			lbMoney->setAnchorPoint(Vec2(1, .5f));
 			lbMoney->setVisible(false);
 			lbMoney->setName("lbmoney");

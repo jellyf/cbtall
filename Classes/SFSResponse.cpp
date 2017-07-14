@@ -136,7 +136,7 @@ void SFSResponse::onConfigZoneResponse(boost::shared_ptr<ISFSObject> isfsObject)
 			byteArray->ReadByte(data.Status);
 			byteArray->ReadByte(data.Money);
 			vecZone.push_back(data);
-			CCLOG("%d %s %s %s %d %d %d", data.Id, data.ZoneName.c_str(), data.ZoneIpIos.c_str(), data.ZoneIp.c_str(), data.ZonePort, data.Status, data.Money);
+			//CCLOG("%d %s %s %s %d %d %d", data.Id, data.ZoneName.c_str(), data.ZoneIpIos.c_str(), data.ZoneIp.c_str(), data.ZonePort, data.Status, data.Money);
 		}
 	}
 	std::vector<std::vector<std::string>> names = { {"NhaTranh", "SanDinh", "VuongPhu", "SoLoXu"}, { "NhaTranhQuan", "SanDinhQuan", "VuongPhuQuan", "SoLoQuan" } };

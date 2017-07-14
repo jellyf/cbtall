@@ -116,6 +116,8 @@ void LoginScene::onInit()
 					Utils::getSingleton().openSMS(number, content);
 				});
 			});
+		} else {
+			resetPopupChooseProvider(popupChooseSmsMK);
 		}
 		showPopup(popupChooseSmsMK);
 	});

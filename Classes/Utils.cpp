@@ -258,7 +258,7 @@ bool Utils::isEmailValid(std::string email)
 bool Utils::isUsernameValid(std::string uname)
 {
 	int length = uname.length();
-	if (length < 6 || length > 16) {
+	if (length < 4 || length > 16) {
 		return false;
 	}
 	for (int i = 0; i < length; i++) {
@@ -545,7 +545,8 @@ void Utils::loginZoneByIndex(int moneyType, int index)
 	currentZonePort = zonePort;
 	currentZoneIp = zoneIp;
 	currentZoneName = zoneName;
-	CCLOG("%d %s", index, zoneName.c_str());
+	//CCLOG("%d %s", index, zoneName.c_str());
+	CCLOG("loginZoneByIndex: %s", username.c_str());
 	SFSRequest::getSingleton().LoginZone(username, password, zoneName);
 }
 
