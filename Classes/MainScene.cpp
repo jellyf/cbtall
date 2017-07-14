@@ -63,21 +63,26 @@ void MainScene::onInit()
 	mLayer->addChild(btnFBFriends);
 	autoScaleNode(btnFBFriends);
 
-	ui::Button* btnShop = ui::Button::create("icon_shop.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnShop->setPosition(Vec2(mPosX += mdx, mPosY));
-	btnShop->setAnchorPoint(Vec2(.5f, 0));
-	btnShop->setVisible(pmE);
-	addTouchEventListener(btnShop, [=]() {
-		if (popupShop == nullptr) {
-			initPopupShop();
+	ui::Button* btnGuide = ui::Button::create("icon_guide.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnGuide->setPosition(Vec2(mPosX += mdx, mPosY));
+	btnGuide->setAnchorPoint(Vec2(.5f, 0));
+	addTouchEventListener(btnGuide, [=]() {
+		if (popupGuide == nullptr) {
+			initPopupGuide();
 		}
-		showPopup(popupShop);
-		if (popupShop->getChildByTag(10)->getChildByName("scrollcard")->getChildrenCount() == 0) {
-			SFSRequest::getSingleton().RequestShopItems();
-		}
+		showPopup(popupGuide);
 	});
-	mLayer->addChild(btnShop);
-	autoScaleNode(btnShop);
+	mLayer->addChild(btnGuide);
+	autoScaleNode(btnGuide);
+
+	ui::Button* btnNews = ui::Button::create("icon_news.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnNews->setPosition(Vec2(mPosX += mdx, mPosY));
+	btnNews->setAnchorPoint(Vec2(.5f, 0));
+	addTouchEventListener(btnNews, [=]() {
+		showPopupNews();
+	});
+	mLayer->addChild(btnNews);
+	autoScaleNode(btnNews);
 
 	ui::Button* btnCharge = ui::Button::create("icon_charge.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnCharge->setPosition(Vec2(mPosX += mdx, mPosY));
@@ -98,36 +103,22 @@ void MainScene::onInit()
 	});
 	mLayer->addChild(btnCharge);
 	autoScaleNode(btnCharge);
-    /*if(pmE){
-        btnCharge->setPosition(vecPos[2]);
-    }else{
-		btnCharge->setPosition(vecPos[7]);
-		btnCharge->setVisible(CC_TARGET_PLATFORM == CC_PLATFORM_IOS);
-    }*/
 
-	ui::Button* btnNews = ui::Button::create("icon_news.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnNews->setPosition(Vec2(mPosX += mdx, mPosY));
-	btnNews->setAnchorPoint(Vec2(.5f, 0));
-	addTouchEventListener(btnNews, [=]() {
-		showPopupNews();
-		/*cocos2d::ValueMap plist = cocos2d::FileUtils::getInstance()->getValueMapFromFile("configs.xml");
-		string url = plist["link_tin_tuc"].asString();
-		showWebView(url);*/
-	});
-	mLayer->addChild(btnNews);
-	autoScaleNode(btnNews);
-
-	ui::Button* btnGuide = ui::Button::create("icon_guide.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnGuide->setPosition(Vec2(mPosX += mdx, mPosY));
-	btnGuide->setAnchorPoint(Vec2(.5f, 0));
-	addTouchEventListener(btnGuide, [=]() {
-		if (popupGuide == nullptr) {
-			initPopupGuide();
+	ui::Button* btnShop = ui::Button::create("icon_shop.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnShop->setPosition(Vec2(mPosX += mdx, mPosY));
+	btnShop->setAnchorPoint(Vec2(.5f, 0));
+	btnShop->setVisible(pmE);
+	addTouchEventListener(btnShop, [=]() {
+		if (popupShop == nullptr) {
+			initPopupShop();
 		}
-		showPopup(popupGuide);
+		showPopup(popupShop);
+		if (popupShop->getChildByTag(10)->getChildByName("scrollcard")->getChildrenCount() == 0) {
+			SFSRequest::getSingleton().RequestShopItems();
+		}
 	});
-	mLayer->addChild(btnGuide);
-	autoScaleNode(btnGuide);
+	mLayer->addChild(btnShop);
+	autoScaleNode(btnShop);
 
 	ui::Button* btnMail = ui::Button::create("icon_mail.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnMail->setPosition(Vec2(mPosX += mdx, mPosY));
@@ -280,6 +271,14 @@ void MainScene::onInit()
 	}
     Utils::getSingleton().solveCachedPurchases();
 	onDynamicConfigReceived();
+
+	if (!Utils::getSingleton().ispmE()) {
+		mPosX = winSize.width / 2 - mdx * 1.5f;
+		btnGuide->setPositionX(mPosX);
+		btnCharge->setPositionX(mPosX += mdx);
+		btnNews->setPositionX(mPosX += mdx);
+		btnMail->setPositionX(mPosX += mdx);
+	}
 }
 
 void MainScene::registerEventListenner()
