@@ -13,8 +13,8 @@ using namespace std;
 void MainScene::onInit()
 {
 	BaseScene::onInit();
-	isChargeQuan = Utils::getSingleton().ispmE();
 	bool pmE = Utils::getSingleton().ispmE();
+	isChargeQuan = Utils::getSingleton().ispmE();
 	currentMoneyType = Utils::getSingleton().moneyType;
 	chosenProviderCard = Utils::getSingleton().chosenProviderCard;
 	chosenProviderSms = Utils::getSingleton().chosenProviderSms;
@@ -63,24 +63,21 @@ void MainScene::onInit()
 	mLayer->addChild(btnFBFriends);
 	autoScaleNode(btnFBFriends);
 
-	ui::Button* btnMail = ui::Button::create("icon_mail.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnMail->setPosition(Vec2(mPosX += mdx, mPosY));
-	btnMail->setAnchorPoint(Vec2(.5f, 0));
-	addTouchEventListener(btnMail, [=]() {
-		showPopupMail();
+	ui::Button* btnShop = ui::Button::create("icon_shop.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnShop->setPosition(Vec2(mPosX += mdx, mPosY));
+	btnShop->setAnchorPoint(Vec2(.5f, 0));
+	btnShop->setVisible(pmE);
+	addTouchEventListener(btnShop, [=]() {
+		if (popupShop == nullptr) {
+			initPopupShop();
+		}
+		showPopup(popupShop);
+		if (popupShop->getChildByTag(10)->getChildByName("scrollcard")->getChildrenCount() == 0) {
+			SFSRequest::getSingleton().RequestShopItems();
+		}
 	});
-	mLayer->addChild(btnMail);
-	autoScaleNode(btnMail);
-
-	Sprite* circleNewMail = Sprite::createWithSpriteFrameName("circle_red.png");
-	circleNewMail->setPosition(btnMail->getPosition() + Vec2(30, 80));
-	circleNewMail->setScale(.7f);
-	circleNewMail->setVisible(false);
-	mLayer->addChild(circleNewMail);
-
-	lbNewMail = Label::create("", "fonts/arial.ttf", 30);
-	lbNewMail->setPosition(circleNewMail->getContentSize().width / 2 - 2, circleNewMail->getContentSize().height / 2);
-	circleNewMail->addChild(lbNewMail);
+	mLayer->addChild(btnShop);
+	autoScaleNode(btnShop);
 
 	ui::Button* btnCharge = ui::Button::create("icon_charge.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnCharge->setPosition(Vec2(mPosX += mdx, mPosY));
@@ -108,22 +105,6 @@ void MainScene::onInit()
 		btnCharge->setVisible(CC_TARGET_PLATFORM == CC_PLATFORM_IOS);
     }*/
 
-	ui::Button* btnShop = ui::Button::create("icon_shop.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnShop->setPosition(Vec2(mPosX += mdx, mPosY));
-	btnShop->setAnchorPoint(Vec2(.5f, 0));
-	btnShop->setVisible(pmE);
-	addTouchEventListener(btnShop, [=]() {
-		if (popupShop == nullptr) {
-			initPopupShop();
-		}
-		showPopup(popupShop);
-		if (popupShop->getChildByTag(10)->getChildByName("scrollcard")->getChildrenCount() == 0) {
-			SFSRequest::getSingleton().RequestShopItems();
-		}
-	});
-	mLayer->addChild(btnShop);
-	autoScaleNode(btnShop);
-
 	ui::Button* btnNews = ui::Button::create("icon_news.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnNews->setPosition(Vec2(mPosX += mdx, mPosY));
 	btnNews->setAnchorPoint(Vec2(.5f, 0));
@@ -147,6 +128,25 @@ void MainScene::onInit()
 	});
 	mLayer->addChild(btnGuide);
 	autoScaleNode(btnGuide);
+
+	ui::Button* btnMail = ui::Button::create("icon_mail.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnMail->setPosition(Vec2(mPosX += mdx, mPosY));
+	btnMail->setAnchorPoint(Vec2(.5f, 0));
+	addTouchEventListener(btnMail, [=]() {
+		showPopupMail();
+	});
+	mLayer->addChild(btnMail);
+	autoScaleNode(btnMail);
+
+	Sprite* circleNewMail = Sprite::createWithSpriteFrameName("circle_red.png");
+	circleNewMail->setPosition(btnMail->getPosition() + Vec2(30, 80));
+	circleNewMail->setScale(.7f);
+	circleNewMail->setVisible(false);
+	mLayer->addChild(circleNewMail);
+
+	lbNewMail = Label::create("", "fonts/arial.ttf", 30);
+	lbNewMail->setPosition(circleNewMail->getContentSize().width / 2 - 2, circleNewMail->getContentSize().height / 2);
+	circleNewMail->addChild(lbNewMail);
 
 	ui::Button* btnGiftcode = ui::Button::create("icon_giftcode.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnGiftcode->setPosition(Vec2(mPosX += mdx, mPosY));
@@ -174,7 +174,7 @@ void MainScene::onInit()
 
 	btnEvent = ui::Button::create("icon_event.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnEvent->setPosition(Vec2(445, 360));
-	btnEvent->setVisible(false);
+	btnEvent->setVisible(pmE);
 	addTouchEventListener(btnEvent, [=]() {
 		Utils::getSingleton().hasShowEventPopup = true;
 		showWebView(Utils::getSingleton().dynamicConfig.PopupUrl);
@@ -231,12 +231,12 @@ void MainScene::onInit()
 	btnLoiDai->setPosition(vecPos[11]);
 	btnLoiDai->setScale(1.2f);
 	addTouchEventListener(btnLoiDai, [=]() {
-		//showPopupNotice(Utils::getSingleton().getStringForKey("feature_coming_soon"));
-		if (isWaiting) return;
+		showPopupNotice(Utils::getSingleton().getStringForKey("feature_coming_soon"));
+		/*if (isWaiting) return;
 		showWaiting();
 		tmpZoneId = 3;
 		isGoToLobby = true;
-		SFSRequest::getSingleton().Disconnect();
+		SFSRequest::getSingleton().Disconnect();*/
 	});
 	mLayer->addChild(btnLoiDai);
 	autoScaleNode(btnLoiDai);
@@ -262,18 +262,7 @@ void MainScene::onInit()
 	mLayer->addChild(spTree2);
 	autoScaleNode(spTree2);
 
-	/*initPopupCharge();
-	initPopupGuide();
-	initPopupMail();
-	initPopupNews();
-	initPopupRank();
-	initPopupShop();
-	initPopupSettings();
-	initPopupHistory();
-	initPopupDisplayName();
-	initPopupGiftcode();*/
 	initEventView(Vec2(0, 575), Size(1120, 40));
-	initWebView();
 
 	if (Utils::getSingleton().userDataMe.Name.length() > 0 && Utils::getSingleton().userDataMe.DisplayName.length() == 0) {
 		if (popupDisplayName == nullptr) {
@@ -291,43 +280,6 @@ void MainScene::onInit()
 	}
     Utils::getSingleton().solveCachedPurchases();
 	onDynamicConfigReceived();
-
-	//for (int i = 1; i <= 4; i++) {
-	//	string name1 = "provider" + to_string(i);
-	//	string name2 = name1 + "_dark";
-	//	Utils::getSingleton().LoadTextureFromURL(host + name1 + ".png", [=](Texture2D* texture) {
-	//		if (Utils::getSingleton().currentScene != this) return;
-	//		textures[name1] = texture;
-	//		if (popupCharge != nullptr) {
-	//			if (i == 1) {
-	//				Sprite* sp = (Sprite*)popupCharge->getChildByName("providerimg" + to_string(i));
-	//				sp->initWithTexture(texture);
-	//			}
-	//			if (textures.size() == 8) {
-	//				for (int k = 1; k <= 4; k++) {
-	//					ui::Button* btn = (ui::Button*)popupCharge->getChildByName("btn" + to_string(k));
-	//					btn->setTouchEnabled(true);
-	//				}
-	//			}
-	//		}
-	//	});
-	//	Utils::getSingleton().LoadTextureFromURL(host + name2 + ".png", [=](Texture2D* texture) {
-	//		if (Utils::getSingleton().currentScene != this) return;
-	//		textures[name2] = texture;
-	//		if (popupCharge != nullptr) {
-	//			if (i > 1) {
-	//				Sprite* sp = (Sprite*)popupCharge->getChildByName("providerimg" + to_string(i));
-	//				sp->initWithTexture(texture);
-	//			}
-	//			if (textures.size() == 8) {
-	//				for (int k = 1; k <= 4; k++) {
-	//					ui::Button* btn = (ui::Button*)popupCharge->getChildByName("btn" + to_string(k));
-	//					btn->setTouchEnabled(true);
-	//				}
-	//			}
-	//		}
-	//	});
-	//}
 }
 
 void MainScene::registerEventListenner()
@@ -1181,7 +1133,7 @@ void MainScene::initPopupCharge()
 			} else if (i == 1) {
 				scrollProvider->scrollToLeft(.3f, true);
 				scrollProvider->setVisible(true);
-				nodeMoneyType->setPosition(0, -20);
+				nodeMoneyType->setPosition(moneyTypePosX, 20);
 				for (Node* n : scrollProvider->getChildren()) {
 					string name = n->getName();
 					n->setTag(0);
@@ -1224,9 +1176,9 @@ void MainScene::initPopupCharge()
 	int xp = 80;
 	int yp = 70;
 	string smsContent = Utils::getSingleton().gameConfig.smsVT;
-	int strIndex = smsContent.find_last_of(' ');
-	string smsTarget = smsContent.substr(strIndex + 1, smsContent.length() - strIndex);
-	smsContent = smsContent.substr(0, strIndex);
+	//int strIndex = smsContent.find_last_of(' ');
+	string smsTarget = Utils::getSingleton().dynamicConfig.SmsNap;// smsContent.substr(strIndex + 1, smsContent.length() - strIndex);
+	//smsContent = smsContent.substr(0, strIndex);
 	smsContent = Utils::getSingleton().replaceString(smsContent, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
 	for (int i = 1; i <= strProviders.size(); i++) {
 		string strimg = strProviders[i - 1] + ".png";
@@ -1625,24 +1577,24 @@ void MainScene::initPopupCharge()
         btn->addChild(sp);
         
         Sprite* spCoin = Sprite::createWithSpriteFrameName(pmE ? "icon_gold.png" : "icon_silver.png");
-        spCoin->setScale(.5f);
+        spCoin->setScale(.55f);
         btn->addChild(spCoin);
         
-        Label* lb1 = Label::create(strValue, "fonts/guanine.ttf", 20);
-        lb1->setPosition(btn->getContentSize().width / 2 - spCoin->getContentSize().width * spCoin->getScale() / 2, btn->getContentSize().height / 2 - 70);
+        Label* lb1 = Label::create(strValue, "fonts/arialbd.ttf", 30);
+        lb1->setPosition(btn->getContentSize().width / 2 - spCoin->getContentSize().width * spCoin->getScale() / 2, btn->getContentSize().height / 2 - 75);
         lb1->setColor(Color3B::YELLOW);
         btn->addChild(lb1);
         
-        Label* lb2 = Label::create(strCost, "fonts/guanine.ttf", 20);
+        Label* lb2 = Label::create(strCost, "fonts/arialbd.ttf", 30);
         lb2->setWidth(175);
         lb2->setHeight(30);
-        lb2->setPosition(btn->getContentSize().width / 2, btn->getContentSize().height / 2 - 105);
-        lb2->setColor(Color3B::WHITE);
+        lb2->setPosition(btn->getContentSize().width / 2, btn->getContentSize().height / 2 - 110);
+        lb2->setColor(Color3B::BLACK);
         lb2->setHorizontalAlignment(TextHAlignment::CENTER);
         btn->addChild(lb2);
         
         spCoin->setPosition(lb1->getPositionX() + lb1->getContentSize().width / 2
-                            + spCoin->getContentSize().width * spCoin->getScale() / 2 + 5, lb1->getPositionY() - 3);
+                            + spCoin->getContentSize().width * spCoin->getScale() / 2 + 5, lb1->getPositionY());
     }
 
     if(!pmE){
@@ -1997,7 +1949,8 @@ void MainScene::initWebView()
 	nodeWebview->addChild(webSplash);
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-	Size wSize = Size(winSize.width, winSize.height - 200);
+	Size visibleSize = Director::getInstance()->getOpenGLView()->getFrameSize();
+	Size wSize = Size(visibleSize.width, visibleSize.height - 200);
 	auto webView = experimental::ui::WebView::create();
 	webView->setContentSize(wSize);
 	webView->setScalesPageToFit(true);
@@ -2029,7 +1982,7 @@ void MainScene::initWebView()
 	nodeWebview->addChild(lb);
 
 	ui::Button* btnClose = ui::Button::create("btn_dong2.png", "btn_dong2.png", "", ui::Widget::TextureResType::PLIST);
-	btnClose->setPosition(Vec2(winSize.width / 2 - 35, winSize.height / 2 - 55));
+	btnClose->setPosition(Vec2(winSize.width / 2 - 35, winSize.height / 2 - 50));
 	addTouchEventListener(btnClose, [=]() {
 		//hideSplash();
 		nodeWebview->setVisible(false);
@@ -2194,6 +2147,9 @@ void MainScene::showPopupNews()
 
 void MainScene::showWebView(std::string url)
 {
+	if (nodeWebview == NULL) {
+		initWebView();
+	}
 	nodeWebview->setVisible(true);
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 	experimental::ui::WebView* webView = (experimental::ui::WebView*)nodeWebview->getChildByName("webview");
@@ -2237,15 +2193,15 @@ void MainScene::updateSmsInfo(bool isQuan)
 	Node* scrollProvider = popupCharge->getChildByName("scrollprovider");
 	string smsct = "";
 	if (chosenProviderSms.compare("viettel") == 0) {
-		smsct = Utils::getSingleton().gameConfig.smsKHVT;
+		smsct = Utils::getSingleton().gameConfig.smsVT;
 	} else if (chosenProviderSms.compare("mobifone") == 0) {
-		smsct = Utils::getSingleton().gameConfig.smsKHVMS;
+		smsct = Utils::getSingleton().gameConfig.smsVMS;
 	} else {
-		smsct = Utils::getSingleton().gameConfig.smsKHVNP;
+		smsct = Utils::getSingleton().gameConfig.smsVNP;
 	}
-	int strid = smsct.find_last_of(' ');
-	string smstg = smsct.substr(strid + 1, smsct.length() - strid);
-	smsct = smsct.substr(0, strid);
+	//int strid = smsct.find_last_of(' ');
+	string smstg = Utils::getSingleton().dynamicConfig.SmsNap;// smsct.substr(strid + 1, smsct.length() - strid);
+	//smsct = smsct.substr(0, strid);
 	smsct = Utils::getSingleton().replaceString(smsct, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
 	if (!isQuan) smsct = Utils::getSingleton().replaceString(smsct, " T", " A");
 

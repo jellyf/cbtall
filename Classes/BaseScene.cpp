@@ -1979,8 +1979,13 @@ void BaseScene::initPopupCoffer()
 
 void BaseScene::initPopupIAP()
 {
-	popupIAP = createPopup(Utils::getSingleton().getStringForKey("nap_tien"), true, false);
-	Size size = Size(810, 466);
+	popupIAP = createPopup("", true, false);
+	Size size = Size(900, 446);
+
+	ui::Scale9Sprite* bgScroll = ui::Scale9Sprite::createWithSpriteFrameName("box6.png");
+	bgScroll->setContentSize(size);
+	//bgScroll->setPosition(0, 0);
+	popupIAP->addChild(bgScroll);
 
 	Node* nodeStore = Node::create();
 	nodeStore->setName("nodestore");
@@ -2030,24 +2035,24 @@ void BaseScene::initPopupIAP()
 		btn->addChild(sp);
 
 		Sprite* spCoin = Sprite::createWithSpriteFrameName("icon_silver.png");
-		spCoin->setScale(.5f);
+		spCoin->setScale(.55f);
 		btn->addChild(spCoin);
 
-		Label* lb1 = Label::create(strValue, "fonts/guanine.ttf", 20);
-		lb1->setPosition(btn->getContentSize().width / 2 - spCoin->getContentSize().width * spCoin->getScale() / 2, btn->getContentSize().height / 2 - 70);
+		Label* lb1 = Label::create(strValue, "fonts/arialbd.ttf", 30);
+		lb1->setPosition(btn->getContentSize().width / 2 - spCoin->getContentSize().width * spCoin->getScale() / 2, btn->getContentSize().height / 2 - 75);
 		lb1->setColor(Color3B::YELLOW);
 		btn->addChild(lb1);
 
-		Label* lb2 = Label::create(strCost, "fonts/guanine.ttf", 20);
+		Label* lb2 = Label::create(strCost, "fonts/arialbd.ttf", 30);
 		lb2->setWidth(175);
 		lb2->setHeight(30);
-		lb2->setPosition(btn->getContentSize().width / 2, btn->getContentSize().height / 2 - 105);
-		lb2->setColor(Color3B::WHITE);
+		lb2->setPosition(btn->getContentSize().width / 2, btn->getContentSize().height / 2 - 110);
+		lb2->setColor(Color3B::BLACK);
 		lb2->setHorizontalAlignment(TextHAlignment::CENTER);
 		btn->addChild(lb2);
 
 		spCoin->setPosition(lb1->getPositionX() + lb1->getContentSize().width / 2
-			+ spCoin->getContentSize().width * spCoin->getScale() / 2 + 5, lb1->getPositionY() - 3);
+			+ spCoin->getContentSize().width * spCoin->getScale() / 2 + 5, lb1->getPositionY());
 	}
 }
 
@@ -2516,6 +2521,7 @@ void BaseScene::resetPopupChooseProvider(Node * popup)
 	for (int i = 1; i < 10; i++) {
 		Node* btn = nodeProvider->getChildByName("btn" + to_string(i));
 		if (btn == nullptr) return;
+		btn->setTag(0);
 		btn->setColor(Color3B::GRAY);
 	}
 }

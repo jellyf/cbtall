@@ -30,7 +30,7 @@ void LoginScene::onInit()
 
 	Sprite* bg = Sprite::createWithTexture(bgTexture);
 	bg->setPosition(560, 350);
-	addChild(bg);
+	mLayer->addChild(bg);
 
 	loginNode = Node::create();
 	loginNode->setPosition(560, 350);
@@ -101,11 +101,11 @@ void LoginScene::onInit()
 			popupChooseSmsMK = createPopupChooseProvider(Utils::getSingleton().getStringForKey("chon_mang_sms"), smsProviders, [=](string provider) {
 				string str = "";
 				if (provider.compare("viettel") == 0) {
-					str = Utils::getSingleton().gameConfig.smsKHVT;
+					str = Utils::getSingleton().gameConfig.smsMKVT;
 				} else if (provider.compare("mobifone") == 0) {
-					str = Utils::getSingleton().gameConfig.smsKHVMS;
+					str = Utils::getSingleton().gameConfig.smsMKVMS;
 				} else {
-					str = Utils::getSingleton().gameConfig.smsKHVNP;
+					str = Utils::getSingleton().gameConfig.smsMKVNP;
 				}
 				string strMsg = Utils::getSingleton().getStringForKey("open_sms_retake_password");
 				strMsg = Utils::getSingleton().replaceString(strMsg, "sms", str);
@@ -395,8 +395,6 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 		}
 	}*/
 
-	//config.pmE = d["payment"].GetBool();
-	//config.pmEIOS = d["paymentIOS"].GetBool();
 	config.zone = d["name"].GetString();
 	config.host = d["host"].GetString();
 	config.port = d["port"].GetInt();
@@ -405,26 +403,39 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	config.versionIOS = d["versionIOS"].GetInt();
 	config.ip_rs = d["ip_rs"].GetString();
 	config.phone = d["phone"].GetString();
-	config.smsVT = d["smsVT"].GetString();
-	string strSmsVNPVMS = d["smsVNPVMS"].GetString();
-	string strSmsKH = d["smsKH"].GetString();
-	string strSmsMK = d["smsMK"].GetString();
-	/*config.linkFb = d["fb"].GetString();
-	config.linkAndroid = d["a"].GetString();
-	config.linkIOS = d["i"].GetString();
-	config.canUpdate = d["updatenow"].GetBool();
-	config.inapp = d["inapp"].GetString();
-    config.invite = d["invite"].GetBool();
-    config.versionIOS71ktc = d["versionIOS71ktc"].GetBool();*/
+	config.smsKHVT = d["SMSKHVTT"].GetString();
+	config.smsKHVMS = d["SMSKHMOBI"].GetString();
+	config.smsKHVNP = d["SMSKHVINA"].GetString();
 
-	config.smsVNP = strSmsVNPVMS;
-	config.smsVMS = strSmsVNPVMS;
-	config.smsKHVT = strSmsKH;
-	config.smsKHVNP = strSmsKH;
-	config.smsKHVMS = strSmsKH;
-	config.smsMKVT = strSmsMK;
-	config.smsMKVNP = strSmsMK;
-	config.smsMKVMS = strSmsMK;
+	if (d.FindMember("payment") != d.MemberEnd()) {
+		config.pmE = d["payment"].GetBool();
+	} else config.pmE = false;
+	if (d.FindMember("paymentIOS") != d.MemberEnd()) {
+		config.pmEIOS = d["paymentIOS"].GetBool();
+	} else config.pmEIOS = false;
+	if (d.FindMember("updatenow") != d.MemberEnd()) {
+		config.canUpdate = d["updatenow"].GetBool();
+	} else config.canUpdate = false;
+	if (d.FindMember("invite") != d.MemberEnd()) {
+		config.invite = d["invite"].GetBool();
+	} else config.invite = false;
+	if (d.FindMember("fb") != d.MemberEnd()) {
+		config.linkFb = d["fb"].GetString();
+	} else config.linkFb = "";
+	if (d.FindMember("a") != d.MemberEnd()) {
+		config.linkAndroid = d["a"].GetString();
+	} else config.linkAndroid = "";
+	if (d.FindMember("i") != d.MemberEnd()) {
+		config.linkIOS = d["i"].GetString();
+	} else config.linkIOS = "";
+	if (d.FindMember("inapp") != d.MemberEnd()) {
+		config.inapp = d["inapp"].GetString();
+	} else config.inapp = "";
+
+	config.linkAndroid = "https://play.google.com/store/apps/details?id=" + config.linkAndroid;
+	config.smsMKVT = Utils::getSingleton().replaceString(config.smsKHVT, "KHuid", "MKuid");
+	config.smsMKVNP = Utils::getSingleton().replaceString(config.smsKHVNP, "KHuid", "MKuid");
+	config.smsMKVMS = Utils::getSingleton().replaceString(config.smsKHVMS, "KHuid", "MKuid");
 
 	string verstr = Application::sharedApplication()->getVersion();
 	int i = verstr.find_last_of('.') + 1;
@@ -440,9 +451,6 @@ void LoginScene::onHttpResponse(int tag, std::string content)
     }
 #endif
 
-	config.pmE = true;
-	config.pmEIOS = true;
-	config.invite = true;
 	Utils::getSingleton().gameConfig = config;
     Utils::getSingleton().queryIAPProduct();
 

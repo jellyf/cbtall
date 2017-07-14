@@ -1247,10 +1247,25 @@ void SFSResponse::onPopupEventResponse(boost::shared_ptr<ISFSObject> isfsObject)
 		if (d.FindMember("CLIENT_LOG_VALUE") != d.MemberEnd()) {
 			config.LogHost = d["CLIENT_LOG_VALUE"].GetString();
 		} else config.LogHost = "";
+		if (d.FindMember("SMSNAPVTT") != d.MemberEnd()) {
+			config.SmsNapVT = d["SMSNAPVTT"].GetString();
+		} else config.SmsNapVT = "";
+		if (d.FindMember("SMSNAPMOBI") != d.MemberEnd()) {
+			config.SmsNapVMS = d["SMSNAPMOBI"].GetString();
+		} else config.SmsNapVMS = "";
+		if (d.FindMember("SMSNAPVINA") != d.MemberEnd()) {
+			config.SmsNapVNP = d["SMSNAPVINA"].GetString();
+		} else config.SmsNapVNP = "";
+		if (d.FindMember("SMSNAP") != d.MemberEnd()) {
+			config.SmsNap = d["SMSNAP"].GetString();
+		} else config.SmsNap = "";
 	}
 	if (config.LogHost.length() == 0) {
 		config.LogHost = "http://125.212.192.96:8899/ktc/client-log?data=";
 	}
+	Utils::getSingleton().gameConfig.smsVT = config.SmsNapVT;
+	Utils::getSingleton().gameConfig.smsVMS = config.SmsNapVMS;
+	Utils::getSingleton().gameConfig.smsVNP = config.SmsNapVNP;
 	Utils::getSingleton().dynamicConfig = config;
 	if (EventHandler::getSingleton().onDynamicConfigReceived != NULL) {
 		EventHandler::getSingleton().onDynamicConfigReceived();

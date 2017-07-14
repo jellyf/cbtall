@@ -299,9 +299,14 @@ void GameScene::onInit()
 	mLayer->addChild(btnCancelReady);
 	autoScaleNode(btnCancelReady);
 
+	int btnY = 40;
+	int btnX1 = 205;
+	int btnX2 = 915;
+	float btnScale = 1.2f;
 	btnBash = ui::Button::create("btn_danh.png", "btn_danh_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnBash->setPosition(Vec2(900, 35));
+	btnBash->setPosition(Vec2(btnX2, btnY));
 	btnBash->setVisible(false);
+	btnBash->setScale(btnScale);
 	addTouchEventListener(btnBash, [=]() {
 		if (chosenCard < 0 || chosenCard >= spHandCards.size()) return;
 		int numb = atoi(spHandCards[chosenCard]->getName().c_str());
@@ -320,8 +325,9 @@ void GameScene::onInit()
 	autoScaleNode(btnBash);
 
 	btnForward = ui::Button::create("btn_duoi.png", "btn_duoi_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnForward->setPosition(Vec2(900, 35));
+	btnForward->setPosition(Vec2(btnX2, btnY));
 	btnForward->setVisible(false);
+	btnForward->setScale(btnScale);
 	addTouchEventListener(btnForward, [=]() {
 		SFSRequest::getSingleton().RequestGameForward();
 		noaction = 0;
@@ -330,8 +336,9 @@ void GameScene::onInit()
 	autoScaleNode(btnForward);
 
 	btnBashBack = ui::Button::create("btn_danh.png", "btn_danh_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnBashBack->setPosition(Vec2(900, 35));
+	btnBashBack->setPosition(Vec2(btnX2, btnY));
 	btnBashBack->setVisible(false);
+	btnBashBack->setScale(btnScale);
 	addTouchEventListener(btnBashBack, [=]() {
 		if (chosenCard < 0 || chosenCard >= spHandCards.size()) return;
 		//btnBashBack->setVisible(false);
@@ -351,8 +358,9 @@ void GameScene::onInit()
 	autoScaleNode(btnBashBack);
 
 	btnHold = ui::Button::create("btn_an.png", "btn_an_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnHold->setPosition(Vec2(220, 35));
+	btnHold->setPosition(Vec2(btnX1, btnY));
 	btnHold->setVisible(false);
+	btnHold->setScale(btnScale);
 	addTouchEventListener(btnHold, [=]() {
 		if (chosenCard < 0 || chosenCard >= spHandCards.size()) return;
 		//btnHold->setVisible(false);
@@ -386,8 +394,9 @@ void GameScene::onInit()
 	autoScaleNode(btnHold);
 
 	btnPick = ui::Button::create("btn_boc.png", "btn_boc_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnPick->setPosition(Vec2(900, 35));
+	btnPick->setPosition(Vec2(btnX2, btnY));
 	btnPick->setVisible(false);
+	btnPick->setScale(btnScale);
 	addTouchEventListener(btnPick, [=]() {
 		SFSRequest::getSingleton().RequestGamePick();
 		//btnHold->setVisible(false);
@@ -410,8 +419,9 @@ void GameScene::onInit()
 	autoScaleNode(btnPick);
 
 	btnPenet = ui::Button::create("btn_chiu.png", "btn_chiu_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnPenet->setPosition(Vec2(900, 35));
+	btnPenet->setPosition(Vec2(btnX2, btnY));
 	btnPenet->setVisible(false);
+	btnPenet->setScale(btnScale);
 	addTouchEventListener(btnPenet, [=]() {
 		SFSRequest::getSingleton().RequestGamePenet();
 		btnPenet->stopAllActions();
@@ -445,8 +455,9 @@ void GameScene::onInit()
 	autoScaleNode(btnPenet);
     
     btnDropPenet = ui::Button::create("btn_bo_chiu.png", "btn_bo_chiu_clicked.png", "", ui::Widget::TextureResType::PLIST);
-    btnDropPenet->setPosition(Vec2(220, 35));
+    btnDropPenet->setPosition(Vec2(btnX1, btnY));
     btnDropPenet->setVisible(false);
+	btnDropPenet->setScale(btnScale);
     addTouchEventListener(btnDropPenet, [=]() {
         dropPenet();
     });
@@ -474,8 +485,9 @@ void GameScene::onInit()
 	autoScaleNode(btnWin);
 
 	btnDropWin = ui::Button::create("btn_bou.png", "btn_bou_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnDropWin->setPosition(Vec2(220, 35));
+	btnDropWin->setPosition(Vec2(btnX1, btnY));
 	btnDropWin->setVisible(false);
+	btnDropWin->setScale(btnScale);
 	addTouchEventListener(btnDropWin, [=]() {
 		dropWin();
 	});
@@ -2047,6 +2059,9 @@ void GameScene::onRoomDataGaResponse(bool isGa, double gaMoney)
 	} else {
 		lbMoneyGa->setString("");
 	}
+
+	//btnBash->setVisible(true);
+	//btnDropPenet->setVisible(true);
 
 	/*tableEndMatch->setVisible(true);
 	tableCrest->setVisible(true);

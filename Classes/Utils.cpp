@@ -594,9 +594,9 @@ void Utils::setIAPProducts(std::vector<ProductData> vecProducts)
 
 void Utils::queryIAPProduct()
 {
-	std::vector<std::string> ids = { "21", "105", "210" };
+	std::vector<std::string> ids;
     split(gameConfig.inapp, ',', ids);
-	std::vector<std::string> descs = { "21.000 ", "105.000 ", "210.000 " };
+	std::vector<std::string> descs = { "10 ", "20 ", "30 " };
 	std::vector<double> prices = { 22000, 105000, 210000 };
     for(int i=0;i<ids.size();i++){
         ids[i] = "com.chan.kinhtuchi.goi." + ids[i];

@@ -401,6 +401,10 @@ struct DynamicConfig
 	bool Log;
 	std::string LogHost;
 	std::string PopupUrl;
+	std::string SmsNap;
+	std::string SmsNapVT;
+	std::string SmsNapVNP;
+	std::string SmsNapVMS;
 	std::vector<std::string> CashValue;
 };
 
