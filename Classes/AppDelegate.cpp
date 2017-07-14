@@ -11,6 +11,7 @@
 #include "Tracker.h"
 #include "SFSGEvent.h"
 #include "GameLogger.h"
+#include "LoadScene.h"
 
 USING_NS_CC;
 
@@ -71,10 +72,11 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	Tracker* tracker = new Tracker();
 	GameLogger* logger = new GameLogger();
 
-	auto scene = LoginScene::create();
+	//auto scene = LoginScene::create();
 	//auto scene = GameScene::create();
 	//auto scene = MainScene::create();
 	//auto scene = LobbyScene::create();
+	auto scene = LoadScene::create();
 	utils->currentScene = scene;
     director->runWithScene(scene);
     

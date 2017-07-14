@@ -708,8 +708,8 @@ void LoginScene::loadTextureCache()
 
 void LoginScene::updateStateToGoToMain(int state)
 {
-	isReadyToMain |= state;
-	if (isReadyToMain == 3 || !Utils::getSingleton().ispmE()) {
+	//isReadyToMain |= state;
+	//if (isReadyToMain == 3 || !Utils::getSingleton().ispmE()) {
 		Utils::getSingleton().goToMainScene();
-	}
+	//}
 }

@@ -42,7 +42,7 @@ Utils::Utils()
 	viLang = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/vi.xml");
 	SFSRequest::getSingleton().onLoadTextureResponse = std::bind(&Utils::onLoadTextureResponse, this, std::placeholders::_1, std::placeholders::_2);
 
-	TextureCache::sharedTextureCache()->addImageAsync("test.png", [=](Texture2D* texture) {
+	TextureCache::sharedTextureCache()->addImageAsync("tmp.png", [=](Texture2D* texture) {
 		string str1 = FileUtils::getInstance()->getStringFromFile("menu1.plist");
 		SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str1, texture);
 		string str2 = FileUtils::getInstance()->getStringFromFile("menu2.plist");
@@ -590,6 +590,9 @@ void Utils::setIAPProducts(std::vector<ProductData> vecProducts)
             }
         }
     }
+	if (EventHandler::getSingleton().onIAPProductReady != NULL) {
+		EventHandler::getSingleton().onIAPProductReady();
+	}
 }
 
 void Utils::queryIAPProduct()
@@ -623,6 +626,10 @@ void Utils::queryIAPProduct()
 	methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID, arr);
 	methodInfo.env->DeleteLocalRef(arr);
 	methodInfo.env->DeleteLocalRef(methodInfo.classID);
+#else
+	if (EventHandler::getSingleton().onIAPProductReady != NULL) {
+		EventHandler::getSingleton().onIAPProductReady();
+	}
 #endif
 }
 
