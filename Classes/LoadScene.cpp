@@ -25,8 +25,8 @@ void LoadScene::onEnter()
 	Layer* mLayer = Layer::create();
 	addChild(mLayer, 10);
 
-	winSize = Director::sharedDirector()->getWinSize();
-	auto visibleSize = Director::sharedDirector()->getVisibleSize();
+	winSize = Director::getInstance()->getWinSize();
+	auto visibleSize = Director::getInstance()->getVisibleSize();
 	visibleSize.width = std::ceil(visibleSize.width);
 	visibleSize.height = std::ceil(visibleSize.height);
 
@@ -106,19 +106,19 @@ void LoadScene::initActionQueue()
 		Utils::getSingleton().queryIAPProduct();
 	});*/
 	addToActionQueue([=]() {
-		TextureCache::sharedTextureCache()->addImageAsync("login.png", [=](Texture2D* texture) {
+		Director::getInstance()->getTextureCache()->addImageAsync("login.png", [=](Texture2D* texture) {
 			SpriteFrameCache::getInstance()->addSpriteFramesWithFile("login.plist");
 			completeCurrentAction();
 		});
 	});
 	addToActionQueue([=]() {
-		TextureCache::sharedTextureCache()->addImageAsync("buttons.png", [=](Texture2D* texture) {
+		Director::getInstance()->getTextureCache()->addImageAsync("buttons.png", [=](Texture2D* texture) {
 			SpriteFrameCache::getInstance()->addSpriteFramesWithFile("buttons.plist");
 			completeCurrentAction();
 		});
 	});
 	addToActionQueue([=]() {
-		TextureCache::sharedTextureCache()->addImageAsync("game.png", [=](Texture2D* texture) {
+		Director::getInstance()->getTextureCache()->addImageAsync("game.png", [=](Texture2D* texture) {
 			SpriteFrameCache::getInstance()->addSpriteFramesWithFile("game.plist");
 			completeCurrentAction();
 		});
@@ -134,7 +134,7 @@ void LoadScene::initActionQueue()
 			completeCurrentAction();
 		});
 #else
-		TextureCache::sharedTextureCache()->addImageAsync("menu1.png", [=](Texture2D* texture) {
+		Director::getInstance()->getTextureCache()->addImageAsync("menu1.png", [=](Texture2D* texture) {
 			SpriteFrameCache::getInstance()->addSpriteFramesWithFile("menu1.plist");
 			completeCurrentAction();
 		});
@@ -148,7 +148,7 @@ void LoadScene::initActionQueue()
 			completeCurrentAction();
 		});
 #else
-		TextureCache::sharedTextureCache()->addImageAsync("menu2.png", [=](Texture2D* texture) {
+		Director::getInstance()->getTextureCache()->addImageAsync("menu2.png", [=](Texture2D* texture) {
 			SpriteFrameCache::getInstance()->addSpriteFramesWithFile("menu2.plist");
 			completeCurrentAction();
 		});
@@ -293,7 +293,7 @@ void LoadScene::onHttpResponse(int tag, std::string content)
 	config.smsMKVNP = Utils::getSingleton().replaceString(config.smsKHVNP, "KHuid", "MKuid");
 	config.smsMKVMS = Utils::getSingleton().replaceString(config.smsKHVMS, "KHuid", "MKuid");
 
-	string verstr = Application::sharedApplication()->getVersion();
+	string verstr = Application::getInstance()->getVersion();
 	int i = verstr.find_last_of('.') + 1;
 	verstr = verstr.substr(i, verstr.length() - i);
 	int nver = atoi(verstr.c_str());

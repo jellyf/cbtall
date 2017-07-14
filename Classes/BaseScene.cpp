@@ -58,14 +58,13 @@ void BaseScene::onEnter()
 {
 	Scene::onEnter();
 	bool ispmE = Utils::getSingleton().ispmE();
-	isPopupReady = Utils::getSingleton().downloadedPlistTexture >= 2 || !Utils::getSingleton().ispmE();
 	myRealMoney = Utils::getSingleton().userDataMe.MoneyReal;
 
 	mLayer = Layer::create();
 	addChild(mLayer, 10);
 
-	winSize = Director::sharedDirector()->getWinSize();
-	auto visibleSize = Director::sharedDirector()->getVisibleSize();
+	winSize = Director::getInstance()->getWinSize();
+	auto visibleSize = Director::getInstance()->getVisibleSize();
 	visibleSize.width = std::ceil(visibleSize.width);
 	visibleSize.height = std::ceil(visibleSize.height);
 	
@@ -107,7 +106,7 @@ void BaseScene::onEnter()
 	mLayer->addChild(spNetwork, constant::GAME_ZORDER_SPLASH - 1);
 	autoScaleNode(spNetwork);
 
-	lbNetwork = Label::create("0ms", "fonts/arial.ttf", 18);
+	lbNetwork = Label::createWithTTF("0ms", "fonts/arial.ttf", 18);
 	lbNetwork->setColor(Color3B::GREEN);
 	lbNetwork->setAnchorPoint(Vec2(1, 0));
 	lbNetwork->setPosition(1115, 3);
@@ -376,7 +375,7 @@ void BaseScene::runEventView(std::vector<EventData> list, int currentPosX)
 	for (int i = 0; i < list.size(); i++) {
 		Label* lb = (Label*)nodelb->getChildByTag(i);
 		if (lb == nullptr) {
-			lb = Label::create("", "fonts/arial.ttf", 20);
+			lb = Label::createWithTTF("", "fonts/arial.ttf", 20);
 			lb->setAnchorPoint(Vec2(0, .5f));
 			lb->setTag(i);
 			nodelb->addChild(lb);
@@ -470,21 +469,21 @@ void BaseScene::showPopupRank(int type)
 			node->setTag(i);
 			scroll->addChild(node);
 
-			Label* lb1 = Label::create("#" + to_string(i + 1), "fonts/arial.ttf", 22);
+			Label* lb1 = Label::createWithTTF("#" + to_string(i + 1), "fonts/arial.ttf", 22);
 			lb1->setAnchorPoint(Vec2(0, .5f));
 			lb1->setColor(Color3B::BLACK);
 			lb1->setPosition(-width / 2 + 20, 0);
 			lb1->setTag(1);
 			node->addChild(lb1);
 
-			lb2 = Label::create("", "fonts/arial.ttf", 22);
+			lb2 = Label::createWithTTF("", "fonts/arial.ttf", 22);
 			lb2->setAnchorPoint(Vec2(0, .5f));
 			lb2->setColor(Color3B::BLACK);
 			lb2->setPosition(-width / 2 + 150, 0);
 			lb2->setTag(2);
 			node->addChild(lb2);
 
-			lb3 = Label::create("", "fonts/arial.ttf", 22);
+			lb3 = Label::createWithTTF("", "fonts/arial.ttf", 22);
 			lb3->setAnchorPoint(Vec2(0, .5f));
 			lb3->setColor(Color3B::BLACK);
 			lb3->setPosition(width / 2 - 160, 0);
@@ -541,21 +540,21 @@ void BaseScene::showPopupRankWin()
 			node->setTag(i);
 			scrollWin->addChild(node);
 
-			Label* lb1 = Label::create("#" + to_string(i + 1), "fonts/arial.ttf", 22);
+			Label* lb1 = Label::createWithTTF("#" + to_string(i + 1), "fonts/arial.ttf", 22);
 			lb1->setAnchorPoint(Vec2(0, .5f));
 			lb1->setColor(Color3B::BLACK);
 			lb1->setPosition(-width / 2 + 20, 0);
 			lb1->setTag(1);
 			node->addChild(lb1);
 
-			lb2 = Label::create(listRankWin[i].Name, "fonts/arial.ttf", 22);
+			lb2 = Label::createWithTTF(listRankWin[i].Name, "fonts/arial.ttf", 22);
 			lb2->setAnchorPoint(Vec2(0, .5f));
 			lb2->setColor(Color3B::BLACK);
 			lb2->setPosition(-width / 2 + 90, 0);
 			lb2->setTag(2);
 			node->addChild(lb2);
 
-			Label* lb3 = Label::create(listRankWin[i].Cuoc, "fonts/arial.ttf", 22);
+			Label* lb3 = Label::createWithTTF(listRankWin[i].Cuoc, "fonts/arial.ttf", 22);
 			lb3->setAnchorPoint(Vec2(0, .5f));
 			lb3->setColor(Color3B::BLACK);
 			lb3->setPosition(-width / 2 + 320, 0);
@@ -563,7 +562,7 @@ void BaseScene::showPopupRankWin()
 			lb3->setTag(3);
 			node->addChild(lb3);
 
-			Label* lb4 = Label::create(Utils::getSingleton().formatMoneyWithComma(listRankWin[i].Point), "fonts/arial.ttf", 22);
+			Label* lb4 = Label::createWithTTF(Utils::getSingleton().formatMoneyWithComma(listRankWin[i].Point), "fonts/arial.ttf", 22);
 			lb4->setAnchorPoint(Vec2(1, .5f));
 			lb4->setColor(Color3B::BLACK);
 			lb4->setPosition(width / 2 - 30, 0);
@@ -851,13 +850,13 @@ void BaseScene::initHeaderWithInfos()
 	iconSilver->setPosition(moneyBg0->getPositionX() - 80, 0);
 	moneyNode->addChild(iconSilver, 2);
 
-	lbGold = Label::create("0", "fonts/arialbd.ttf", 25);
+	lbGold = Label::createWithTTF("0", "fonts/arialbd.ttf", 25);
 	lbGold->setPosition(iconGold->getPosition() + Vec2(25, 0));
 	lbGold->setAnchorPoint(Vec2(0, .5f));
 	lbGold->setColor(Color3B::YELLOW);
 	moneyNode->addChild(lbGold, 2);
 
-	lbSilver = Label::create("0", "fonts/arialbd.ttf", 25);
+	lbSilver = Label::createWithTTF("0", "fonts/arialbd.ttf", 25);
 	lbSilver->setPosition(iconSilver->getPosition() + Vec2(25, 0));
 	lbSilver->setAnchorPoint(Vec2(0, .5f));
 	lbSilver->setColor(Color3B(0, 255, 255));
@@ -908,7 +907,7 @@ void BaseScene::initHeaderWithInfos()
 	mLayer->addChild(btnAvar, constant::MAIN_ZORDER_HEADER);
 	autoScaleNode(btnAvar);
 
-	lbName = Label::create("Name", "fonts/arialbd.ttf", 23);
+	lbName = Label::createWithTTF("Name", "fonts/arialbd.ttf", 23);
 	lbName->setAnchorPoint(Vec2(0, .5f));
 	lbName->setPosition(vecPos[10]);
 	//lbName->setWidth(150);
@@ -916,13 +915,13 @@ void BaseScene::initHeaderWithInfos()
 	mLayer->addChild(lbName, constant::MAIN_ZORDER_HEADER);
 	autoScaleNode(lbName);
 
-	lbId = Label::create("ID: ", "fonts/arialbd.ttf", 23);
+	lbId = Label::createWithTTF("ID: ", "fonts/arialbd.ttf", 23);
 	lbId->setAnchorPoint(Vec2(0, .5f));
 	lbId->setPosition(vecPos[11]);
 	mLayer->addChild(lbId, constant::MAIN_ZORDER_HEADER);
 	autoScaleNode(lbId);
 
-    lbLevel = Label::create(Utils::getSingleton().getStringForKey("level") + ": ", "fonts/arialbd.ttf", 23);
+    lbLevel = Label::createWithTTF(Utils::getSingleton().getStringForKey("level") + ": ", "fonts/arialbd.ttf", 23);
 	lbLevel->setAnchorPoint(Vec2(0, .5f));
 	lbLevel->setPosition(vecPos[12]);
 	mLayer->addChild(lbLevel, constant::MAIN_ZORDER_HEADER);
@@ -1114,10 +1113,7 @@ void BaseScene::showToast(std::string tag, ::string msg, Vec2 pos, Color3B textC
 	std::string ss = plist[msg].asString();
 	if (ss.length() > 0) msg = ss;
 
-	Label* lb = Label::create();
-	lb->setString(msg);
-	lb->setSystemFontName("Arial");
-	lb->setSystemFontSize(25);
+	Label* lb = Label::createWithTTF(msg, "fonts/arial.ttf", 25);
 	lb->setColor(textColor);
 	nodeChat->addChild(lb, 2);
 
@@ -1146,11 +1142,6 @@ void BaseScene::showToast(std::string tag, ::string msg, Vec2 pos, Color3B textC
 
 cocos2d::Node * BaseScene::createPopup(std::string stitle, bool isBig, bool isHidden)
 {
-	if (isHidden && !isPopupReady) {
-		showWaiting();
-		return nullptr;
-	}
-
 	Node* popup = Node::create();
 	popup->setPosition(560, 350);
 	popup->setVisible(false);
@@ -1188,11 +1179,6 @@ cocos2d::Node * BaseScene::createPopup(std::string stitle, bool isBig, bool isHi
 
 cocos2d::Node * BaseScene::createPopupChooseProvider(std::string stitle, std::vector<std::string> providers, std::function<void(std::string chosenProvider)> funcCallback)
 {
-	if (!isPopupReady) {
-		showWaiting();
-		return nullptr;
-	}
-
 	Node* popup = Node::create();
 	popup->setPosition(winSize.width / 2, winSize.height / 2);
 	popup->setName("");
@@ -1390,7 +1376,7 @@ void BaseScene::initPopupRank()
 		});
 		popupRank->addChild(btn);
 
-		Label* lb = Label::create(Utils::getSingleton().getStringForKey(texts[i]), "fonts/azuki.ttf", 30);
+		Label* lb = Label::createWithTTF(Utils::getSingleton().getStringForKey(texts[i]), "fonts/azuki.ttf", 30);
 		lb->setPosition(btn->getContentSize().width / 2, btn->getContentSize().height / 2);
 		lb->setAnchorPoint(Vec2(i < 2 ? 0 : .5f, .5f));
 		lb->setColor(Color3B::BLACK);
@@ -1544,7 +1530,7 @@ void BaseScene::initPopupUserInfo()
 	avatar->setName("avatar");
 	popupUserInfo->addChild(avatar);
 
-	Label* lbAppellation = Label::create("Huong Truong", "fonts/azuki.ttf", 35);
+	Label* lbAppellation = Label::createWithTTF("Huong Truong", "fonts/azuki.ttf", 35);
 	lbAppellation->setColor(Color3B::WHITE);
 	lbAppellation->setPosition(avatar->getPositionX(), avatar->getPositionY() - 113);
 	lbAppellation->setName("lbappellation");
@@ -1618,7 +1604,7 @@ void BaseScene::initPopupUserInfo()
     popupUserInfo->addChild(btnLogoutFb);
 
 	int x = 45;
-	Label* lbName = Label::create("Stormus", "fonts/arialbd.ttf", 30);
+	Label* lbName = Label::createWithTTF("Stormus", "fonts/arialbd.ttf", 30);
 	lbName->setAnchorPoint(Vec2(0, .5f));
 	lbName->setColor(Color3B::BLACK);
 	lbName->setPosition(-130, 150);
@@ -1630,42 +1616,42 @@ void BaseScene::initPopupUserInfo()
 	nodeInfo->setPosition(lbName->getPositionX(), lbName->getPositionY() - x);
 	popupUserInfo->addChild(nodeInfo);
 
-	Label* lbUname = Label::create(Utils::getSingleton().getStringForKey("login") + ":", "fonts/arial.ttf", 25);
+	Label* lbUname = Label::createWithTTF(Utils::getSingleton().getStringForKey("login") + ":", "fonts/arial.ttf", 25);
 	lbUname->setAnchorPoint(Vec2(0, .5f));
 	lbUname->setColor(Color3B::BLACK);
 	lbUname->setPosition(0, 0);
 	lbUname->setName("lbuname");
 	nodeInfo->addChild(lbUname);
 
-	Label* lbUname1 = Label::create("stormus", "fonts/arial.ttf", 25);
+	Label* lbUname1 = Label::createWithTTF("stormus", "fonts/arial.ttf", 25);
 	lbUname1->setAnchorPoint(Vec2(0, .5f));
 	lbUname1->setColor(Color3B::BLACK);
 	lbUname1->setPosition(lbUname->getPositionX() + 150, lbUname->getPositionY());
 	lbUname1->setName("lbuname1");
 	nodeInfo->addChild(lbUname1);
 
-	Label* lbId = Label::create("ID:", "fonts/arial.ttf", 25);
+	Label* lbId = Label::createWithTTF("ID:", "fonts/arial.ttf", 25);
 	lbId->setAnchorPoint(Vec2(0, .5f));
 	lbId->setColor(Color3B::BLACK);
 	lbId->setPosition(lbUname->getPositionX(), lbUname->getPositionY() - x);
 	lbId->setName("lbid");
 	nodeInfo->addChild(lbId);
 
-	Label* lbId1 = Label::create("847558", "fonts/arial.ttf", 25);
+	Label* lbId1 = Label::createWithTTF("847558", "fonts/arial.ttf", 25);
 	lbId1->setAnchorPoint(Vec2(0, .5f));
 	lbId1->setColor(Color3B::BLACK);
 	lbId1->setPosition(lbId->getPositionX() + 150, lbId->getPositionY());
 	lbId1->setName("lbid1");
 	nodeInfo->addChild(lbId1);
 
-	Label* lbQuan = Label::create(Utils::getSingleton().getStringForKey("quan") + ":", "fonts/arial.ttf", 25);
+	Label* lbQuan = Label::createWithTTF(Utils::getSingleton().getStringForKey("quan") + ":", "fonts/arial.ttf", 25);
 	lbQuan->setAnchorPoint(Vec2(0, .5f));
 	lbQuan->setColor(Color3B::BLACK);
 	lbQuan->setPosition(lbId->getPositionX(), lbId->getPositionY() - x);
 	lbQuan->setVisible(ispmE);
 	nodeInfo->addChild(lbQuan);
 
-	Label* lbQuan1 = Label::create("100,000", "fonts/arialbd.ttf", 25);
+	Label* lbQuan1 = Label::createWithTTF("100,000", "fonts/arialbd.ttf", 25);
 	lbQuan1->setAnchorPoint(Vec2(0, .5f));
 	lbQuan1->setColor(Color3B::YELLOW);
 	lbQuan1->enableOutline(Color4B(150, 150, 0, 255), 1);
@@ -1674,13 +1660,13 @@ void BaseScene::initPopupUserInfo()
 	lbQuan1->setVisible(ispmE);
 	nodeInfo->addChild(lbQuan1);
 
-	Label* lbXu = Label::create(Utils::getSingleton().getStringForKey("xu") + ":", "fonts/arial.ttf", 25);
+	Label* lbXu = Label::createWithTTF(Utils::getSingleton().getStringForKey("xu") + ":", "fonts/arial.ttf", 25);
 	lbXu->setAnchorPoint(Vec2(0, .5f));
 	lbXu->setColor(Color3B::BLACK);
 	lbXu->setPosition(lbQuan->getPositionX(), lbQuan->getPositionY() - x);
 	nodeInfo->addChild(lbXu);
 
-	Label* lbXu1 = Label::create("100,000", "fonts/arialbd.ttf", 25);
+	Label* lbXu1 = Label::createWithTTF("100,000", "fonts/arialbd.ttf", 25);
 	lbXu1->setAnchorPoint(Vec2(0, .5f));
 	lbXu1->setColor(Color3B(0, 255, 255));
 	lbXu1->enableOutline(Color4B(0, 150, 150, 255), 1);
@@ -1688,35 +1674,35 @@ void BaseScene::initPopupUserInfo()
 	lbXu1->setName("lbxu");
 	nodeInfo->addChild(lbXu1);
 	
-	/*Label* lbLevel = Label::create(Utils::getSingleton().getStringForKey("cap_do") + ":", "fonts/arial.ttf", 25);
+	/*Label* lbLevel = Label::createWithTTF(Utils::getSingleton().getStringForKey("cap_do") + ":", "fonts/arial.ttf", 25);
 	lbLevel->setAnchorPoint(Vec2(0, .5f));
 	lbLevel->setColor(Color3B::WHITE);
 	lbLevel->setPosition(-70, -70);
 	lbLevel->setName("lblevel");
 	popupUserInfo->addChild(lbLevel);*/
 
-	Label* lbWin = Label::create(Utils::getSingleton().getStringForKey("thang") + ": 12", "fonts/arial.ttf", 25);
+	Label* lbWin = Label::createWithTTF(Utils::getSingleton().getStringForKey("thang") + ": 12", "fonts/arial.ttf", 25);
 	lbWin->setAnchorPoint(Vec2(0, .5f));
 	lbWin->setColor(Color3B::BLACK);
 	lbWin->setPosition(lbXu->getPositionX(), lbXu->getPositionY() - x);
 	lbWin->setName("lbwin");
 	nodeInfo->addChild(lbWin);
 
-	Label* lbTotal = Label::create(Utils::getSingleton().getStringForKey("tong") + ": 20", "fonts/arial.ttf", 25);
+	Label* lbTotal = Label::createWithTTF(Utils::getSingleton().getStringForKey("tong") + ": 20", "fonts/arial.ttf", 25);
 	lbTotal->setAnchorPoint(Vec2(0, .5f));
 	lbTotal->setColor(Color3B::BLACK);
 	lbTotal->setPosition(lbWin->getPositionX() + 250, lbWin->getPositionY());
 	lbTotal->setName("lbtotal");
 	nodeInfo->addChild(lbTotal);
 
-	Label* lbBigWin = Label::create(Utils::getSingleton().getStringForKey("thang_lon_nhat") + ":", "fonts/arial.ttf", 25);
+	Label* lbBigWin = Label::createWithTTF(Utils::getSingleton().getStringForKey("thang_lon_nhat") + ":", "fonts/arial.ttf", 25);
 	lbBigWin->setPosition(lbWin->getPositionX(), lbWin->getPositionY() - x);
 	lbBigWin->setAnchorPoint(Vec2(0, .5f));
 	lbBigWin->setColor(Color3B::BLACK);
 	lbBigWin->setVisible(false);
 	nodeInfo->addChild(lbBigWin);
 
-	Label* lbBigWin1 = Label::create("1111", "fonts/arial.ttf", 25);
+	Label* lbBigWin1 = Label::createWithTTF("1111", "fonts/arial.ttf", 25);
 	lbBigWin1->setPosition(lbBigWin->getPositionX() + lbBigWin->getContentSize().width + 10, lbBigWin->getPositionY());
 	lbBigWin1->setAnchorPoint(Vec2(0, .5f));
 	lbBigWin1->setColor(Color3B::BLACK);
@@ -1724,7 +1710,7 @@ void BaseScene::initPopupUserInfo()
 	lbBigWin1->setVisible(false);
 	nodeInfo->addChild(lbBigWin1);
 
-	Label* lbBigCrest = Label::create(Utils::getSingleton().getStringForKey("u_to_nhat") + ": Nha lau xe hoi - Hoa roi cua pha t, a a a Ngu ong bat ca, Ca loi san dinh", "fonts/arial.ttf", 25);
+	Label* lbBigCrest = Label::createWithTTF(Utils::getSingleton().getStringForKey("u_to_nhat") + ": Nha lau xe hoi - Hoa roi cua pha t, a a a Ngu ong bat ca, Ca loi san dinh", "fonts/arial.ttf", 25);
 	lbBigCrest->setPosition(lbBigWin->getPositionX(), lbBigWin->getPositionY() - x + 20);
 	lbBigCrest->setAnchorPoint(Vec2(0, 1));
 	lbBigCrest->setColor(Color3B::BLACK);
@@ -1733,7 +1719,7 @@ void BaseScene::initPopupUserInfo()
 	lbBigCrest->setVisible(false);
 	nodeInfo->addChild(lbBigCrest);
 
-	//Label* lbBigCrest1 = Label::create("Nha lau xe hoi - Hoa roi cua pha t, a a a Ngu ong bat ca, Ca loi san dinh", "fonts/arial.ttf", 25);
+	//Label* lbBigCrest1 = Label::createWithTTF("Nha lau xe hoi - Hoa roi cua pha t, a a a Ngu ong bat ca, Ca loi san dinh", "fonts/arial.ttf", 25);
 	//lbBigCrest1->setPosition(lbBigCrest->getPositionX() + lbBigCrest->getContentSize().width + 10, lbBigCrest->getPositionY() + 15);
 	////lbBigCrest1->setAlignment(TextHAlignment::LEFT, TextVAlignment::TOP);
 	//lbBigCrest1->setAnchorPoint(Vec2(0, 1));
@@ -1800,7 +1786,7 @@ void BaseScene::initPopupHistory()
 		});
 		popupHistory->addChild(btn);
 
-		Label* lb = Label::create(Utils::getSingleton().getStringForKey(texts[i]), "fonts/azuki.ttf", 30);
+		Label* lb = Label::createWithTTF(Utils::getSingleton().getStringForKey(texts[i]), "fonts/azuki.ttf", 30);
 		lb->setPosition(btn->getContentSize().width / 2, btn->getContentSize().height / 2);
 		lb->setAnchorPoint(Vec2(i < 2 ? 0 : .5f, .5f));
 		lb->setColor(Color3B::BLACK);
@@ -1826,7 +1812,7 @@ void BaseScene::initPopupHistory()
 	vector<string> historyTitles = { "STT", Utils::getSingleton().getStringForKey("ngay"), Utils::getSingleton().getStringForKey("thong_tin"),
 		Utils::getSingleton().getStringForKey("tien_van"), Utils::getSingleton().getStringForKey("tien"), "ID" };
 	for (int i = 0; i < historyTitles.size(); i++) {
-		Label* lb = Label::create(historyTitles[i], "fonts/arialbd.ttf", 22);
+		Label* lb = Label::createWithTTF(historyTitles[i], "fonts/arialbd.ttf", 22);
 		lb->setColor(Color3B::BLACK);
 		lb->setPosition(px, py);
 		popupHistory->addChild(lb);
@@ -1849,7 +1835,7 @@ void BaseScene::initPopupHistory()
 
 	px = scroll->getPositionX() + 25;
 	for (int i = 0; i < historyTitles.size(); i++) {
-		Label* lbDetail = Label::create("s", "fonts/arial.ttf", 20);
+		Label* lbDetail = Label::createWithTTF("s", "fonts/arial.ttf", 20);
 		lbDetail->setWidth(widths[i] - (i == 2 ? 30 : 0));
 		lbDetail->setAnchorPoint(Vec2(.5f, 1));
 		lbDetail->setHorizontalAlignment(TextHAlignment::CENTER);
@@ -1952,7 +1938,7 @@ void BaseScene::initPopupCoffer()
 		cocos2d::ValueMap plist = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/tutorials.xml");
 		guideContent = plist["tutorial_5"].asString();
 	}
-	Label* lb = Label::create(guideContent, "fonts/arial.ttf", 20);
+	Label* lb = Label::createWithTTF(guideContent, "fonts/arial.ttf", 20);
 	lb->setAnchorPoint(Vec2(0, 1));
 	lb->setColor(Color3B::BLACK);
 	lb->setName("lbcontent");
@@ -2038,12 +2024,12 @@ void BaseScene::initPopupIAP()
 		spCoin->setScale(.55f);
 		btn->addChild(spCoin);
 
-		Label* lb1 = Label::create(strValue, "fonts/arialbd.ttf", 30);
+		Label* lb1 = Label::createWithTTF(strValue, "fonts/arialbd.ttf", 30);
 		lb1->setPosition(btn->getContentSize().width / 2 - spCoin->getContentSize().width * spCoin->getScale() / 2, btn->getContentSize().height / 2 - 75);
 		lb1->setColor(Color3B::YELLOW);
 		btn->addChild(lb1);
 
-		Label* lb2 = Label::create(strCost, "fonts/arialbd.ttf", 30);
+		Label* lb2 = Label::createWithTTF(strCost, "fonts/arialbd.ttf", 30);
 		lb2->setWidth(175);
 		lb2->setHeight(30);
 		lb2->setPosition(btn->getContentSize().width / 2, btn->getContentSize().height / 2 - 110);
@@ -2069,7 +2055,7 @@ void BaseScene::initCofferView(Vec2 pos, int zorder, float scale)
 	mLayer->addChild(btnCoffer, zorder);
 	autoScaleNode(btnCoffer);
 
-	lbCoffer = Label::create(Utils::getSingleton().formatMoneyWithComma(Utils::getSingleton().cofferMoney), "fonts/arial.ttf", 18);
+	lbCoffer = Label::createWithTTF(Utils::getSingleton().formatMoneyWithComma(Utils::getSingleton().cofferMoney), "fonts/arial.ttf", 18);
 	lbCoffer->setPosition(btnCoffer->getContentSize().width / 2, 15);
 	lbCoffer->setColor(Color3B::YELLOW);
 	btnCoffer->addChild(lbCoffer);
@@ -2195,7 +2181,7 @@ void BaseScene::onPlayLogDataResponse(std::vector<PlayLogData> logs)
 			btn->setVisible(true);
 		} else {
 			for (int j = 0; j < 6; j++) {
-				Label* lbDetail = Label::create("", "fonts/arial.ttf", 20);
+				Label* lbDetail = Label::createWithTTF("", "fonts/arial.ttf", 20);
 				lbDetail->setWidth(widths[j] - (j == 2 ? 30 : 0));
 				lbDetail->setHeight(46);
 				lbDetail->setAnchorPoint(Vec2(.5f, 1));
@@ -2278,7 +2264,7 @@ void BaseScene::onCofferHistoryResponse(std::vector<CofferWinnerData> list)
 			node->setTag(i);
 			scroll->addChild(node);
 
-			Label* lb1 = Label::create(list[i].Date, "fonts/arial.ttf", 22);
+			Label* lb1 = Label::createWithTTF(list[i].Date, "fonts/arial.ttf", 22);
 			lb1->setAnchorPoint(Vec2(0, .5f));
 			lb1->setColor(Color3B::BLACK);
 			lb1->setPosition(-width / 2 + 20, 0);
@@ -2287,13 +2273,13 @@ void BaseScene::onCofferHistoryResponse(std::vector<CofferWinnerData> list)
 			lb1->setVisible(false);
 			node->addChild(lb1);
 
-			lb2 = Label::create(list[i].Name, "fonts/arial.ttf", 22);
+			lb2 = Label::createWithTTF(list[i].Name, "fonts/arial.ttf", 22);
 			lb2->setColor(Color3B::BLACK);
 			lb2->setPosition(-width / 2 + 95, 0);
 			lb2->setTag(2);
 			node->addChild(lb2);
 
-			Label* lb3 = Label::create(list[i].Cuocs, "fonts/arial.ttf", 22);
+			Label* lb3 = Label::createWithTTF(list[i].Cuocs, "fonts/arial.ttf", 22);
 			lb3->setHorizontalAlignment(TextHAlignment::CENTER);
 			lb3->setColor(Color3B::BLACK);
 			lb3->setPosition(-10, 0);
@@ -2301,13 +2287,13 @@ void BaseScene::onCofferHistoryResponse(std::vector<CofferWinnerData> list)
 			lb3->setTag(3);
 			node->addChild(lb3);
 
-			Label* lb4 = Label::create(Utils::getSingleton().formatMoneyWithComma(list[i].Point), "fonts/arial.ttf", 22);
+			Label* lb4 = Label::createWithTTF(Utils::getSingleton().formatMoneyWithComma(list[i].Point), "fonts/arial.ttf", 22);
 			lb4->setColor(Color3B::BLACK);
 			lb4->setPosition(width / 2 - 30, 0);
 			lb4->setTag(4);
 			node->addChild(lb4);
 
-			Label* lb5 = Label::create(Utils::getSingleton().formatMoneyWithComma(list[i].Money), "fonts/arial.ttf", 22);
+			Label* lb5 = Label::createWithTTF(Utils::getSingleton().formatMoneyWithComma(list[i].Money), "fonts/arial.ttf", 22);
 			lb5->setColor(Color3B::BLACK);
 			lb5->setPosition(width / 2 - 130, 0);
 			lb5->setTag(5);
@@ -2335,7 +2321,7 @@ void BaseScene::onCofferHistoryResponse(std::vector<CofferWinnerData> list)
 
 void BaseScene::onDownloadedPlistTexture(int numb)
 {
-	isPopupReady = numb >= 2;
+	
 }
 
 void BaseScene::onHttpResponse(int tag, std::string content)

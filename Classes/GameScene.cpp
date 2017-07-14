@@ -1,5 +1,4 @@
-﻿#pragma once
-#include "GameScene.h"
+﻿#include "GameScene.h"
 #include "Constant.h"
 #include "Data.h"
 #include "SFSRequest.h"
@@ -123,7 +122,7 @@ void GameScene::onInit()
 
 	string bgName = isSolo ? "bgVuongPhu.jpg" : "bg" + zone + ".jpg";
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB565);
-	Texture2D* bgTexture = TextureCache::getInstance()->addImage(bgName);
+	Texture2D* bgTexture = Director::getInstance()->getTextureCache()->addImage(bgName);
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
 
 	Sprite* bg = Sprite::createWithTexture(bgTexture);
@@ -264,7 +263,7 @@ void GameScene::onInit()
 	mLayer->addChild(iconGa, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(iconGa);
 
-	lbMoneyGa = Label::create("", "fonts/arial.ttf", 20);
+	lbMoneyGa = Label::createWithTTF("", "fonts/arial.ttf", 20);
 	lbMoneyGa->setPosition(iconGa->getPosition() - getScaleSceneDistance(Vec2(0, 40)));
 	mLayer->addChild(lbMoneyGa, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(lbMoneyGa);
@@ -570,9 +569,7 @@ void GameScene::onInit()
 		}
 	});
 
-	lbCardNoc = Label::create();
-	lbCardNoc->setString("23");
-	lbCardNoc->setSystemFontSize(30);
+	lbCardNoc = Label::createWithTTF("23", "fonts/arial.ttf", 30);
 	lbCardNoc->setPosition(bgDiaNoc->getContentSize().width / 2 + 55, bgDiaNoc->getContentSize().height / 2 + 31);
 	bgDiaNoc->addChild(lbCardNoc, 3);
 
@@ -703,7 +700,7 @@ void GameScene::onInit()
 	initTableInfo();
 	initPopupUserInfo();
 	initCofferEffects();
-	//initEventView(Vec2(0, 680), Size(Director::sharedDirector()->getVisibleSize().width, 40));
+	//initEventView(Vec2(0, 680), Size(Director::getInstance()->getVisibleSize().width, 40));
 
 	Node* nodeError = Node::create();
 	nodeError->setPosition(560, 350);
@@ -3053,8 +3050,7 @@ void GameScene::onLobbyUserResponse(std::vector<UserData> listUser)
 			ui::Button* btn;
 			bool isNewBtn;
 			if (tag >= childCount) {
-				lb1 = Label::create();
-				lb1->setSystemFontSize(25);
+				lb1 = Label::createWithTTF("", "fonts/arial.ttf", 25);
 				lb1->setAnchorPoint(Vec2(0, .5f));
 				lb1->setWidth(sx - 350);
 				lb1->setHeight(30);
@@ -3067,8 +3063,7 @@ void GameScene::onLobbyUserResponse(std::vector<UserData> listUser)
 				sp->setTag(tag + 1);
 				scroll->addChild(sp);
 
-				lb2 = Label::create();
-				lb2->setSystemFontSize(25);
+				lb2 = Label::createWithTTF("", "fonts/arial.ttf", 25);
 				lb2->setAnchorPoint(Vec2(0, .5f));
 				lb2->setTag(tag + 2);
 				scroll->addChild(lb2);
@@ -3519,7 +3514,7 @@ void GameScene::initCrestTable()
 	light->setScaleX(.8f);
 	tableCrest->addChild(light);
 
-	lbChonCuoc = Label::create("", "fonts/azuki.ttf", 30);
+	lbChonCuoc = Label::createWithTTF("", "fonts/azuki.ttf", 30);
 	lbChonCuoc->setPosition(0, light->getPositionY() + 20);
 	lbChonCuoc->setColor(Color3B::BLACK);
 	lbChonCuoc->setAlignment(TextHAlignment::CENTER);
@@ -3802,9 +3797,7 @@ void GameScene::initSettingsPopup()
 		popupSettings->addChild(checkbox);
 		cbs.push_back(checkbox);
 
-		Label* lb = Label::create();
-		lb->setSystemFontName("Arial");
-		lb->setSystemFontSize(30);
+		Label* lb = Label::createWithTTF("", "fonts/arial.ttf", 30);
 		lb->setPosition(vecPos[i] + Vec2(40, 0));
 		lb->setAnchorPoint(Vec2(0, .5f));
 		lb->setColor(Color3B::BLACK);
@@ -3888,21 +3881,21 @@ void GameScene::initTableInfo()
 	icMoney->setName("icmoney");
 	tableInfo->addChild(icMoney);
 
-	Label* lbTableName = Label::create("", "fonts/arialbd.ttf", 18);
+	Label* lbTableName = Label::createWithTTF("", "fonts/arialbd.ttf", 18);
 	lbTableName->setPosition(-90, 15);
 	lbTableName->setAnchorPoint(Vec2(0, .5f));
 	lbTableName->setColor(Color3B(255, 200, 0));
 	lbTableName->setName("lbname");
 	tableInfo->addChild(lbTableName);
 
-	Label* lbTableBet = Label::create("", "fonts/arialbd.ttf", 18);
+	Label* lbTableBet = Label::createWithTTF("", "fonts/arialbd.ttf", 18);
 	lbTableBet->setPosition(8, 15);
 	lbTableBet->setAnchorPoint(Vec2(0, .5f));
 	lbTableBet->setColor(Color3B(255, 200, 0));
 	lbTableBet->setName("lbbet");
 	tableInfo->addChild(lbTableBet);
 
-	Label* lbType = Label::create("", "fonts/arialbd.ttf", 18);
+	Label* lbType = Label::createWithTTF("", "fonts/arialbd.ttf", 18);
 	lbType->setPosition(-90, -15);
 	lbType->setAnchorPoint(Vec2(0, .5f));
 	lbType->setColor(Color3B(255, 200, 0));
@@ -3934,13 +3927,13 @@ void GameScene::initCofferEffects()
 	Sprite* spCoffer = Sprite::create();
 	cofferEffect->addChild(spCoffer);
 
-	Label* lbMoney = Label::create("123.456", "fonts/arialbd.ttf", 50);
+	Label* lbMoney = Label::createWithTTF("123.456", "fonts/arialbd.ttf", 50);
 	lbMoney->setColor(Color3B::YELLOW);
 	lbMoney->setPosition(0, -150);
 	lbMoney->setName("lbmoney");
 	cofferEffect->addChild(lbMoney);
 
-	Label* lbName = Label::create("Stormus", "fonts/arialbd.ttf", 40);
+	Label* lbName = Label::createWithTTF("Stormus", "fonts/arialbd.ttf", 40);
 	lbName->enableOutline(Color4B::BLACK, 2);
 	lbName->setColor(Color3B::WHITE);
 	lbName->setPosition(0, -210);

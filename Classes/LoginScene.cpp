@@ -1,4 +1,3 @@
-#pragma once
 #include "LoginScene.h"
 #include "Utils.h"
 #include "SFSRequest.h"
@@ -25,7 +24,7 @@ void LoginScene::onInit()
 	bool ispmE = Utils::getSingleton().ispmE();
 
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB565);
-	Texture2D* bgTexture = TextureCache::getInstance()->addImage("login_bg.jpg");
+	Texture2D* bgTexture = Director::getInstance()->getTextureCache()->addImage("login_bg.jpg");
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA8888);
 
 	Sprite* bg = Sprite::createWithTexture(bgTexture);
@@ -169,14 +168,14 @@ void LoginScene::onInit()
 	mLayer->addChild(btnPhone);
 	autoScaleNode(btnPhone);
 
-	labelPhone = Label::create("", "fonts/arialbd.ttf",25);
+	labelPhone = Label::createWithTTF("", "fonts/arialbd.ttf",25);
 	labelPhone->setPosition(110 * scaleScene.y, 10 * scaleScene.x);
 	labelPhone->setAnchorPoint(Vec2(0, 0));
 	labelPhone->setVisible(false);
 	mLayer->addChild(labelPhone);
 	autoScaleNode(labelPhone);
 
-	Label* labelVersion = Label::create(Application::sharedApplication()->getVersion(), "fonts/arial.ttf", 18);
+	Label* labelVersion = Label::createWithTTF(Application::getInstance()->getVersion(), "fonts/arial.ttf", 18);
 	labelVersion->setPosition(10 * scaleScene.y, 3 * scaleScene.x);
 	labelVersion->setAnchorPoint(Vec2(0, 0));
 	mLayer->addChild(labelVersion);
@@ -198,7 +197,6 @@ void LoginScene::onInit()
 	}
 
 	loadTextureCache();
-	if (isPopupReady) isReadyToMain = 2;
 }
 
 void LoginScene::registerEventListenner()
@@ -437,7 +435,7 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	config.smsMKVNP = Utils::getSingleton().replaceString(config.smsKHVNP, "KHuid", "MKuid");
 	config.smsMKVMS = Utils::getSingleton().replaceString(config.smsKHVMS, "KHuid", "MKuid");
 
-	string verstr = Application::sharedApplication()->getVersion();
+	string verstr = Application::getInstance()->getVersion();
 	int i = verstr.find_last_of('.') + 1;
 	verstr = verstr.substr(i, verstr.length() - i);
 	int nver = atoi(verstr.c_str());
@@ -465,12 +463,12 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 	if (config.canUpdate && nver < config.versionIOS - 1) {
 		showPopupNotice(Utils::getSingleton().getStringForKey("notice_update_new_version"), [=]() {
-			Application::sharedApplication()->openURL(config.linkIOS);
+			Application::getInstance()->openURL(config.linkIOS);
 		});
 #else
 	if (config.canUpdate && nver < config.version - 1) {
 		showPopupNotice(Utils::getSingleton().getStringForKey("notice_update_new_version"), [=]() {
-			Application::sharedApplication()->openURL(config.linkAndroid);
+			Application::getInstance()->openURL(config.linkAndroid);
 		});
 #endif
 		SFSRequest::getSingleton().Connect();
@@ -533,7 +531,7 @@ bool LoginScene::onKeyBack()
 			return false;
 		} else {
 			showPopupNotice(Utils::getSingleton().getStringForKey("ban_muon_thoat_game"), [=]() {
-				Director::sharedDirector()->end();
+				Director::getInstance()->end();
 			});
 			return false;
 		}
@@ -698,10 +696,10 @@ void LoginScene::requestGameConfig(bool realConfig)
 
 void LoginScene::loadTextureCache()
 {
-	TextureCache::sharedTextureCache()->addImageAsync("game.png", [=](Texture2D* texture) {
+	Director::getInstance()->getTextureCache()->addImageAsync("game.png", [=](Texture2D* texture) {
 		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("game.plist");
 	});
-	TextureCache::sharedTextureCache()->addImageAsync("buttons.png", [=](Texture2D* texture) {
+	Director::getInstance()->getTextureCache()->addImageAsync("buttons.png", [=](Texture2D* texture) {
 		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("buttons.plist");
 	});
 }

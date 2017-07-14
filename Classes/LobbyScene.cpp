@@ -1,4 +1,3 @@
-#pragma once
 #include "LobbyScene.h"
 #include "SFSRequest.h"
 #include "Constant.h"
@@ -32,7 +31,7 @@ void LobbyScene::onInit()
 
 	string bgName = isSolo ? "lobby_bgVuongPhu.jpg" : "lobby_bg" + zone + ".jpg";
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB565);
-	Texture2D* bgTexture = TextureCache::getInstance()->addImage(bgName);
+	Texture2D* bgTexture = Director::getInstance()->getTextureCache()->addImage(bgName);
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
 
 	Sprite* bg = Sprite::createWithTexture(bgTexture);
@@ -325,14 +324,14 @@ void LobbyScene::onTableDataResponse(LobbyListTable data)
 			spGa->setName("iconga");
 			btn->addChild(spGa);
 
-			Label* lbName = Label::create(Utils::getSingleton().getStringForKey("table") + " " + to_string(i + 1), "fonts/arialbd.ttf", 24);
+			Label* lbName = Label::createWithTTF(Utils::getSingleton().getStringForKey("table") + " " + to_string(i + 1), "fonts/arialbd.ttf", 24);
 			lbName->setColor(Color3B::WHITE);
 			lbName->setPosition(40, posY);
 			lbName->setAnchorPoint(Vec2(0, .5f));
 			lbName->setName("lbname");
 			btn->addChild(lbName);
 
-			/*Label* lbMoney = Label::create("", "fonts/arialbd.ttf", 24);
+			/*Label* lbMoney = Label::createWithTTF("", "fonts/arialbd.ttf", 24);
 			lbMoney->setColor(colorMoney);
 			lbMoney->setPositionY(posY);
 			lbMoney->setAnchorPoint(Vec2(1, .5f));

@@ -1,4 +1,3 @@
-#pragma once
 #include "MainScene.h"
 #include "SFSRequest.h"
 #include "Constant.h"
@@ -42,7 +41,7 @@ void MainScene::onInit()
 	initHeaderWithInfos();
 
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB565);
-	Texture2D* bgTexture = TextureCache::getInstance()->addImage("main_bg.jpg");
+	Texture2D* bgTexture = Director::getInstance()->getTextureCache()->addImage("main_bg.jpg");
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
 
 	Sprite* bg = Sprite::createWithTexture(bgTexture);
@@ -135,7 +134,7 @@ void MainScene::onInit()
 	circleNewMail->setVisible(false);
 	mLayer->addChild(circleNewMail);
 
-	lbNewMail = Label::create("", "fonts/arial.ttf", 30);
+	lbNewMail = Label::createWithTTF("", "fonts/arial.ttf", 30);
 	lbNewMail->setPosition(circleNewMail->getContentSize().width / 2 - 2, circleNewMail->getContentSize().height / 2);
 	circleNewMail->addChild(lbNewMail);
 
@@ -158,7 +157,7 @@ void MainScene::onInit()
 	btnFacebook->setAnchorPoint(Vec2(.5f, 0));
 	btnFacebook->setVisible(pmE);
 	addTouchEventListener(btnFacebook, [=]() {
-		Application::sharedApplication()->openURL(Utils::getSingleton().gameConfig.linkFb);
+		Application::getInstance()->openURL(Utils::getSingleton().gameConfig.linkFb);
 	});
 	mLayer->addChild(btnFacebook);
 	autoScaleNode(btnFacebook);
@@ -490,21 +489,22 @@ void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)
 	string fontName = "fonts/myriad.ttf";
 	int fontSize = 25;
 	float scaleX = 1;
-	for (int i = 0; i < list.size(); i++) {
+	int lsize = list.size();
+	for (int i = 0; i < lsize; i++) {
 		int tag = i * 7;
 		ui::Button* btn, *btnCancel;
 		Label *lb1, *lb2, *lb3, *lb4, *lb5;
 		lb1 = (Label*)scrollHistory->getChildByTag(tag);
 		bool isNewBtn;
 		if (lb1 == nullptr) {
-			lb1 = Label::create("", fontName, fontSize);
+			lb1 = Label::createWithTTF("", fontName, fontSize);
 			lb1->setPosition(posX[0], heightHistory - 10);
 			lb1->setColor(Color3B::BLACK);
 			lb1->setScaleX(scaleX);
 			lb1->setTag(tag);
 			scrollHistory->addChild(lb1);
 
-			lb2 = Label::create("", fontName, fontSize);
+			lb2 = Label::createWithTTF("", fontName, fontSize);
 			lb2->setPosition(posX[1], heightHistory - 10);
 			lb2->setHorizontalAlignment(TextHAlignment::CENTER);
 			lb2->setColor(Color3B::BLACK);
@@ -514,21 +514,21 @@ void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)
 			lb2->setScaleX(scaleX);
 			scrollHistory->addChild(lb2);
 
-			lb3 = Label::create("", fontName, fontSize);
+			lb3 = Label::createWithTTF("", fontName, fontSize);
 			lb3->setPosition(posX[2], heightHistory - 10);
 			lb3->setTag(tag + 2);
 			lb3->setScaleX(scaleX);
 			lb3->setColor(Color3B::BLACK);
 			scrollHistory->addChild(lb3);
 
-			lb4 = Label::create("", fontName, fontSize);
+			lb4 = Label::createWithTTF("", fontName, fontSize);
 			lb4->setPosition(posX[3], heightHistory - 10);
 			lb4->setTag(tag + 3);
 			lb4->setScaleX(scaleX);
 			lb4->setColor(Color3B::BLACK);
 			scrollHistory->addChild(lb4);
 
-			lb5 = Label::create("", fontName, fontSize);
+			lb5 = Label::createWithTTF("", fontName, fontSize);
 			lb5->setPosition(posX[4], heightHistory - 10);
 			lb5->setColor(Color3B::YELLOW);
 			lb5->setTag(tag + 4);
@@ -615,7 +615,8 @@ void MainScene::onShopItemsDataResponse(std::vector<ShopItemData> list)
 	for (int i = 0; i < 4; i++) {
 		cards.push_back(vector<ShopItemData>());
 	}
-	for (int i = 0; i < list.size(); i++) {
+	int lsize = list.size();
+	for (int i = 0; i < lsize; i++) {
 		list[i].Name = Utils::getSingleton().trim(list[i].Name);
 		if (list[i].ItemType == 1) {
 			cards[0].push_back(list[i]);
@@ -648,8 +649,10 @@ void MainScene::onShopItemsDataResponse(std::vector<ShopItemData> list)
 	scrollCard->setInnerContainerSize(Size(scrollCard->getContentSize().width, heightCard));
 
 	int count = -1;
-	for (int i = 0; i < cards.size(); i++) {
-		for (int j = 0; j < cards[i].size(); j++) {
+	int csize = cards.size();
+	for (int i = 0; i < csize; i++) {
+		int cisize = cards[i].size();
+		for (int j = 0; j < cisize; j++) {
 			count++;
 			string str = Utils::getSingleton().getStringForKey("xac_nhan_mua_vat_pham");
 			string strMoney = Utils::getSingleton().formatMoneyWithComma(cards[i][j].PriceChange);
@@ -679,12 +682,12 @@ void MainScene::onShopItemsDataResponse(std::vector<ShopItemData> list)
 			spCoin->setScale(.5f);
 			btn->addChild(spCoin);
 
-			Label* lb1 = Label::create(Utils::getSingleton().formatMoneyWithComma(cards[i][j].Price), "fonts/guanine.ttf", 18);
+			Label* lb1 = Label::createWithTTF(Utils::getSingleton().formatMoneyWithComma(cards[i][j].Price), "fonts/guanine.ttf", 18);
 			lb1->setPosition(btn->getContentSize().width / 2 - spCoin->getContentSize().width * spCoin->getScale() / 2, -10);
 			lb1->setColor(Color3B::YELLOW);
 			btn->addChild(lb1);
 
-			Label* lb2 = Label::create(Utils::getSingleton().formatMoneyWithComma(cards[i][j].PriceChange), "fonts/guanine.ttf", 18);
+			Label* lb2 = Label::createWithTTF(Utils::getSingleton().formatMoneyWithComma(cards[i][j].PriceChange), "fonts/guanine.ttf", 18);
 			lb2->setPosition(btn->getContentSize().width / 2, 19);
 			lb2->setColor(Color3B::WHITE);
 			btn->addChild(lb2);
@@ -703,7 +706,8 @@ void MainScene::onShopItemsDataResponse(std::vector<ShopItemData> list)
 	}
 
 	map<unsigned char, string> names;
-	for (int i = 0; i < list.size(); i++) {
+	lsize = list.size();
+	for (int i = 0; i < lsize; i++) {
 		names[list[i].Id] = list[i].Name;
 	}
 
@@ -712,7 +716,8 @@ void MainScene::onShopItemsDataResponse(std::vector<ShopItemData> list)
 	vector<unsigned char> items;
 	vector<string> images;
 	vector<long> moneyItems;
-	for (int i = 0; i < list.size(); i++) {
+	lsize = list.size();
+	for (int i = 0; i < lsize; i++) {
 		if (list[i].ItemType == 2) {
 			items.push_back(list[i].Id);
 			images.push_back(list[i].Image);
@@ -733,7 +738,8 @@ void MainScene::onShopItemsDataResponse(std::vector<ShopItemData> list)
 		heightItem = scrollItem->getContentSize().width;
 	}
 	scrollItem->setInnerContainerSize(Size(scrollItem->getContentSize().width, heightItem));
-	for (int i = 0; i < items.size(); i++) {
+	int itemsize = items.size();
+	for (int i = 0; i < itemsize; i++) {
 		string str = Utils::getSingleton().getStringForKey("xac_nhan_mua_vat_pham");
 		string strMoney = Utils::getSingleton().formatMoneyWithComma(moneyItems[i]);
 		string msg = String::createWithFormat(str.c_str(), names[items[i]].c_str(), strMoney.c_str())->getCString();
@@ -765,12 +771,12 @@ void MainScene::onShopItemsDataResponse(std::vector<ShopItemData> list)
 		spCoin->setScale(.5f);
 		btn->addChild(spCoin);
 
-		Label* lb1 = Label::create(Utils::getSingleton().formatMoneyWithComma(moneyItems[i]), "fonts/guanine.ttf", 20);
+		Label* lb1 = Label::createWithTTF(Utils::getSingleton().formatMoneyWithComma(moneyItems[i]), "fonts/guanine.ttf", 20);
 		lb1->setPosition(btn->getContentSize().width / 2 - spCoin->getContentSize().width * spCoin->getScale() / 2, btn->getContentSize().height / 2 - 80);
 		lb1->setColor(Color3B::YELLOW);
 		btn->addChild(lb1);
 
-		Label* lb2 = Label::create(names[items[i]], "fonts/guanine.ttf", 18);
+		Label* lb2 = Label::createWithTTF(names[items[i]], "fonts/guanine.ttf", 18);
 		lb2->setWidth(175);
 		lb2->setHeight(30);
 		lb2->setPosition(btn->getContentSize().width / 2, btn->getContentSize().height / 2 - 45);
@@ -832,7 +838,8 @@ void MainScene::onListMailDataResponse(std::vector<MailData> list)
 		height = scroll->getContentSize().height;
 	}
 	scroll->setInnerContainerSize(Size(scroll->getContentSize().width, height));
-	for (int i = 0; i < list.size(); i++) {
+	int lsize = list.size();
+	for (int i = 0; i < lsize; i++) {
 		vector<Label*> lbs;
 		ui::Button* btn;
 		if (i < scroll->getChildrenCount() / 5) {
@@ -848,7 +855,7 @@ void MainScene::onListMailDataResponse(std::vector<MailData> list)
 			btn->setVisible(true);
 		} else {
 			for (int j = 0; j < 4; j++) {
-				Label* lbDetail = Label::create("", list[i].IsRead ? "fonts/arial.ttf" : "fonts/arialbd.ttf", 20);
+				Label* lbDetail = Label::createWithTTF("", list[i].IsRead ? "fonts/arial.ttf" : "fonts/arialbd.ttf", 20);
 				lbDetail->setWidth(widths[j]);
 				lbDetail->setHeight(52);
 				lbDetail->setAnchorPoint(Vec2(.5f, 1));
@@ -940,7 +947,8 @@ void MainScene::onNewsDataResponse(std::vector<NewsData> list)
 		widthTitle = scrollTitle->getContentSize().width;
 	}
 	scrollTitle->setInnerContainerSize(Size(widthTitle, scrollTitle->getContentSize().height));
-	for (int i = 0; i < list.size(); i++) {
+	int lsize = list.size();
+	for (int i = 0; i < lsize; i++) {
 		string strTitle = list[i].Title.length() < 17 ? list[i].Title : list[i].Title.substr(0, 16);
 		int indexTitle = strTitle.find_last_of(' ');
 		strTitle = strTitle.substr(0, indexTitle);
@@ -1096,7 +1104,8 @@ void MainScene::initPopupCharge()
 	int x = -320;
 	int y = 219;
 	Size btnSize = Size(205, 50);
-	for (int i = 0; i < texts.size(); i++) {
+	int tsize = texts.size();
+	for (int i = 0; i < tsize; i++) {
 		ui::Button* btn = ui::Button::create(i == 0 ? "box4.png" : "box2.png", "box4.png", "", ui::Widget::TextureResType::PLIST);
 		btn->setTitleText(Utils::getSingleton().getStringForKey(texts[i]));
 		btn->setTitleFontName("fonts/arialbd.ttf");
@@ -1179,7 +1188,8 @@ void MainScene::initPopupCharge()
 	string smsTarget = Utils::getSingleton().dynamicConfig.SmsNap;// smsContent.substr(strIndex + 1, smsContent.length() - strIndex);
 	//smsContent = smsContent.substr(0, strIndex);
 	smsContent = Utils::getSingleton().replaceString(smsContent, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
-	for (int i = 1; i <= strProviders.size(); i++) {
+	int spsize = strProviders.size();
+	for (int i = 1; i <= spsize; i++) {
 		string strimg = strProviders[i - 1] + ".png";
 		ui::Button* btnProvider = ui::Button::create(strimg, strimg, "", ui::Widget::TextureResType::PLIST);
 		btnProvider->setPosition(Vec2(xp, yp));
@@ -1221,7 +1231,7 @@ void MainScene::initPopupCharge()
 		nodeMoneyType->addChild(checkbox);
 		cbs.push_back(checkbox);
 
-		Label* lb = Label::create("", "fonts/arialbd.ttf", 22);
+		Label* lb = Label::createWithTTF("", "fonts/arialbd.ttf", 22);
 		lb->setPosition(checkbox->getPosition() + Vec2(30, 0));
 		lb->setAnchorPoint(Vec2(0, .5f));
 		lb->setColor(Color3B::BLACK);
@@ -1285,18 +1295,19 @@ void MainScene::initPopupCharge()
 	}
 	scrollInfo->setInnerContainerSize(Size(scrollInfo->getContentSize().width, height));
 	//for (int i = 0; i < 2; i++) {
-		for (int j = 0; j < moneys.size(); j++) {
+	int msize = moneys.size();
+		for (int j = 0; j < msize; j++) {
 			string str1 = Utils::getSingleton().getStringForKey("the") + " " + to_string(moneys[j]) + "k = ";
 			string str2 = to_string(moneys[j]) + "k " + "Quan";//(i == 0 ? "Quan" : "Xu");
 
-			Label* lb1 = Label::create(str1, "fonts/arial.ttf", 22);
+			Label* lb1 = Label::createWithTTF(str1, "fonts/arial.ttf", 22);
 			lb1->setTag(j * 2);
 			lb1->setAnchorPoint(Vec2(1, .5f));
 			lb1->setPosition(scrollInfo->getContentSize().width/2, height - 15);
 			lb1->setColor(Color3B::BLACK);
 			scrollInfo->addChild(lb1);
 
-			Label* lb2 = Label::create(str2, "fonts/arial.ttf", 22);
+			Label* lb2 = Label::createWithTTF(str2, "fonts/arial.ttf", 22);
 			lb2->setTag(j * 2 + 1);
 			lb2->setAnchorPoint(Vec2(0, .5f));
 			lb2->setPosition(scrollInfo->getContentSize().width/2 + 3, height - 15);
@@ -1316,13 +1327,13 @@ void MainScene::initPopupCharge()
 	bgInput->setOpacity(100);
 	nodeInput->addChild(bgInput);
 
-	Label* lbseri = Label::create(Utils::getSingleton().getStringForKey("so_seri"), "fonts/arial.ttf", 25);
+	Label* lbseri = Label::createWithTTF(Utils::getSingleton().getStringForKey("so_seri"), "fonts/arial.ttf", 25);
 	lbseri->setAnchorPoint(Vec2(0, .5f));
 	lbseri->setPosition(-240, 60);
 	lbseri->setColor(Color3B::BLACK);
 	nodeInput->addChild(lbseri);
 
-	Label* lbcode = Label::create(Utils::getSingleton().getStringForKey("ma_the"), "fonts/arial.ttf", 25);
+	Label* lbcode = Label::createWithTTF(Utils::getSingleton().getStringForKey("ma_the"), "fonts/arial.ttf", 25);
 	lbcode->setAnchorPoint(Vec2(0, .5f));
 	lbcode->setPosition(-240, 0);
 	lbcode->setColor(Color3B::BLACK);
@@ -1421,7 +1432,7 @@ void MainScene::initPopupCharge()
 	});
 	nodeInput->addChild(btnCharge);
 
-	/*Label* lbTitleBtnCharge = Label::create(Utils::getSingleton().getStringForKey("nap"), "fonts/guanine.ttf", 30);
+	/*Label* lbTitleBtnCharge = Label::createWithTTF(Utils::getSingleton().getStringForKey("nap"), "fonts/guanine.ttf", 30);
 	lbTitleBtnCharge->setPosition(btnCharge->getContentSize().width / 2, btnCharge->getContentSize().height / 2 + 8);
 	lbTitleBtnCharge->setColor(Color3B::BLACK);
 	btnCharge->addChild(lbTitleBtnCharge);*/
@@ -1448,7 +1459,8 @@ void MainScene::initPopupCharge()
 	}
 	scrollSms->setInnerContainerSize(Size(width, 170));
 	//for (int k = 0; k < 2; k++) {
-		for (int i = 0; i < moneys.size(); i++) {
+	msize = moneys.size();
+		for (int i = 0; i < msize; i++) {
 			string strMoney = to_string(moneys[i]);
 			string strMoney2 = to_string(moneys[i] / 2);
 			string smsStr = Utils::getSingleton().replaceString(smsContent, "vnd", strMoney);
@@ -1463,26 +1475,26 @@ void MainScene::initPopupCharge()
 			bgItemSms->setContentSize(Size(240, 170));
 			itemSms->addChild(bgItemSms);
 
-			Label* lbItemSms1 = Label::create("SMS " + strMoney + "k = ", "fonts/arial.ttf", 22);
+			Label* lbItemSms1 = Label::createWithTTF("SMS " + strMoney + "k = ", "fonts/arial.ttf", 22);
 			lbItemSms1->setAnchorPoint(Vec2(1, .5f));
 			lbItemSms1->setPosition(5, 60);
 			lbItemSms1->setColor(Color3B::BLACK);
 			itemSms->addChild(lbItemSms1);
 
-			Label* lbItemSms2 = Label::create(strMoney2 + "k Quan", "fonts/arial.ttf", 22);
+			Label* lbItemSms2 = Label::createWithTTF(strMoney2 + "k Quan", "fonts/arial.ttf", 22);
 			lbItemSms2->setAnchorPoint(Vec2(0, .5f));
 			lbItemSms2->setColor(Color3B::YELLOW);
 			lbItemSms2->setPosition(10, 60);
 			lbItemSms2->setName("lbsmsmoney");
 			itemSms->addChild(lbItemSms2);
 
-			Label* lbItemSms3 = Label::create(smsStr, "fonts/arial.ttf", 22);
+			Label* lbItemSms3 = Label::createWithTTF(smsStr, "fonts/arial.ttf", 22);
 			lbItemSms3->setPosition(0, 30);
 			lbItemSms3->setName("lbsmscontent");
 			lbItemSms3->setColor(Color3B::BLACK);
 			itemSms->addChild(lbItemSms3);
 
-			Label* lbItemSms4 = Label::create(smsTarget, "fonts/arial.ttf", 22);
+			Label* lbItemSms4 = Label::createWithTTF(smsTarget, "fonts/arial.ttf", 22);
 			lbItemSms4->setPosition(0, 0);
 			lbItemSms4->setName("lbsmstarget");
 			lbItemSms4->setColor(Color3B::BLACK);
@@ -1501,7 +1513,8 @@ void MainScene::initPopupCharge()
 			addTouchEventListener(btnItemSms, [=]() {
 				if (strProviders.size() == 0) return;
 				std::vector<std::string> smsProviders;
-				for (int j = 1; j <= strProviders.size(); j++) {
+				int spsize = strProviders.size();
+				for (int j = 1; j <= spsize; j++) {
 					if (strProviders[j - 1].compare("viettel") == 0
 						|| strProviders[j - 1].compare("mobifone") == 0
 						|| strProviders[j - 1].compare("vinaphone") == 0) {
@@ -1526,7 +1539,7 @@ void MainScene::initPopupCharge()
 			});
 			itemSms->addChild(btnItemSms);
 
-			/*Label* lbTitleBtnItemSms = Label::create(Utils::getSingleton().getStringForKey("nap"), "fonts/guanine.ttf", 25);
+			/*Label* lbTitleBtnItemSms = Label::createWithTTF(Utils::getSingleton().getStringForKey("nap"), "fonts/guanine.ttf", 25);
 			lbTitleBtnItemSms->setPosition(btnItemSms->getContentSize().width / 2, btnItemSms->getContentSize().height / 2 + 5);
 			lbTitleBtnItemSms->setColor(Color3B::BLACK);
 			btnItemSms->addChild(lbTitleBtnItemSms);*/
@@ -1552,7 +1565,8 @@ void MainScene::initPopupCharge()
     }
     scrollStore->setInnerContainerSize(Size(storeWidth, storeSize.height));
 	string strCurrency = " " + Utils::getSingleton().getStringForKey("vnd");
-    for (int i = 0; i < products.size(); i++) {
+	int psize = products.size();
+    for (int i = 0; i < psize; i++) {
         int index = products[i].Description.find(' ');
         string strValue = products[i].Description.substr(0, index);
         string strCost = Utils::getSingleton().formatMoneyWithComma(products[i].Price) + strCurrency;
@@ -1579,12 +1593,12 @@ void MainScene::initPopupCharge()
         spCoin->setScale(.55f);
         btn->addChild(spCoin);
         
-        Label* lb1 = Label::create(strValue, "fonts/arialbd.ttf", 30);
+        Label* lb1 = Label::createWithTTF(strValue, "fonts/arialbd.ttf", 30);
         lb1->setPosition(btn->getContentSize().width / 2 - spCoin->getContentSize().width * spCoin->getScale() / 2, btn->getContentSize().height / 2 - 75);
         lb1->setColor(Color3B::YELLOW);
         btn->addChild(lb1);
         
-        Label* lb2 = Label::create(strCost, "fonts/arialbd.ttf", 30);
+        Label* lb2 = Label::createWithTTF(strCost, "fonts/arialbd.ttf", 30);
         lb2->setWidth(175);
         lb2->setHeight(30);
         lb2->setPosition(btn->getContentSize().width / 2, btn->getContentSize().height / 2 - 110);
@@ -1600,11 +1614,13 @@ void MainScene::initPopupCharge()
         nodeCard->setVisible(false);
         nodeStore->setVisible(true);
         nodeStore->setPosition(0, 10);
-        for(int i=1;i<= strProviders.size();i++){
+		int spsize = strProviders.size();
+        for(int i=1;i<= spsize;i++){
             popupCharge->getChildByName("btn" + to_string(i))->setVisible(false);
             //popupCharge->getChildByName("providerimg" + to_string(i))->setVisible(false);
         }
-		for (int i = 0; i < texts.size(); i++) {
+		int tsize = texts.size();
+		for (int i = 0; i < tsize; i++) {
 			popupCharge->getChildByTag(10 + i)->setVisible(false);
 		}
     }
@@ -1636,7 +1652,7 @@ void MainScene::initPopupGuide()
 	popupGuide->addChild(scroll);
 
 	cocos2d::ValueMap plist = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/tutorials.xml");
-	Label* lb = Label::create(plist["tutorial_1"].asString(), "fonts/arial.ttf", 22);
+	Label* lb = Label::createWithTTF(plist["tutorial_1"].asString(), "fonts/arial.ttf", 22);
 	lb->setAnchorPoint(Vec2(0, 1));
 	lb->setColor(Color3B::BLACK);
 	lb->setName("lbcontent");
@@ -1715,8 +1731,9 @@ void MainScene::initPopupMail()
 	vector<int> widths = { 50, 100, 420, 120 };
 	vector<string> historyTitles = { "STT", Utils::getSingleton().getStringForKey("ngay"), 
 		Utils::getSingleton().getStringForKey("thong_tin"), Utils::getSingleton().getStringForKey("nguoi_gui") };
-	for (int i = 0; i < historyTitles.size(); i++) {
-		Label* lb = Label::create(historyTitles[i], "fonts/arialbd.ttf", 25);
+	int htsize = historyTitles.size();
+	for (int i = 0; i < htsize; i++) {
+		Label* lb = Label::createWithTTF(historyTitles[i], "fonts/arialbd.ttf", 25);
 		lb->setColor(Color3B::BLACK);
 		lb->setPosition(posX[i], bgContent->getPositionY() + bgContent->getContentSize().height / 2 - 25);
 		popupMail->addChild(lb);
@@ -1737,8 +1754,9 @@ void MainScene::initPopupMail()
 	bgDetail->setColor(Color3B(155, 155, 155));
 	nodeDetail->addChild(bgDetail);
 
-	for (int i = 0; i < posX.size(); i++) {
-		Label* lbDetail = Label::create("", "fonts/arial.ttf", 22);
+	int pxsize = posX.size();
+	for (int i = 0; i < pxsize; i++) {
+		Label* lbDetail = Label::createWithTTF("", "fonts/arial.ttf", 22);
 		lbDetail->setWidth(widths[i]);
 		lbDetail->setAnchorPoint(Vec2(.5f, 1));
 		lbDetail->setHorizontalAlignment(TextHAlignment::CENTER);
@@ -1785,7 +1803,7 @@ void MainScene::initPopupNews()
 	scrollContent->setName("scrollcontent");
 	popupNews->addChild(scrollContent);
 
-	Label* lbContent = Label::create("", "fonts/arial.ttf", 22);
+	Label* lbContent = Label::createWithTTF("", "fonts/arial.ttf", 22);
 	lbContent->setWidth(scrollContent->getContentSize().width);
 	lbContent->setAnchorPoint(Vec2(0, 1));
 	lbContent->setColor(Color3B::BLACK);
@@ -1843,7 +1861,8 @@ void MainScene::initPopupShop()
 	int y = 219;
 	Size btnSize = Size(205, 50);
 	vector<string> texts = { "the_cao" , "vat_pham", "lich_su" };
-	for (int i = 0; i < texts.size(); i++) {
+	int tsize = texts.size();
+	for (int i = 0; i < tsize; i++) {
 		ui::Button* btn = ui::Button::create(i == 0 ? "box4.png" : "box2.png", "box4.png", "", ui::Widget::TextureResType::PLIST);
 		btn->setTitleText(Utils::getSingleton().getStringForKey(texts[i]));
 		btn->setTitleFontName("fonts/arialbd.ttf");
@@ -1873,7 +1892,7 @@ void MainScene::initPopupShop()
 		});
 		popupShop->addChild(btn);
 
-		/*Label* lbbtn = Label::create(Utils::getSingleton().getStringForKey(texts[i]), "fonts/guanine.ttf", 30);
+		/*Label* lbbtn = Label::createWithTTF(Utils::getSingleton().getStringForKey(texts[i]), "fonts/guanine.ttf", 30);
 		lbbtn->setPosition(btn->getContentSize().width / 2, btn->getContentSize().height / 2);
 		btn->addChild(lbbtn);*/
 
@@ -1903,8 +1922,9 @@ void MainScene::initPopupShop()
 	int px = -390;
 	vector<int> widths = { 120, 210, 210, 210, 150 };
 	vector<string> historyTitles = { "ma_dt", "san_pham_doi", "thoi_gian_doi", "thoi_gian_nhan", "trang_thai" };
-	for (int i = 0; i < historyTitles.size(); i++) {
-		Label* lb = Label::create(Utils::getSingleton().getStringForKey(historyTitles[i]), "fonts/arialbd.ttf", 22);
+	int htsize = historyTitles.size();
+	for (int i = 0; i < htsize; i++) {
+		Label* lb = Label::createWithTTF(Utils::getSingleton().getStringForKey(historyTitles[i]), "fonts/arialbd.ttf", 22);
 		lb->setColor(Color3B::BLACK);
 		lb->setPosition(px, py);
 		nodeHistory->addChild(lb);
@@ -1914,7 +1934,7 @@ void MainScene::initPopupShop()
 		bgTitle->setPosition(lb->getContentSize().width / 2, lb->getContentSize().height / 2);
 		lb->addChild(bgTitle, -1);
 
-		if (i < historyTitles.size() - 1) {
+		if (i < htsize - 1) {
 			px += widths[i] / 2 + widths[i + 1] / 2;
 		}
 	}
@@ -1973,7 +1993,7 @@ void MainScene::initWebView()
 		}
 	});
 
-	Label* lb = Label::create(Utils::getSingleton().getStringForKey("khong_hien_lai"), "fonts/arial.ttf", 30);
+	Label* lb = Label::createWithTTF(Utils::getSingleton().getStringForKey("khong_hien_lai"), "fonts/arial.ttf", 30);
 	lb->setPosition(checkbox->getPosition() + Vec2(40, 0));
 	lb->setAnchorPoint(Vec2(0, .5f));
 	lb->setColor(Color3B::WHITE);
@@ -2016,7 +2036,7 @@ void MainScene::initPopupGiftcode()
 	tfGiftcode->setDelegate(this);
 	popupGiftcode->addChild(tfGiftcode);
 
-	Label* lb = Label::create(Utils::getSingleton().getStringForKey("nhap_giftcode"), "fonts/arial.ttf", 30);
+	Label* lb = Label::createWithTTF(Utils::getSingleton().getStringForKey("nhap_giftcode"), "fonts/arial.ttf", 30);
 	lb->setColor(Color3B::BLACK);
 	lb->setPosition(0, 60);
 	popupGiftcode->addChild(lb);
@@ -2069,7 +2089,7 @@ void MainScene::initPopupDisplayName()
 	tfDisplayName->setDelegate(this);
 	popupDisplayName->addChild(tfDisplayName);
 
-	Label* lb = Label::create(Utils::getSingleton().getStringForKey("nhap_ten_hien_thi"), "fonts/arial.ttf", 30);
+	Label* lb = Label::createWithTTF(Utils::getSingleton().getStringForKey("nhap_ten_hien_thi"), "fonts/arial.ttf", 30);
 	lb->setPosition(0, 60);
 	popupDisplayName->addChild(lb);
 
@@ -2161,7 +2181,8 @@ void MainScene::checkProviderToChargeSms()
 {
 	int btnIndex = -1;
 	Node* scrollProvider = popupCharge->getChildByName("scrollprovider");
-	for (int i = 1; i <= strProviders.size(); i++) {
+	int spsize = strProviders.size();
+	for (int i = 1; i <= spsize; i++) {
 		string btnName = strProviders[i - 1];
 		Node* btni = scrollProvider->getChildByName(btnName);
 		if (btnName.compare("viettel") != 0
@@ -2179,7 +2200,8 @@ void MainScene::checkProviderToChargeSms()
 void MainScene::updateChargeRateCard(bool isQuan)
 {
 	ui::ScrollView* scroll = (ui::ScrollView*)(popupCharge->getChildByName("nodecard")->getChildByName("nodecardinfo")->getChildByName("scrollinfo"));
-	for (int i = 0; i < moneys.size(); i++) {
+	int msize = moneys.size();
+	for (int i = 0; i < msize; i++) {
 		string type = isQuan ? Utils::getSingleton().getStringForKey("quan") : Utils::getSingleton().getStringForKey("xu");
 		Label* lb = (Label*)scroll->getChildByTag(i * 2 + 1);
 		lb->setString(to_string(isQuan ? moneys[i] : moneyxs[i]) + "k " + type);
@@ -2206,7 +2228,8 @@ void MainScene::updateSmsInfo(bool isQuan)
 
 	Node* nodeSms = popupCharge->getChildByName("nodesms");
 	ui::ScrollView* scroll = (ui::ScrollView*)nodeSms->getChildByName("scrollsms");
-	for (int i = 0; i < moneys.size(); i++) {
+	int msize = moneys.size();
+	for (int i = 0; i < msize; i++) {
 		string strMoney = to_string(moneys[i]);
 		string smsStr = Utils::getSingleton().replaceString(smsct, "vnd", strMoney);
 
@@ -2226,7 +2249,8 @@ void MainScene::onChooseProviderCard(std::string provider)
 	if (chosenProviderCard.compare(provider) == 0) return;
 	Node* scrollProvider = popupCharge->getChildByName("scrollprovider");
 	Node *lastBtn = nullptr, *curBtn;
-	for (int i = 1; i <= strProviders.size(); i++) {
+	int spsize = strProviders.size();
+	for (int i = 1; i <= spsize; i++) {
 		std::string btnName = strProviders[i - 1];
 		if (chosenProviderCard.compare(btnName) == 0) {
 			lastBtn = scrollProvider->getChildByName(btnName);
@@ -2249,7 +2273,8 @@ void MainScene::onChooseProviderSms(std::string provider)
 	if (chosenProviderSms.compare(provider) == 0) return;
 	Node* scrollProvider = popupCharge->getChildByName("scrollprovider");
 	Node *lastBtn = nullptr, *curBtn;
-	for (int i = 1; i <= strProviders.size(); i++) {
+	int spsize = strProviders.size();
+	for (int i = 1; i <= spsize; i++) {
 		std::string btnName = strProviders[i - 1];
 		if (chosenProviderSms.compare(btnName) == 0) {
 			lastBtn = scrollProvider->getChildByName(btnName);
