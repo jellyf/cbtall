@@ -1,4 +1,3 @@
-#pragma once
 #include "LoadScene.h"
 #include "SFSRequest.h"
 

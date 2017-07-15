@@ -302,7 +302,7 @@ void SFSRequest::RequestLogin(std::string username, std::string password)
 	parameters->PutUtfString("1", username);
 	parameters->PutUtfString("2", password);
 	parameters->PutUtfString("3", Utils::getSingleton().getPlatformOS());
-	parameters->PutUtfString("4", cocos2d::Application::sharedApplication()->getVersion());
+	parameters->PutUtfString("4", cocos2d::Application::getInstance()->getVersion());
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::LOGIN, parameters);
 }
 
@@ -313,7 +313,7 @@ void SFSRequest::RequestLoginFacebook(std::string token)
 	data->WriteUTF(token);
 	parameters->PutByteArray("d", data);
 	parameters->PutUtfString("3", Utils::getSingleton().getPlatformOS());
-	parameters->PutUtfString("4", cocos2d::Application::sharedApplication()->getVersion());
+	parameters->PutUtfString("4", cocos2d::Application::getInstance()->getVersion());
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::LOGIN_FACEBOOK, parameters);
 }
 
@@ -635,7 +635,7 @@ void SFSRequest::onRequestTextureCompleted(cocos2d::network::HttpClient * client
 			int index = url.find_last_of('/');
 			tag = url.substr(index + 1, url.length());
 		}
-		cocos2d::Texture2D * texture = cocos2d::TextureCache::sharedTextureCache()->addImage(image, tag);
+		cocos2d::Texture2D * texture = cocos2d::Director::getInstance()->getTextureCache()->addImage(image, tag);
 		if (SFSRequest::getSingleton().onLoadTextureResponse != NULL) {
 			SFSRequest::getSingleton().onLoadTextureResponse(url, texture);
 		}

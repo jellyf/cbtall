@@ -1,4 +1,3 @@
-#pragma once
 #include "MainScene.h"
 #include "SFSRequest.h"
 #include "Constant.h"
@@ -38,7 +37,7 @@ void MainScene::onInit()
 	initHeaderWithInfos();
 
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB565);
-	Texture2D* bgTexture = TextureCache::getInstance()->addImage("bg.jpg");
+	Texture2D* bgTexture = Director::getInstance()->getTextureCache()->addImage("bg.jpg");
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
 
 	Sprite* bg = Sprite::createWithTexture(bgTexture);
@@ -168,7 +167,7 @@ void MainScene::onInit()
 	mLayer->addChild(circleNewMail);
 	autoScaleNode(circleNewMail);
 
-	lbNewMail = Label::create("", "fonts/myriad.ttf", 25);
+	lbNewMail = Label::createWithTTF("", "fonts/myriad.ttf", 25);
 	lbNewMail->setPosition(circleNewMail->getContentSize().width / 2 - 4, circleNewMail->getContentSize().height / 2);
 	circleNewMail->addChild(lbNewMail);
 
@@ -193,7 +192,7 @@ void MainScene::onInit()
 	btnFacebook->setPosition(vecMenuPos[8]);
 	btnFacebook->setVisible(pmE);
 	addTouchEventListener(btnFacebook, [=]() {
-		Application::sharedApplication()->openURL(Utils::getSingleton().gameConfig.linkFb);
+		Application::getInstance()->openURL(Utils::getSingleton().gameConfig.linkFb);
 	});
 	mLayer->addChild(btnFacebook);
 	autoScaleNode(btnFacebook);
@@ -484,13 +483,13 @@ void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)
 		lb1 = (Label*)scrollHistory->getChildByTag(tag);
 		bool isNewBtn;
 		if (lb1 == nullptr) {
-			lb1 = Label::create("", "fonts/myriad.ttf", 25);
+			lb1 = Label::createWithTTF("", "fonts/myriad.ttf", 25);
 			lb1->setColor(Color3B::BLACK);
 			lb1->setTag(tag);
 			scrollHistory->addChild(lb1);
 			lbs.push_back(lb1);
 
-			lb2 = Label::create("", "fonts/myriad.ttf", 25);
+			lb2 = Label::createWithTTF("", "fonts/myriad.ttf", 25);
 			lb2->setHorizontalAlignment(TextHAlignment::CENTER);
 			lb2->setColor(Color3B::BLACK);
 			lb2->setTag(tag + 1);
@@ -499,19 +498,19 @@ void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)
 			scrollHistory->addChild(lb2);
 			lbs.push_back(lb2);
 
-			lb3 = Label::create("", "fonts/myriad.ttf", 25);
+			lb3 = Label::createWithTTF("", "fonts/myriad.ttf", 25);
 			lb3->setColor(Color3B::BLACK);
 			lb3->setTag(tag + 2);
 			scrollHistory->addChild(lb3);
 			lbs.push_back(lb3);
 
-			lb4 = Label::create("", "fonts/myriad.ttf", 25);
+			lb4 = Label::createWithTTF("", "fonts/myriad.ttf", 25);
 			lb4->setColor(Color3B::BLACK);
 			lb4->setTag(tag + 3);
 			scrollHistory->addChild(lb4);
 			lbs.push_back(lb4);
 
-			lb5 = Label::create("", "fonts/myriad.ttf", 25);
+			lb5 = Label::createWithTTF("", "fonts/myriad.ttf", 25);
 			lb5->setColor(Color3B::BLACK);
 			lb5->setTag(tag + 4);
 			scrollHistory->addChild(lb5);
@@ -712,13 +711,13 @@ void MainScene::onShopItemsDataResponse(std::vector<ShopItemData> list)
 			spCoin->setScale(.5f);
 			btn->addChild(spCoin);
 
-			Label* lb1 = Label::create(Utils::getSingleton().formatMoneyWithComma(cards[i][j].Price), "fonts/myriadb.ttf", 25);
+			Label* lb1 = Label::createWithTTF(Utils::getSingleton().formatMoneyWithComma(cards[i][j].Price), "fonts/myriadb.ttf", 25);
 			lb1->setPosition(btn->getContentSize().width / 2 - spCoin->getContentSize().width * spCoin->getScale() / 2, -20);
             lb1->enableOutline(Color4B(150, 150, 0, 255), 1);
 			lb1->setColor(Color3B::YELLOW);
 			btn->addChild(lb1);
 
-			Label* lb2 = Label::create(Utils::getSingleton().formatMoneyWithComma(cards[i][j].PriceChange), "fonts/myriadb.ttf", 25);
+			Label* lb2 = Label::createWithTTF(Utils::getSingleton().formatMoneyWithComma(cards[i][j].PriceChange), "fonts/myriadb.ttf", 25);
 			lb2->setPosition(btn->getContentSize().width / 2, 10);
 			lb2->setColor(Color3B::WHITE);
 			btn->addChild(lb2);
@@ -799,13 +798,13 @@ void MainScene::onShopItemsDataResponse(std::vector<ShopItemData> list)
 		spCoin->setScale(.5f);
 		btn->addChild(spCoin);
 
-		Label* lb1 = Label::create(Utils::getSingleton().formatMoneyWithComma(moneyItems[i]), "fonts/myriadb.ttf", 25);
+		Label* lb1 = Label::createWithTTF(Utils::getSingleton().formatMoneyWithComma(moneyItems[i]), "fonts/myriadb.ttf", 25);
 		lb1->setPosition(btn->getContentSize().width / 2 - spCoin->getContentSize().width * spCoin->getScale() / 2, btn->getContentSize().height / 2 - 80);
         lb1->enableOutline(Color4B(150, 150, 0, 255), 1);
         lb1->setColor(Color3B::YELLOW);
 		btn->addChild(lb1);
 
-		Label* lb2 = Label::create(names[items[i]], "fonts/myriadb.ttf", 25);
+		Label* lb2 = Label::createWithTTF(names[items[i]], "fonts/myriadb.ttf", 25);
 		lb2->setWidth(175);
 		lb2->setHeight(30);
 		lb2->setPosition(btn->getContentSize().width / 2, btn->getContentSize().height / 2 - 50);
@@ -1301,7 +1300,7 @@ void MainScene::initPopupCharge()
 		nodeMoneyType->addChild(checkbox);
 		cbs.push_back(checkbox);
 
-		Label* lb = Label::create("", "fonts/myriadb.ttf", 35);
+		Label* lb = Label::createWithTTF("", "fonts/myriadb.ttf", 35);
 		lb->setPosition(checkbox->getPosition() + Vec2(30, 0));
 		lb->setAnchorPoint(Vec2(0, .5f));
 		lb->setColor(Color3B::BLACK);
@@ -1368,13 +1367,13 @@ void MainScene::initPopupCharge()
 			string str1 = Utils::getSingleton().getStringForKey("the") + " " + to_string(moneys[j]) + "k = ";
 			string str2 = to_string(moneys[j]) + "k " + "Quan";//(i == 0 ? "Quan" : "Xu");
 
-			Label* lb1 = Label::create(str1, "fonts/myriadb.ttf", 25);
+			Label* lb1 = Label::createWithTTF(str1, "fonts/myriadb.ttf", 25);
 			lb1->setTag(j * 2);
 			lb1->setAnchorPoint(Vec2(1, .5f));
 			lb1->setPosition(100 + 210 * (j / 3) , height - 40 - 50 * (j % 3));
 			scrollInfo->addChild(lb1);
 
-			Label* lb2 = Label::create(str2, "fonts/myriadb.ttf", 25);
+			Label* lb2 = Label::createWithTTF(str2, "fonts/myriadb.ttf", 25);
 			lb2->setTag(j * 2 + 1);
 			lb2->setAnchorPoint(Vec2(0, .5f));
 			lb2->setPosition(lb1->getPositionX() + 3, lb1->getPositionY());
@@ -1492,24 +1491,24 @@ void MainScene::initPopupCharge()
 			bgItemSms->setContentSize(Size(240, 170));
 			itemSms->addChild(bgItemSms);
 
-			Label* lbItemSms1 = Label::create("SMS " + strMoney + "k = ", "fonts/myriadb.ttf", 30);
+			Label* lbItemSms1 = Label::createWithTTF("SMS " + strMoney + "k = ", "fonts/myriadb.ttf", 30);
 			lbItemSms1->setAnchorPoint(Vec2(1, .5f));
 			lbItemSms1->setPosition(5, 40);
 			itemSms->addChild(lbItemSms1);
 
-			Label* lbItemSms2 = Label::create(strMoney2 + "k Quan", "fonts/myriadb.ttf", 30);
+			Label* lbItemSms2 = Label::createWithTTF(strMoney2 + "k Quan", "fonts/myriadb.ttf", 30);
 			lbItemSms2->setAnchorPoint(Vec2(0, .5f));
 			lbItemSms2->setColor(Color3B::YELLOW);
 			lbItemSms2->setPosition(lbItemSms1->getPositionX() + 5, lbItemSms1->getPositionY());
 			lbItemSms2->setName("lbsmsmoney");
 			itemSms->addChild(lbItemSms2);
 
-			Label* lbItemSms3 = Label::create(smsStr, "fonts/myriadb.ttf", 30);
+			Label* lbItemSms3 = Label::createWithTTF(smsStr, "fonts/myriadb.ttf", 30);
 			lbItemSms3->setPosition(0, lbItemSms1->getPositionY() - 35);
 			lbItemSms3->setName("lbsmscontent");
 			itemSms->addChild(lbItemSms3);
 
-			Label* lbItemSms4 = Label::create(smsTarget, "fonts/myriadb.ttf", 30);
+			Label* lbItemSms4 = Label::createWithTTF(smsTarget, "fonts/myriadb.ttf", 30);
 			lbItemSms4->setPosition(0, lbItemSms3->getPositionY() - 35);
 			lbItemSms4->setName("lbsmstarget");
 			itemSms->addChild(lbItemSms4);
@@ -1588,7 +1587,7 @@ void MainScene::initPopupCharge()
         Sprite* spCoin = Sprite::createWithSpriteFrameName(pmE ? "icon_gold.png" : "icon_silver.png");
         btn->addChild(spCoin);
         
-        Label* lb1 = Label::create(strValue, "fonts/myriadb.ttf", 50);
+        Label* lb1 = Label::createWithTTF(strValue, "fonts/myriadb.ttf", 50);
         lb1->setPosition(btn->getContentSize().width / 2 - spCoin->getContentSize().width * spCoin->getScale() / 2, btn->getContentSize().height / 2 - 80);
         lb1->setColor(Color3B::YELLOW);
         btn->addChild(lb1);
@@ -1598,7 +1597,7 @@ void MainScene::initPopupCharge()
 		bglb2->setPosition(btn->getContentSize().width / 2, btn->getContentSize().height / 2 - 145);
 		btn->addChild(bglb2);
         
-        Label* lb2 = Label::create(strCost, "fonts/myriadb.ttf", 50);
+        Label* lb2 = Label::createWithTTF(strCost, "fonts/myriadb.ttf", 50);
 		lb2->enableOutline(Color4B::BLACK, 2);
         lb2->setPosition(bglb2->getPosition() + Vec2(0, -10));
         lb2->setColor(Color3B::WHITE);
@@ -1644,7 +1643,7 @@ void MainScene::initPopupGuide()
 	popupGuide->addChild(scroll);
 
 	cocos2d::ValueMap plist = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/tutorials.xml");
-	Label* lb = Label::create(plist["tutorial_1"].asString(), "fonts/myriad.ttf", 30);
+	Label* lb = Label::createWithTTF(plist["tutorial_1"].asString(), "fonts/myriad.ttf", 30);
 	lb->setAnchorPoint(Vec2(0, 1));
 	lb->setColor(Color3B::BLACK);
 	lb->setName("lbcontent");
@@ -1751,7 +1750,7 @@ void MainScene::initPopupNews()
 	scrollContent->setName("scrollcontent");
 	popupNews->addChild(scrollContent);
 
-	Label* lbContent = Label::create("", "fonts/myriad.ttf", 30);
+	Label* lbContent = Label::createWithTTF("", "fonts/myriad.ttf", 30);
 	lbContent->setWidth(scrollContent->getContentSize().width);
 	lbContent->setAnchorPoint(Vec2(0, 1));
 	lbContent->setColor(Color3B::BLACK);
@@ -1910,7 +1909,7 @@ void MainScene::initPopupGiftcode()
 	tfGiftcode->setDelegate(this);
 	popupGiftcode->addChild(tfGiftcode);
 
-	Label* lb = Label::create(Utils::getSingleton().getStringForKey("nhap_giftcode"), "fonts/myriad.ttf", 40);
+	Label* lb = Label::createWithTTF(Utils::getSingleton().getStringForKey("nhap_giftcode"), "fonts/myriad.ttf", 40);
 	lb->setColor(Color3B::BLACK);
 	lb->setPosition(0, 60);
 	popupGiftcode->addChild(lb);
@@ -1966,7 +1965,7 @@ void MainScene::initPopupDisplayName()
 	tfDisplayName->setDelegate(this);
 	popupDisplayName->addChild(tfDisplayName);
 
-	Label* lb = Label::create(Utils::getSingleton().getStringForKey("nhap_ten_hien_thi"), "fonts/myriadb.ttf", 35);
+	Label* lb = Label::createWithTTF(Utils::getSingleton().getStringForKey("nhap_ten_hien_thi"), "fonts/myriadb.ttf", 35);
 	lb->setColor(Color3B::BLACK);
 	lb->setPosition(0, 70);
 	popupDisplayName->addChild(lb);

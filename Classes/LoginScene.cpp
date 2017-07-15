@@ -1,4 +1,3 @@
-#pragma once
 #include "LoginScene.h"
 #include "Utils.h"
 #include "SFSRequest.h"
@@ -25,7 +24,7 @@ void LoginScene::onInit()
 	bool ispmE = Utils::getSingleton().ispmE();
 
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB565);
-	Texture2D* bgTexture = TextureCache::getInstance()->addImage("login_bg.jpg");
+	Texture2D* bgTexture = Director::getInstance()->getTextureCache()->addImage("login_bg.jpg");
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
 
 	Sprite* bg = Sprite::createWithTexture(bgTexture);
@@ -170,14 +169,14 @@ void LoginScene::onInit()
 	mLayer->addChild(btnPhone);
 	autoScaleNode(btnPhone);
 
-	labelPhone = Label::create("", "fonts/myriadb.ttf",25);
+	labelPhone = Label::createWithTTF("", "fonts/myriadb.ttf",25);
 	labelPhone->setPosition(110 * scaleScene.y, 10 * scaleScene.x);
 	labelPhone->setAnchorPoint(Vec2(0, 0));
 	labelPhone->setVisible(false);
 	mLayer->addChild(labelPhone);
 	autoScaleNode(labelPhone);
 
-	Label* labelVersion = Label::create(string("ver ") + Application::sharedApplication()->getVersion(), "fonts/myriad.ttf", 18);
+	Label* labelVersion = Label::createWithTTF(string("ver ") + Application::getInstance()->getVersion(), "fonts/myriad.ttf", 18);
 	labelVersion->setPosition(winSize.width - 10 * scaleScene.y, 3 * scaleScene.x);
 	labelVersion->setAnchorPoint(Vec2(1, 0));
 	mLayer->addChild(labelVersion);
@@ -388,14 +387,14 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	GameConfig config;
 	d.Parse<0>(content.c_str());
 
-	vector<string> keys = { "payment", "paymentIOS", "name", "host", "port", "websocket", "version", "versionIOS", "ip_rs", "phone",
-		"smsVT", "smsVNPVMS", "smsKH", "smsMK", "fb", "a", "i", "updatenow", "inapp", "invite" };
-	for (string k : keys) {
-		if (d.FindMember(k.c_str()) == d.MemberEnd()) {
-			onHttpResponseFailed();
-			return;
-		}
-	}
+//	vector<string> keys = { "payment", "paymentIOS", "name", "host", "port", "websocket", "version", "versionIOS", "ip_rs", "phone",
+//		"smsVT", "smsVNPVMS", "smsKH", "smsMK", "fb", "a", "i", "updatenow", "inapp", "invite" };
+//	for (string k : keys) {
+//		if (d.FindMember(k.c_str()) == d.MemberEnd()) {
+//			onHttpResponseFailed();
+//			return;
+//		}
+//	}
 
 	config.zone = d["name"].GetString();
 	config.host = d["host"].GetString();
@@ -404,28 +403,31 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	config.versionIOS = d["versionIOS"].GetInt();
 	config.ip_rs = d["ip_rs"].GetString();
 	config.phone = d["phone"].GetString();
-	config.pmE = d["payment"].GetBool();
-	config.pmEIOS = d["paymentIOS"].GetBool();
+	//config.pmE = d["payment"].GetBool();
+	//config.pmEIOS = d["paymentIOS"].GetBool();
 	config.websocket = d["websocket"].GetInt();
 	config.smsVT = d["smsVT"].GetString();
 	config.smsVNPVMS = d["smsVNPVMS"].GetString();
 	config.smsKH = d["smsKH"].GetString();
 	config.smsMK = d["smsMK"].GetString();
-	config.linkFb = d["fb"].GetString();
-	config.linkAndroid = d["a"].GetString();
-	config.linkIOS = d["i"].GetString();
-	config.canUpdate = d["updatenow"].GetBool();
-	config.inapp = d["inapp"].GetString();
-    config.invite = d["invite"].GetBool();
+	//config.linkFb = d["fb"].GetString();
+	//config.linkAndroid = d["a"].GetString();
+	//config.linkIOS = d["i"].GetString();
+	//config.canUpdate = d["updatenow"].GetBool();
+	//config.inapp = d["inapp"].GetString();
+    //config.invite = d["invite"].GetBool();
 
 	config.linkAndroid = "https://play.google.com/store/apps/details?id=" + config.linkAndroid;
 
-	string verstr = Application::sharedApplication()->getVersion();
+	string verstr = Application::getInstance()->getVersion();
 	int i = verstr.find_last_of('.') + 1;
 	verstr = verstr.substr(i, verstr.length() - i);
 	int nver = atoi(verstr.c_str());
 	config.pmE &= config.version > nver;
 	config.pmEIOS &= config.versionIOS > nver;
+    
+    config.ip_rs = "125.212.226.40";
+    config.port = 843;
 
 	Utils::getSingleton().gameConfig = config;
     Utils::getSingleton().queryIAPProduct();
@@ -446,7 +448,7 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 #else
 	if (config.canUpdate && nver < config.version - 1) {
 		showPopupNotice(Utils::getSingleton().getStringForKey("notice_update_new_version"), [=]() {
-			Application::sharedApplication()->openURL(config.linkAndroid);
+			Application::getInstance()->openURL(config.linkAndroid);
 		});
 #endif
 		SFSRequest::getSingleton().Connect();
@@ -509,7 +511,7 @@ bool LoginScene::onKeyBack()
 			return false;
 		} else {
 			showPopupNotice(Utils::getSingleton().getStringForKey("ban_muon_thoat_game"), [=]() {
-				Director::sharedDirector()->end();
+				Director::getInstance()->end();
 			});
 			return false;
 		}
@@ -520,19 +522,24 @@ bool LoginScene::onKeyBack()
 void LoginScene::loginNormal()
 {
 	isRequesting = true;
-    string username = tfUsername->getText();// Utils::getSingleton().trim(tfUsername->getText());
+    string username = tfUsername->getText();
     if (username.length() == 0) {
         showPopupNotice(Utils::getSingleton().getStringForKey("hay_nhap_tai_khoan"), [=]() {});
         return;
     }
-    string password = tfPassword->getText();// Utils::getSingleton().trim(tfPassword->getText());
+    string password = tfPassword->getText();
     if (password.length() == 0) {
         showPopupNotice(Utils::getSingleton().getStringForKey("hay_nhap_mat_khau"), [=]() {});
         return;
     }
+	if (!Utils::getSingleton().isUsernameValid(username)
+		|| !Utils::getSingleton().isPasswordValid(password)) {
+		showPopupNotice(Utils::getSingleton().getStringForKey("tai_khoan_khong_dung"), [=]() {});
+		return;
+	}
     showWaiting(60);
 	if (isLogedInZone) {
-		SFSRequest::getSingleton().RequestLogin(tfUsername->getText(), md5(tfPassword->getText()));
+		SFSRequest::getSingleton().RequestLogin(username, md5(password));
 	} else {
 		SFSRequest::getSingleton().Connect();
 	}
@@ -680,22 +687,22 @@ void LoginScene::initRegisterNode()
 void LoginScene::requestGameConfig(bool realConfig)
 {
 	showWaiting(60);
-	SFSRequest::getSingleton().RequestHttpGet("http://ip171.api1chan.info/configcv2.txt", constant::TAG_HTTP_GAME_CONFIG);
+	//SFSRequest::getSingleton().RequestHttpGet("http://ip171.api1chan.info/configcv2.txt", constant::TAG_HTTP_GAME_CONFIG);
 	//SFSRequest::getSingleton().RequestHttpGet("http://chanvuong1.info/config/configchan.txt", constant::TAG_HTTP_GAME_CONFIG);
 	//SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
-	//SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", constant::TAG_HTTP_GAME_CONFIG);
+	SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", constant::TAG_HTTP_GAME_CONFIG);
 }
 
 void LoginScene::loadTextureCache()
 {
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA8888);
-	TextureCache::sharedTextureCache()->addImageAsync("main.png", [=](Texture2D* texture) {
+	Director::getInstance()->getTextureCache()->addImageAsync("main.png", [=](Texture2D* texture) {
 		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("main.plist");
 	});
-	TextureCache::sharedTextureCache()->addImageAsync("game.png", [=](Texture2D* texture) {
+	Director::getInstance()->getTextureCache()->addImageAsync("game.png", [=](Texture2D* texture) {
 		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("game.plist");
 	});
-	TextureCache::sharedTextureCache()->addImageAsync("buttons.png", [=](Texture2D* texture) {
+	Director::getInstance()->getTextureCache()->addImageAsync("buttons.png", [=](Texture2D* texture) {
 		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("buttons.plist");
 	});
 }

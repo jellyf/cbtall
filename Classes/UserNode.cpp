@@ -1,5 +1,4 @@
-﻿#pragma once
-#include "UserNode.h"
+﻿#include "UserNode.h"
 #include "Utils.h"
 using namespace cocos2d;
 bool UserNode::init()

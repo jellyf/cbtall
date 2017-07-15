@@ -1,4 +1,3 @@
-#pragma once
 #include "SFSConnector.h"
 #include "SFSGEvent.h"
 
