@@ -129,7 +129,7 @@ void LoadScene::initActionQueue()
 		//SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", constant::TAG_HTTP_GAME_CONFIG);
 	});
 	addToActionQueue([=]() {
-#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
 		SFSRequest::getSingleton().RequestHttpGet(textureHost + "vi2.xml", constant::TAG_HTTP_VILANG);
 #else
 		string content = FileUtils::getInstance()->getStringFromFile("lang/vi2.xml");
