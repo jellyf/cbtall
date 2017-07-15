@@ -125,11 +125,6 @@ void LoginScene::onInit()
 	ui::Button* btnLogin = ui::Button::create("btn_login.png", "btn_login_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnLogin->setPosition(Vec2(110, -115));
 	addTouchEventListener(btnLogin, [=]() {
-		if (Utils::getSingleton().gameConfig.phone.length() == 0) {
-            waitingLogin = 1;
-			requestGameConfig(isRealConfig);
-			return;
-		}
         loginNormal();
 	});
 	loginNode->addChild(btnLogin);
@@ -145,11 +140,6 @@ void LoginScene::onInit()
 	ui::Button* btnFB = ui::Button::create("btn_fb.png", "btn_fb_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnFB->setPosition(Vec2(0, -195));
 	addTouchEventListener(btnFB, [=]() {
-        if (Utils::getSingleton().gameConfig.phone.length() == 0) {
-            waitingLogin = 2;
-            requestGameConfig(isRealConfig);
-            return;
-        }
         loginFacebook();
 	});
 	loginNode->addChild(btnFB);
@@ -189,14 +179,16 @@ void LoginScene::onInit()
 	tfPassword->setText(lastPassword.c_str());
 
     SFSRequest::getSingleton().ForceIPv6(false);
-	if (Utils::getSingleton().gameConfig.phone.length() == 0) {
-		requestGameConfig(isRealConfig);
-	} else {
-		showWaiting(60);
-		SFSRequest::getSingleton().Connect();
-	}
+	showWaiting(60);
+	SFSRequest::getSingleton().Connect();
 
-	//loadTextureCache();
+	if (Utils::getSingleton().gameConfig.canUpdate) {
+		Utils::getSingleton().gameConfig.canUpdate = false;
+		string updateLink = CC_TARGET_PLATFORM == CC_PLATFORM_IOS ? Utils::getSingleton().gameConfig.linkIOS : Utils::getSingleton().gameConfig.linkAndroid;
+		showPopupNotice(Utils::getSingleton().getStringForKey("notice_update_new_version"), [=]() {
+			Application::getInstance()->openURL(updateLink);
+		});
+	}
 }
 
 void LoginScene::registerEventListenner()
@@ -322,7 +314,7 @@ void LoginScene::onConfigZoneReceived()
 		isReconnecting = true;
 		return;
 	} else {
-		updateStateToGoToMain(1);
+		Utils::getSingleton().goToMainScene();
 	}
 }
 
@@ -373,150 +365,9 @@ void LoginScene::onErrorResponse(unsigned char code, std::string msg)
 	fbToken = "";
 }
 
-void LoginScene::onHttpResponse(int tag, std::string content)
-{
-	if (tag != constant::TAG_HTTP_GAME_CONFIG) return;
-	if (content.length() == 0) {
-		onHttpResponseFailed();
-		return;
-	}
-	rapidjson::Document d;
-	GameConfig config;
-	d.Parse<0>(content.c_str());
-
-	/*vector<string> keys = { "payment", "paymentIOS", "name", "host", "port", "websocket", "version", "versionIOS", "ip_rs", "phone",
-		"smsVT", "smsVNPVMS", "smsKH", "smsMK", "fb", "a", "i", "updatenow", "inapp", "invite" };
-	for (string k : keys) {
-		if (d.FindMember(k.c_str()) == d.MemberEnd()) {
-			onHttpResponseFailed();
-			return;
-		}
-	}*/
-
-	config.zone = d["name"].GetString();
-	config.host = d["host"].GetString();
-	config.port = d["port"].GetInt();
-	config.websocket = d["websocket"].GetInt();
-	config.version = d["version"].GetInt();
-	config.versionIOS = d["versionIOS"].GetInt();
-	config.ip_rs = d["ip_rs"].GetString();
-	config.phone = d["phone"].GetString();
-	config.smsKHVT = d["SMSKHVTT"].GetString();
-	config.smsKHVMS = d["SMSKHMOBI"].GetString();
-	config.smsKHVNP = d["SMSKHVINA"].GetString();
-
-	if (d.FindMember("payment") != d.MemberEnd()) {
-		config.pmE = d["payment"].GetBool();
-	} else config.pmE = false;
-	if (d.FindMember("paymentIOS") != d.MemberEnd()) {
-		config.pmEIOS = d["paymentIOS"].GetBool();
-	} else config.pmEIOS = false;
-	if (d.FindMember("updatenow") != d.MemberEnd()) {
-		config.canUpdate = d["updatenow"].GetBool();
-	} else config.canUpdate = false;
-	if (d.FindMember("invite") != d.MemberEnd()) {
-		config.invite = d["invite"].GetBool();
-	} else config.invite = false;
-	if (d.FindMember("fb") != d.MemberEnd()) {
-		config.linkFb = d["fb"].GetString();
-	} else config.linkFb = "";
-	if (d.FindMember("a") != d.MemberEnd()) {
-		config.linkAndroid = d["a"].GetString();
-	} else config.linkAndroid = "";
-	if (d.FindMember("i") != d.MemberEnd()) {
-		config.linkIOS = d["i"].GetString();
-	} else config.linkIOS = "";
-	if (d.FindMember("inapp") != d.MemberEnd()) {
-		config.inapp = d["inapp"].GetString();
-	} else config.inapp = "";
-
-	config.linkAndroid = "https://play.google.com/store/apps/details?id=" + config.linkAndroid;
-	config.smsMKVT = Utils::getSingleton().replaceString(config.smsKHVT, "KHuid", "MKuid");
-	config.smsMKVNP = Utils::getSingleton().replaceString(config.smsKHVNP, "KHuid", "MKuid");
-	config.smsMKVMS = Utils::getSingleton().replaceString(config.smsKHVMS, "KHuid", "MKuid");
-
-	string verstr = Application::getInstance()->getVersion();
-	int i = verstr.find_last_of('.') + 1;
-	verstr = verstr.substr(i, verstr.length() - i);
-	int nver = atoi(verstr.c_str());
-	config.pmE &= config.version > nver;
-	config.pmEIOS &= config.versionIOS > nver;
-    
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-    if (!config.pmEIOS && config.versionIOS71ktc) {
-        config.ip_rs = "api4chan.info";
-        config.port = 843;
-    }
-#endif
-
-	Utils::getSingleton().gameConfig = config;
-    Utils::getSingleton().queryIAPProduct();
-
-	if (Utils::getSingleton().ispmE()) {
-		btnForgotPass->setVisible(true);
-		lbBtnForgotPass->setVisible(true);
-		Utils::getSingleton().downloadPlistTextures();
-	}
-	//string location = Utils::getSingleton().getUserCountry();
-	//Utils::getSingleton().gameConfig.pmE = config.pmE && location.compare("vn") == 0;
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-	if (config.canUpdate && nver < config.versionIOS - 1) {
-		showPopupNotice(Utils::getSingleton().getStringForKey("notice_update_new_version"), [=]() {
-			Application::getInstance()->openURL(config.linkIOS);
-		});
-#else
-	if (config.canUpdate && nver < config.version - 1) {
-		showPopupNotice(Utils::getSingleton().getStringForKey("notice_update_new_version"), [=]() {
-			Application::getInstance()->openURL(config.linkAndroid);
-		});
-#endif
-		SFSRequest::getSingleton().Connect();
-	} else if (waitingLogin > 0) {
-        if(waitingLogin == 1){
-            loginNormal();
-        }else if(waitingLogin == 2){
-            loginFacebook();
-        }
-        waitingLogin = 0;
-	} else {
-		SFSRequest::getSingleton().Connect();
-	}
-	//hideWaiting();
-}
-
-void LoginScene::onHttpResponseFailed()
-{
-	if (currentConfigLink == 0) {
-		currentConfigLink = 1;
-		hideWaiting();
-		requestGameConfig(false);
-	} else {
-		currentConfigLink = 0;
-		hideWaiting();
-		if (isFirstLoadConfig) {
-			isFirstLoadConfig = false;
-		} else {
-			showPopupNotice(Utils::getSingleton().getStringForKey("error_connection"));
-		}
-	}
-}
-
 void LoginScene::onTableDataResponse(LobbyListTable data)
 {
 	Utils::getSingleton().goToLobbyScene();
-}
-
-void LoginScene::onDownloadedPlistTexture(int numb)
-{
-	BaseScene::onDownloadedPlistTexture(numb);
-	btnPhone->loadTextures("btn_phone.png", "btn_phone_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnPhone->setVisible(true);
-	//labelPhone->setVisible(true);
-	labelPhone->setString(Utils::getSingleton().gameConfig.phone);
-	if (numb == 1) {
-		updateStateToGoToMain(2);
-	}
 }
 
 bool LoginScene::onKeyBack()
@@ -652,10 +503,6 @@ void LoginScene::initRegisterNode()
 	ui::Button* btnRegister = ui::Button::create("btn_register.png", "btn_register_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btnRegister->setPosition(Vec2(110, -140));
 	addTouchEventListener(btnRegister, [=]() {
-		if (Utils::getSingleton().gameConfig.phone.length() == 0) {
-			requestGameConfig(isRealConfig);
-			return;
-		}
 		string uname = tfResUname->getText();
 		string passw = tfResPass->getText();
 		if (!Utils::getSingleton().isUsernameValid(uname)
@@ -683,31 +530,4 @@ void LoginScene::initRegisterNode()
 		}
 	});
 	registerNode->addChild(btnRegister);
-}
-
-void LoginScene::requestGameConfig(bool realConfig)
-{
-	showWaiting(60);
-	SFSRequest::getSingleton().RequestHttpGet("http://ip171.api1chan.info/configcv.txt", constant::TAG_HTTP_GAME_CONFIG);
-	//SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
-	//SFSRequest::getSingleton().RequestHttpGet("http://115.84.179.242/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
-	//SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", constant::TAG_HTTP_GAME_CONFIG);
-}
-
-void LoginScene::loadTextureCache()
-{
-	Director::getInstance()->getTextureCache()->addImageAsync("imgs/game.png", [=](Texture2D* texture) {
-		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("imgs/game.plist");
-	});
-	Director::getInstance()->getTextureCache()->addImageAsync("imgs/buttons.png", [=](Texture2D* texture) {
-		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("imgs/buttons.plist");
-	});
-}
-
-void LoginScene::updateStateToGoToMain(int state)
-{
-	//isReadyToMain |= state;
-	//if (isReadyToMain == 3 || !Utils::getSingleton().ispmE()) {
-		Utils::getSingleton().goToMainScene();
-	//}
 }

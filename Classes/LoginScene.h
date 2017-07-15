@@ -9,9 +9,6 @@ public:
 	virtual void registerEventListenner();
 	virtual void unregisterEventListenner();
 	virtual void editBoxReturn(cocos2d::ui::EditBox* editBox);
-	virtual void onDownloadedPlistTexture(int numb);
-	virtual void onHttpResponse(int tag, std::string content);
-	virtual void onHttpResponseFailed();
 
 	void onConnected();
 	void onLoginZone();
@@ -29,9 +26,6 @@ private:
 	void loginNormal();
 	void loginFacebook();
 	void initRegisterNode();
-	void requestGameConfig(bool realConfig);
-	void loadTextureCache();
-	void updateStateToGoToMain(int state);
     
 	int waitingLogin = 0;
 	int currentConfigLink = 0;

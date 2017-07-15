@@ -24,6 +24,7 @@ private:
 	void finishActionQueue();
 	void updateLoadingView();
 	int getCompletedPercentage();
+	int getVersionValue();
 
 	cocos2d::ProgressTimer* progressTimer;
 	cocos2d::Vec2 scaleScene;

@@ -124,6 +124,9 @@ void LoadScene::initActionQueue()
 	});
 	addToActionQueue([=]() {
 		SFSRequest::getSingleton().RequestHttpGet("http://ip171.api1chan.info/configcv.txt", constant::TAG_HTTP_GAME_CONFIG);
+		//SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
+		//SFSRequest::getSingleton().RequestHttpGet("http://115.84.179.242/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
+		//SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", constant::TAG_HTTP_GAME_CONFIG);
 	});
 	addToActionQueue([=]() {
 #if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
@@ -292,12 +295,17 @@ void LoadScene::onHttpResponse(int tag, std::string content)
 	config.smsMKVNP = Utils::getSingleton().replaceString(config.smsKHVNP, "KHuid", "MKuid");
 	config.smsMKVMS = Utils::getSingleton().replaceString(config.smsKHVMS, "KHuid", "MKuid");
 
-	string verstr = Application::getInstance()->getVersion();
-	int i = verstr.find_last_of('.') + 1;
-	verstr = verstr.substr(i, verstr.length() - i);
-	int nver = atoi(verstr.c_str());
-	config.pmE &= config.version > nver;
-	config.pmEIOS &= config.versionIOS > nver;
+	int verValue = getVersionValue();
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
+	config.pmEIOS &= verValue < config.versionIOS;
+	config.canUpdate &= verValue < config.versionIOS - 1;
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+	config.pmE &= verValue < config.version;
+	config.canUpdate &= verValue < config.version - 1;
+#else
+	config.pmE = true;
+	config.canUpdate = false;
+#endif
 
 	Utils::getSingleton().gameConfig = config;
 	Utils::getSingleton().queryIAPProduct();
@@ -307,4 +315,21 @@ void LoadScene::onHttpResponse(int tag, std::string content)
 	} else {
 		finishActionQueue();
 	}
+}
+
+int LoadScene::getVersionValue()
+{
+	string verstr = Application::getInstance()->getVersion();
+
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
+	std::vector<std::string> numbs;
+	Utils::getSingleton().split(verstr, '.', numbs);
+	int nver = atoi(numbs[0].c_str()) * 100 + atoi(numbs[1].c_str()) * 10 + atoi(numbs[2].c_str());
+#else
+	int i = verstr.find_last_of('.') + 1;
+	verstr = verstr.substr(i, verstr.length() - i);
+	int nver = atoi(verstr.c_str());
+#endif
+
+	return nver;
 }
