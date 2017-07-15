@@ -60,9 +60,6 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     register_all_packages();
 
-	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA8888);
-	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("login.plist");
-
 	SFSGEvent* sfsEvent = new SFSGEvent();
 	SFSConnector* connector = new SFSConnector();
 	SFSRequest* request = new SFSRequest();
