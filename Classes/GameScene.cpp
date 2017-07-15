@@ -120,7 +120,7 @@ void GameScene::onInit()
 		zone = "VuongPhu";
 	}
 
-	string bgName = isSolo ? "bgVuongPhu.jpg" : "bg" + zone + ".jpg";
+	string bgName = isSolo ? "imgs/bgVuongPhu.jpg" : "imgs/bg" + zone + ".jpg";
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB565);
 	Texture2D* bgTexture = Director::getInstance()->getTextureCache()->addImage(bgName);
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
@@ -3501,7 +3501,7 @@ void GameScene::initCrestTable()
 	autoScaleNode(tableCrest);
 
 	Size bgsize = Size(1060, 370);
-	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("xuong_bg.png");
+	ui::Scale9Sprite* bg = ui::Scale9Sprite::create("imgs/xuong_bg.png");
 	bg->setInsetLeft(62);
 	bg->setInsetRight(67);
 	bg->setInsetTop(56);

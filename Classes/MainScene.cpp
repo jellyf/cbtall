@@ -41,7 +41,7 @@ void MainScene::onInit()
 	initHeaderWithInfos();
 
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB565);
-	Texture2D* bgTexture = Director::getInstance()->getTextureCache()->addImage("main_bg.jpg");
+	Texture2D* bgTexture = Director::getInstance()->getTextureCache()->addImage("imgs/main_bg.jpg");
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
 
 	Sprite* bg = Sprite::createWithTexture(bgTexture);

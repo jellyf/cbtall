@@ -24,7 +24,7 @@ void LoginScene::onInit()
 	bool ispmE = Utils::getSingleton().ispmE();
 
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB565);
-	Texture2D* bgTexture = Director::getInstance()->getTextureCache()->addImage("login_bg.jpg");
+	Texture2D* bgTexture = Director::getInstance()->getTextureCache()->addImage("imgs/login_bg.jpg");
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA8888);
 
 	Sprite* bg = Sprite::createWithTexture(bgTexture);

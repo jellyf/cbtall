@@ -41,7 +41,7 @@ Utils::Utils()
 	viLang = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/vi.xml");
 	SFSRequest::getSingleton().onLoadTextureResponse = std::bind(&Utils::onLoadTextureResponse, this, std::placeholders::_1, std::placeholders::_2);
 
-	Director::getInstance()->getTextureCache()->addImageAsync("tmp.png", [=](Texture2D* texture) {
+	Director::getInstance()->getTextureCache()->addImageAsync("imgs/tmp.png", [=](Texture2D* texture) {
 		string str1 = FileUtils::getInstance()->getStringFromFile("menu1.plist");
 		SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str1, texture);
 		string str2 = FileUtils::getInstance()->getStringFromFile("menu2.plist");

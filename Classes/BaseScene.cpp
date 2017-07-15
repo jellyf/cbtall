@@ -1148,7 +1148,7 @@ cocos2d::Node * BaseScene::createPopup(std::string stitle, bool isBig, bool isHi
 	mLayer->addChild(popup, constant::ZORDER_POPUP);
 	//autoScaleNode(popup);
 
-	Sprite* bg = isBig ? Sprite::create("popup_bg1.png") : Sprite::createWithSpriteFrameName("popup_bg.png");
+	Sprite* bg = isBig ? Sprite::create("imgs/popup_bg1.png") : Sprite::createWithSpriteFrameName("popup_bg.png");
 	bg->setName("spbg");
 	popup->addChild(bg);
 

@@ -39,20 +39,20 @@ void LoadScene::onEnter()
 		mLayer->setScaleY(scaleScene.y);
 	}
 
-	Sprite* bg = Sprite::create("loading_bg.jpg");
+	Sprite* bg = Sprite::create("imgs/loading_bg.jpg");
 	bg->setPosition(winSize.width / 2, winSize.height / 2);
 	mLayer->addChild(bg);
 
-	Sprite* icon = Sprite::create("loading_icon.png");
+	Sprite* icon = Sprite::create("imgs/loading_icon.png");
 	icon->setPosition(winSize.width / 2, winSize.height / 2 + 50);
 	mLayer->addChild(icon);
 	autoScaleNode(icon);
 
-	Sprite* processBg = Sprite::create("loading_process_bg.png");
+	Sprite* processBg = Sprite::create("imgs/loading_process_bg.png");
 	processBg->setPosition(winSize.width / 2, winSize.height / 4 - 60);
 	mLayer->addChild(processBg);
 
-	progressTimer = ProgressTimer::create(Sprite::create("loading_process.png"));
+	progressTimer = ProgressTimer::create(Sprite::create("imgs/loading_process.png"));
 	progressTimer->setType(ProgressTimer::Type::BAR);
 	progressTimer->setMidpoint(Vec2(0, 0));
 	progressTimer->setBarChangeRate(Vec2(1, 0));
@@ -63,7 +63,6 @@ void LoadScene::onEnter()
 	registerEventListenner();
 	initActionQueue();
 	startActionQueue();
-	Utils::getSingleton().queryIAPProduct();
 }
 
 void LoadScene::onExit()
@@ -106,20 +105,20 @@ void LoadScene::initActionQueue()
 		Utils::getSingleton().queryIAPProduct();
 	});*/
 	addToActionQueue([=]() {
-		Director::getInstance()->getTextureCache()->addImageAsync("login.png", [=](Texture2D* texture) {
-			SpriteFrameCache::getInstance()->addSpriteFramesWithFile("login.plist");
+		Director::getInstance()->getTextureCache()->addImageAsync("imgs/login.png", [=](Texture2D* texture) {
+			SpriteFrameCache::getInstance()->addSpriteFramesWithFile("imgs/login.plist");
 			completeCurrentAction();
 		});
 	});
 	addToActionQueue([=]() {
-		Director::getInstance()->getTextureCache()->addImageAsync("buttons.png", [=](Texture2D* texture) {
-			SpriteFrameCache::getInstance()->addSpriteFramesWithFile("buttons.plist");
+		Director::getInstance()->getTextureCache()->addImageAsync("imgs/buttons.png", [=](Texture2D* texture) {
+			SpriteFrameCache::getInstance()->addSpriteFramesWithFile("imgs/buttons.plist");
 			completeCurrentAction();
 		});
 	});
 	addToActionQueue([=]() {
-		Director::getInstance()->getTextureCache()->addImageAsync("game.png", [=](Texture2D* texture) {
-			SpriteFrameCache::getInstance()->addSpriteFramesWithFile("game.plist");
+		Director::getInstance()->getTextureCache()->addImageAsync("imgs/game.png", [=](Texture2D* texture) {
+			SpriteFrameCache::getInstance()->addSpriteFramesWithFile("imgs/game.plist");
 			completeCurrentAction();
 		});
 	});
@@ -301,6 +300,7 @@ void LoadScene::onHttpResponse(int tag, std::string content)
 	config.pmEIOS &= config.versionIOS > nver;
 
 	Utils::getSingleton().gameConfig = config;
+	Utils::getSingleton().queryIAPProduct();
 
 	if (Utils::getSingleton().ispmE()) {
 		completeCurrentAction();

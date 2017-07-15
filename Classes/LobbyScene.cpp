@@ -29,7 +29,7 @@ void LobbyScene::onInit()
 		zone = "VuongPhu";
 	}
 
-	string bgName = isSolo ? "lobby_bgVuongPhu.jpg" : "lobby_bg" + zone + ".jpg";
+	string bgName = isSolo ? "imgs/lobby_bgVuongPhu.jpg" : "imgs/lobby_bg" + zone + ".jpg";
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB565);
 	Texture2D* bgTexture = Director::getInstance()->getTextureCache()->addImage(bgName);
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
