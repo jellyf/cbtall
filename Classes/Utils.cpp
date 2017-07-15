@@ -596,12 +596,13 @@ void Utils::setIAPProducts(std::vector<ProductData> vecProducts)
 
 void Utils::queryIAPProduct()
 {
+	string prefix = CC_TARGET_PLATFORM == CC_PLATFORM_IOS ? "com.chanvuong.chanonline." : "com.chan.vuong.chanpro.";
 	std::vector<std::string> ids;
     split(gameConfig.inapp, ',', ids);
 	std::vector<std::string> descs = { "10 ", "20 ", "30 " };
 	std::vector<double> prices = { 22000, 105000, 210000 };
     for(int i=0;i<ids.size();i++){
-        ids[i] = "com.chan.kinhtuchi.goi." + ids[i];
+        ids[i] = prefix + ids[i];
         ProductData data;
         data.Id = ids[i];
 		data.Price = prices[i];
