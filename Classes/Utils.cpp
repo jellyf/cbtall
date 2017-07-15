@@ -744,3 +744,12 @@ void Utils::createAppellations()
 		appellations.push_back(apl);
 	}
 }
+
+void Utils::addViLangFromData(std::string data)
+{
+	const char* charData = data.c_str();
+	cocos2d::ValueMap map = cocos2d::FileUtils::getInstance()->getValueMapFromData(charData, strlen(charData));
+	for (auto iter = map.begin(); iter != map.end(); iter++) {
+		viLang[iter->first] = iter->second.asString();
+	}
+}

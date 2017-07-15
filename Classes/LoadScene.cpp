@@ -129,6 +129,14 @@ void LoadScene::initActionQueue()
 		//SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", constant::TAG_HTTP_GAME_CONFIG);
 	});
 	addToActionQueue([=]() {
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+		SFSRequest::getSingleton().RequestHttpGet(textureHost + "vi2.xml", constant::TAG_HTTP_VILANG);
+#else
+		string content = FileUtils::getInstance()->getStringFromFile("lang/vi2.xml");
+		onHttpResponse(constant::TAG_HTTP_VILANG, content);
+#endif
+	});
+	addToActionQueue([=]() {
 #if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
 		string str1 = FileUtils::getInstance()->getStringFromFile("menu1.plist");
 		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu1.png", [=](Texture2D* texture1) {
@@ -235,6 +243,11 @@ void LoadScene::onHttpResponseFailed()
 
 void LoadScene::onHttpResponse(int tag, std::string content)
 {
+	if (tag == constant::TAG_HTTP_VILANG) {
+		Utils::getSingleton().addViLangFromData(content);
+		completeCurrentAction();
+		return;
+	}
 	if (tag != constant::TAG_HTTP_GAME_CONFIG) return;
 	if (content.length() == 0) {
 		onHttpResponseFailed();
