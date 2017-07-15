@@ -196,7 +196,7 @@ void LoginScene::onInit()
 		SFSRequest::getSingleton().Connect();
 	}
 
-	loadTextureCache();
+	//loadTextureCache();
 }
 
 void LoginScene::registerEventListenner()
@@ -696,11 +696,11 @@ void LoginScene::requestGameConfig(bool realConfig)
 
 void LoginScene::loadTextureCache()
 {
-	Director::getInstance()->getTextureCache()->addImageAsync("game.png", [=](Texture2D* texture) {
-		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("game.plist");
+	Director::getInstance()->getTextureCache()->addImageAsync("imgs/game.png", [=](Texture2D* texture) {
+		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("imgs/game.plist");
 	});
-	Director::getInstance()->getTextureCache()->addImageAsync("buttons.png", [=](Texture2D* texture) {
-		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("buttons.plist");
+	Director::getInstance()->getTextureCache()->addImageAsync("imgs/buttons.png", [=](Texture2D* texture) {
+		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("imgs/buttons.plist");
 	});
 }
 
