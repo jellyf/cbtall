@@ -13,7 +13,7 @@ bool LoadScene::init()
 	if (!Scene::init()) {
 		return false;
 	}
-	textureHost = "http://115.84.179.242/main_kinhtuchi/";
+	textureHost = "http://ip171.api1chan.info/CvResource/";
 
 	return true;
 }
