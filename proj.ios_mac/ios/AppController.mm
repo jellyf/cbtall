@@ -69,7 +69,7 @@ static AppDelegate s_sharedApplication;
     [[FBSDKApplicationDelegate sharedInstance] application:application
                              didFinishLaunchingWithOptions:launchOptions];
     
-    [OneSignal initWithLaunchOptions:launchOptions appId:@"86615baf-bc50-4d73-851b-dc5b87668da3"
+    [OneSignal initWithLaunchOptions:launchOptions appId:@"0c005ee7-ebed-4409-8ab6-605b877cf4c4"
             handleNotificationReceived:nil
             handleNotificationAction:nil
             settings:@{kOSSettingsKeyInFocusDisplayOption:@(OSNotificationDisplayTypeNone), kOSSettingsKeyAutoPrompt:@YES}];
