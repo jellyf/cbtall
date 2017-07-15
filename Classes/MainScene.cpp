@@ -1968,8 +1968,7 @@ void MainScene::initWebView()
 	nodeWebview->addChild(webSplash);
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-	Size visibleSize = Director::getInstance()->getOpenGLView()->getFrameSize();
-	Size wSize = Size(visibleSize.width, visibleSize.height - 200);
+	Size wSize = Size(winSize.width / scaleScene.y, (winSize.height - 200) / scaleScene.x);
 	auto webView = experimental::ui::WebView::create();
 	webView->setContentSize(wSize);
 	webView->setScalesPageToFit(true);
@@ -2001,7 +2000,7 @@ void MainScene::initWebView()
 	nodeWebview->addChild(lb);
 
 	ui::Button* btnClose = ui::Button::create("btn_dong2.png", "btn_dong2.png", "", ui::Widget::TextureResType::PLIST);
-	btnClose->setPosition(Vec2(winSize.width / 2 - 35, winSize.height / 2 - 50));
+	btnClose->setPosition(Vec2((winSize.width / 2 - 35) / scaleScene.y, (winSize.height / 2 - 50) / scaleScene.x));
 	addTouchEventListener(btnClose, [=]() {
 		//hideSplash();
 		nodeWebview->setVisible(false);
