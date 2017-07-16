@@ -1572,11 +1572,11 @@ void MainScene::initPopupCharge()
         string strCost = Utils::getSingleton().formatMoneyWithComma(products[i].Price) + strCurrency;
         string strId = products[i].Id;
         
-        ui::Button* btn = ui::Button::create("box_shop.png", "", "", ui::Widget::TextureResType::PLIST);
+        ui::Button* btn = ui::Button::create("box7.png", "", "", ui::Widget::TextureResType::PLIST);
         btn->setPosition(Vec2(130 + i * 260, storeSize.height/2));
         btn->setContentSize(Size(200, 180));
         btn->setScale9Enabled(true);
-        btn->setBright(false);
+        //btn->setBright(false);
         btn->setTag(i);
         addTouchEventListener(btn, [=]() {
             showWaiting(300);
