@@ -1741,7 +1741,7 @@ void BaseScene::initPopupHistory()
 
 	ui::Scale9Sprite* bgScroll = ui::Scale9Sprite::createWithSpriteFrameName("box6.png");
 	bgScroll->setContentSize(size);
-	bgScroll->setPosition(0, -45);
+	bgScroll->setPosition(0, ispmE ? -45 : -25);
 	popupHistory->addChild(bgScroll);
 
 	ui::ScrollView* scroll = ui::ScrollView::create();
@@ -1764,6 +1764,7 @@ void BaseScene::initPopupHistory()
 		btn->setContentSize(btnSize);
 		btn->setPosition(Vec2(x, y));
 		btn->setScale9Enabled(true);
+		btn->setVisible(ispmE);
 		btn->setTag(10 + i);
 		addTouchEventListener(btn, [=]() {
 			if (popupHistory->getTag() == i) return;
@@ -1857,7 +1858,7 @@ void BaseScene::initPopupHistory()
 	});
 	nodeDetail->addChild(btnCloseDetail);
 
-	addBtnChoosePage(0, -222, popupHistory, [=](int page) {
+	addBtnChoosePage(0, ispmE ? -222 : -202, popupHistory, [=](int page) {
 		int type = popupHistory->getTag();
 		SFSRequest::getSingleton().RequestPlayHistory(type, page - 1);
 		//onPlayLogDataResponse(vector<PlayLogData>());
@@ -2003,11 +2004,10 @@ void BaseScene::initPopupIAP()
 		string strCost = Utils::getSingleton().formatMoneyWithComma(products[i].Price) + strCurrency;
 		string strId = products[i].Id;
 
-		ui::Button* btn = ui::Button::create("box_shop.png", "", "", ui::Widget::TextureResType::PLIST);
+		ui::Button* btn = ui::Button::create("box7.png", "", "", ui::Widget::TextureResType::PLIST);
 		btn->setPosition(Vec2(130 + i * 260, storeSize.height / 2));
 		btn->setContentSize(Size(200, 180));
 		btn->setScale9Enabled(true);
-		btn->setBright(false);
 		btn->setTag(i);
 		addTouchEventListener(btn, [=]() {
 			showWaiting(300);
