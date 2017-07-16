@@ -220,6 +220,7 @@ void MainScene::onInit()
 	ui::Button* btnLoiDai = ui::Button::create("dtd.png", "dtd.png", "", ui::Widget::TextureResType::PLIST);
 	btnLoiDai->setPosition(vecPos[11]);
 	btnLoiDai->setScale(1.2f);
+	btnLoiDai->setVisible(pmE);
 	addTouchEventListener(btnLoiDai, [=]() {
 		showPopupNotice(Utils::getSingleton().getStringForKey("feature_coming_soon"));
 		/*if (isWaiting) return;
