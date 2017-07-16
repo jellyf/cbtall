@@ -1247,8 +1247,9 @@ void MainScene::initPopupCharge()
 			cbs[1]->setSelected(true);
 		}
 		isChargeQuan = cbs[0]->isSelected();
-		updateChargeRateCard(cbs[0]->isSelected());
-		updateSmsInfo(cbs[0]->isSelected());
+		updateChargeRateCard(isChargeQuan);
+		updateSmsInfo(isChargeQuan);
+		updateStoreInfo(isChargeQuan);
 	});
 	cbs[1]->addEventListener([=](Ref* ref, ui::CheckBox::EventType type) {
 		if (type == ui::CheckBox::EventType::SELECTED) {
@@ -1257,8 +1258,9 @@ void MainScene::initPopupCharge()
 			cbs[0]->setSelected(true);
 		}
 		isChargeQuan = cbs[0]->isSelected();
-		updateChargeRateCard(cbs[0]->isSelected());
-		updateSmsInfo(cbs[0]->isSelected());
+		updateChargeRateCard(isChargeQuan);
+		updateSmsInfo(isChargeQuan);
+		updateStoreInfo(isChargeQuan);
 	});
 	lbs[0]->setString(Utils::getSingleton().getStringForKey("quan"));
 	lbs[1]->setString(Utils::getSingleton().getStringForKey("xu"));
@@ -1590,6 +1592,7 @@ void MainScene::initPopupCharge()
         btn->addChild(sp);
         
         Sprite* spCoin = Sprite::createWithSpriteFrameName(pmE ? "icon_gold.png" : "icon_silver.png");
+		spCoin->setName("iconmoney");
         spCoin->setScale(.55f);
         btn->addChild(spCoin);
         
@@ -2240,6 +2243,17 @@ void MainScene::updateSmsInfo(bool isQuan)
 		lbMoney->setColor(isQuan ? Color3B::YELLOW : Color3B(0, 255, 255));
 		lbContent->setString(smsStr);
 		lbTarget->setString(smstg);
+	}
+}
+
+void MainScene::updateStoreInfo(bool isQuan)
+{
+	if (popupCharge == NULL) return;
+	Node* nodeStore = popupCharge->getChildByName("nodestore");
+	Node* scrollStore = nodeStore->getChildByName("scrollstore");
+	for (Node* btn : scrollStore->getChildren()) {
+		Sprite* sp = (Sprite*)btn->getChildByName("iconmoney");
+		sp->initWithSpriteFrameName(isQuan ? "icon_gold.png" : "icon_silver.png");
 	}
 }
 

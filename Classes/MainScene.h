@@ -50,6 +50,7 @@ private:
 	void checkProviderToChargeSms();
 	void updateChargeRateCard(bool isQuan);
 	void updateSmsInfo(bool isQuan);
+	void updateStoreInfo(bool isQuan);
 	void onChooseProviderCard(std::string provider);
 	void onChooseProviderSms(std::string provider);
 
