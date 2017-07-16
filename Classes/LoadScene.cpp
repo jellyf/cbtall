@@ -123,10 +123,9 @@ void LoadScene::initActionQueue()
 		});
 	});
 	addToActionQueue([=]() {
-		SFSRequest::getSingleton().RequestHttpGet("http://ip171.api1chan.info/configcv.txt", constant::TAG_HTTP_GAME_CONFIG);
+		//SFSRequest::getSingleton().RequestHttpGet("http://ip171.api1chan.info/configcv.txt", constant::TAG_HTTP_GAME_CONFIG);
+		SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configcv.txt", constant::TAG_HTTP_GAME_CONFIG);
 		//SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
-		//SFSRequest::getSingleton().RequestHttpGet("http://115.84.179.242/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
-		//SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", constant::TAG_HTTP_GAME_CONFIG);
 	});
 	addToActionQueue([=]() {
 #if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
