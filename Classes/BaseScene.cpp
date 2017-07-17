@@ -638,14 +638,10 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 	lbAppellation->enableOutline(aplData.ColorOutline, 1);
 	//lbBigWin->setString(Utils::getSingleton().formatMoneyWithComma(data.BigWin));
 	//lbBigCrest->setString(data.BigCrest);
-	nodeInfo->setPosition(isMe ? lbName->getPosition() - Vec2(0, 45) : lbName->getPosition() + Vec2(0, 20));
-
-	lbName->setString(data.DisplayName);
-	cropLabel(lbName, 450);
-	
-	iconGold->setPosition(lbQuan->getPosition() + Vec2(lbQuan->getContentSize().width + 20, 5));
-	iconSilver->setPosition(lbXu->getPosition() + Vec2(lbXu->getContentSize().width + 20, 5));
 	nodeInfo->setPosition(isMe ? lbDName->getPosition() - Vec2(0, 45) : lbDName->getPosition() + Vec2(0, 20));
+
+	lbDName->setString(data.DisplayName);
+	cropLabel(lbDName, 450);
 
 	if (data.AvatarUrl.length() > 0) {
 		Utils::getSingleton().LoadTextureFromURL(data.AvatarUrl, [=](Texture2D* texture) {
@@ -655,7 +651,7 @@ void BaseScene::showPopupUserInfo(UserData data, bool showHistoryIfIsMe)
 			Size spsize = spOlAvar->getContentSize();
 			float scaleX = fsize.width / spsize.width;
 			float scaleY = fsize.height / spsize.height;
-			spOlAvar->setScale(originScale * (scaleX < scaleY ? scaleY : scaleX) + .05f);
+			spOlAvar->setScale(originScale * (scaleX < scaleY ? scaleY : scaleX));
 		});
 	}
 }
@@ -1566,11 +1562,6 @@ void BaseScene::initPopupUserInfo()
 	spOlAvar->setPosition(avatar->getPosition());
 	spOlAvar->setName("olavar");
 	popupUserInfo->addChild(spOlAvar);
-
-	Sprite* bgAvar = Sprite::createWithSpriteFrameName("bg_user_avatar.png");
-	bgAvar->setPosition(avatar->getPositionX(), avatar->getPositionY() - 18);
-	bgAvar->setScale(avatar->getScale());
-	popupUserInfo->addChild(bgAvar);
 
 	Label* lbAppellation = Label::createWithTTF("Huong Truong", "fonts/azuki.ttf", 35);
 	lbAppellation->setColor(Color3B::WHITE);

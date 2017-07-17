@@ -1928,6 +1928,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 				vecUsers[index]->setPlayerMoney(player.PMoney);
 				vecUsers[index]->setName(player.Info.Name);
 				vecUsers[index]->setSfsId(player.Info.SfsUserId);
+				vecUsers[index]->setAvatarUrl(player.Info.AvatarUrl);
 				spSanSangs[index]->setVisible(player.Ready);
 				if (player.Index == 0) {
 					spChuPhong->setVisible(true);
@@ -3159,6 +3160,7 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 				vecUsers[index]->setPlayerName(player.Info.DisplayName);
 				vecUsers[index]->setPlayerMoney(player.PMoney);
 				vecUsers[index]->setName(player.Info.Name);
+				vecUsers[index]->setAvatarUrl(player.Info.AvatarUrl);
 				if (player.Index == 0) {
 					spChuPhong->setVisible(true);
 					spChuPhong->setPosition(vecUserPos[index] + Vec2(50 * scaleScene.y, 0));
@@ -3281,6 +3283,7 @@ void GameScene::onGameSpectatorDataResponse(std::vector<PlayerData> spectators)
 			vecUsers[index]->setPlayerName(player.Info.DisplayName);
 			vecUsers[index]->setPlayerMoney(player.PMoney);
 			vecUsers[index]->setName(player.Info.Name);
+			vecUsers[index]->setAvatarUrl(player.Info.AvatarUrl);
 		}
 	}
 }

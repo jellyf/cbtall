@@ -15,10 +15,11 @@ bool UserNode::init()
 	addChild(spAvatar);
 
 	spOnlineAvatar = Sprite::create();
+	spOnlineAvatar->setPositionY(-3);
 	addChild(spOnlineAvatar);
 
 	Sprite* mask = Sprite::createWithSpriteFrameName("mask_avar.png");
-	mask->setPositionY(-3);
+	mask->setPosition(1, -3);
 	addChild(mask);
 
 	lbName = Label::createWithTTF("Stormus", "fonts/arial.ttf", 20);
@@ -81,7 +82,7 @@ void UserNode::setAvatarUrl(std::string avarUrl)
 			Size spsize = spOnlineAvatar->getContentSize();
 			float scaleX = fsize.width / spsize.width;
 			float scaleY = fsize.height / spsize.height;
-			spOnlineAvatar->setScale((scaleX < scaleY ? scaleY : scaleX) + .05f);
+			spOnlineAvatar->setScale((scaleX < scaleY ? scaleY : scaleX));
 		});
 	}
 }

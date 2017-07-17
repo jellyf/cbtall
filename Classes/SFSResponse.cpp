@@ -181,6 +181,8 @@ void SFSResponse::onUserDataResponse(boost::shared_ptr<ISFSObject> isfsObject)
 	UserData data;
 	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
 	getUserDataFromSFSObject(byteArray, data);
+	byteArray->ReadByte(data.Device);
+	byteArray->ReadUTF(data.AvatarUrl);
 
 	if (EventHandler::getSingleton().onUserDataSFSResponse != NULL) {
 		EventHandler::getSingleton().onUserDataSFSResponse(data);
@@ -189,10 +191,13 @@ void SFSResponse::onUserDataResponse(boost::shared_ptr<ISFSObject> isfsObject)
 
 void SFSResponse::onUserDataMeResponse(boost::shared_ptr<ISFSObject> isfsObject)
 {
+	short numb;
 	UserData newData;
 	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
 	getUserDataFromSFSObject(byteArray, newData);
 	byteArray->ReadByte(newData.MoneyType);
+	byteArray->ReadShort(numb);
+	byteArray->ReadShort(numb);
 	byteArray->ReadByte(newData.IsActived);
 	byteArray->ReadUTF(newData.AvatarUrl);
 	byteArray->ReadUTF(newData.Email);
@@ -252,7 +257,11 @@ void SFSResponse::onRoomDataResponse(boost::shared_ptr<ISFSObject> isfsObject)
 		byteArray->ReadDouble(player.PMoney);
 		byteArray->ReadShort(player.UType);
 		byteArray->ReadUTF(player.Ip);
+		byteArray->ReadShort(player.Info.Level);
 		byteArray->ReadDouble(player.TMoney);
+		byteArray->ReadUTF(player.Info.GroupAvatar);
+		byteArray->ReadByte(player.Info.Device);
+		byteArray->ReadUTF(player.Info.AvatarUrl);
 		roomData.Players.push_back(player);
 		//CCLOG("%s %s %d %d %d %f %f %d %s %f", player.Ready ? "true" : "false", player.Info.Name.c_str(), player.Index, player.Info.SfsUserId, player.Info.UserID,
 		//	player.Info.MoneyFree, player.Info.MoneyReal, player.UType, player.Ip.c_str(), player.TMoney);
@@ -773,6 +782,7 @@ void SFSResponse::onGamePlayingTableResponse(boost::shared_ptr<ISFSObject> isfsO
 		byteArray->ReadDouble(player.PMoney);
 		byteArray->ReadShort(player.UType);
 		byteArray->ReadUTF(player.Ip);
+		//byteArray->ReadShort(player.Info.Level);
 		byteArray->ReadDouble(player.TMoney);
 		byteArray->ReadUTF(player.Info.GroupAvatar);
 		byteArray->ReadByte(player.Info.Device);
@@ -789,6 +799,7 @@ void SFSResponse::onGamePlayingTableResponse(boost::shared_ptr<ISFSObject> isfsO
 			player.SingleCards = vnumb[0];
 		}
 
+		byteArray->ReadUTF(player.Info.AvatarUrl);
 		data.Players.push_back(player);
 		//CCLOG("%s %d %d %d %d %s %.0f %s %d ___ %s ___ %s", player.Info.Name.c_str(), player.Index, player.Info.SfsUserId, player.Info.UserID,
 		//	player.UType, player.Ip.c_str(), player.PMoney, player.Info.GroupAvatar.c_str(), player.Info.Device, str1.c_str(), str2.c_str());
@@ -854,6 +865,7 @@ void SFSResponse::onGameSpectatorResponse(boost::shared_ptr<ISFSObject> isfsObje
 		byteArray->ReadDouble(player.TMoney);
 		byteArray->ReadUTF(player.Info.GroupAvatar);
 		byteArray->ReadByte(player.Info.Device);
+		byteArray->ReadUTF(player.Info.AvatarUrl);
 
 		list.push_back(player);
 		//CCLOG("%s %d %d %d %.0f %d %s %s %d", player.Info.Name.c_str(), player.Index, player.Info.SfsUserId, player.Info.UserID,
