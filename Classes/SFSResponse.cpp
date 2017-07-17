@@ -194,6 +194,8 @@ void SFSResponse::onUserDataMeResponse(boost::shared_ptr<ISFSObject> isfsObject)
 	getUserDataFromSFSObject(byteArray, newData);
 	byteArray->ReadByte(newData.MoneyType);
 	byteArray->ReadByte(newData.IsActived);
+	byteArray->ReadUTF(newData.AvatarUrl);
+	byteArray->ReadUTF(newData.Email);
 
 	Utils::getSingleton().setUserDataMe(newData);
 	if (Utils::getSingleton().moneyType == -1) {
@@ -214,6 +216,9 @@ void SFSResponse::onUpdateUserDataMeResponse(boost::shared_ptr<ISFSObject> isfsO
 	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
 	getUserDataFromSFSObject(byteArray, newData);
 	byteArray->ReadByte(newData.IsActived);
+	byteArray->ReadUTF(newData.AvatarUrl);
+	byteArray->ReadUTF(newData.Email);
+
 	Utils::getSingleton().setUserDataMe(newData);
 	if (EventHandler::getSingleton().onUserDataMeSFSResponse != NULL) {
 		EventHandler::getSingleton().onUserDataMeSFSResponse();

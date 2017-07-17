@@ -10,9 +10,12 @@ bool UserNode::init()
 	Sprite* bg = Sprite::createWithSpriteFrameName("bg_avatar.png");
 	addChild(bg);
 
-	Sprite* avatar = Sprite::createWithSpriteFrameName("avatar_default.png");
-	avatar->setPositionY(-3);
-	addChild(avatar);
+	spAvatar = Sprite::createWithSpriteFrameName("avatar_default.png");
+	spAvatar->setPositionY(-3);
+	addChild(spAvatar);
+
+	spOnlineAvatar = Sprite::create();
+	addChild(spOnlineAvatar);
 
 	Sprite* mask = Sprite::createWithSpriteFrameName("mask_avar.png");
 	mask->setPositionY(-3);
@@ -67,6 +70,20 @@ void UserNode::setPlayerMoney(double money)
 void UserNode::setSfsId(long id)
 {
 	sfsId = id;
+}
+
+void UserNode::setAvatarUrl(std::string avarUrl)
+{
+	if (avarUrl.length() > 0) {
+		Utils::getSingleton().LoadTextureFromURL(avarUrl, [=](Texture2D* texture) {
+			spOnlineAvatar->initWithTexture(texture);
+			Size fsize = spAvatar->getContentSize();
+			Size spsize = spOnlineAvatar->getContentSize();
+			float scaleX = fsize.width / spsize.width;
+			float scaleY = fsize.height / spsize.height;
+			spOnlineAvatar->setScale((scaleX < scaleY ? scaleY : scaleX) + .05f);
+		});
+	}
 }
 
 std::string UserNode::getPlayerName()

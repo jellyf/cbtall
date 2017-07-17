@@ -497,7 +497,7 @@ void SFSRequest::LoadImageFromURL(std::string url, int tag)
 {
 	cocos2d::network::HttpRequest* request = new (std::nothrow) cocos2d::network::HttpRequest();
 	request->setUrl(url);
-	request->setRequestType(cocos2d::network::HttpRequest::Type::POST);
+	request->setRequestType(cocos2d::network::HttpRequest::Type::GET);
 	request->setResponseCallback(this, httpresponse_selector(SFSRequest::onRequestImgCompleted));
 	request->setTag(to_string(tag));
 	cocos2d::network::HttpClient::getInstance()->send(request);
@@ -509,7 +509,7 @@ void SFSRequest::LoadTextureFromURL(std::string url, std::string tag)
 	cocos2d::network::HttpRequest* request = new (std::nothrow) cocos2d::network::HttpRequest();
 	request->setUrl(url);
 	request->setTag(tag);
-	request->setRequestType(cocos2d::network::HttpRequest::Type::POST);
+	request->setRequestType(cocos2d::network::HttpRequest::Type::GET);
 	request->setResponseCallback(this, httpresponse_selector(SFSRequest::onRequestTextureCompleted));
 	cocos2d::network::HttpClient::getInstance()->send(request);
 	request->release();
@@ -613,7 +613,7 @@ void SFSRequest::onRequestTextureCompleted(cocos2d::network::HttpClient * client
 	{
 		//CCLOG("onHttpRequestCompleted - Response failed");
 		//CCLOG("onHttpRequestCompleted - Error buffer: %s", response->getErrorBuffer());
-		SFSRequest::getSingleton().LoadTextureFromURL(url, tag);
+		//SFSRequest::getSingleton().LoadTextureFromURL(url, tag);
 		return;
 	}
 	//CCLOG("onHttpRequestCompleted - Response data: %s", response->getResponseDataString());

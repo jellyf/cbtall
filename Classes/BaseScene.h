@@ -103,9 +103,11 @@ protected:
 	cocos2d::ui::Scale9Sprite* splash;
 	cocos2d::ui::Button* moneyBg0;
 	cocos2d::ui::Button* moneyBg1;
+	cocos2d::ui::Button* btnAvar;
 	cocos2d::Sprite* chosenBg;
 	cocos2d::Sprite* spWaiting;
 	cocos2d::Sprite* spNetwork;
+	cocos2d::Sprite* spOnlineAvatar;
 	cocos2d::Layer* mLayer;
 	cocos2d::Label* lbGold;
 	cocos2d::Label* lbSilver;
