@@ -37,11 +37,11 @@ JNIEXPORT jstring JNICALL Java_org_cocos2dx_cpp_AppActivity_callbackQueryIAPProd
 		ProductData data;
 		data.Price = d["price_amount_micros"].GetDouble() / 1000000;
 		data.Id = d["productId"].GetString();
-		//data.Description = d["description"].GetString();
+		data.Description = d["description"].GetString();
 		data.CurrencySymbol = d["price_currency_code"].GetString();
 
-		int index = data.Id.find_last_of('.');
-		data.Description = data.Id.substr(index + 1, data.Id.length() - index - 1) + ".000 Quan";
+		//int index = data.Id.find_last_of('.');
+		//data.Description = data.Id.substr(index + 1, data.Id.length() - index - 1) + ".000 Quan";
 
 		products.push_back(data);
 

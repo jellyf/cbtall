@@ -30,7 +30,7 @@
 	<key>chon_the_nap</key><string>Chọn thẻ nạp</string>
 	<key>chon_mang_sms</key><string>Chọn mạng SMS</string>
 	<key>khong_du_tien_doi_thuong</key><string>Bạn không đủ tiền để đổi vật phẩm này</string>
-	<key>xac_nhan_mua_vat_pham</key><string>Bạn có chắc chắn muốn đổi vật phẩm %s giá %s Quan</string>
+	<key>xac_nhan_mua_vat_pham</key><string>Bạn muốn đổi %s giá %s Quan?</string>
 	<key>nhap_giftcode</key><string>Nhập Giftcode tại đây</string>
 	<key>open_sms_retake_password</key><string>Vui lòng soạn tin [sms] để lấy lại mật khẩu, trong đó [uid] là số ID tài khoản của bạn</string>
 	<key>ban_muon_huy_don_hang_nay</key><string>Bạn muốn hủy đơn hàng này?</string>
