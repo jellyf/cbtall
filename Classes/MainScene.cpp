@@ -51,10 +51,9 @@ void MainScene::onInit()
 	int mdx = winSize.width / 8;
 	int mPosY = 20;
 	int mPosX = -mdx / 2;
-	bool canInvite = Utils::getSingleton().gameConfig.invite;
     ui::Button* btnFBFriends = ui::Button::create(pmE ? "fb_friends.png" : "empty.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnFBFriends->setPosition(Vec2(mPosX += mdx, mPosY));
-	btnFBFriends->setVisible(pmE && canInvite);
+	btnFBFriends->setVisible(pmE);
 	btnFBFriends->setAnchorPoint(Vec2(.5f, 0));
 	addTouchEventListener(btnFBFriends, [=]() {
 		Utils::getSingleton().inviteFacebookFriends();

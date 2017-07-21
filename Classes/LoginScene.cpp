@@ -146,8 +146,7 @@ void LoginScene::onInit()
 
 	initRegisterNode();
 
-	bool isImgReady = Utils::getSingleton().downloadedPlistTexture;
-	btnPhone = ui::Button::create(isImgReady ? "btn_phone.png" : "empty.png", isImgReady ? "btn_phone_clicked.png" : "empty.png", "", ui::Widget::TextureResType::PLIST);
+	btnPhone = ui::Button::create(ispmE ? "btn_phone.png" : "", ispmE ? "btn_phone_clicked.png" : "", "", ui::Widget::TextureResType::PLIST);
 	btnPhone->setPosition(Vec2(winSize.width - 60 * scaleScene.y, 55 * scaleScene.x));
 	btnPhone->setVisible(ispmE);
 	addTouchEventListener(btnPhone, [=]() {
