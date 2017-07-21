@@ -123,25 +123,19 @@ void LoadScene::initActionQueue()
 		});
 	});
 	addToActionQueue([=]() {
-		//SFSRequest::getSingleton().RequestHttpGet("http://ip171.api1chan.info/configcv.txt", constant::TAG_HTTP_GAME_CONFIG);
-		SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configcv.txt", constant::TAG_HTTP_GAME_CONFIG);
-		//SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
+		SFSRequest::getSingleton().RequestHttpGet("http://ip171.api1chan.info/configcv.txt", constant::TAG_HTTP_GAME_CONFIG);
 	});
 	addToActionQueue([=]() {
 #if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
 		SFSRequest::getSingleton().RequestHttpGet(textureHost + "vi2.xml", constant::TAG_HTTP_VILANG);
 #else
-		string content = FileUtils::getInstance()->getStringFromFile("lang/vi2.xml");
+		string content = FileUtils::getInstance()->getStringFromFile("vi2.xml");
 		onHttpResponse(constant::TAG_HTTP_VILANG, content);
 #endif
 	});
 	addToActionQueue([=]() {
 #if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
-		string str1 = FileUtils::getInstance()->getStringFromFile("menu1.plist");
-		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu1.png", [=](Texture2D* texture1) {
-			SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str1, texture1);
-			completeCurrentAction();
-		});
+		SFSRequest::getSingleton().RequestHttpGet(textureHost + "menu1.plist", constant::TAG_HTTP_MENU1);
 #else
 		Director::getInstance()->getTextureCache()->addImageAsync("menu1.png", [=](Texture2D* texture) {
 			SpriteFrameCache::getInstance()->addSpriteFramesWithFile("menu1.plist");
@@ -151,11 +145,7 @@ void LoadScene::initActionQueue()
 	});
 	addToActionQueue([=]() {
 #if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
-		string str2 = FileUtils::getInstance()->getStringFromFile("menu2.plist");
-		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu2.png", [=](Texture2D* texture2) {
-			SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str2, texture2);
-			completeCurrentAction();
-		});
+		SFSRequest::getSingleton().RequestHttpGet(textureHost + "menu2.plist", constant::TAG_HTTP_MENU2);
 #else
 		Director::getInstance()->getTextureCache()->addImageAsync("menu2.png", [=](Texture2D* texture) {
 			SpriteFrameCache::getInstance()->addSpriteFramesWithFile("menu2.plist");
@@ -242,6 +232,20 @@ void LoadScene::onHttpResponseFailed()
 
 void LoadScene::onHttpResponse(int tag, std::string content)
 {
+	if (tag == constant::TAG_HTTP_MENU1) {
+		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu1.png", [=](Texture2D* texture1) {
+			SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(content, texture1);
+			completeCurrentAction();
+		});
+		return;
+	}
+	if (tag == constant::TAG_HTTP_MENU2) {
+		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu2.png", [=](Texture2D* texture1) {
+			SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(content, texture1);
+			completeCurrentAction();
+		});
+		return;
+	}
 	if (tag == constant::TAG_HTTP_VILANG) {
 		Utils::getSingleton().addViLangFromData(content);
 		completeCurrentAction();
@@ -268,15 +272,10 @@ void LoadScene::onHttpResponse(int tag, std::string content)
 	config.zone = d["name"].GetString();
 	config.host = d["host"].GetString();
 	config.port = d["port"].GetInt();
-	config.websocket = d["websocket"].GetInt();
 	config.version = d["version"].GetInt();
 	config.versionIOS = d["versionIOS"].GetInt();
 	config.ip_rs = d["ip_rs"].GetString();
-	config.phone = d["phone"].GetString();
-	config.smsKHVT = d["SMSKHVTT"].GetString();
-	config.smsKHVMS = d["SMSKHMOBI"].GetString();
-	config.smsKHVNP = d["SMSKHVINA"].GetString();
-
+	
 	if (d.FindMember("payment") != d.MemberEnd()) {
 		config.pmE = d["payment"].GetBool();
 	} else config.pmE = false;
@@ -301,6 +300,18 @@ void LoadScene::onHttpResponse(int tag, std::string content)
 	if (d.FindMember("inapp") != d.MemberEnd()) {
 		config.inapp = d["inapp"].GetString();
 	} else config.inapp = "";
+	if (d.FindMember("phone") != d.MemberEnd()) {
+		config.phone = d["phone"].GetString();
+	} else config.phone = "";
+	if (d.FindMember("SMSKHVTT") != d.MemberEnd()) {
+		config.smsKHVT = d["SMSKHVTT"].GetString();
+	} else config.smsKHVT = "";
+	if (d.FindMember("SMSKHVINA") != d.MemberEnd()) {
+		config.smsKHVNP = d["SMSKHVINA"].GetString();
+	} else config.smsKHVNP = "";
+	if (d.FindMember("SMSKHMOBI") != d.MemberEnd()) {
+		config.smsKHVMS = d["SMSKHMOBI"].GetString();
+	} else config.smsKHVMS = "";
 
 	config.linkAndroid = "https://play.google.com/store/apps/details?id=" + config.linkAndroid;
 	config.smsMKVT = Utils::getSingleton().replaceString(config.smsKHVT, "KHuid", "MKuid");

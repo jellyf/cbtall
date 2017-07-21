@@ -7,7 +7,7 @@
 			<key>btn_phone.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{116,439},{63,63}}</string>
+				<string>{{227,141},{63,63}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -21,7 +21,7 @@
 			<key>btn_phone_clicked.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{121,228},{63,63}}</string>
+				<string>{{336,0},{63,63}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -35,7 +35,7 @@
 			<key>coffer.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{0,228},{120,110}}</string>
+				<string>{{0,358},{120,110}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -44,6 +44,20 @@
 				<string>{{0,0},{120,110}}</string>
 				<key>sourceSize</key>
 				<string>{120,110}</string>
+			</dict>
+
+			<key>dtd.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,228},{182,129}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false/>
+				<key>sourceColorRect</key>
+				<string>{{0,0},{182,129}}</string>
+				<key>sourceSize</key>
+				<string>{182,129}</string>
 			</dict>
 
 			<key>facebook.png</key>
@@ -63,7 +77,7 @@
 			<key>fb_friends.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{227,141},{108,140}}</string>
+				<string>{{237,328},{108,140}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -77,7 +91,7 @@
 			<key>icon_event.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{116,339},{113,99}}</string>
+				<string>{{183,228},{113,99}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -91,7 +105,7 @@
 			<key>icon_giftcode.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{230,282},{108,140}}</string>
+				<string>{{297,141},{108,140}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -105,7 +119,7 @@
 			<key>icon_gold.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{180,439},{48,47}}</string>
+				<string>{{336,64},{48,47}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
@@ -119,7 +133,7 @@
 			<key>icon_shop.png</key>
 			<dict>
 				<key>frame</key>
-				<string>{{0,339},{115,140}}</string>
+				<string>{{121,358},{115,140}}</string>
 				<key>offset</key>
 				<string>{0,0}</string>
 				<key>rotated</key>
