@@ -331,7 +331,6 @@ void LoadScene::onHttpResponse(int tag, std::string content)
 #endif
 
 	Utils::getSingleton().gameConfig = config;
-	Utils::getSingleton().queryIAPProduct();
 
 	if (Utils::getSingleton().ispmE()) {
 		completeCurrentAction();

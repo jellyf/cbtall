@@ -859,7 +859,7 @@ void BaseScene::initHeaderWithInfos()
 		}
 	});
 
-	Sprite* iconGold = Sprite::createWithSpriteFrameName("icon_gold.png");
+    Sprite* iconGold = Sprite::createWithSpriteFrameName(ispmE ? "icon_gold.png" : "icon_silver.png");
 	iconGold->setPosition(moneyBg1->getPositionX() - 80, 0);
 	moneyNode->addChild(iconGold, 2);
 
@@ -1411,7 +1411,7 @@ void BaseScene::initPopupRank()
 		btn->addChild(lb);
 
 		if (i < 2) {
-			Sprite* spMoney = Sprite::createWithSpriteFrameName(i == 0 ? "icon_gold.png" : "icon_silver.png");
+			Sprite* spMoney = Sprite::createWithSpriteFrameName(i == 0 ? (pmE ? "icon_gold.png" : "icon_silver.png") : "icon_silver.png");
 			spMoney->setScale(.6f);
 			btn->addChild(spMoney);
 
@@ -1827,7 +1827,7 @@ void BaseScene::initPopupHistory()
 		btn->addChild(lb);
 
 		if (i < 2) {
-			Sprite* spMoney = Sprite::createWithSpriteFrameName(i == 0 ? "icon_gold.png" : "icon_silver.png");
+			Sprite* spMoney = Sprite::createWithSpriteFrameName(i == 0 ? (ispmE ? "icon_gold.png" : "icon_silver.png") : "icon_silver.png");
 			spMoney->setScale(.6f);
 			btn->addChild(spMoney);
 
@@ -2078,7 +2078,7 @@ void BaseScene::initPopupIAP()
 void BaseScene::initCofferView(Vec2 pos, int zorder, float scale)
 {
 	bool ispmE = Utils::getSingleton().ispmE();
-	ui::Button* btnCoffer = ui::Button::create("coffer.png", "coffer.png", "", ui::Widget::TextureResType::PLIST);
+    ui::Button* btnCoffer = ui::Button::create(ispmE ? "coffer.png" : "empty.png", ispmE ? "coffer.png" : "empty.png", "", ui::Widget::TextureResType::PLIST);
 	btnCoffer->setPosition(pos);
 	btnCoffer->setScale(scale);
 	btnCoffer->setVisible(ispmE);
@@ -2093,7 +2093,7 @@ void BaseScene::initCofferView(Vec2 pos, int zorder, float scale)
 	lbCoffer->setColor(Color3B::YELLOW);
 	btnCoffer->addChild(lbCoffer);
 
-	Sprite* lightPoint = Sprite::createWithSpriteFrameName("light_point.png");
+    Sprite* lightPoint = Sprite::createWithSpriteFrameName(ispmE ? "light_point.png" : "empty.png");
 	lightPoint->setPosition(btnCoffer->getContentSize().width / 2, btnCoffer->getContentSize().height / 2);
 	btnCoffer->addChild(lightPoint, -1);
 

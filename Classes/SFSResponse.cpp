@@ -1257,6 +1257,10 @@ void SFSResponse::onPopupEventResponse(boost::shared_ptr<ISFSObject> isfsObject)
 			std::string str = d["CASH_VALUE"].GetString();
 			Utils::getSingleton().split(str, ',', config.CashValue);
 		}
+        if (d.FindMember("inapp") != d.MemberEnd()) {
+            std::string str = d["inapp"].GetString();
+            Utils::getSingleton().gameConfig.inapp = str;
+        }
 		if (d.FindMember("CLIENT_LOG") != d.MemberEnd()) {
 			std::string str = d["CLIENT_LOG"].GetString();
 			config.Log = str.compare("1") == 0;

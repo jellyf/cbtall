@@ -52,7 +52,7 @@ void MainScene::onInit()
 	int mPosY = 20;
 	int mPosX = -mdx / 2;
 	bool canInvite = Utils::getSingleton().gameConfig.invite;
-	ui::Button* btnFBFriends = ui::Button::create("fb_friends.png", "", "", ui::Widget::TextureResType::PLIST);
+    ui::Button* btnFBFriends = ui::Button::create(pmE ? "fb_friends.png" : "empty.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnFBFriends->setPosition(Vec2(mPosX += mdx, mPosY));
 	btnFBFriends->setVisible(pmE && canInvite);
 	btnFBFriends->setAnchorPoint(Vec2(.5f, 0));
@@ -103,7 +103,7 @@ void MainScene::onInit()
 	mLayer->addChild(btnCharge);
 	autoScaleNode(btnCharge);
 
-	ui::Button* btnShop = ui::Button::create("icon_shop.png", "", "", ui::Widget::TextureResType::PLIST);
+    ui::Button* btnShop = ui::Button::create(pmE ? "icon_shop.png" : "empty.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnShop->setPosition(Vec2(mPosX += mdx, mPosY));
 	btnShop->setAnchorPoint(Vec2(.5f, 0));
 	btnShop->setVisible(pmE);
@@ -138,7 +138,7 @@ void MainScene::onInit()
 	lbNewMail->setPosition(circleNewMail->getContentSize().width / 2 - 2, circleNewMail->getContentSize().height / 2);
 	circleNewMail->addChild(lbNewMail);
 
-	ui::Button* btnGiftcode = ui::Button::create("icon_giftcode.png", "", "", ui::Widget::TextureResType::PLIST);
+    ui::Button* btnGiftcode = ui::Button::create(pmE ? "icon_giftcode.png" : "empty.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnGiftcode->setPosition(Vec2(mPosX += mdx, mPosY));
 	btnGiftcode->setAnchorPoint(Vec2(.5f, 0));
 	btnGiftcode->setVisible(pmE);
@@ -152,7 +152,7 @@ void MainScene::onInit()
 	mLayer->addChild(btnGiftcode);
 	autoScaleNode(btnGiftcode);
 
-	ui::Button* btnFacebook = ui::Button::create("facebook.png", "", "", ui::Widget::TextureResType::PLIST);
+    ui::Button* btnFacebook = ui::Button::create(pmE ? "facebook.png" : "empty.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnFacebook->setPosition(Vec2(mPosX += mdx, mPosY));
 	btnFacebook->setAnchorPoint(Vec2(.5f, 0));
 	btnFacebook->setVisible(pmE);
@@ -162,7 +162,7 @@ void MainScene::onInit()
 	mLayer->addChild(btnFacebook);
 	autoScaleNode(btnFacebook);
 
-	btnEvent = ui::Button::create("icon_event.png", "", "", ui::Widget::TextureResType::PLIST);
+    btnEvent = ui::Button::create(pmE ? "icon_event.png" : "empty.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnEvent->setPosition(Vec2(445, 360));
 	btnEvent->setVisible(pmE);
 	addTouchEventListener(btnEvent, [=]() {
@@ -217,7 +217,7 @@ void MainScene::onInit()
 	mLayer->addChild(btnDinhLang);
 	autoScaleNode(btnDinhLang);
 
-	ui::Button* btnLoiDai = ui::Button::create("dtd.png", "dtd.png", "", ui::Widget::TextureResType::PLIST);
+    ui::Button* btnLoiDai = ui::Button::create(pmE ? "dtd.png": "", pmE ? "dtd.png" : "empty.png", "", ui::Widget::TextureResType::PLIST);
 	btnLoiDai->setPosition(vecPos[11]);
 	btnLoiDai->setScale(1.2f);
 	btnLoiDai->setVisible(pmE);
@@ -1024,6 +1024,9 @@ void MainScene::onDynamicConfigReceived()
 	GameLogger::getSingleton().setEnabled(Utils::getSingleton().dynamicConfig.Log);
 	GameLogger::getSingleton().setHost(Utils::getSingleton().dynamicConfig.LogHost);
 	GameLogger::getSingleton().setUser(Utils::getSingleton().userDataMe);
+    if(Utils::getSingleton().gameConfig.inapp.length() > 0){
+        Utils::getSingleton().queryIAPProduct();
+    }
 }
 
 void MainScene::onDownloadedPlistTexture(int numb)
