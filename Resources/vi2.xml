@@ -7,6 +7,13 @@
 	<key>nap_sms</key><string>Nạp SMS</string>
 	<key>the</key><string>Thẻ</string>
 	<key>quan</key><string>Quan</string>
+	<key>huy</key><string>Hủy</string>
+	<key>cua_hang</key><string>Cửa hàng</string>
+	<key>hoan_tra</key><string>Hoàn trả</string>
+	<key>xac_nhan</key><string>Xác nhận</string>
+	<key>hoan_tat</key><string>Hoàn tất</string>
+	<key>trang_thai</key><string>Trạng thái</string>
+	<key>thanh_cong</key><string>Thành công</string>
 	<key>kich_hoat</key><string>Kích hoạt</string>
 	<key>so_seri</key><string>Số Seri</string>
 	<key>nhap_so_seri</key><string>Nhập số Seri</string>
@@ -29,6 +36,9 @@
 	<key>lich_su_no</key><string>Lịch sử nổ</string>
 	<key>chon_the_nap</key><string>Chọn thẻ nạp</string>
 	<key>chon_mang_sms</key><string>Chọn mạng SMS</string>
+	<key>khong_hien_lai</key><string>Không hiển thị</string>
+	<key>feature_coming_soon</key><string>Tính năng đang được hoàn thiện và sẽ mở trong thời gian sắp tới</string>
+	<key>error_email_format</key><string>Email không đúng. Vui lòng nhập lại</string>
 	<key>khong_du_tien_doi_thuong</key><string>Bạn không đủ tiền để đổi vật phẩm này</string>
 	<key>xac_nhan_mua_vat_pham</key><string>Bạn muốn đổi %s giá %s Quan?</string>
 	<key>nhap_giftcode</key><string>Nhập Giftcode tại đây</string>
