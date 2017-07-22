@@ -197,7 +197,7 @@ void LoadScene::finishActionQueue()
 	completedActionNumb = actionQueue.size();
 	updateLoadingView();
 
-	DelayTime* delay = DelayTime::create(.3f);
+	DelayTime* delay = DelayTime::create(.22f);
 	CallFunc* func = CallFunc::create([=]() {
 		Utils::getSingleton().goToLoginScene();
 	});

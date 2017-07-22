@@ -935,6 +935,17 @@ void BaseScene::initHeaderWithInfos()
 	mLayer->addChild(clipper, constant::MAIN_ZORDER_HEADER);
 	autoScaleNode(clipper);
 
+	bgNoted = Sprite::createWithSpriteFrameName("circle_red.png");
+	bgNoted->setPosition(btnAvar->getPositionX() + 27, btnAvar->getPositionY() + 30);
+	bgNoted->setScale(.5);
+	mLayer->addChild(bgNoted, constant::MAIN_ZORDER_HEADER);
+	autoScaleNode(bgNoted);
+
+	Label* lbNoted = Label::createWithTTF("!", "fonts/arialbd.ttf", 35);
+	lbNoted->setColor(Color3B::WHITE);
+	lbNoted->setPosition(bgNoted->getContentSize().width / 2 - 2, bgNoted->getContentSize().height / 2);
+	bgNoted->addChild(lbNoted, 1);
+
 	lbName = Label::createWithTTF("Name", "fonts/arialbd.ttf", 23);
 	lbName->setAnchorPoint(Vec2(0, .5f));
 	lbName->setPosition(vecPos[10]);
@@ -1636,6 +1647,16 @@ void BaseScene::initPopupUserInfo()
     });
     popupUserInfo->addChild(btnLogoutFb);
 
+	Sprite* bgNoted = Sprite::createWithSpriteFrameName("circle_red.png");
+	bgNoted->setPosition(btnActive->getContentSize().width - 15, btnActive->getContentSize().height - 15);
+	bgNoted->setScale(.6);
+	btnActive->addChild(bgNoted);
+
+	Label* lbNoted = Label::createWithTTF("!", "fonts/arialbd.ttf", 35);
+	lbNoted->setColor(Color3B::WHITE);
+	lbNoted->setPosition(bgNoted->getContentSize().width / 2, bgNoted->getContentSize().height / 2);
+	bgNoted->addChild(lbNoted, 1);
+
 	int x = 45;
 	Label* lbDName = Label::createWithTTF("Stormus", "fonts/arialbd.ttf", 30);
 	lbDName->setAnchorPoint(Vec2(0, .5f));
@@ -2131,6 +2152,7 @@ void BaseScene::onUserDataMeResponse()
 	lbName->setString(strName);
 	cropLabel(lbName, 120);
 
+	bgNoted->setVisible(!dataMe.IsActived);
 	lbGold->setString(strGold);
 	lbSilver->setString(strSilver);
 	lbId->setString(strId);

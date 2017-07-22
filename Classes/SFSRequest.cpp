@@ -547,11 +547,10 @@ void SFSRequest::onHttpRequest(cocos2d::network::HttpClient * client, cocos2d::n
 	std::vector<char> * buffer = response->getResponseData();
 	char * concatenated = (char *)malloc(buffer->size() + 1);
 	std::string s2(buffer->begin(), buffer->end());
-	strcpy(concatenated, s2.c_str());
 
 	if (SFSRequest::getSingleton().onHttpResponse != NULL) {
 		int tag = atoi(response->getHttpRequest()->getTag());
-		SFSRequest::getSingleton().onHttpResponse(tag, concatenated);
+		SFSRequest::getSingleton().onHttpResponse(tag, s2);
 	}
 }
 

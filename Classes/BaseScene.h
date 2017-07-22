@@ -108,6 +108,7 @@ protected:
 	cocos2d::Sprite* spWaiting;
 	cocos2d::Sprite* spNetwork;
 	cocos2d::Sprite* spOnlineAvatar;
+	cocos2d::Sprite* bgNoted;
 	cocos2d::Layer* mLayer;
 	cocos2d::Label* lbGold;
 	cocos2d::Label* lbSilver;
