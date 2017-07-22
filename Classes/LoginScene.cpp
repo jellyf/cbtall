@@ -383,6 +383,14 @@ void LoginScene::onErrorResponse(unsigned char code, std::string msg)
 
 void LoginScene::onHttpResponse(int tag, std::string content)
 {
+	if (tag == constant::TAG_HTTP_MENU1) {
+		
+		return;
+	}
+	if (tag == constant::TAG_HTTP_VILANG) {
+		Utils::getSingleton().addViLangFromData(content);
+		return;
+	}
 	if (tag != constant::TAG_HTTP_GAME_CONFIG) return;
 	if (content.length() == 0) {
 		onHttpResponseFailed();
@@ -444,6 +452,12 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 		btnForgotPass->setVisible(true);
 		lbBtnForgotPass->setVisible(true);
 		Utils::getSingleton().downloadPlistTextures();
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+		SFSRequest::getSingleton().RequestHttpGet(Utils::getSingleton().textureHost + "vi2.xml", constant::TAG_HTTP_VILANG);
+#else
+		string strVi = FileUtils::getInstance()->getStringFromFile("vi2.xml");
+		onHttpResponse(constant::TAG_HTTP_VILANG, strVi);
+#endif
 	}
 	//string location = Utils::getSingleton().getUserCountry();
 	//Utils::getSingleton().gameConfig.pmE = config.pmE && location.compare("vn") == 0;

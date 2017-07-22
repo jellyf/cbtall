@@ -13,23 +13,35 @@
 	<key>ma_the</key><string>Mã thẻ</string>
 	<key>nhap_ma_the</key><string>Nhập mã thẻ</string>
 	<key>nap</key><string>Nạp</string>
+	<key>cua_hang</key><string>Cửa hàng</string>
+	<key>lich_su_no</key><string>Lịch sử nổ</string>
 	<key>the_cao</key><string>Thẻ cào</string>
 	<key>vat_pham</key><string>Vật phẩm</string>
+	<key>quay_lai</key><string>Quay lại</string>
 	<key>ma_dt</key><string>Mã ĐT</string>
-	<key>san_pham_doi</key><string>Sản phẩm</string>
-	<key>thoi_gian_doi</key><string>Thời gian mua</string>
+	<key>san_pham_doi</key><string>Sản phẩm đổi</string>
+	<key>thoi_gian_doi</key><string>Thời gian đổi</string>
 	<key>thoi_gian_nhan</key><string>Thời gian nhận</string>
+	<key>trang_thai</key><string>Trạng thái</string>
+	<key>thanh_cong</key><string>Thành công</string>
 	<key>dang_duyet</key><string>Đang duyệt</string>
 	<key>dat_hang</key><string>Đặt hàng</string>
+	<key>xac_nhan</key><string>Xác nhận</string>
+	<key>hoan_tat</key><string>Hoàn tất</string>
+	<key>huy</key><string>Hủy</string>
+	<key>hoan_tra</key><string>Hoàn trả</string>
 	<key>nap_quan</key><string>Nạp quan</string>
 	<key>top_quan</key><string>Top đại gia(Quan)</string>
 	<key>top_xu</key><string>Top đại gia(Xu)</string>
 	<key>lich_su_no</key><string>Lịch sử nổ</string>
+	<key>khong_hien_lai</key><string>Không hiển thị</string>
 	<key>khong_du_tien_doi_thuong</key><string>Bạn không đủ tiền để đổi vật phẩm này</string>
-	<key>xac_nhan_mua_vat_pham</key><string>Bạn có chắc chắn muốn đổi vật phẩm %s giá %s Quan</string>
+	<key>xac_nhan_mua_vat_pham</key><string>Bạn muốn đổi %s giá %s Quan</string>
 	<key>nhap_giftcode</key><string>Nhập Giftcode tại đây</string>
 	<key>open_sms_retake_password</key><string>Vui lòng soạn tin [sms] để lấy lại mật khẩu, trong đó [uid] là số ID tài khoản của bạn</string>
 	<key>ban_muon_huy_don_hang_nay</key><string>Bạn muốn hủy đơn hàng này?</string>
 	<key>hien_chua_co_su_kien</key><string>Hiện tại chưa có sự kiện nào</string>
+	<key>error_email_format</key><string>Email không đúng. Vui lòng nhập lại</string>
+	<key>feature_coming_soon</key><string>Tính năng đang được hoàn thiện và sẽ mở trong thời gian sắp tới</string>
 </dict>
 </plist>

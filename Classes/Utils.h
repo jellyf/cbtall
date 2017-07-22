@@ -67,6 +67,7 @@ public:
 	void setUserDataMe(UserData myData);
 	void inviteFacebookFriends();
 	void createAppellations();
+	void addViLangFromData(std::string data);
 public:
 	cocos2d::Scene* currentScene;
 	UserData userDataMe;
