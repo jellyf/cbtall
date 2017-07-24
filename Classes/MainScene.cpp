@@ -47,7 +47,7 @@ void MainScene::onInit()
 	addChild(bg);
 
 	bool canInvite = Utils::getSingleton().gameConfig.invite;
-	ui::Button* btnFBFriends = ui::Button::create("fb_friends.png", "", "", ui::Widget::TextureResType::PLIST);
+	ui::Button* btnFBFriends = ui::Button::create(pmE ? "fb_friends.png" : "empty.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnFBFriends->setPosition(vecPos[0]);
 	btnFBFriends->setVisible(pmE && canInvite);
 	addTouchEventListener(btnFBFriends, [=]() {
@@ -56,7 +56,7 @@ void MainScene::onInit()
 	mLayer->addChild(btnFBFriends);
 	autoScaleNode(btnFBFriends);
 
-	ui::Button* btnAgency = ui::Button::create("icon_agency.png", "", "", ui::Widget::TextureResType::PLIST);
+	ui::Button* btnAgency = ui::Button::create(pmE ? "icon_agency.png" : "empty.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnAgency->setPosition(vecPos[0]);
 	btnAgency->setVisible(pmE && !canInvite);
 	addTouchEventListener(btnAgency, [=]() {
@@ -100,7 +100,7 @@ void MainScene::onInit()
 		btnCharge->setVisible(CC_TARGET_PLATFORM == CC_PLATFORM_IOS);
     }*/
 
-	ui::Button* btnShop = ui::Button::create("icon_shop.png", "", "", ui::Widget::TextureResType::PLIST);
+	ui::Button* btnShop = ui::Button::create(pmE ? "icon_shop.png" : "empty.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnShop->setPosition(vecPos[3]);
 	btnShop->setVisible(pmE);
 	addTouchEventListener(btnShop, [=]() {
@@ -115,7 +115,7 @@ void MainScene::onInit()
 	mLayer->addChild(btnShop);
 	autoScaleNode(btnShop);
 
-	btnEvent = ui::Button::create("icon_event.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnEvent = ui::Button::create(pmE ? "icon_event.png" : "empty.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnEvent->setPosition(vecPos[3] + Vec2(110, 0));
 	btnEvent->setVisible(false);
 	addTouchEventListener(btnEvent, [=]() {
@@ -154,7 +154,7 @@ void MainScene::onInit()
 	lbNewMail->setPosition(circleNewMail->getContentSize().width / 2 - 4, circleNewMail->getContentSize().height / 2);
 	circleNewMail->addChild(lbNewMail);
 
-	ui::Button* btnGiftcode = ui::Button::create("icon_giftcode.png", "", "", ui::Widget::TextureResType::PLIST);
+	ui::Button* btnGiftcode = ui::Button::create(pmE ? "icon_giftcode.png" : "empty.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnGiftcode->setPosition(vecPos[6]);
 	btnGiftcode->setVisible(pmE);
 	addTouchEventListener(btnGiftcode, [=]() {
@@ -167,7 +167,7 @@ void MainScene::onInit()
 	mLayer->addChild(btnGiftcode);
 	autoScaleNode(btnGiftcode);
 
-	ui::Button* btnFacebook = ui::Button::create("facebook.png", "", "", ui::Widget::TextureResType::PLIST);
+	ui::Button* btnFacebook = ui::Button::create(pmE ? "facebook.png" : "empty.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnFacebook->setPosition(vecPos[7]);
 	btnFacebook->setVisible(pmE);
 	addTouchEventListener(btnFacebook, [=]() {

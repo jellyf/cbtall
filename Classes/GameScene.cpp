@@ -3871,7 +3871,7 @@ void GameScene::initTableInfo()
 	bg->setScaleX(.85f);
 	tableInfo->addChild(bg);*/
 
-	Sprite* icMoney = Sprite::createWithSpriteFrameName("icon_gold.png");
+	Sprite* icMoney = Sprite::createWithSpriteFrameName("icon_silver.png");
 	icMoney->setPosition(-5, 15);
 	icMoney->setScale(.5f);
 	icMoney->setName("icmoney");

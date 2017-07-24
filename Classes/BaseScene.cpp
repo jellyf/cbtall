@@ -825,7 +825,7 @@ void BaseScene::initHeaderWithInfos()
 		}
 	});
 
-	Sprite* iconGold = Sprite::createWithSpriteFrameName("icon_gold.png");
+	Sprite* iconGold = Sprite::createWithSpriteFrameName(ispmE ? "icon_gold.png" : "empty.png");
 	iconGold->setPosition(-170, 0);
 	moneyNode->addChild(iconGold, 2);
 
@@ -1444,7 +1444,7 @@ void BaseScene::initPopupUserInfo()
 	});
 	popupUserInfo->addChild(btnHistory);
 
-	ui::Button* btnActive = ui::Button::create("btn_kichhoat.png", "btn_kickhoat_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	ui::Button* btnActive = ui::Button::create(ispmE ? "btn_kichhoat.png" : "", ispmE ? "btn_kickhoat_clicked.png" : "", "", ui::Widget::TextureResType::PLIST);
 	btnActive->setPosition(Vec2(btnHistory->getPositionX(), btnHistory->getPositionY() - 60));
 	btnActive->setName("btnactive");
 	btnActive->setScale(.8f);
@@ -1995,7 +1995,8 @@ void BaseScene::initPopupIAP()
 void BaseScene::initCofferView(Vec2 pos, int zorder, float scale)
 {
 	bool ispmE = Utils::getSingleton().ispmE();
-	ui::Button* btnCoffer = ui::Button::create("coffer.png", "coffer.png", "", ui::Widget::TextureResType::PLIST);
+	string btnSprite = ispmE ? "coffer.png" : "empty.png";
+	ui::Button* btnCoffer = ui::Button::create(btnSprite, btnSprite, "", ui::Widget::TextureResType::PLIST);
 	btnCoffer->setPosition(pos);
 	btnCoffer->setScale(scale);
 	btnCoffer->setVisible(ispmE);
@@ -2010,7 +2011,7 @@ void BaseScene::initCofferView(Vec2 pos, int zorder, float scale)
 	lbCoffer->setColor(Color3B::YELLOW);
 	btnCoffer->addChild(lbCoffer);
 
-	Sprite* lightPoint = Sprite::createWithSpriteFrameName("light_point.png");
+	Sprite* lightPoint = Sprite::createWithSpriteFrameName(ispmE ? "light_point.png" : "empty.png");
 	lightPoint->setPosition(btnCoffer->getContentSize().width / 2, btnCoffer->getContentSize().height / 2);
 	btnCoffer->addChild(lightPoint, -1);
 
