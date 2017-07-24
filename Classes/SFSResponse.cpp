@@ -189,10 +189,13 @@ void SFSResponse::onUserDataResponse(boost::shared_ptr<ISFSObject> isfsObject)
 
 void SFSResponse::onUserDataMeResponse(boost::shared_ptr<ISFSObject> isfsObject)
 {
+	short numb;
 	UserData newData;
 	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
 	getUserDataFromSFSObject(byteArray, newData);
 	byteArray->ReadByte(newData.MoneyType);
+	byteArray->ReadShort(numb);
+	byteArray->ReadShort(numb);
 	byteArray->ReadByte(newData.IsActived);
 
 	Utils::getSingleton().setUserDataMe(newData);

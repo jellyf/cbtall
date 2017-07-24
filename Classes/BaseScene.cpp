@@ -878,6 +878,17 @@ void BaseScene::initHeaderWithInfos()
 	mLayer->addChild(btnAvar, constant::MAIN_ZORDER_HEADER);
 	autoScaleNode(btnAvar);
 
+	bgNoted = Sprite::createWithSpriteFrameName("circle_red.png");
+	bgNoted->setPosition(btnAvar->getPositionX() + 27, btnAvar->getPositionY() + 30);
+	bgNoted->setScale(.5);
+	mLayer->addChild(bgNoted, constant::MAIN_ZORDER_HEADER);
+	autoScaleNode(bgNoted);
+
+	Label* lbNoted = Label::createWithTTF("!", "fonts/arialbd.ttf", 35);
+	lbNoted->setColor(Color3B::WHITE);
+	lbNoted->setPosition(bgNoted->getContentSize().width / 2 - 2, bgNoted->getContentSize().height / 2);
+	bgNoted->addChild(lbNoted, 1);
+
 	lbGold = Label::create("0", "fonts/arialbd.ttf", 25);
 	lbGold->setAnchorPoint(Vec2(0, .5f));
 	lbGold->setPosition(vecPos[8]);
@@ -1458,6 +1469,16 @@ void BaseScene::initPopupUserInfo()
     });
     popupUserInfo->addChild(btnLogoutFb);
 
+	Sprite* bgNoted = Sprite::createWithSpriteFrameName("circle_red.png");
+	bgNoted->setPosition(btnActive->getContentSize().width - 15, btnActive->getContentSize().height - 15);
+	bgNoted->setScale(.6);
+	btnActive->addChild(bgNoted);
+
+	Label* lbNoted = Label::createWithTTF("!", "fonts/arialbd.ttf", 35);
+	lbNoted->setColor(Color3B::WHITE);
+	lbNoted->setPosition(bgNoted->getContentSize().width / 2, bgNoted->getContentSize().height / 2);
+	bgNoted->addChild(lbNoted, 1);
+
 	int x = 45;
 	Label* lbName = Label::create("Stormus", "fonts/arialbd.ttf", 35);
 	lbName->setAnchorPoint(Vec2(0, .5f));
@@ -2017,11 +2038,14 @@ void BaseScene::onPingPong(long timems)
 void BaseScene::onUserDataMeResponse()
 {
 	if (!hasHeader) return;
-	std::string strGold = Utils::getSingleton().formatMoneyWithComma(Utils::getSingleton().userDataMe.MoneyReal);
-	std::string strSilver = Utils::getSingleton().formatMoneyWithComma(Utils::getSingleton().userDataMe.MoneyFree);
-	std::string strId = String::createWithFormat("ID: %ld", Utils::getSingleton().userDataMe.UserID)->getCString();
-	std::string strLevel = String::createWithFormat((Utils::getSingleton().getStringForKey("level") + ": %d").c_str(), Utils::getSingleton().userDataMe.Level)->getCString();
+	bool ispmE = Utils::getSingleton().ispmE();
+	UserData dataMe = Utils::getSingleton().userDataMe;
+	std::string strGold = Utils::getSingleton().formatMoneyWithComma(dataMe.MoneyReal);
+	std::string strSilver = Utils::getSingleton().formatMoneyWithComma(dataMe.MoneyFree);
+	std::string strId = String::createWithFormat("ID: %ld", dataMe.UserID)->getCString();
+	std::string strLevel = String::createWithFormat((Utils::getSingleton().getStringForKey("level") + ": %d").c_str(), dataMe.Level)->getCString();
 
+	bgNoted->setVisible(ispmE && !dataMe.IsActived);
 	lbName->setString(Utils::getSingleton().userDataMe.DisplayName);
 	lbGold->setString(strGold);
 	lbSilver->setString(strSilver);
