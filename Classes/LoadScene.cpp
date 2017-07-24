@@ -347,7 +347,7 @@ int LoadScene::getVersionValue()
 	std::vector<std::string> numbs;
 	Utils::getSingleton().split(verstr, '.', numbs);
 	int nver = atoi(numbs[0].c_str()) * 100 + atoi(numbs[1].c_str()) * 10 + atoi(numbs[2].c_str());
-    nver += 21;
+    nver += 20;
 #else
 	int i = verstr.find_last_of('.') + 1;
 	verstr = verstr.substr(i, verstr.length() - i);
