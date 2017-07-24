@@ -2142,6 +2142,7 @@ void BaseScene::onPingPong(long timems)
 void BaseScene::onUserDataMeResponse()
 {
 	if (!hasHeader) return;
+    bool ispmE = Utils::getSingleton().ispmE();
 	UserData dataMe = Utils::getSingleton().userDataMe;
 	std::string strGold = Utils::getSingleton().formatMoneyWithComma(dataMe.MoneyReal);
 	std::string strSilver = Utils::getSingleton().formatMoneyWithComma(dataMe.MoneyFree);
@@ -2152,7 +2153,7 @@ void BaseScene::onUserDataMeResponse()
 	lbName->setString(strName);
 	cropLabel(lbName, 120);
 
-	bgNoted->setVisible(!dataMe.IsActived);
+	bgNoted->setVisible(!dataMe.IsActived && ispmE);
 	lbGold->setString(strGold);
 	lbSilver->setString(strSilver);
 	lbId->setString(strId);
