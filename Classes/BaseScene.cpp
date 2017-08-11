@@ -137,6 +137,7 @@ void BaseScene::onEnter()
 	registerEventListenner();
 	Utils::getSingleton().onInitSceneCompleted();
 	SFSResponse::getSingleton().RunCachedResponses();
+	processCachedErrors();
 	scheduleUpdate();
 }
 
@@ -161,8 +162,11 @@ void BaseScene::registerEventListenner()
 	EventHandler::getSingleton().onPingPong = std::bind(&BaseScene::onPingPong, this, std::placeholders::_1);
 	EventHandler::getSingleton().onConnected = bind(&BaseScene::onConnected, this);
 	EventHandler::getSingleton().onConnectionFailed = std::bind(&BaseScene::onConnectionFailed, this);
+	EventHandler::getSingleton().onConnectionLost = std::bind(&BaseScene::onConnectionLost, this, std::placeholders::_1);
 	EventHandler::getSingleton().onLoginZone = bind(&BaseScene::onLoginZone, this);
 	EventHandler::getSingleton().onLoginZoneError = bind(&BaseScene::onLoginZoneError, this, placeholders::_1, placeholders::_2);
+	EventHandler::getSingleton().onJoinRoom = bind(&BaseScene::onJoinRoom, this, placeholders::_1, placeholders::_2);
+	EventHandler::getSingleton().onJoinRoomError = bind(&BaseScene::onJoinRoomError, this, placeholders::_1);
 	EventHandler::getSingleton().onUserDataMeSFSResponse = std::bind(&BaseScene::onUserDataMeResponse, this);
 	EventHandler::getSingleton().onRankDataSFSResponse = std::bind(&BaseScene::onRankDataResponse, this, std::placeholders::_1);
 	EventHandler::getSingleton().onRankWinDataSFSResponse = std::bind(&BaseScene::onRankWinDataResponse, this, std::placeholders::_1);
@@ -172,6 +176,9 @@ void BaseScene::registerEventListenner()
 	EventHandler::getSingleton().onCofferMoneySFSResponse = bind(&BaseScene::onCofferMoneyResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onCofferHistorySFSResponse = bind(&BaseScene::onCofferHistoryResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onDownloadedPlistTexture = bind(&BaseScene::onDownloadedPlistTexture, this, placeholders::_1);
+	EventHandler::getSingleton().onTourWinnersSFSResponse = bind(&BaseScene::onTourWinnersResponse, this, placeholders::_1);
+	EventHandler::getSingleton().onTourRoomToJoinSFSResponse = bind(&BaseScene::onTourRoomToJoin, this, placeholders::_1);
+	EventHandler::getSingleton().onTourInfoSFSResponse = bind(&BaseScene::onTourInfoResponse, this, placeholders::_1);
 
 	SFSRequest::getSingleton().onHttpResponseFailed = std::bind(&BaseScene::onHttpResponseFailed, this);
 	SFSRequest::getSingleton().onHttpResponse = std::bind(&BaseScene::onHttpResponse, this, std::placeholders::_1, std::placeholders::_2);
@@ -183,6 +190,11 @@ void BaseScene::unregisterEventListenner()
 	EventHandler::getSingleton().onApplicationWillEnterForeground = NULL;
 	EventHandler::getSingleton().onPingPong = NULL;
 	EventHandler::getSingleton().onConnectionFailed = NULL;
+	EventHandler::getSingleton().onConnectionLost = NULL;
+	EventHandler::getSingleton().onLoginZone = NULL;
+	EventHandler::getSingleton().onLoginZoneError = NULL;
+	EventHandler::getSingleton().onJoinRoom = NULL;
+	EventHandler::getSingleton().onJoinRoomError = NULL;
 	EventHandler::getSingleton().onUserDataMeSFSResponse = NULL;
 	EventHandler::getSingleton().onRankDataSFSResponse = NULL;
 	EventHandler::getSingleton().onRankWinDataSFSResponse = NULL;
@@ -192,6 +204,9 @@ void BaseScene::unregisterEventListenner()
 	EventHandler::getSingleton().onCofferMoneySFSResponse = NULL;
 	EventHandler::getSingleton().onCofferHistorySFSResponse = NULL;
 	EventHandler::getSingleton().onDownloadedPlistTexture = NULL;
+	EventHandler::getSingleton().onTourWinnersSFSResponse = NULL;
+	EventHandler::getSingleton().onTourRoomToJoinSFSResponse = NULL;
+	EventHandler::getSingleton().onTourInfoSFSResponse = NULL;
 
 	SFSRequest::getSingleton().onHttpResponse = NULL;
 	SFSRequest::getSingleton().onHttpResponseFailed = NULL;
@@ -259,9 +274,36 @@ void BaseScene::showPopupNotice(std::string msg, std::function<void()> func, boo
 	}, false);
 
 	if (timeToHide > 0) {
-		DelayTime* delay = DelayTime::create(15);
+		DelayTime* delay = DelayTime::create(timeToHide);
 		CallFunc* funcHide = CallFunc::create([=]() {
 			hidePopup(popupNotice);
+		});
+		popupNotice->runAction(Sequence::createWithTwoActions(delay, funcHide));
+	}
+}
+
+void BaseScene::showPopupNoticeMini(std::string msg, std::function<void()> func, Vec2 pos, bool showBtnClose, int timeToHide)
+{
+	Node* popupNotice = createPopupNoticeMini();
+	popupNotice->setPosition(pos);
+	runEffectShowPopup(popupNotice);
+	popupNotice->setVisible(true);
+
+	Label* lbcontent = (Label*)popupNotice->getChildByName("lbcontent");
+	lbcontent->setString(msg);
+	ui::Button* btnClose = (ui::Button*)popupNotice->getChildByName("btnclose");
+	btnClose->setVisible(showBtnClose);
+	ui::Button* btnSubmit = (ui::Button*)popupNotice->getChildByName("btnsubmit");
+	addTouchEventListener(btnSubmit, [=]() {
+		popupNotice->stopAllActions();
+		func();
+		runEffectHidePopup(popupNotice);
+	}, false);
+
+	if (timeToHide > 0) {
+		DelayTime* delay = DelayTime::create(timeToHide);
+		CallFunc* funcHide = CallFunc::create([=]() {
+			runEffectHidePopup(popupNotice);
 		});
 		popupNotice->runAction(Sequence::createWithTwoActions(delay, funcHide));
 	}
@@ -707,18 +749,62 @@ void BaseScene::addTouchEventListener(ui::Button* btn, std::function<void()> fun
 	});
 }
 
-void BaseScene::onErrorResponse(unsigned char code, std::string msg)
+bool BaseScene::onErrorResponse(unsigned char code, std::string msg)
 {
+	CCLOG("%d %s", (int)code, msg.c_str());
+	if (code == 34) {
+		//Bat dau dang ky giai dau
+		if (getTag() == constant::SCENE_GAME) {
+			showPopupNoticeMini(msg, [=]() {
+				if (popupTour == NULL) {
+					initPopupTour();
+				}
+				showPopup(popupTour);
+				ui::Button* btnReg = (ui::Button*)popupTour->getChildByName("btnregister");
+				btnReg->setVisible(true);
+				btnReg->setColor(Color3B::WHITE);
+				btnReg->setTouchEnabled(true);
+			}, Vec2(200, 150), true, 10);
+		} else {
+			showPopupNotice(msg, [=]() {
+				if (popupTour == NULL) {
+					initPopupTour();
+				}
+				showPopup(popupTour);
+				ui::Button* btnReg = (ui::Button*)popupTour->getChildByName("btnregister");
+				btnReg->setVisible(true);
+				btnReg->setColor(Color3B::WHITE);
+				btnReg->setTouchEnabled(true);
+			});
+		}
+		return true;
+	}
+	if (code == 37) {
+		//Bat dau tham gia giai dau
+		if (getTag() == constant::SCENE_GAME) {
+			showPopupNoticeMini(msg, [=]() {
+				joinIntoTour();
+			}, Vec2(200, 150), true, 10);
+		} else {
+			showPopupNotice(msg, [=]() {
+				joinIntoTour();
+			});
+		}
+		return true;
+	}
 	if (code == 38) {
 		isOverlapLogin = true;
-		return;
 	}
+	return false;
 }
 
 void BaseScene::onConnected()
 {
 	if (isReconnecting) {
 		Utils::getSingleton().reloginZone();
+	} else if (isJoiningTour) {
+		Utils::getSingleton().loginZoneByIndex(1, tmpZoneId);
+		tmpZoneId = -1;
 	}
 }
 
@@ -738,6 +824,15 @@ void BaseScene::onConnectionFailed()
 	this->runAction(Sequence::createWithTwoActions(delay, func));
 }
 
+bool BaseScene::onConnectionLost(std::string reason)
+{
+	if (isJoiningTour) {
+		Utils::getSingleton().connectZoneByIndex(1, tmpZoneId);
+		return true;
+	}
+	return false;
+}
+
 void BaseScene::onLoginZone()
 {
 	if (isReconnecting) {
@@ -751,6 +846,15 @@ void BaseScene::onLoginZoneError(short int code, std::string msg)
 		isReconnecting = false;
 		isBackToLogin = true;
 		SFSRequest::getSingleton().Disconnect();
+	} else if (isJoiningTour) {
+		isJoiningTour = false;
+		showWaiting();
+		isPauseApp = true;
+		Utils::getSingleton().currentZoneName = zoneBeforeTour;
+		SFSRequest::getSingleton().Disconnect();
+		showPopupNotice(msg, [=]() {});
+	} else {
+
 	}
 }
 
@@ -759,6 +863,7 @@ void BaseScene::initHeaderWithInfos()
 	hasHeader = true;
 	bool isRealMoney = Utils::getSingleton().moneyType == 1;
 	bool ispmE = Utils::getSingleton().ispmE();
+	bool isTour = Utils::getSingleton().isTourGame();
 
 	std::vector<Vec2> vecPos;
 	vecPos.push_back(Vec2(50 * scaleScene.y, 650));
@@ -807,22 +912,10 @@ void BaseScene::initHeaderWithInfos()
 	moneyBg0->setBright(false);
 	moneyBg1->setBright(false);
 	addTouchEventListener(moneyBg0, [=]() {
-		if (moneyBg0->getTag() == 1) {
-			moneyBg0->setTag(0);
-			moneyBg1->setTag(0);
-			chosenBg->setPosition(100, 0);
-			onChangeMoneyType(0);
-			//UserDefault::getInstance()->setBoolForKey(constant::KEY_MONEY_TYPE.c_str(), false);
-		}
+		switchMoneyType(0);
 	});
 	addTouchEventListener(moneyBg1, [=]() {
-		if (moneyBg0->getTag() == 0) {
-			moneyBg0->setTag(1);
-			moneyBg1->setTag(1);
-			chosenBg->setPosition(-100, 0);
-			onChangeMoneyType(1);
-			//UserDefault::getInstance()->setBoolForKey(constant::KEY_MONEY_TYPE.c_str(), true);
-		}
+		switchMoneyType(1);
 	});
 
 	Sprite* iconGold = Sprite::createWithSpriteFrameName(ispmE ? "icon_gold.png" : "empty.png");
@@ -950,6 +1043,13 @@ void BaseScene::initHeaderWithInfos()
 		lbCoffer->setVisible(false);
 	}
 	//btnIAP->setVisible(!ispmE);
+	if (isTour) {
+		chosenBg->setPosition(-100, 0);
+		moneyNode->setPosition(vecPos[1] + Vec2(100, 0));
+		moneyBg0->setVisible(false);
+		iconSilver->setVisible(false);
+		lbSilver->setVisible(false);
+	}
 }
 
 void BaseScene::onBackScene()
@@ -1017,6 +1117,19 @@ bool BaseScene::onKeyBack()
 
 void BaseScene::onKeyHome()
 {
+}
+
+void BaseScene::onJoinRoom(long roomId, std::string roomName)
+{
+	if (roomName.at(0) == 'g' && roomName.at(2) == 'b') {
+		Utils::getSingleton().goToGameScene();
+	}
+}
+
+void BaseScene::onJoinRoomError(std::string msg)
+{
+	hideWaiting();
+	showPopupNotice(msg, [=]() {}, false);
 }
 
 void BaseScene::hideSplash()
@@ -1216,6 +1329,55 @@ Node* BaseScene::createPopupNotice()
 	ui::Button* btndong = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
 	btndong->setPosition(Vec2(310, 170));
 	btndong->setScale(.8f);
+	btndong->setName("btnclose");
+	addTouchEventListener(btndong, [=]() {
+		hidePopup(popupNotice);
+	});
+	popupNotice->addChild(btndong);
+
+	return popupNotice;
+}
+
+cocos2d::Node * BaseScene::createPopupNoticeMini()
+{
+	Node* popupNotice = nullptr;
+	for (Node* n : vecPopupNoticeMinis) {
+		if (!n->isVisible()) {
+			popupNotice = n;
+			break;
+		}
+	}
+	if (popupNotice == nullptr) {
+		popupNotice = Node::create();
+	}
+
+	popupNotice->setPosition(560, 350);
+	popupNotice->setVisible(false);
+	mLayer->addChild(popupNotice, constant::ZORDER_POPUP_NOTICE);
+	autoScaleNode(popupNotice);
+
+	float bgScale = .6f;
+	Sprite* bg = Sprite::createWithSpriteFrameName("popup_bg.png");
+	bg->setScale(bgScale);
+	popupNotice->addChild(bg);
+
+	Label* lb = Label::createWithTTF("", "fonts/arial.ttf", 25);
+	lb->setAlignment(TextHAlignment::CENTER);
+	lb->setColor(Color3B::WHITE);
+	lb->setWidth(550 * bgScale);
+	lb->setName("lbcontent");
+	popupNotice->addChild(lb);
+
+	ui::Button* btnok = ui::Button::create("btn_submit.png", "btn_submit_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnok->setPosition(Vec2(0, -200 * bgScale));
+	btnok->setName("btnsubmit");
+	btnok->setScale(.8f);
+	addTouchEventListener(btnok, [=]() {});
+	popupNotice->addChild(btnok);
+
+	ui::Button* btndong = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btndong->setPosition(Vec2(310 * bgScale, 170 * bgScale));
+	btndong->setScale(.6f);
 	btndong->setName("btnclose");
 	addTouchEventListener(btndong, [=]() {
 		hidePopup(popupNotice);
@@ -1992,6 +2154,164 @@ void BaseScene::initPopupIAP()
 	}
 }
 
+void BaseScene::initPopupTour()
+{
+	popupTour = createPopup("title_loidai.png", true, true);
+	if (!popupTour) return;
+	popupTour->setTag(0);
+
+	Size size = Size(780, 466);
+	Size scrollSize = size - Size(20, 20);
+	DrawNode* rect = DrawNode::create();
+	rect->drawRect(Vec2(-size.width / 2, -size.height / 2), Vec2(size.width / 2, size.height / 2), Color4F::BLACK);
+	rect->setPosition(95, -25);
+	popupTour->addChild(rect);
+
+	Node* nodeInfo = Node::create();
+	nodeInfo->setName("nodeinfo");
+	nodeInfo->setTag(0);
+	popupTour->addChild(nodeInfo);
+
+	Node* nodeHonor = Node::create();
+	nodeHonor->setName("nodehonor");
+	nodeHonor->setTag(1);
+	nodeHonor->setVisible(false);
+	popupTour->addChild(nodeHonor);
+
+	vector<string> texts = { "thong_tin" , "vinh_danh" };
+	int x = -400;
+	int y = 180;
+	for (int i = 0; i < texts.size(); i++) {
+		ui::Button* btn = ui::Button::create(i == 0 ? "btn_light.png" : "empty.png", "", "", ui::Widget::TextureResType::PLIST);
+		btn->setTitleText(Utils::getSingleton().getStringForKey(texts[i]));
+		btn->setTitleFontName("fonts/aristote.ttf");
+		btn->setTitleFontSize(25);
+		btn->setTitleColor(i == 0 ? Color3B::BLACK : Color3B::WHITE);
+		btn->setContentSize(Size(255, 50));
+		btn->setPosition(Vec2(x, y));
+		btn->setScale9Enabled(true);
+		//btn->setCapInsets(Rect(25, 25, 0, 0));
+		btn->setTag(10 + i);
+		addTouchEventListener(btn, [=]() {
+			if (popupTour->getTag() == i) return;
+			popupTour->getChildByTag(i)->setVisible(true);
+			popupTour->getChildByTag(1 - i)->setVisible(false);
+			ui::Button* btn1 = (ui::Button*)popupTour->getChildByTag(10 + popupTour->getTag());
+			btn1->loadTextureNormal("empty.png", ui::Widget::TextureResType::PLIST);
+			btn->loadTextureNormal("btn_light.png", ui::Widget::TextureResType::PLIST);
+			btn1->setTitleColor(Color3B::WHITE);
+			btn->setTitleColor(Color3B::BLACK);
+			popupTour->setTag(i);
+
+			if (i == 1) {
+				SFSRequest::getSingleton().RequestTourWinners();
+			}
+		});
+		popupTour->addChild(btn);
+		//x += 210;
+		y -= 70;
+	}
+
+	//Node info
+	ui::ScrollView* scrollInfo = ui::ScrollView::create();
+	scrollInfo->setDirection(ui::ScrollView::Direction::VERTICAL);
+	scrollInfo->setBounceEnabled(true);
+	scrollInfo->setPosition(Vec2(-scrollSize.width / 2, -scrollSize.height / 2) + rect->getPosition());
+	scrollInfo->setContentSize(scrollSize);
+	scrollInfo->setScrollBarEnabled(false);
+	scrollInfo->setName("scrollinfo");
+	nodeInfo->addChild(scrollInfo);
+
+	Node* nodeContent = Node::create();
+	nodeContent->setName("nodecontent");
+	scrollInfo->addChild(nodeContent);
+
+	Node* nodelb1 = Node::create();
+	nodelb1->setName("nodecontent1");
+	nodeContent->addChild(nodelb1);
+
+	float n1height = 0;
+	for (int i = 0; i < 12; i++) {
+		string str = Utils::getSingleton().getStringForKey("tour_info_" + to_string(i));
+		Label* lbn1 = Label::createWithTTF(str, "fonts/arialbd.ttf", 22);
+		lbn1->setPosition(0, n1height);
+		lbn1->setAnchorPoint(Vec2(0, 1));
+		lbn1->setColor(Color3B::WHITE);
+		lbn1->setTag(i);
+		nodelb1->addChild(lbn1);
+
+		n1height -= 25.7f;
+	}
+	n1height = -n1height + 26;
+
+	Label* lb2 = Label::create("", "fonts/arialit.ttf", 22);
+	lb2->setAnchorPoint(Vec2(0, 1));
+	lb2->setColor(Color3B::WHITE);
+	lb2->setName("lbcontent2");
+	lb2->setPosition(0, -n1height);
+	nodeContent->addChild(lb2);
+
+	string info3 = "";
+	Label* lb3 = Label::create(info3, "fonts/arialbd.ttf", 22);
+	lb3->setAnchorPoint(Vec2(0, 1));
+	lb3->setColor(Color3B::WHITE);
+	lb3->setName("lbcontent3");
+	lb3->setWidth(scrollSize.width);
+	lb3->setPosition(350, 0);
+	nodeContent->addChild(lb3);
+
+	//Node history
+	ui::ScrollView* scrollHonor = ui::ScrollView::create();
+	scrollHonor->setDirection(ui::ScrollView::Direction::VERTICAL);
+	scrollHonor->setBounceEnabled(true);
+	scrollHonor->setPosition(Vec2(-scrollSize.width / 2, -scrollSize.height / 2) + rect->getPosition());
+	scrollHonor->setContentSize(scrollSize);
+	scrollHonor->setScrollBarEnabled(false);
+	scrollHonor->setName("scrollhonor");
+	nodeHonor->addChild(scrollHonor);
+
+	ui::Button* btnRegister = ui::Button::create("btn_register.png", "btn_register_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnRegister->setPosition(Vec2(-400, -180));
+	btnRegister->setScale(.9f);
+	btnRegister->setName("btnregister");
+	btnRegister->setColor(Color3B::GRAY);
+	btnRegister->setTouchEnabled(false);
+	popupTour->addChild(btnRegister);
+
+	ui::Button* btnJoin = ui::Button::create("btn.png", "btn_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnJoin->setTitleFontName("fonts/arialbd.ttf");
+	btnJoin->setTitleFontSize(35);
+	btnJoin->setTitleText(Utils::getSingleton().getStringForKey("tham_gia"));
+	btnJoin->setContentSize(btnRegister->getContentSize());
+	btnJoin->setScale9Enabled(true);
+	btnJoin->setPosition(btnRegister->getPosition());
+	btnJoin->setScale(.9f);
+	btnJoin->setName("btnjoin");
+	btnJoin->setColor(Color3B::GRAY);
+	btnJoin->setTouchEnabled(false);
+	btnJoin->setVisible(false);
+	popupTour->addChild(btnJoin);
+
+	addTouchEventListener(btnRegister, [=]() {
+		btnRegister->setVisible(false);
+		btnJoin->setVisible(true);
+		SFSRequest::getSingleton().RequestRegisterTour();
+	});
+
+	addTouchEventListener(btnJoin, [=]() {
+		joinIntoTour();
+	});
+
+	Label* lbCountDown = Label::createWithTTF("", "fonts/arialbd.ttf", 40);
+	lbCountDown->setPosition(btnRegister->getPosition() - Vec2(80, 60));
+	lbCountDown->setAnchorPoint(Vec2(0, .5f));
+	lbCountDown->setTag(0);
+	lbCountDown->setName("lbcountdown");
+	popupTour->addChild(lbCountDown);
+
+	onTourInfoResponse(Utils::getSingleton().tourInfo);
+}
+
 void BaseScene::initCofferView(Vec2 pos, int zorder, float scale)
 {
 	bool ispmE = Utils::getSingleton().ispmE();
@@ -2002,10 +2322,14 @@ void BaseScene::initCofferView(Vec2 pos, int zorder, float scale)
 	btnCoffer->setVisible(ispmE);
 	addTouchEventListener(btnCoffer, [=]() {
 		showPopupCoffer();
+		//onErrorResponse(34, "Bat dau dang ky giai dau");
+		//onErrorResponse(37, "Bat dau tham gia giai dau");
+		//onErrorResponse(36, "Ban da vao vong trong");
+		//onErrorResponse(80, "Giai dau ket thuc");
+		//showPopupNoticeMini("Da co the dang ky giai dau", [=]() {}, Vec2(200, 150), true, 5);
 	});
 	mLayer->addChild(btnCoffer, zorder);
 	autoScaleNode(btnCoffer);
-
 	lbCoffer = Label::create(Utils::getSingleton().formatMoneyWithComma(Utils::getSingleton().cofferMoney), "fonts/arialbd.ttf", 20);
 	lbCoffer->setPosition(btnCoffer->getContentSize().width / 2, 15);
 	lbCoffer->setColor(Color3B::YELLOW);
@@ -2285,6 +2609,224 @@ void BaseScene::onCofferHistoryResponse(std::vector<CofferWinnerData> list)
 	}
 }
 
+void BaseScene::onTourWinnersResponse(std::vector<TourAward> list)
+{
+	int nheight = 140;
+	int iheight = 30;
+	Node* nodeHonor = popupTour->getChildByName("nodehonor");
+	ui::ScrollView* scroll = (ui::ScrollView*)nodeHonor->getChildByName("scrollhonor");
+	int height = list.size() * nheight;
+	int width = scroll->getContentSize().width;
+	if (height < scroll->getContentSize().height) {
+		height = scroll->getContentSize().height;
+	}
+	scroll->setInnerContainerSize(Size(width, height));
+	for (int i = 0; i < list.size(); i++) {
+		ui::Scale9Sprite* nbg;
+		Label* lbDate;
+		vector<Node*> inodes;
+		vector<vector<Label*>> lbs;
+		Node* node = scroll->getChildByTag(i);
+		if (node == nullptr) {
+			node = Node::create();
+			node->setTag(i);
+			scroll->addChild(node);
+
+			nbg = ui::Scale9Sprite::createWithSpriteFrameName("box3.png");
+			nbg->setTag(10);
+			node->addChild(nbg);
+
+			lbDate = Label::create("", "fonts/arialbd.ttf", 20);
+			lbDate->setHorizontalAlignment(TextHAlignment::CENTER);
+			lbDate->setPosition(-width / 2 + 90, nheight / 2 - 40);
+			lbDate->setColor(Color3B::WHITE);
+			lbDate->setTag(11);
+			lbDate->setWidth(150);
+			node->addChild(lbDate);
+
+			lbName = Label::create("", "fonts/arialbd.ttf", 20);
+			lbName->setHorizontalAlignment(TextHAlignment::CENTER);
+			lbName->setPosition(-width / 2 + 90, -nheight / 2 + 40);
+			lbName->setColor(Color3B::WHITE);
+			lbName->setTag(12);
+			lbName->setWidth(150);
+			node->addChild(lbName);
+
+			for (int j = 0; j < 4; j++) {
+				Node* inode = Node::create();
+				inode->setTag(j);
+				node->addChild(inode);
+				inodes.push_back(inode);
+
+				vector<Label*> ilbs;
+				Label *lb0 = Label::create("", "fonts/arialbd.ttf", 20);
+				lb0->setPosition(-width / 2 + 200, 0);
+				lb0->setAnchorPoint(Vec2(0, .5f));
+				lb0->setColor(Color3B::WHITE);
+				lb0->setTag(0);
+				inode->addChild(lb0);
+				ilbs.push_back(lb0);
+
+				Label *lb1 = Label::create("", "fonts/arialbd.ttf", 22);
+				lb1->setPosition(lb0->getPositionX() + 130, 0);
+				lb1->setAnchorPoint(Vec2(0, .5f));
+				lb1->setColor(Color3B::WHITE);
+				lb1->setTag(1);
+				inode->addChild(lb1);
+				ilbs.push_back(lb1);
+
+				Label *lb2 = Label::create("", "fonts/arialbd.ttf", 22);
+				lb2->setPosition(lb1->getPositionX() + 270, 0);
+				lb2->setAnchorPoint(Vec2(0, .5f));
+				lb2->setColor(Color3B::YELLOW);
+				lb2->setTag(2);
+				inode->addChild(lb2);
+				ilbs.push_back(lb2);
+
+				lbs.push_back(ilbs);
+			}
+		} else {
+			node->setVisible(true);
+			nbg = (ui::Scale9Sprite*)node->getChildByTag(10);
+			lbDate = (Label*)node->getChildByTag(11);
+			lbName = (Label*)node->getChildByTag(12);
+			for (int j = 0; j < 4; j++) {
+				Node* inode = node->getChildByTag(j);
+				vector<Label*> ilbs;
+				int childCount = inode->getChildrenCount();
+				for (int k = 0; k < childCount; k++) {
+					ilbs.push_back((Label*)inode->getChildByTag(k));
+				}
+				inodes.push_back(inode);
+				lbs.push_back(ilbs);
+			}
+		}
+
+		node->setPosition(scroll->getContentSize().width / 2, height - nheight / 2 - i * nheight);
+		nbg->setContentSize(Size(width, nheight));
+		lbDate->setString(list[i].KeyDate);
+		lbName->setString(Utils::getSingleton().getStringForKey("giai_dau") + " " + to_string(list[i].Id));
+		int j = 0;
+		for (; j < list[i].Winners.size(); j++) {
+			inodes[j]->setVisible(true);
+			inodes[j]->setPosition(0, nheight / 2 - iheight / 2 - 10 - j * iheight);
+
+			lbs[j][0]->setString(list[i].Winners[j].LevelTitle);
+			lbs[j][1]->setString(list[i].Winners[j].Name);
+			lbs[j][2]->setString(Utils::getSingleton().formatMoneyWithComma(list[i].Winners[j].Money));
+			cropLabel(lbs[j][1], 200);
+		}
+		for (; j < 4; j++) {
+			inodes[j]->setVisible(false);
+		}
+	}
+	int i = list.size();
+	Node* n;
+	while ((n = scroll->getChildByTag(i++)) != nullptr) {
+		n->setVisible(false);
+	}
+}
+
+void BaseScene::onTourRoomToJoin(std::string room)
+{
+	if (isJoiningTour) {
+		Utils::getSingleton().currentLobbyName = Utils::getSingleton().currentRoomName;
+		SFSRequest::getSingleton().RequestJoinRoom(room);
+	} else {
+		tourGroup = room.substr(0, room.length() - 1);
+		Utils::getSingleton().currentLobbyName = "cho3";
+		prepareTourRoom = tourGroup + "1";
+
+		if (Utils::getSingleton().tourRoom.length() > 0) {
+			SFSRequest::getSingleton().RequestJoinRoom(room);
+			Utils::getSingleton().tourRoom = "";
+		}
+	}
+}
+
+void BaseScene::onTourInfoResponse(TourInfo tourInfo)
+{
+	if (!popupTour) return;
+	bool isTourExist = tourInfo.Name.length() > 0;
+	Node* nodeInfo = popupTour->getChildByName("nodeinfo");
+	ui::ScrollView* scroll = (ui::ScrollView*)nodeInfo->getChildByName("scrollinfo");
+	Node* nodeContent = scroll->getChildByName("nodecontent");
+	Node* nodeContent1 = nodeContent->getChildByName("nodecontent1");
+	Label* lb2 = (Label*)nodeContent->getChildByName("lbcontent2");
+	Label* lb3 = (Label*)nodeContent->getChildByName("lbcontent3");
+
+	float n1height = 0;
+	nodeContent1->setVisible(isTourExist);
+	if (isTourExist) {
+		vector<Node*> lbs;
+		for (int i = 0; i < 12; i++) {
+			if (i == 10) {
+				nodeContent1->getChildByTag(i)->setVisible(tourInfo.Race3Enabled);
+				if (!tourInfo.Race3Enabled) continue;
+			}
+			lbs.push_back(nodeContent1->getChildByTag(i));
+		}
+		for (Node* lb : lbs) {
+			lb->setPositionY(n1height);
+			n1height -= 25.7f;
+		}
+		n1height = -n1height + 26;
+	}
+
+	cocos2d::ValueMap plist = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/tutorials.xml");
+	std::string info2 = plist["loi_dai_2"].asString();
+	string requiredMatchStr = isTourExist ? to_string(tourInfo.RequiredMatch) : "85";
+	info2 = Utils::getSingleton().replaceString(info2, "[p1]", requiredMatchStr + "%");
+
+	int scrollWidth = scroll->getContentSize().width;
+	lb2->initWithTTF("", isTourExist ? "fonts/arialit.ttf" : "fonts/arial.ttf", 22);
+	lb2->setWidth(scrollWidth);
+	lb2->setString(info2);
+	lb2->setPosition(0, isTourExist ? -n1height : 0);
+
+	int height = (isTourExist ? n1height : 0) + lb2->getContentSize().height;
+	if (height < scroll->getContentSize().height) {
+		height = scroll->getContentSize().height;
+	}
+	nodeContent->setPosition(0, height);
+	scroll->setInnerContainerSize(Size(scroll->getContentSize().width, height));
+
+	string info3 = "";
+	if (isTourExist) {
+		std::vector<string> playModes = { "win_free", "win_free", "win_411" };
+		string stimeFormat = Utils::getSingleton().getStringForKey("tu_den");
+		string regTimeBegin = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.RegTimeBegin, "%I:%M:%S");
+		string regTimeEnd = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.RegTimeEnd, "%I:%M:%S");
+		string race1TimeBegin = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.Race1TimeBegin, "%I:%M:%S");
+		string race1TimeEnd = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.Race1TimeEnd, "%I:%M:%S");
+		string race2TimeBegin = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.Race2TimeBegin, "%I:%M:%S");
+		string race2TimeEnd = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.Race2TimeEnd, "%I:%M:%S");
+		string race3TimeBegin = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.Race3TimeBegin, "%I:%M:%S");
+		string race3TimeEnd = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.Race3TimeEnd, "%I:%M:%S");
+		string regTime(String::createWithFormat(stimeFormat.c_str(), regTimeBegin.c_str(), regTimeEnd.c_str())->getCString());
+		string race1Time(String::createWithFormat(stimeFormat.c_str(), race1TimeBegin.c_str(), race1TimeEnd.c_str())->getCString());
+		string race2Time(String::createWithFormat(stimeFormat.c_str(), race2TimeBegin.c_str(), race2TimeEnd.c_str())->getCString());
+		string race3Time(String::createWithFormat(stimeFormat.c_str(), race3TimeBegin.c_str(), race3TimeEnd.c_str())->getCString());
+		info3 += tourInfo.Name + "\n";
+		info3 += to_string((int)tourInfo.MaxUser) + "\n";
+		info3 += Utils::getSingleton().formatMoneyWithComma(tourInfo.MoneyCoc) + " Quan\n";
+		info3 += Utils::getSingleton().formatMoneyWithComma(tourInfo.RequiredMoney) + " Quan\n";
+		info3 += to_string(tourInfo.RequiredLevel) + "\n";
+		//info3 += to_string(tourInfo.RequiredVip) + "\n";
+		info3 += Utils::getSingleton().formatMoneyWithComma(tourInfo.MoneyCuoc) + " Quan\n";
+		//info3 += to_string(tourInfo.MoneyTime) + "s\n";
+		info3 += Utils::getSingleton().getStringForKey(playModes[(int)tourInfo.Mode]) + "\n";
+		info3 += regTime + "\n";
+		info3 += race1Time + "\n";
+		info3 += race2Time + "\n";
+		info3 += (tourInfo.Race3Enabled ? (race3Time + "\n") : "");
+		info3 += to_string(tourInfo.MaxMatch);
+	}
+
+	lb3->setString(info3);
+	calculateTourTime();
+}
+
 void BaseScene::onDownloadedPlistTexture(int numb)
 {
 	isPopupReady = numb >= 2;
@@ -2443,4 +2985,172 @@ void BaseScene::delayFunction(Node * node, float time, std::function<void()> fun
     DelayTime* delay = DelayTime::create(time);
     CallFunc* callfunc = CallFunc::create(func);
     node->runAction(Sequence::create(delay, callfunc, nullptr));
+}
+
+void BaseScene::switchMoneyType(int type)
+{
+	if (moneyBg0 != NULL && moneyBg0->getTag() != type) {
+		moneyBg0->setTag(type);
+		moneyBg1->setTag(type);
+		chosenBg->setPosition(type == 0 ? 100 : -100, 0);
+		onChangeMoneyType(type);
+		//UserDefault::getInstance()->setBoolForKey(constant::KEY_MONEY_TYPE.c_str(), type == 1);
+	}
+}
+
+void BaseScene::cropLabel(cocos2d::Label *label, int width, bool dots)
+{
+	bool isCut = false;
+	string str = label->getString();
+	while (label->getContentSize().width > width) {
+		str = str.substr(0, str.length() - 1);
+		label->setString(str);
+		isCut = true;
+	}
+	if (isCut && dots) {
+		str += "..";
+		label->setString(str);
+	}
+}
+
+void BaseScene::calculateTourTime()
+{
+	time_t rawtime;
+	time(&rawtime);
+	double timeDiff = Utils::getSingleton().serverTimeDiff;
+	TourInfo tourInfo = Utils::getSingleton().tourInfo;
+	Label* lbCountDown = (Label*)popupTour->getChildByName("lbcountdown");
+	int state = lbCountDown->getTag();
+
+	if (state == 0) {
+		if (rawtime < tourInfo.RegTimeBegin + timeDiff) {
+			setTourTimeState(0);
+			tourTimeRemain = tourInfo.RegTimeBegin + timeDiff - rawtime + 3;
+		} else if (rawtime >= tourInfo.RegTimeBegin + timeDiff
+			&& rawtime < tourInfo.RegTimeEnd + timeDiff) {
+			setTourTimeState(1);
+			tourTimeRemain = tourInfo.RegTimeEnd + timeDiff - rawtime + 3;
+		} else if (rawtime >= tourInfo.RegTimeEnd + timeDiff
+			&& rawtime < tourInfo.Race1TimeBegin + timeDiff) {
+			setTourTimeState(2);
+			tourTimeRemain = tourInfo.Race1TimeBegin + timeDiff - rawtime + 3;
+		} else if (rawtime >= tourInfo.Race1TimeBegin + timeDiff
+			&& rawtime < tourInfo.Race2TimeEnd + timeDiff) {
+			setTourTimeState(3);
+			tourTimeRemain = tourInfo.Race2TimeEnd + timeDiff - rawtime + 3;
+		} else if (rawtime >= tourInfo.Race2TimeEnd + timeDiff) {
+			setTourTimeState(4);
+			tourTimeRemain = -1;
+		}
+	} else if (state == 1) {
+		setTourTimeState(1);
+		tourTimeRemain = tourInfo.RegTimeEnd - tourInfo.RegTimeBegin;
+	} else if (state == 2) {
+		setTourTimeState(2);
+		tourTimeRemain = tourInfo.Race1TimeBegin - tourInfo.RegTimeEnd;
+	} else if (state == 3) {
+		setTourTimeState(3);
+		tourTimeRemain = tourInfo.Race2TimeEnd - tourInfo.Race1TimeBegin;
+	} else if (state == 4) {
+		setTourTimeState(4);
+		tourTimeRemain = -1;
+	}
+
+	if (tourTimeRemain >= 0) {
+		showTourCountDown([=]() {
+			calculateTourTime();
+		});
+	}
+}
+
+void BaseScene::setTourTimeState(int state)
+{
+	TourInfo tourInfo = Utils::getSingleton().tourInfo;
+	ui::Button *btnJoin = (ui::Button*)popupTour->getChildByName("btnjoin");
+	ui::Button *btnRegister = (ui::Button*)popupTour->getChildByName("btnregister");
+	Label* lbCountDown = (Label*)popupTour->getChildByName("lbcountdown");
+
+	if (state == 0) {
+		lbCountDown->setTag(1);
+		btnJoin->setVisible(false);
+		btnRegister->setVisible(true);
+		btnRegister->setColor(Color3B::GRAY);
+		btnRegister->setTouchEnabled(false);
+	} else if (state == 1) {
+		lbCountDown->setTag(2);
+		btnJoin->setVisible(false);
+		btnRegister->setVisible(true);
+		btnRegister->setColor(Color3B::WHITE);
+		btnRegister->setTouchEnabled(true);
+	} else if (state == 2) {
+		lbCountDown->setTag(3);
+		btnRegister->setVisible(false);
+		btnJoin->setVisible(true);
+		btnJoin->setColor(Color3B::GRAY);
+		btnJoin->setTouchEnabled(false);
+	} else if (state == 3) {
+		lbCountDown->setTag(4);
+		btnRegister->setVisible(false);
+		btnJoin->setVisible(true);
+		btnJoin->setColor(Color3B::WHITE);
+		btnJoin->setTouchEnabled(true);
+	} else if (state == 4) {
+		lbCountDown->setTag(5);
+		btnJoin->setVisible(false);
+		btnRegister->setVisible(true);
+		btnRegister->setColor(Color3B::GRAY);
+		btnRegister->setTouchEnabled(false);
+	}
+}
+
+void BaseScene::showTourCountDown(std::function<void()> callback)
+{
+	Label *lbCountDown = (Label*)popupTour->getChildByName("lbcountdown");
+	string timeRemainString = Utils::getSingleton().getCountTimeStringBySecs(tourTimeRemain, "%I:%M:%S");
+	lbCountDown->setString(timeRemainString);
+
+	DelayTime *delayTime = DelayTime::create(1);
+	CallFunc *func = CallFunc::create([=]() {
+		if (tourTimeRemain > 1) {
+			tourTimeRemain -= 1;
+			string str = Utils::getSingleton().getCountTimeStringBySecs(tourTimeRemain, "%I:%M:%S");
+			lbCountDown->setString(str);
+		} else {
+			lbCountDown->stopActionByTag(3);
+			lbCountDown->setString("");
+			callback();
+		}
+	});
+	Action* actionCount = RepeatForever::create(Sequence::createWithTwoActions(delayTime, func));
+	actionCount->setTag(3);
+	lbCountDown->stopAllActions();
+	lbCountDown->runAction(actionCount);
+}
+
+void BaseScene::joinIntoLobby(int lobby)
+{
+	if (isWaiting) return;
+	showWaiting();
+	tmpZoneId = lobby;
+	isGoToLobby = true;
+	SFSRequest::getSingleton().Disconnect();
+}
+
+void BaseScene::processCachedErrors()
+{
+	for (pair<unsigned char, string> p : Utils::getSingleton().cachedErrors) {
+		showPopupNotice(p.second, [=]() {});
+	}
+	Utils::getSingleton().cachedErrors.clear();
+}
+
+void BaseScene::joinIntoTour()
+{
+	if (isWaiting) return;
+	switchMoneyType(1);
+	isJoiningTour = true;
+	showWaiting();
+	tmpZoneId = 5;
+	zoneBeforeTour = Utils::getSingleton().currentZoneName;
+	SFSRequest::getSingleton().Disconnect();
 }

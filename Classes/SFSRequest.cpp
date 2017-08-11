@@ -274,6 +274,33 @@ void SFSRequest::RequestCancelItemShop(int itemId)
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::CANCEL_ITEM_SHOP, parameters);
 }
 
+void SFSRequest::RequestRegisterTour()
+{
+	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+	//parameters->PutUtfString("1", Utils::getSingleton().userDataMe.Name);
+	parameters->PutInt("1", 1);
+	parameters->PutUtfString("2", "01666823669");
+	SFSConnector::getSingleton().SendExtensionRequest(cmd::REGISTER_TOUR, parameters);
+}
+
+void SFSRequest::RequestTopTourPlayers()
+{
+	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+	SFSConnector::getSingleton().SendExtensionRequest(cmd::TOP_TOUR_PLAYER, parameters);
+}
+
+void SFSRequest::RequestListTourPlayers()
+{
+	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+	SFSConnector::getSingleton().SendExtensionRequest(cmd::LIST_TOUR_PLAYER, parameters);
+}
+
+void SFSRequest::RequestTourWinners()
+{
+	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+	SFSConnector::getSingleton().SendExtensionRequest(cmd::TOUR_WINNERS, parameters);
+}
+
 void SFSRequest::RequestRegister(std::string username, std::string password, std::string email)
 {
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
@@ -309,6 +336,7 @@ void SFSRequest::RequestLoginFacebook(std::string token)
 
 void SFSRequest::RequestJoinRoom(std::string roomId, bool isReconnect)
 {
+	CCLOG("%s", roomId.c_str());
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
 	parameters->PutBool("p", true);
 	parameters->PutUtfString("1", roomId);

@@ -104,6 +104,28 @@ AppellationData& Utils::getAppellationByLevel(int level)
 	return appellations[level == 0 ? 0 : i - 1];
 }
 
+ZoneData & Utils::getZoneByIndex(int moneyType, int index)
+{
+	if (moneyType >= 0 && index >= 0 && moneyType < zones.size() && index < zones[moneyType].size()) {
+		return zones[moneyType][index];
+	}
+	ZoneData zone;
+	return zone;
+}
+
+ZoneData & Utils::getCurrentZone()
+{
+	for (int i = 0; i < zones.size(); i++) {
+		for (int j = 0; j < zones[i].size(); j++) {
+			if (zones[i][j].ZoneName.compare(currentZoneName) == 0) {
+				return zones[i][j];
+			}
+		}
+	}
+	ZoneData zone;
+	return zone;
+}
+
 string Utils::formatMoneyWithComma(double money) {
 	stringstream ss;
 	//ss.imbue(locale("de-VI"));
@@ -220,6 +242,33 @@ std::string Utils::getCurrentZoneName()
 	return currentZoneName;
 }
 
+std::string Utils::getSystemTimeStringBySecs(double secs, char *fm)
+{
+	time_t rawtime = secs;
+	struct tm * timeinfo;
+	char buffer[80];
+
+	timeinfo = localtime(&rawtime);
+
+	strftime(buffer, sizeof(buffer), fm, timeinfo);
+	std::string str(buffer);
+
+	return str;
+}
+
+std::string Utils::getCountTimeStringBySecs(double secs, char * fm)
+{
+	if (secs <= 0) return "00:00:00";
+
+	long lsecs = secs;
+	int hour = lsecs / 3600;
+	lsecs %= 3600;
+	int min = lsecs / 60;
+	int sec = lsecs % 60;
+
+	return std::string(cocos2d::String::createWithFormat("%02d:%02d:%02d", hour, min, sec)->getCString());
+}
+
 double Utils::getCurrentSystemTimeInSecs()
 {
 	timeval time;
@@ -309,6 +358,11 @@ bool Utils::isSoloGame()
 	return currentZoneName.substr(0, 4).compare("SoLo") == 0;
 }
 
+bool Utils::isTourGame()
+{
+	return currentZoneName.compare("AutoTourKTC") == 0;
+}
+
 void Utils::setPmEByLogin(bool pme)
 {
 	gameConfig.pmE &= pme;
@@ -373,12 +427,12 @@ void Utils::logoutGame()
 	userDataMe.Name = "";
 	logoutZone();
 	hasShowEventPopup = false;
+	tourInfo.Name = "";
 }
 
 void Utils::logoutZone()
 {
 	currentRoomId = 0;
-	currentLobbyId = 0;
 	currentZoneName = "";
 	currentRoomName = "";
 	currentLobbyName = "";
@@ -528,7 +582,7 @@ void Utils::connectZoneByIndex(int moneyType, int index)
 
 void Utils::loginZoneByIndex(int moneyType, int index)
 {
-	long zonePort =zones[moneyType][index].ZonePort;
+	long zonePort = zones[moneyType][index].ZonePort;
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 	std::string zoneIp = zones[moneyType][index].ZoneIpIos;
 #else
@@ -734,4 +788,12 @@ void Utils::addViLangFromData(std::string data)
 	for (auto iter = map.begin(); iter != map.end(); iter++) {
 		viLang[iter->first] = iter->second.asString();
 	}
+}
+
+void Utils::setServerTime(double svTime)
+{
+	time_t rawtime;
+	time(&rawtime);
+	serverTime = svTime;
+	serverTimeDiff = rawtime - svTime;
 }

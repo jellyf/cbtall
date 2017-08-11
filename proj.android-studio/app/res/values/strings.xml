@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Kính tứ chi</string>
+    <string name="app_name">Test Kính tứ chi</string>
     <string name="facebook_app_id">992430550888136</string>
     <string name="fb_login_protocol_scheme">fb992430550888136</string>
 </resources>

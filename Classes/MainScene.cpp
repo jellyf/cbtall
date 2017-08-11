@@ -12,6 +12,7 @@ using namespace std;
 
 void MainScene::onInit()
 {
+	setTag(constant::SCENE_MAIN);
 	BaseScene::onInit();
 	isChargeQuan = Utils::getSingleton().ispmE();
 	bool pmE = Utils::getSingleton().ispmE();
@@ -52,6 +53,7 @@ void MainScene::onInit()
 	btnFBFriends->setVisible(pmE && canInvite);
 	addTouchEventListener(btnFBFriends, [=]() {
 		Utils::getSingleton().inviteFacebookFriends();
+		//SFSRequest::getSingleton().RequestRegisterTour();
 	});
 	mLayer->addChild(btnFBFriends);
 	autoScaleNode(btnFBFriends);
@@ -180,11 +182,7 @@ void MainScene::onInit()
 	btnNhaTranh->setPosition(vecPos[8]);
 	btnNhaTranh->setScale(.95f);
 	addTouchEventListener(btnNhaTranh, [=]() {
-		if (isWaiting) return;
-		showWaiting();
-		tmpZoneId = 0;
-		isGoToLobby = true;
-		SFSRequest::getSingleton().Disconnect();
+		joinIntoLobby(0);
 	});
 	mLayer->addChild(btnNhaTranh);
 	autoScaleNode(btnNhaTranh);
@@ -193,11 +191,7 @@ void MainScene::onInit()
 	btnDinhLang->setPosition(vecPos[9]);
 	btnDinhLang->setScale(.95f);
 	addTouchEventListener(btnDinhLang, [=]() {
-		if (isWaiting) return;
-		showWaiting();
-		tmpZoneId = 1;
-		isGoToLobby = true;
-		SFSRequest::getSingleton().Disconnect();
+		joinIntoLobby(1);
 	});
 	mLayer->addChild(btnDinhLang);
 	autoScaleNode(btnDinhLang);
@@ -206,25 +200,19 @@ void MainScene::onInit()
 	btnPhuChua->setPosition(vecPos[10]);
 	btnPhuChua->setScale(.95f);
 	addTouchEventListener(btnPhuChua, [=]() {
-		if (isWaiting) return;
-		showWaiting();
-		tmpZoneId = 2;
-		isGoToLobby = true;
-		SFSRequest::getSingleton().Disconnect();
+		joinIntoLobby(2);
 	});
 	mLayer->addChild(btnPhuChua);
 	autoScaleNode(btnPhuChua);
 
-	ui::Button* btnLoiDai = ui::Button::create("dtd.png", "dtd.png", "", ui::Widget::TextureResType::PLIST);
+	ui::Button* btnLoiDai = ui::Button::create("loidai.png", "loidai.png", "", ui::Widget::TextureResType::PLIST);
 	btnLoiDai->setPosition(vecPos[11]);
 	btnLoiDai->setScale(.95f);
 	addTouchEventListener(btnLoiDai, [=]() {
-		//showPopupNotice(Utils::getSingleton().getStringForKey("feature_coming_soon"), [=]() {});
-		if (isWaiting) return;
-		showWaiting();
-		tmpZoneId = 3;
-		isGoToLobby = true;
-		SFSRequest::getSingleton().Disconnect();
+		if (popupTour == NULL) {
+			initPopupTour();
+		}
+		showPopup(popupTour);
 	});
 	mLayer->addChild(btnLoiDai);
 	autoScaleNode(btnLoiDai);
@@ -302,9 +290,6 @@ void MainScene::registerEventListenner()
 	BaseScene::registerEventListenner();
 	EventHandler::getSingleton().onConfigZoneReceived = std::bind(&MainScene::onConfigZoneReceived, this);
 	EventHandler::getSingleton().onDynamicConfigReceived = std::bind(&MainScene::onDynamicConfigReceived, this);
-	EventHandler::getSingleton().onConnectionLost = std::bind(&MainScene::onConnectionLost, this, std::placeholders::_1);
-	EventHandler::getSingleton().onJoinRoom = std::bind(&MainScene::onJoinRoom, this, std::placeholders::_1, std::placeholders::_2);
-	EventHandler::getSingleton().onJoinRoomError = std::bind(&MainScene::onJoinRoomError, this, std::placeholders::_1);
 	EventHandler::getSingleton().onLobbyTableSFSResponse = bind(&MainScene::onTableDataResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onShopHistoryDataSFSResponse = bind(&MainScene::onShopHistoryDataResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onShopItemsDataSFSResponse = bind(&MainScene::onShopItemsDataResponse, this, placeholders::_1);
@@ -315,16 +300,14 @@ void MainScene::registerEventListenner()
 	EventHandler::getSingleton().onExchangeItemSFSResponse = bind(&MainScene::onExchangeItemResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onPurchaseSuccess = bind(&MainScene::onPurchaseSuccess, this, placeholders::_1);
 	EventHandler::getSingleton().onFacebookInvite = bind(&MainScene::onFacebookInvite, this, placeholders::_1);
+	EventHandler::getSingleton().onRegisterTourSFSResponse = bind(&MainScene::onRegisterTour, this, placeholders::_1);
 }
 
 void MainScene::unregisterEventListenner()
 {
 	BaseScene::unregisterEventListenner();
-	EventHandler::getSingleton().onConnectionLost = NULL;
 	EventHandler::getSingleton().onConfigZoneReceived = NULL;
 	EventHandler::getSingleton().onDynamicConfigReceived = NULL;
-	EventHandler::getSingleton().onJoinRoom = NULL;
-	EventHandler::getSingleton().onJoinRoomError = NULL;
 	EventHandler::getSingleton().onLobbyTableSFSResponse = NULL;
 	EventHandler::getSingleton().onShopHistoryDataSFSResponse = NULL;
 	EventHandler::getSingleton().onShopItemsDataSFSResponse = NULL;
@@ -335,6 +318,8 @@ void MainScene::unregisterEventListenner()
 	EventHandler::getSingleton().onExchangeItemSFSResponse = NULL;
 	EventHandler::getSingleton().onPurchaseSuccess = NULL;
 	EventHandler::getSingleton().onFacebookInvite = NULL;
+	EventHandler::getSingleton().onRegisterTourSFSResponse = NULL;
+	EventHandler::getSingleton().onTourInfoSFSResponse = NULL;
 }
 
 void MainScene::editBoxReturn(cocos2d::ui::EditBox * editBox)
@@ -370,11 +355,12 @@ void MainScene::onConnected()
 	}
 }
 
-void MainScene::onConnectionLost(std::string reason)
+bool MainScene::onConnectionLost(std::string reason)
 {
+	if (BaseScene::onConnectionLost(reason)) return true;
 	if (isBackToLogin) {
 		Utils::getSingleton().goToLoginScene();
-		return;
+		return true;
 	}
 	if (isGoToLobby && tmpZoneId >= 0) {
 		showWaiting();
@@ -382,6 +368,7 @@ void MainScene::onConnectionLost(std::string reason)
 	} else {
 		handleClientDisconnectionReason(reason);
 	}
+	return true;
 }
 
 void MainScene::onConfigZoneReceived()
@@ -394,16 +381,19 @@ void MainScene::onLoginZoneError(short int code, std::string msg)
 	BaseScene::onLoginZoneError(code, msg);
 	if (isGoToLobby) {
 		isGoToLobby = false;
-		hideWaiting();
+		showWaiting();
+		isPauseApp = true;
+		Utils::getSingleton().currentZoneName = "Authen";
+		SFSRequest::getSingleton().Disconnect();
 		showPopupNotice(msg, [=]() {});
 	}
 }
 
-void MainScene::onErrorResponse(unsigned char code, std::string msg)
+bool MainScene::onErrorResponse(unsigned char code, std::string msg)
 {
-	BaseScene::onErrorResponse(code, msg);
+	if(BaseScene::onErrorResponse(code, msg)) return true;
 	hideWaiting();
-	if (code == 0 && popupShop->isVisible()) {
+	if (code == 0 && popupShop != NULL && popupShop->isVisible()) {
 		showPopupNotice(msg, [=]() {
 			string str = Utils::getSingleton().gameConfig.smsKH;
 			int index = str.find_last_of(' ');
@@ -412,12 +402,12 @@ void MainScene::onErrorResponse(unsigned char code, std::string msg)
 			content = Utils::getSingleton().replaceString(content, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
 			Utils::getSingleton().openSMS(number, content);
 		}, false);
-		return;
+		return true;
 	}
 	if (code == 51 && popupDisplayName->isVisible()) {
 		hidePopup(popupDisplayName);
 		setDisplayName(tmpDisplayName);
-		return;
+		return true;
 	}
 	if (code == 32) {
 		if (popupShop != NULL && popupShop->isVisible()) {
@@ -428,20 +418,9 @@ void MainScene::onErrorResponse(unsigned char code, std::string msg)
 			chargingProvider = "";
 		}
 	}
-	if (msg.length() == 0) return;
+	if (msg.length() == 0) return false;
 	showPopupNotice(msg, [=]() {});
-}
-
-void MainScene::onJoinRoom(long roomId, std::string roomName)
-{
-	if (roomName.at(0) == 'g' && roomName.at(2) == 'b') {
-		Utils::getSingleton().goToGameScene();
-	}
-}
-
-void MainScene::onJoinRoomError(std::string msg)
-{
-	showPopupNotice(msg, [=]() {}, false);
+	return true;
 }
 
 void MainScene::onTableDataResponse(LobbyListTable data)
@@ -999,6 +978,13 @@ void MainScene::onDynamicConfigReceived()
 	GameLogger::getSingleton().setEnabled(Utils::getSingleton().dynamicConfig.Log);
 	GameLogger::getSingleton().setHost(Utils::getSingleton().dynamicConfig.LogHost);
 	GameLogger::getSingleton().setUser(Utils::getSingleton().userDataMe);
+}
+
+void MainScene::onRegisterTour(bool isRegistered)
+{
+	if (popupTour) {
+		popupTour->getChildByName("btnregister")->setVisible(!isRegistered);
+	}
 }
 
 void MainScene::onDownloadedPlistTexture(int numb)

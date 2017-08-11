@@ -27,7 +27,6 @@ public:
     virtual void onApplicationWillEnterForeground();
 
 	void onConnectionFailed();
-	void onConnectionLost(std::string reason);
 	void onJoinRoom(long roomId, std::string roomName);
 	void onUserDataResponse(UserData data);
 	void onUserExitRoom(long sfsUId);
@@ -58,11 +57,15 @@ public:
 	void onGameUserReconnectDataResponse(std::vector<UserReconnectData> list);
 	void onLobbyListTableResponse(LobbyListTable data);
 	void onTableReconnectDataResponse(TableReconnectData data);
+	void onTourRoomMatch(long totalMatch);
+	void onTourTimeWaitPlayer(long timeWait);
 protected:
 	virtual bool onKeyBack();
 	virtual void onKeyHome();
 	virtual void onBackScene();
-	virtual void onErrorResponse(unsigned char code, std::string msg);
+	virtual bool onConnectionLost(std::string reason);
+	virtual bool onErrorResponse(unsigned char code, std::string msg);
+	virtual void joinIntoTour();
 private:
 	void reset();
 	void initChatTable();
@@ -98,6 +101,7 @@ private:
 	void showCofferEffects(std::string money);
 	void showMenuButtons();
 	void hideMenuButtons();
+	void updateTourMatch();
 	void playSoundAction(unsigned char soundId);
 	void playSoundCuoc(unsigned char cuocId);
 	void changeZOrderAfterFly(cocos2d::Sprite* card, int zorder);
@@ -124,6 +128,7 @@ private:
 	std::vector<cocos2d::Node*> vecStilts;
 	//std::vector<cocos2d::Label*> vecCrests;
 	std::vector<cocos2d::Label*> lbWinMoneys;
+	std::vector<cocos2d::Label*> lbTourPoints;
 	std::vector<cocos2d::Sprite*> spCards;
 	std::vector<cocos2d::Sprite*> spHandCards;
 	std::vector<cocos2d::Sprite*> spDealCards;
@@ -207,6 +212,8 @@ private:
 	float cardScaleTable = .85f;
 	float cardScaleTableNew = .9f;
     double pauseTimeInSecs = 0;
+	double tourTimeRemain = 0;
+	long timeWaitPlayer = 0;
 	long playIdMe;
 	long sfsIdMe;
 	bool isBatBao;
@@ -221,6 +228,9 @@ private:
 	bool isAutoReady = false;
 	bool isSynchronizing = false;
 	bool isAutoBash = false;
+	bool isTourGame = false;
+	bool isMatchTimeEnd = false;
+	bool isPrepareToTour = false;
 	GameState state;
 	StartGameData startGameData;
 	CardHandData myCardHand;

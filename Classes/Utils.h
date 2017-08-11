@@ -19,6 +19,8 @@ public:
     
 	cocos2d::SpriteFrame* getDownloadedTextureAsSpriteFrame(std::string key);
 	AppellationData& getAppellationByLevel(int level);
+	ZoneData& getZoneByIndex(int moneyType, int index);
+	ZoneData& getCurrentZone();
     std::string formatMoneyWithComma(double money);
 	std::string getStringForKey(std::string key);
 	std::string replaceString(std::string str, std::string strSearch, std::string strReplace);
@@ -28,6 +30,8 @@ public:
 	std::string getPlatformOS();
 	std::string getDeviceId();
 	std::string getCurrentZoneName();
+	std::string getSystemTimeStringBySecs(double secs, char *fm);
+	std::string getCountTimeStringBySecs(double secs, char *fm);
 	double getCurrentSystemTimeInSecs();
 	int getCurrentZoneIndex();
 	bool isEmailValid(std::string email);
@@ -36,6 +40,7 @@ public:
 	bool isDisplayNameValid(std::string displayname);
 	bool ispmE();
 	bool isSoloGame();
+	bool isTourGame();
 	void setPmEByLogin(bool pme);
 	void split(const std::string &s, char delim, std::vector<std::string> &elems);
 	void replaceScene(cocos2d::Scene* scene);
@@ -68,6 +73,7 @@ public:
 	void inviteFacebookFriends();
 	void createAppellations();
 	void addViLangFromData(std::string data);
+	void setServerTime(double svTime);
 public:
 	cocos2d::Scene* currentScene;
 	UserData userDataMe;
@@ -76,6 +82,9 @@ public:
 	LobbyListTable lobbyListTable;
 	LobbyListRoomType lobbyListRoomType;
 	TableReconnectData tableReconnectData;
+	TourInfo tourInfo;
+	ZoneData currentZone;
+	std::vector<std::pair<unsigned char, std::string>> cachedErrors;
     std::vector<std::vector<ZoneData>> zones;
     std::vector<ProductData> products;
 	std::vector<EventData> events;
@@ -88,11 +97,13 @@ public:
 	std::string currentZoneIp;
 	std::string textureHost;
 	std::string cofferGuide;
+	std::string tourRoom;
+	double serverTime;
+	double serverTimeDiff;
 	double timeStartReconnect;
 	long cofferMoney;
 	long currentZonePort;
 	int currentRoomId;
-	int currentLobbyId;
 	int loginType;
 	int currentEventPosX;
 	int moneyType;
@@ -103,6 +114,7 @@ public:
 	bool IgnoreInvitation;
 	bool allowEventPopup;
 	bool hasShowEventPopup;
+	bool isRegisterTour;
 private:
 	cocos2d::ValueMap viLang;
 	std::vector<AppellationData> appellations;

@@ -35,17 +35,24 @@ public:
 	void onPlayLogDataResponse(std::vector<PlayLogData> logs);
 	void onCofferMoneyResponse(long money);
 	void onCofferHistoryResponse(std::vector<CofferWinnerData> list);
+	void onTourWinnersResponse(std::vector<TourAward> winners);
+	void onTourRoomToJoin(std::string room);
+	void onTourInfoResponse(TourInfo tour);
 protected:
 	virtual void onConnected();
 	virtual void onConnectionFailed();
+	virtual bool onConnectionLost(std::string reason);
 	virtual void onLoginZone();
 	virtual void onLoginZoneError(short int code, std::string msg);
-	virtual void onErrorResponse(unsigned char code, std::string msg);
+	virtual bool onErrorResponse(unsigned char code, std::string msg);
 	virtual void initHeaderWithInfos();
 	virtual void onBackScene();
 	virtual void onChangeMoneyType(int type);
 	virtual bool onKeyBack();
 	virtual void onKeyHome();
+	virtual void onJoinRoom(long roomId, std::string roomName);
+	virtual void onJoinRoomError(std::string msg);
+	virtual void joinIntoTour();
 
 	void handleClientDisconnectionReason(std::string reason);
 	void addTouchEventListener(cocos2d::ui::Button* btn, std::function<void()> func, bool isNew = true);
@@ -59,9 +66,11 @@ protected:
 	void initPopupHistory();
 	void initPopupCoffer();
 	void initPopupIAP();
+	void initPopupTour();
 	void initCofferView(cocos2d::Vec2 pos, int zorder, float scale = 1.0f);
 	void setMoneyType(int type);
 	void showPopupNotice(std::string msg, std::function<void()> func, bool showBtnClose = true, int timeToHide = -1);
+	void showPopupNoticeMini(std::string msg, std::function<void()> func, cocos2d::Vec2 pos, bool showBtnClose = true, int timeToHide = -1);
 	void showPopupRank(int type);
 	void showPopupRankWin();
 	void showPopupUserInfo(UserData userData, bool showHistoryIfIsMe = true);
@@ -79,20 +88,36 @@ protected:
 	void setSplashZOrder(int zorder);
     void autoScaleNode(cocos2d::Node* node);
     void delayFunction(Node* node, float time, std::function<void()> func);
+	void switchMoneyType(int type);
+	void cropLabel(cocos2d::Label *label, int width, bool dots = true);
+	void calculateTourTime();
+	void setTourTimeState(int state);
+	void showTourCountDown(std::function<void()> callback);
+	void joinIntoLobby(int lobby);
+	void processCachedErrors();
 
 	cocos2d::Node* createPopup(std::string stitle, bool isBig, bool isHidden);
 	cocos2d::Node* createPopupNotice();
+	cocos2d::Node* createPopupNoticeMini();
 	cocos2d::Vec2 getScaleSmoothly(float scale);
 
 	std::string chargingProvider = "";
+	std::string tourGroup = "";
+	std::string prepareTourRoom = "";
+	std::string zoneBeforeTour = "";
 	bool isReconnecting = false;
 	bool isOverlapLogin = false;
 	bool hasHeader = false;
 	bool isWaiting = false;
 	bool isPopupReady = false;
 	bool isBackToLogin = false;
+	bool isPauseApp = false;
+	bool isGoToLobby = false;
+	bool isJoiningTour = false;
+	int tmpZoneId = -1;
 	int pingId = 0;
 	double myRealMoney;
+	double tourTimeRemain;
 
 	cocos2d::Vec2 scaleScene;
 	cocos2d::Size winSize;
@@ -119,6 +144,7 @@ protected:
 	cocos2d::Node* popupHistory;
 	cocos2d::Node* popupCoffer;
 	cocos2d::Node* popupIAP;
+	cocos2d::Node* popupTour;
 	cocos2d::Node* eventView;
 
 	std::vector<cocos2d::ui::Button*> buttons;
@@ -134,10 +160,10 @@ protected:
 	int tmpIndex;
 
 private:
-    bool isPauseApp = false;
     bool isShowDisconnected = false;
 	std::vector<RankWinData> listRankWin;
 	std::vector<std::vector<RankData>> listRanks;
 	cocos2d::Vector<Node*> vecPopupNotices;
+	cocos2d::Vector<Node*> vecPopupNoticeMinis;
 };
 

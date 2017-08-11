@@ -68,6 +68,14 @@ SFSResponse::SFSResponse()
 	mapFunctions[cmd::COFFER_HISTORY] = std::bind(&SFSResponse::onCofferHistoryResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::PAYMENT_ENABLE] = std::bind(&SFSResponse::onPaymentEnableResponse, this, std::placeholders::_1);
 	mapFunctions[cmd::POPUP_EVENT] = std::bind(&SFSResponse::onPopupEventResponse, this, std::placeholders::_1);
+	mapFunctions[cmd::POPUP_EVENT] = std::bind(&SFSResponse::onPopupEventResponse, this, std::placeholders::_1);
+	mapFunctions[cmd::TOUR_INFO] = std::bind(&SFSResponse::onTourInfoResponse, this, std::placeholders::_1);
+	mapFunctions[cmd::TOP_TOUR_PLAYER] = std::bind(&SFSResponse::onTopTourPlayersResponse, this, std::placeholders::_1);
+	mapFunctions[cmd::LIST_TOUR_PLAYER] = std::bind(&SFSResponse::onListTourPlayersResponse, this, std::placeholders::_1);
+	mapFunctions[cmd::TOUR_ROOM_TO_JOIN] = std::bind(&SFSResponse::onTourRoomToJoinResponse, this, std::placeholders::_1);
+	mapFunctions[cmd::TOUR_WINNERS] = std::bind(&SFSResponse::onTourWinnersResponse, this, std::placeholders::_1);
+	mapFunctions[cmd::TOUR_ROOM_MATCH] = std::bind(&SFSResponse::onTourRoomMatchResponse, this, std::placeholders::_1);
+	mapFunctions[cmd::TOUR_TIME_WAIT_PLAYER] = std::bind(&SFSResponse::onTourTimeWaitPlayerResponse, this, std::placeholders::_1);
 }
 
 SFSResponse::~SFSResponse()
@@ -139,7 +147,8 @@ void SFSResponse::onConfigZoneResponse(boost::shared_ptr<ISFSObject> isfsObject)
 			//CCLOG("%d %s %s %s %d %d %d", data.Id, data.ZoneName.c_str(), data.ZoneIpIos.c_str(), data.ZoneIp.c_str(), data.ZonePort, data.Status, data.Money);
 		}
 	}
-	std::vector<std::vector<std::string>> names = { {"NhaTranh", "SanDinh", "VuongPhu", "SoLoXu"}, { "NhaTranhQuan", "SanDinhQuan", "VuongPhuQuan", "SoLoQuan" } };
+	std::vector<std::vector<std::string>> names = { {"NhaTranh", "SanDinh", "VuongPhu", "SoLoXu", "Authen", "AutoTourKTC" }, 
+													{ "NhaTranhQuan", "SanDinhQuan", "VuongPhuQuan", "SoLoQuan", "Authen", "AutoTourKTC" } };
 	zones.push_back(std::vector<ZoneData>());
 	zones.push_back(std::vector<ZoneData>());
 	for (int i = 0; i < names.size(); i++) {
@@ -250,7 +259,14 @@ void SFSResponse::onRoomDataResponse(boost::shared_ptr<ISFSObject> isfsObject)
 		byteArray->ReadDouble(player.PMoney);
 		byteArray->ReadShort(player.UType);
 		byteArray->ReadUTF(player.Ip);
+		byteArray->ReadShort(player.Info.Level);
 		byteArray->ReadDouble(player.TMoney);
+		byteArray->ReadUTF(player.Info.GroupAvatar);
+		byteArray->ReadByte(player.Info.Device);
+		byteArray->ReadUTF(player.Info.AvatarUrl);
+
+		player.TPoint = (short)player.TMoney;
+		player.TMatch = 0;
 		roomData.Players.push_back(player);
 		//CCLOG("%s %s %d %d %d %f %f %d %s %f", player.Ready ? "true" : "false", player.Info.Name.c_str(), player.Index, player.Info.SfsUserId, player.Info.UserID,
 		//	player.Info.MoneyFree, player.Info.MoneyReal, player.UType, player.Ip.c_str(), player.TMoney);
@@ -787,6 +803,8 @@ void SFSResponse::onGamePlayingTableResponse(boost::shared_ptr<ISFSObject> isfsO
 			player.SingleCards = vnumb[0];
 		}
 
+		player.TPoint = (short)player.TMoney;
+		player.TMatch = 0;
 		data.Players.push_back(player);
 		//CCLOG("%s %d %d %d %d %s %.0f %s %d ___ %s ___ %s", player.Info.Name.c_str(), player.Index, player.Info.SfsUserId, player.Info.UserID,
 		//	player.UType, player.Ip.c_str(), player.PMoney, player.Info.GroupAvatar.c_str(), player.Info.Device, str1.c_str(), str2.c_str());
@@ -852,6 +870,8 @@ void SFSResponse::onGameSpectatorResponse(boost::shared_ptr<ISFSObject> isfsObje
 		byteArray->ReadDouble(player.TMoney);
 		byteArray->ReadUTF(player.Info.GroupAvatar);
 		byteArray->ReadByte(player.Info.Device);
+		player.TPoint = (short)player.TMoney;
+		player.TMatch = 0;
 
 		list.push_back(player);
 		//CCLOG("%s %d %d %d %.0f %d %s %s %d", player.Info.Name.c_str(), player.Index, player.Info.SfsUserId, player.Info.UserID,
@@ -1257,5 +1277,233 @@ void SFSResponse::onPopupEventResponse(boost::shared_ptr<ISFSObject> isfsObject)
 	Utils::getSingleton().dynamicConfig = config;
 	if (EventHandler::getSingleton().onDynamicConfigReceived != NULL) {
 		EventHandler::getSingleton().onDynamicConfigReceived();
+	}
+}
+
+void SFSResponse::onTourInfoResponse(boost::shared_ptr<ISFSObject> isfsObject)
+{
+	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
+	if (byteArray->Length() == 0) return;
+
+	short numb;
+	TourInfo tour;
+	double serverTime;
+	byteArray->ReadShort(numb);
+	byteArray->ReadByte(tour.MaxUser);
+	byteArray->ReadInt(tour.RequiredMoney);
+	byteArray->ReadInt(tour.RequiredVip);
+	byteArray->ReadInt(tour.RequiredLevel);
+	byteArray->ReadInt(tour.MoneyCoc);
+	byteArray->ReadInt(tour.MoneyCuoc);
+	byteArray->ReadInt(tour.MoneyTime);
+	byteArray->ReadByte(tour.Mode);
+	byteArray->ReadDouble(tour.RegTimeBegin);
+	byteArray->ReadDouble(tour.RegTimeEnd);
+	byteArray->ReadDouble(tour.Race1TimeBegin);
+	byteArray->ReadDouble(tour.Race1TimeEnd);
+	byteArray->ReadDouble(tour.Race2TimeBegin);
+	byteArray->ReadDouble(tour.Race2TimeEnd);
+	byteArray->ReadDouble(tour.Race3TimeBegin);
+	byteArray->ReadDouble(tour.Race3TimeEnd);
+	byteArray->ReadBool(tour.CanRegister);
+	byteArray->ReadBool(tour.IsTouring);
+	byteArray->ReadUTF(tour.Name);
+	byteArray->ReadInt(tour.MaxMatch);
+	byteArray->ReadInt(tour.RequiredMatch);
+	byteArray->ReadBool(tour.Race3Enabled);
+	byteArray->ReadDouble(serverTime);
+
+	/*time_t rawtime;
+	time(&rawtime);
+	double dt = 4600;
+	tour.RegTimeBegin += dt;
+	tour.RegTimeEnd += dt;
+	tour.Race1TimeBegin += dt;
+	tour.Race1TimeEnd += dt;
+	tour.Race2TimeBegin += dt;
+	tour.Race2TimeEnd += dt;
+	tour.Race3TimeBegin += dt;
+	tour.Race3TimeEnd += dt;
+	tour.CanRegister = tour.RegTimeBegin < rawtime && rawtime < tour.RegTimeEnd;
+	tour.IsTouring = tour.Race1TimeBegin < rawtime && rawtime < tour.Race2TimeEnd;*/
+
+	Utils::getSingleton().setServerTime(serverTime);
+	Utils::getSingleton().tourInfo = tour;
+	if (EventHandler::getSingleton().onTourInfoSFSResponse != NULL) {
+		EventHandler::getSingleton().onTourInfoSFSResponse(tour);
+	}
+}
+
+void SFSResponse::onTopTourPlayersResponse(boost::shared_ptr<ISFSObject> isfsObject)
+{
+	std::vector<TourRoom> topPlayers;
+	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
+	while (byteArray->Position() < byteArray->Length()) {
+		short numb1;
+		string name;
+		std::vector<unsigned char> tmp1;
+		byteArray->ReadShort(numb1);
+		byteArray->ReadBytes(numb1, tmp1);
+		//byteArray->ReadUTF(name);
+
+		TourRoom room;
+		boost::shared_ptr<ByteArray> byteArray1 = boost::shared_ptr<ByteArray>(new ByteArray(boost::shared_ptr<vector<unsigned char>>(new vector<unsigned char>(tmp1))));
+
+		byteArray1->ReadUTF(room.Name);
+		while (byteArray1->Position() < byteArray1->Length()) {
+			unsigned char numb2;
+			std::vector<unsigned char> tmp2;
+
+			byteArray1->ReadByte(numb2);
+			byteArray1->ReadBytes(numb2, tmp2);
+
+			TourPlayer player;
+			boost::shared_ptr<ByteArray> byteArray2 = boost::shared_ptr<ByteArray>(new ByteArray(boost::shared_ptr<vector<unsigned char>>(new vector<unsigned char>(tmp2))));
+			byteArray2->ReadInt(player.Id);
+			byteArray2->ReadUTF(player.Name);
+			byteArray2->ReadDouble(player.Money);
+			byteArray2->ReadByte(player.Matches);
+
+			room.Players.push_back(player);
+		}
+		topPlayers.push_back(room);
+	}
+
+	if (EventHandler::getSingleton().onTopTourPlayersSFSResponse != NULL) {
+		EventHandler::getSingleton().onTopTourPlayersSFSResponse(topPlayers);
+	}
+}
+
+void SFSResponse::onListTourPlayersResponse(boost::shared_ptr<ISFSObject> isfsObject)
+{
+	std::vector<TourPlayer> players;
+	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
+	while (byteArray->Position() < byteArray->Length()) {
+		unsigned char numb1;
+		std::vector<unsigned char> tmp1;
+
+		byteArray->ReadByte(numb1);
+		byteArray->ReadBytes(numb1, tmp1);
+
+		TourPlayer player;
+		boost::shared_ptr<ByteArray> byteArray1 = boost::shared_ptr<ByteArray>(new ByteArray(boost::shared_ptr<vector<unsigned char>>(new vector<unsigned char>(tmp1))));
+		byteArray1->ReadInt(player.Id);
+		byteArray1->ReadUTF(player.Name);
+		byteArray1->ReadByte(player.Matches);
+		byteArray1->ReadUTF(player.Room);
+
+		//CCLOG("%d %s %d %s", player.Id, player.Name.c_str(), (int)player.Matches, player.Room.c_str());
+		players.push_back(player);
+	}
+
+	if (EventHandler::getSingleton().onListTourPlayersSFSResponse != NULL) {
+		EventHandler::getSingleton().onListTourPlayersSFSResponse(players);
+	}
+}
+
+void SFSResponse::onTourRoomToJoinResponse(boost::shared_ptr<ISFSObject> isfsObject)
+{
+	std::string room;
+	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
+	byteArray->ReadUTF(room);
+
+	if (EventHandler::getSingleton().onTourRoomToJoinSFSResponse != NULL) {
+		EventHandler::getSingleton().onTourRoomToJoinSFSResponse(room);
+	}
+}
+
+void SFSResponse::onRegisterTourInfoResponse(boost::shared_ptr<ISFSObject> isfsObject)
+{
+	bool isRegTour;
+	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
+	byteArray->ReadBool(isRegTour);
+
+	Utils::getSingleton().isRegisterTour = isRegTour;
+	if (EventHandler::getSingleton().onRegisterTourSFSResponse != NULL) {
+		EventHandler::getSingleton().onRegisterTourSFSResponse(isRegTour);
+	}
+}
+
+void SFSResponse::onTourNewRoundResponse(boost::shared_ptr<ISFSObject> isfsObject)
+{
+	std::string room;
+	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
+	byteArray->ReadUTF(room);
+
+	if (EventHandler::getSingleton().onTourNewRoundSFSResponse != NULL) {
+		EventHandler::getSingleton().onTourNewRoundSFSResponse(room);
+	}
+}
+
+void SFSResponse::onTourWinnersResponse(boost::shared_ptr<ISFSObject> isfsObject)
+{
+	std::vector<TourAward> tourAwards;
+	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
+	while (byteArray->Position() < byteArray->Length()) {
+		short length1;
+		std::vector<unsigned char> tmp1;
+		byteArray->ReadShort(length1);
+		byteArray->ReadBytes(length1, tmp1);
+
+		TourAward tour;
+		boost::shared_ptr<ByteArray> byteArray1 = boost::shared_ptr<ByteArray>(new ByteArray(boost::shared_ptr<vector<unsigned char>>(new vector<unsigned char>(tmp1))));
+		byteArray1->ReadInt(tour.Id);
+		byteArray1->ReadUTF(tour.KeyDate);
+		
+		while (byteArray1->Position() < byteArray1->Length()) {
+			unsigned char length2;
+			std::vector<unsigned char> tmp2;
+			byteArray1->ReadByte(length2);
+			byteArray1->ReadBytes(length2, tmp2);
+
+			TourWinner winner;
+			boost::shared_ptr<ByteArray> byteArray2 = boost::shared_ptr<ByteArray>(new ByteArray(boost::shared_ptr<vector<unsigned char>>(new vector<unsigned char>(tmp2))));
+			byteArray2->ReadInt(winner.Id);
+			byteArray2->ReadInt(winner.Atid);
+			byteArray2->ReadInt(winner.Uid);
+			byteArray2->ReadUTF(winner.Name);
+			byteArray2->ReadUTF(winner.DisplayName);
+			byteArray2->ReadUTF(winner.CreatedDate);
+			byteArray2->ReadInt(winner.Round);
+			byteArray2->ReadInt(winner.Point);
+			byteArray2->ReadInt(winner.Level);
+			byteArray2->ReadInt(winner.Match);
+			byteArray2->ReadDouble(winner.Money);
+			byteArray2->ReadUTF(winner.LevelTitle);
+
+			tour.Winners.push_back(winner);
+			//CCLOG("Player: %d %d %d %s %s %s %d %d %d %d %.0f %s", winner.Id, winner.Atid, winner.Uid, winner.Name.c_str(), winner.DisplayName.c_str(), 
+			//	winner.CreatedDate.c_str(), winner.Round, winner.Point, winner.Level, winner.Match, winner.Money, winner.LevelTitle.c_str());
+		}
+
+		//tour.Winners.reserve(tour.Winners.size());
+		tourAwards.push_back(tour);
+	}
+
+	//tourAwards.reserve(tourAwards.size());
+	if (EventHandler::getSingleton().onTourWinnersSFSResponse != NULL) {
+		EventHandler::getSingleton().onTourWinnersSFSResponse(tourAwards);
+	}
+}
+
+void SFSResponse::onTourRoomMatchResponse(boost::shared_ptr<ISFSObject> isfsObject)
+{
+	long totalMatch;
+	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
+	byteArray->ReadInt(totalMatch);
+
+	if (EventHandler::getSingleton().onTourRoomMatchSFSResponse != NULL) {
+		EventHandler::getSingleton().onTourRoomMatchSFSResponse(totalMatch);
+	}
+}
+
+void SFSResponse::onTourTimeWaitPlayerResponse(boost::shared_ptr<ISFSObject> isfsObject)
+{
+	long timeWait;
+	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
+	byteArray->ReadInt(timeWait);
+
+	if (EventHandler::getSingleton().onTourTimeWaitPlayerSFSResponse != NULL) {
+		EventHandler::getSingleton().onTourTimeWaitPlayerSFSResponse(timeWait);
 	}
 }

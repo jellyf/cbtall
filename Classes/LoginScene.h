@@ -15,14 +15,15 @@ public:
 
 	void onConnected();
 	void onLoginZone();
+	void onLogoutZone();
     void onConnectionException();
-	void onConnectionLost(std::string reason);
 	void onConfigZoneReceived();
 	void onUserDataMeResponse();
 	void onLoginFacebook(std::string token);
-	void onErrorResponse(unsigned char code, std::string msg);
 	void onTableDataResponse(LobbyListTable data);
 protected:
+	virtual bool onErrorResponse(unsigned char code, std::string msg);
+	virtual bool onConnectionLost(std::string reason);
 	virtual void onConnectionFailed();
 	virtual bool onKeyBack();
 private:

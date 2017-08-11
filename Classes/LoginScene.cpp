@@ -15,6 +15,7 @@ using namespace cocos2d;
 
 void LoginScene::onInit()
 {
+	setTag(constant::SCENE_LOGIN);
 	BaseScene::onInit();
 	Utils::getSingleton().loginType = -1;
 	Utils::getSingleton().SoundEnabled = UserDefault::getInstance()->getBoolForKey(constant::KEY_SOUND.c_str(), true);
@@ -211,9 +212,8 @@ void LoginScene::registerEventListenner()
 {
 	BaseScene::registerEventListenner();
 	EventHandler::getSingleton().onConnected = std::bind(&LoginScene::onConnected, this);
-    EventHandler::getSingleton().onLoginZone = std::bind(&LoginScene::onLoginZone, this);
+	EventHandler::getSingleton().onLoginZone = std::bind(&LoginScene::onLoginZone, this);
     EventHandler::getSingleton().onConnectionException = std::bind(&LoginScene::onConnectionException, this);
-	EventHandler::getSingleton().onConnectionLost = std::bind(&LoginScene::onConnectionLost, this, std::placeholders::_1);
 	EventHandler::getSingleton().onConfigZoneReceived = std::bind(&LoginScene::onConfigZoneReceived, this);
 	EventHandler::getSingleton().onErrorSFSResponse = std::bind(&LoginScene::onErrorResponse, this, std::placeholders::_1, std::placeholders::_2);
 	EventHandler::getSingleton().onUserDataMeSFSResponse = std::bind(&LoginScene::onUserDataMeResponse, this);
@@ -226,7 +226,6 @@ void LoginScene::unregisterEventListenner()
 	BaseScene::unregisterEventListenner();
 	EventHandler::getSingleton().onConnected = NULL;
 	EventHandler::getSingleton().onLoginZone = NULL;
-	EventHandler::getSingleton().onConnectionLost = NULL;
 	EventHandler::getSingleton().onConfigZoneReceived = NULL;
 	EventHandler::getSingleton().onErrorSFSResponse = NULL;
 	EventHandler::getSingleton().onUserDataMeSFSResponse = NULL;
@@ -283,8 +282,9 @@ void LoginScene::onConnectionException()
     }
 }
 
-void LoginScene::onConnectionLost(std::string reason)
+bool LoginScene::onConnectionLost(std::string reason)
 {
+	if(BaseScene::onConnectionLost(reason)) return true;
 	isLogedInZone = false;
 	if (isReconnecting) {
 		Utils::getSingleton().connectZoneByIndex(tmpZoneIndex / 10, tmpZoneIndex % 10);
@@ -292,6 +292,7 @@ void LoginScene::onConnectionLost(std::string reason)
         hideWaiting();
         showPopupNotice(Utils::getSingleton().getStringForKey("connection_failed"), [=]() {});
     }
+	return true;
 }
 
 void LoginScene::onConnectionFailed()
@@ -365,9 +366,9 @@ void LoginScene::onLoginFacebook(std::string token)
 	}
 }
 
-void LoginScene::onErrorResponse(unsigned char code, std::string msg)
+bool LoginScene::onErrorResponse(unsigned char code, std::string msg)
 {
-	if (code == 49) return;
+	if (code == 49) return false;
 	hideWaiting();
 	if (code == 48) {
 		loginNode->setVisible(true);
@@ -376,9 +377,10 @@ void LoginScene::onErrorResponse(unsigned char code, std::string msg)
 		tfPassword->setText(tfResPass->getText());
 		Utils::getSingleton().saveUsernameAndPassword(tfUsername->getText(), tfPassword->getText());
 	}
-	if (msg.length() == 0) return;
+	if (msg.length() == 0) return false;
 	showPopupNotice(msg, [=]() {});
 	fbToken = "";
+	return true;
 }
 
 void LoginScene::onHttpResponse(int tag, std::string content)
@@ -429,7 +431,7 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	config.canUpdate = d["updatenow"].GetBool();
 	config.inapp = d["inapp"].GetString();
     config.invite = d["invite"].GetBool();
-    config.versionIOS71ktc = d["versionIOS71ktc"].GetBool();
+    //config.versionIOS71ktc = d["versionIOS71ktc"].GetBool();
 
 	string verstr = Application::sharedApplication()->getVersion();
 	int i = verstr.find_last_of('.') + 1;
@@ -682,9 +684,9 @@ void LoginScene::initRegisterNode()
 void LoginScene::requestGameConfig(bool realConfig)
 {
 	showWaiting(60);
-	SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
+	//SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
 	//SFSRequest::getSingleton().RequestHttpGet("http://115.84.179.242/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
-	//SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", constant::TAG_HTTP_GAME_CONFIG);
+	SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", constant::TAG_HTTP_GAME_CONFIG);
 }
 
 void LoginScene::loadTextureCache()

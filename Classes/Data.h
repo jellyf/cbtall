@@ -36,17 +36,20 @@ struct UserData
 	std::string DisplayName;
 	std::string GroupAvatar;
 	std::string BigCrest;
+	std::string AvatarUrl;
 };
 
 struct PlayerData
 {
 	UserData Info;
 	bool Ready;
-	unsigned char Index;
 	short UType;
-	std::string Ip;
+	short TPoint;
+	short TMatch;
 	double TMoney;
 	double PMoney;
+	unsigned char Index;
+	std::string Ip;
 	std::vector<char> SingleCards;
 	std::vector<std::vector<char>> PairCards;
 };
@@ -404,4 +407,69 @@ struct AppellationData
 	int Level;
 	std::string Name;
 	cocos2d::Color3B Color;
+};
+
+struct TourInfo
+{
+	std::string Name;
+	unsigned char MaxUser;
+	unsigned char Mode;
+	long RequiredMoney;
+	long RequiredVip;
+	long RequiredLevel;
+	long RequiredMatch;
+	long MoneyCoc;
+	long MoneyCuoc;
+	long MoneyTime;
+	long MaxMatch;
+	double RegTimeBegin;
+	double RegTimeEnd;
+	double Race1TimeBegin;
+	double Race1TimeEnd;
+	double Race2TimeBegin;
+	double Race2TimeEnd;
+	double Race3TimeBegin;
+	double Race3TimeEnd;
+	bool CanRegister;
+	bool IsTouring;
+	bool Race3Enabled;
+};
+
+struct TourPlayer
+{
+	long Id;
+	double Money;
+	unsigned char Matches;
+	unsigned char TotalCuoc;
+	std::string Name;
+	std::string Room;
+};
+
+struct TourRoom
+{
+	std::string Name;
+	std::vector<TourPlayer> Players;
+};
+
+struct TourWinner
+{
+	long Id;
+	long Atid;
+	long Uid;
+	long Round;
+	long Point;
+	long Level;
+	long Match;
+	double Money;
+	std::string Name;
+	std::string DisplayName;
+	std::string CreatedDate;
+	std::string LevelTitle;
+};
+
+struct TourAward
+{
+	long Id;
+	std::string KeyDate;
+	std::vector<TourWinner> Winners;
 };

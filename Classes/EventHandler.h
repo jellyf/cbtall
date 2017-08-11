@@ -3,6 +3,11 @@
 #include "SingLeton.h"
 #include "Data.h"
 
+class BaseHandler
+{
+	
+};
+
 class EventHandler : public SingLeton <EventHandler>
 {
 
@@ -53,6 +58,15 @@ public:
 	std::function<void(TableReconnectData)> onTableReconnectDataSFSResponse = NULL;
 	std::function<void(long)> onCofferMoneySFSResponse = NULL;
 	std::function<void(std::vector<CofferWinnerData>)> onCofferHistorySFSResponse = NULL;
+	std::function<void(TourInfo)> onTourInfoSFSResponse = NULL;
+	std::function<void(std::vector<TourPlayer>)> onListTourPlayersSFSResponse = NULL;
+	std::function<void(std::vector<TourRoom>)> onTopTourPlayersSFSResponse = NULL;
+	std::function<void(std::string)> onTourRoomToJoinSFSResponse = NULL;
+	std::function<void(std::string)> onTourNewRoundSFSResponse = NULL;
+	std::function<void(bool)> onRegisterTourSFSResponse = NULL;
+	std::function<void(std::vector<TourAward>)> onTourWinnersSFSResponse = NULL;
+	std::function<void(long)> onTourRoomMatchSFSResponse = NULL;
+	std::function<void(long)> onTourTimeWaitPlayerSFSResponse = NULL;
 
 	std::function<void(unsigned char, std::string)> onErrorSFSResponse = NULL;
 	std::function<void(RoomData)> onRoomDataSFSResponse = NULL;
@@ -92,3 +106,17 @@ public:
 	}
 };
 
+class RuntimeHandler : public BaseHandler
+{
+public:
+	void setActive(bool active);
+	void finish();
+	bool IsAvtive();
+public:
+	bool mIsActive;
+};
+
+class StartTourHandler : public RuntimeHandler
+{
+
+};

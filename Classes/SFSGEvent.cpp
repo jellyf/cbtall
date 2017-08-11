@@ -135,11 +135,11 @@ void SFSGEvent::OnLoginZoneError(map<string, boost::shared_ptr<void>> params)
 	boost::shared_ptr<void> ptrEventParamValueErrorCode = params["errorCode"];
 	boost::shared_ptr<short int> ptrErrorCode = ((boost::static_pointer_cast<short int>))(ptrEventParamValueErrorCode);
 
+	string message = "OnSmartFoxLoginZoneError: " + *ptrErrorMessage;
+	CCLOG("%d %s", *ptrErrorCode, message.c_str());
 	if (EventHandler::getSingleton().onLoginZoneError != NULL) {
 		EventHandler::getSingleton().onLoginZoneError(*ptrErrorCode, *ptrErrorMessage);
 	}
-	string message = "OnSmartFoxLoginZoneError: " + *ptrErrorMessage;
-	CCLOG("%d %s", *ptrErrorCode, message.c_str());
 }
 
 void SFSGEvent::OnLogoutZone(map<string, boost::shared_ptr<void>> params)

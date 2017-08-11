@@ -17,3 +17,18 @@ EventHandler::EventHandler()
 EventHandler::~EventHandler()
 {
 }
+
+void RuntimeHandler::setActive(bool active)
+{
+	mIsActive = active;
+}
+
+void RuntimeHandler::finish()
+{
+	mIsActive = false;
+}
+
+bool RuntimeHandler::IsAvtive()
+{
+	return mIsActive;
+}
