@@ -101,6 +101,7 @@ public:
 	double serverTime;
 	double serverTimeDiff;
 	double timeStartReconnect;
+	double tourRemindId = 0;
 	long cofferMoney;
 	long currentZonePort;
 	int currentRoomId;

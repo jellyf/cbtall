@@ -49,6 +49,7 @@ private:
 	void checkProviderToCharge();
 	void updateChargeRateCard(bool isQuan);
 	void updateSmsInfo(bool isQuan);
+	bool isTourCanRegOrJoin();
 
 	cocos2d::Node* popupShop;
 	cocos2d::Node* popupMail;

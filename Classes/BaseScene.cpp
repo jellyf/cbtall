@@ -248,8 +248,6 @@ void BaseScene::onApplicationDidEnterBackground()
 {
 	spNetwork->pause();
 	lbNetwork->pause();
-    isPauseApp = true;
-    SFSRequest::getSingleton().Disconnect();
 }
 
 void BaseScene::onApplicationWillEnterForeground()
@@ -1117,6 +1115,8 @@ bool BaseScene::onKeyBack()
 
 void BaseScene::onKeyHome()
 {
+	isPauseApp = true;
+	SFSRequest::getSingleton().Disconnect();
 }
 
 void BaseScene::onJoinRoom(long roomId, std::string roomName)
@@ -3022,6 +3022,7 @@ void BaseScene::calculateTourTime()
 	Label* lbCountDown = (Label*)popupTour->getChildByName("lbcountdown");
 	int state = lbCountDown->getTag();
 
+	Utils::getSingleton().tourRemindId = tourInfo.RegTimeBegin;
 	if (state == 0) {
 		if (rawtime < tourInfo.RegTimeBegin + timeDiff) {
 			setTourTimeState(0);
