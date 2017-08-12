@@ -2292,22 +2292,25 @@ void BaseScene::initPopupTour()
 	btnJoin->setVisible(false);
 	popupTour->addChild(btnJoin);
 
-	addTouchEventListener(btnRegister, [=]() {
-		btnRegister->setVisible(false);
-		btnJoin->setVisible(true);
-		SFSRequest::getSingleton().RequestRegisterTour();
-	});
-
-	addTouchEventListener(btnJoin, [=]() {
-		joinIntoTour();
-	});
-
 	Label* lbCountDown = Label::createWithTTF("", "fonts/arialbd.ttf", 40);
 	lbCountDown->setPosition(btnRegister->getPosition() - Vec2(80, 60));
 	lbCountDown->setAnchorPoint(Vec2(0, .5f));
 	lbCountDown->setTag(0);
 	lbCountDown->setName("lbcountdown");
 	popupTour->addChild(lbCountDown);
+
+	addTouchEventListener(btnRegister, [=]() {
+		btnRegister->setVisible(false);
+		btnJoin->setVisible(false);
+		lbCountDown->stopAllActions();
+		lbCountDown->setString("");
+		tourTimeRemain = -1;
+		SFSRequest::getSingleton().RequestRegisterTour();
+	});
+
+	addTouchEventListener(btnJoin, [=]() {
+		joinIntoTour();
+	});
 
 	onTourInfoResponse(Utils::getSingleton().tourInfo);
 }
@@ -3026,19 +3029,19 @@ void BaseScene::calculateTourTime()
 	if (state == 0) {
 		if (rawtime < tourInfo.RegTimeBegin + timeDiff) {
 			setTourTimeState(0);
-			tourTimeRemain = tourInfo.RegTimeBegin + timeDiff - rawtime + 3;
+			tourTimeRemain = -1;// tourInfo.RegTimeBegin + timeDiff - rawtime + 3;
 		} else if (rawtime >= tourInfo.RegTimeBegin + timeDiff
 			&& rawtime < tourInfo.RegTimeEnd + timeDiff) {
 			setTourTimeState(1);
-			tourTimeRemain = tourInfo.RegTimeEnd + timeDiff - rawtime + 3;
+			tourTimeRemain = tourInfo.CanRegister ? (tourInfo.RegTimeEnd + timeDiff - rawtime + 3) : -1;
 		} else if (rawtime >= tourInfo.RegTimeEnd + timeDiff
 			&& rawtime < tourInfo.Race1TimeBegin + timeDiff) {
 			setTourTimeState(2);
-			tourTimeRemain = tourInfo.Race1TimeBegin + timeDiff - rawtime + 3;
+			tourTimeRemain = -1;// tourInfo.Race1TimeBegin + timeDiff - rawtime + 3;
 		} else if (rawtime >= tourInfo.Race1TimeBegin + timeDiff
 			&& rawtime < tourInfo.Race2TimeEnd + timeDiff) {
 			setTourTimeState(3);
-			tourTimeRemain = tourInfo.Race2TimeEnd + timeDiff - rawtime + 3;
+			tourTimeRemain = tourInfo.CanRegister ? -1 : tourInfo.Race2TimeEnd + timeDiff - rawtime + 3;
 		} else if (rawtime >= tourInfo.Race2TimeEnd + timeDiff) {
 			setTourTimeState(4);
 			tourTimeRemain = -1;
@@ -3048,7 +3051,7 @@ void BaseScene::calculateTourTime()
 		tourTimeRemain = tourInfo.RegTimeEnd - tourInfo.RegTimeBegin;
 	} else if (state == 2) {
 		setTourTimeState(2);
-		tourTimeRemain = tourInfo.Race1TimeBegin - tourInfo.RegTimeEnd;
+		tourTimeRemain = -1;// tourInfo.Race1TimeBegin - tourInfo.RegTimeEnd;
 	} else if (state == 3) {
 		setTourTimeState(3);
 		tourTimeRemain = tourInfo.Race2TimeEnd - tourInfo.Race1TimeBegin;
@@ -3074,33 +3077,47 @@ void BaseScene::setTourTimeState(int state)
 	if (state == 0) {
 		lbCountDown->setTag(1);
 		btnJoin->setVisible(false);
-		btnRegister->setVisible(true);
-		btnRegister->setColor(Color3B::GRAY);
-		btnRegister->setTouchEnabled(false);
+		btnRegister->setVisible(false);
+		//btnRegister->setColor(Color3B::GRAY);
+		//btnRegister->setTouchEnabled(false);
 	} else if (state == 1) {
 		lbCountDown->setTag(2);
-		btnJoin->setVisible(false);
-		btnRegister->setVisible(true);
-		btnRegister->setColor(Color3B::WHITE);
-		btnRegister->setTouchEnabled(true);
+		if (tourInfo.CanRegister) {
+			btnJoin->setVisible(false);
+			btnRegister->setVisible(true);
+			btnRegister->setColor(Color3B::WHITE);
+			btnRegister->setTouchEnabled(true);
+		} else {
+			btnRegister->setVisible(false);
+			btnJoin->setVisible(false);
+			//btnJoin->setColor(Color3B::GRAY);
+			//btnJoin->setTouchEnabled(false);
+		}
 	} else if (state == 2) {
 		lbCountDown->setTag(3);
 		btnRegister->setVisible(false);
-		btnJoin->setVisible(true);
-		btnJoin->setColor(Color3B::GRAY);
-		btnJoin->setTouchEnabled(false);
+		btnJoin->setVisible(false);
+		//btnJoin->setColor(Color3B::GRAY);
+		//btnJoin->setTouchEnabled(false);
 	} else if (state == 3) {
 		lbCountDown->setTag(4);
-		btnRegister->setVisible(false);
-		btnJoin->setVisible(true);
-		btnJoin->setColor(Color3B::WHITE);
-		btnJoin->setTouchEnabled(true);
+		if (tourInfo.CanRegister) {
+			btnJoin->setVisible(false);
+			btnRegister->setVisible(false);
+			//btnRegister->setColor(Color3B::GRAY);
+			//btnRegister->setTouchEnabled(false);
+		} else {
+			btnRegister->setVisible(false);
+			btnJoin->setVisible(true);
+			btnJoin->setColor(Color3B::WHITE);
+			btnJoin->setTouchEnabled(true);
+		}
 	} else if (state == 4) {
 		lbCountDown->setTag(5);
 		btnJoin->setVisible(false);
-		btnRegister->setVisible(true);
-		btnRegister->setColor(Color3B::GRAY);
-		btnRegister->setTouchEnabled(false);
+		btnRegister->setVisible(false);
+		//btnRegister->setColor(Color3B::GRAY);
+		//btnRegister->setTouchEnabled(false);
 	}
 }
 

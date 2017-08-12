@@ -2409,6 +2409,6 @@ bool MainScene::isTourCanRegOrJoin()
 	time_t rawtime;
 	time(&rawtime);
 	double timeDiff = Utils::getSingleton().serverTimeDiff;
-	return (rawtime >= tourInfo.RegTimeBegin + timeDiff && rawtime < tourInfo.RegTimeEnd + timeDiff)
-		|| (rawtime >= tourInfo.Race1TimeBegin + timeDiff && rawtime < tourInfo.Race2TimeEnd + timeDiff);
+	return (tourInfo.CanRegister && rawtime >= tourInfo.RegTimeBegin + timeDiff && rawtime < tourInfo.RegTimeEnd + timeDiff)
+		|| (!tourInfo.CanRegister && rawtime >= tourInfo.Race1TimeBegin + timeDiff && rawtime < tourInfo.Race2TimeEnd + timeDiff);
 }
