@@ -1315,7 +1315,7 @@ void SFSResponse::onTourInfoResponse(boost::shared_ptr<ISFSObject> isfsObject)
 
 	/*time_t rawtime;
 	time(&rawtime);
-	double dt = 4600;
+	double dt = 600;
 	tour.RegTimeBegin += dt;
 	tour.RegTimeEnd += dt;
 	tour.Race1TimeBegin += dt;
@@ -1362,7 +1362,7 @@ void SFSResponse::onTopTourPlayersResponse(boost::shared_ptr<ISFSObject> isfsObj
 			byteArray2->ReadInt(player.Id);
 			byteArray2->ReadUTF(player.Name);
 			byteArray2->ReadDouble(player.Money);
-			byteArray2->ReadByte(player.Matches);
+			byteArray2->ReadInt(player.Matches);
 
 			room.Players.push_back(player);
 		}
@@ -1389,7 +1389,8 @@ void SFSResponse::onListTourPlayersResponse(boost::shared_ptr<ISFSObject> isfsOb
 		boost::shared_ptr<ByteArray> byteArray1 = boost::shared_ptr<ByteArray>(new ByteArray(boost::shared_ptr<vector<unsigned char>>(new vector<unsigned char>(tmp1))));
 		byteArray1->ReadInt(player.Id);
 		byteArray1->ReadUTF(player.Name);
-		byteArray1->ReadByte(player.Matches);
+		byteArray1->ReadInt(player.Matches);
+		byteArray1->ReadInt(player.TotalCuoc);
 		byteArray1->ReadUTF(player.Room);
 
 		//CCLOG("%d %s %d %s", player.Id, player.Name.c_str(), (int)player.Matches, player.Room.c_str());

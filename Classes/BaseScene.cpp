@@ -307,6 +307,37 @@ void BaseScene::showPopupNoticeMini(std::string msg, std::function<void()> func,
 	}
 }
 
+void BaseScene::showPopupConfirm(std::string msg, std::string titleOK, std::string titleCancel, std::function<void()> func)
+{
+	Node* popupConfirm = createPopupConfirm();
+	showPopup(popupConfirm);
+	Label* lbcontent = (Label*)popupConfirm->getChildByName("lbcontent");
+	lbcontent->setString(msg);
+	ui::Button* btnSubmit = (ui::Button*)popupConfirm->getChildByName("btnsubmit");
+	addTouchEventListener(btnSubmit, [=]() {
+		popupConfirm->stopAllActions();
+		func();
+		hidePopup(popupConfirm);
+	}, false);
+}
+
+void BaseScene::showPopupConfirmMini(std::string msg, std::string titleOK, std::string titleCancel, cocos2d::Vec2 pos, std::function<void()> func)
+{
+	Node* popupConfirm = createPopupConfirmMini();
+	popupConfirm->setPosition(pos);
+	runEffectShowPopup(popupConfirm);
+	popupConfirm->setVisible(true);
+
+	Label* lbcontent = (Label*)popupConfirm->getChildByName("lbcontent");
+	lbcontent->setString(msg);
+	ui::Button* btnSubmit = (ui::Button*)popupConfirm->getChildByName("btnsubmit");
+	addTouchEventListener(btnSubmit, [=]() {
+		popupConfirm->stopAllActions();
+		func();
+		hidePopup(popupConfirm);
+	}, false);
+}
+
 void BaseScene::showSplash()
 {
 	splash->setVisible(true);
@@ -753,7 +784,8 @@ bool BaseScene::onErrorResponse(unsigned char code, std::string msg)
 	if (code == 34) {
 		//Bat dau dang ky giai dau
 		if (getTag() == constant::SCENE_GAME) {
-			showPopupNoticeMini(msg, [=]() {
+			showPopupConfirmMini(msg, Utils::getSingleton().getStringForKey("dang_ky")
+				, Utils::getSingleton().getStringForKey("bo_qua"), Vec2(200, 150), [=]() {
 				if (popupTour == NULL) {
 					initPopupTour();
 				}
@@ -762,7 +794,7 @@ bool BaseScene::onErrorResponse(unsigned char code, std::string msg)
 				btnReg->setVisible(true);
 				btnReg->setColor(Color3B::WHITE);
 				btnReg->setTouchEnabled(true);
-			}, Vec2(200, 150), true, 10);
+			});
 		} else {
 			showPopupNotice(msg, [=]() {
 				if (popupTour == NULL) {
@@ -780,9 +812,10 @@ bool BaseScene::onErrorResponse(unsigned char code, std::string msg)
 	if (code == 37) {
 		//Bat dau tham gia giai dau
 		if (getTag() == constant::SCENE_GAME) {
-			showPopupNoticeMini(msg, [=]() {
+			showPopupConfirmMini(msg, Utils::getSingleton().getStringForKey("tham_gia")
+				, Utils::getSingleton().getStringForKey("bo_qua"), Vec2(200, 150), [=]() {
 				joinIntoTour();
-			}, Vec2(200, 150), true, 10);
+			});
 		} else {
 			showPopupNotice(msg, [=]() {
 				joinIntoTour();
@@ -1380,11 +1413,148 @@ cocos2d::Node * BaseScene::createPopupNoticeMini()
 	btndong->setScale(.6f);
 	btndong->setName("btnclose");
 	addTouchEventListener(btndong, [=]() {
-		hidePopup(popupNotice);
+		runEffectHidePopup(popupNotice);
 	});
 	popupNotice->addChild(btndong);
 
 	return popupNotice;
+}
+
+cocos2d::Node * BaseScene::createPopupConfirm()
+{
+	Node* popupConfirm = nullptr;
+	for (Node* n : vecPopupConfirms) {
+		if (!n->isVisible()) {
+			popupConfirm = n;
+			break;
+		}
+	}
+	if (popupConfirm == nullptr) {
+		popupConfirm = Node::create();
+	}
+
+	popupConfirm->setPosition(560, 350);
+	popupConfirm->setVisible(false);
+	mLayer->addChild(popupConfirm, constant::ZORDER_POPUP_NOTICE);
+	autoScaleNode(popupConfirm);
+
+	Sprite* bg = Sprite::createWithSpriteFrameName("popup_bg.png");
+	popupConfirm->addChild(bg);
+
+	Sprite* title = Sprite::createWithSpriteFrameName("title_thongbao.png");
+	title->setPosition(0, 170);
+	//title->setScale(.8f);
+	popupConfirm->addChild(title);
+
+	Label* lb = Label::create();
+	lb->setColor(Color3B::WHITE);
+	lb->setSystemFontSize(30);
+	lb->setWidth(550);
+	lb->setName("lbcontent");
+	lb->setAlignment(TextHAlignment::CENTER);
+	popupConfirm->addChild(lb);
+
+	ui::Button* btnok = ui::Button::create("btn.png", "btn_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnok->setScale9Enabled(true);
+	btnok->setCapInsets(Rect(85, 10, 10, 40));
+	btnok->setContentSize(Size(202, 59));
+	btnok->setPosition(Vec2(-130, -170));
+	btnok->setName("btnsubmit");
+	addTouchEventListener(btnok, [=]() {});
+	popupConfirm->addChild(btnok);
+
+	ui::Button* btndong = ui::Button::create("btn.png", "btn_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btndong->setScale9Enabled(true);
+	btndong->setCapInsets(Rect(85, 10, 10, 40));
+	btndong->setContentSize(Size(202, 59));
+	btndong->setPosition(Vec2(130, -170));
+	btndong->setName("btnclose");
+	addTouchEventListener(btndong, [=]() {
+		hidePopup(popupConfirm);
+	});
+	popupConfirm->addChild(btndong);
+
+	Label* okTitle = Label::createWithTTF(Utils::getSingleton().getStringForKey("dang_ky"), "fonts/staccato.ttf", 30);
+	okTitle->setPosition(btnok->getContentSize().width / 2, btnok->getContentSize().height / 2 + 5);
+	okTitle->setColor(Color3B(255, 255, 80));
+	okTitle->enableOutline(Color4B(51, 0, 0, 255), 2);
+	btnok->addChild(okTitle);
+
+	Label* cancelTitle = Label::createWithTTF(Utils::getSingleton().getStringForKey("bo_qua"), "fonts/staccato.ttf", 30);
+	cancelTitle->setPosition(btndong->getContentSize().width / 2, btndong->getContentSize().height / 2 + 5);
+	cancelTitle->setColor(Color3B(255, 255, 80));
+	cancelTitle->enableOutline(Color4B(51, 0, 0, 255), 2);
+	btndong->addChild(cancelTitle);
+
+	return popupConfirm;
+}
+
+cocos2d::Node * BaseScene::createPopupConfirmMini()
+{
+	Node* popupConfirm = nullptr;
+	for (Node* n : vecPopupConfirmMinis) {
+		if (!n->isVisible()) {
+			popupConfirm = n;
+			break;
+		}
+	}
+	if (popupConfirm == nullptr) {
+		popupConfirm = Node::create();
+	}
+
+	popupConfirm->setPosition(560, 350);
+	popupConfirm->setVisible(false);
+	mLayer->addChild(popupConfirm, constant::ZORDER_POPUP_NOTICE);
+	autoScaleNode(popupConfirm);
+
+	float bgScale = .6f;
+	Sprite* bg = Sprite::createWithSpriteFrameName("popup_bg.png");
+	bg->setScale(bgScale);
+	popupConfirm->addChild(bg);
+
+	Label* lb = Label::create();
+	lb->setColor(Color3B::WHITE);
+	lb->setSystemFontSize(25);
+	lb->setWidth(550 * bgScale);
+	lb->setName("lbcontent");
+	lb->setAlignment(TextHAlignment::CENTER);
+	popupConfirm->addChild(lb);
+
+	ui::Button* btnok = ui::Button::create("btn.png", "btn_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnok->setScale9Enabled(true);
+	btnok->setCapInsets(Rect(85, 10, 10, 40));
+	btnok->setContentSize(Size(180, 59));
+	btnok->setPosition(Vec2(-130 * .7f, -200 * bgScale));
+	btnok->setName("btnsubmit");
+	btnok->setScale(.8f);
+	addTouchEventListener(btnok, [=]() {});
+	popupConfirm->addChild(btnok);
+
+	ui::Button* btndong = ui::Button::create("btn.png", "btn_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btndong->setScale9Enabled(true);
+	btndong->setCapInsets(Rect(85, 10, 10, 40));
+	btndong->setContentSize(Size(180, 59));
+	btndong->setPosition(Vec2(130 * .7f, -200 * bgScale));
+	btndong->setName("btnclose");
+	btndong->setScale(.8f);
+	addTouchEventListener(btndong, [=]() {
+		runEffectHidePopup(popupConfirm);
+	});
+	popupConfirm->addChild(btndong);
+
+	Label* okTitle = Label::createWithTTF(Utils::getSingleton().getStringForKey("dang_ky"), "fonts/staccato.ttf", 30);
+	okTitle->setPosition(btnok->getContentSize().width / 2, btnok->getContentSize().height / 2 + 5);
+	okTitle->setColor(Color3B(255, 255, 80));
+	okTitle->enableOutline(Color4B(51, 0, 0, 255), 2);
+	btnok->addChild(okTitle);
+
+	Label* cancelTitle = Label::createWithTTF(Utils::getSingleton().getStringForKey("bo_qua"), "fonts/staccato.ttf", 30);
+	cancelTitle->setPosition(btndong->getContentSize().width / 2, btndong->getContentSize().height / 2 + 5);
+	cancelTitle->setColor(Color3B(255, 255, 80));
+	cancelTitle->enableOutline(Color4B(51, 0, 0, 255), 2);
+	btndong->addChild(cancelTitle);
+
+	return popupConfirm;
 }
 
 cocos2d::Vec2 BaseScene::getScaleSmoothly(float scale)
@@ -2279,11 +2449,9 @@ void BaseScene::initPopupTour()
 	popupTour->addChild(btnRegister);
 
 	ui::Button* btnJoin = ui::Button::create("btn.png", "btn_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btnJoin->setTitleFontName("fonts/arialbd.ttf");
-	btnJoin->setTitleFontSize(35);
-	btnJoin->setTitleText(Utils::getSingleton().getStringForKey("tham_gia"));
 	btnJoin->setContentSize(btnRegister->getContentSize());
 	btnJoin->setScale9Enabled(true);
+	btnJoin->setCapInsets(Rect(85, 10, 10, 40));
 	btnJoin->setPosition(btnRegister->getPosition());
 	btnJoin->setScale(.9f);
 	btnJoin->setName("btnjoin");
@@ -2292,6 +2460,12 @@ void BaseScene::initPopupTour()
 	btnJoin->setVisible(false);
 	popupTour->addChild(btnJoin);
 
+	Label* titleJoin = Label::createWithTTF(Utils::getSingleton().getStringForKey("tham_gia"), "fonts/staccato.ttf", 32);
+	titleJoin->setPosition(btnJoin->getContentSize().width / 2, btnJoin->getContentSize().height / 2 + 5);
+	titleJoin->setColor(Color3B(255, 255, 80));
+	titleJoin->enableOutline(Color4B(51, 0, 0, 255), 2);
+	btnJoin->addChild(titleJoin);
+
 	Label* lbCountDown = Label::createWithTTF("", "fonts/arialbd.ttf", 40);
 	lbCountDown->setPosition(btnRegister->getPosition() - Vec2(80, 60));
 	lbCountDown->setAnchorPoint(Vec2(0, .5f));
@@ -2299,12 +2473,17 @@ void BaseScene::initPopupTour()
 	lbCountDown->setName("lbcountdown");
 	popupTour->addChild(lbCountDown);
 
+	Node* nodelbtime = Node::create();
+	nodelbtime->setName("0");
+	nodelbtime->setTag(0);
+	lbCountDown->addChild(nodelbtime);
+
 	addTouchEventListener(btnRegister, [=]() {
 		btnRegister->setVisible(false);
 		btnJoin->setVisible(false);
-		lbCountDown->stopAllActions();
-		lbCountDown->setString("");
-		tourTimeRemain = -1;
+		//lbCountDown->stopAllActions();
+		//lbCountDown->setString("");
+		//tourTimeRemain = -1;
 		SFSRequest::getSingleton().RequestRegisterTour();
 	});
 
@@ -2757,6 +2936,7 @@ void BaseScene::onTourInfoResponse(TourInfo tourInfo)
 	Node* nodeContent1 = nodeContent->getChildByName("nodecontent1");
 	Label* lb2 = (Label*)nodeContent->getChildByName("lbcontent2");
 	Label* lb3 = (Label*)nodeContent->getChildByName("lbcontent3");
+	Label* lbCountDown = (Label*)popupTour->getChildByName("lbcountdown");
 
 	float n1height = 0;
 	nodeContent1->setVisible(isTourExist);
@@ -2827,7 +3007,7 @@ void BaseScene::onTourInfoResponse(TourInfo tourInfo)
 	}
 
 	lb3->setString(info3);
-	calculateTourTime();
+	calculateTourTimeOnLabel(lbCountDown);
 }
 
 void BaseScene::onDownloadedPlistTexture(int numb)
@@ -3016,13 +3196,12 @@ void BaseScene::cropLabel(cocos2d::Label *label, int width, bool dots)
 	}
 }
 
-void BaseScene::calculateTourTime()
+void BaseScene::calculateTourTimeOnLabel(cocos2d::Label *lbCountDown)
 {
 	time_t rawtime;
 	time(&rawtime);
 	double timeDiff = Utils::getSingleton().serverTimeDiff;
 	TourInfo tourInfo = Utils::getSingleton().tourInfo;
-	Label* lbCountDown = (Label*)popupTour->getChildByName("lbcountdown");
 	int state = lbCountDown->getTag();
 
 	Utils::getSingleton().tourRemindId = tourInfo.RegTimeBegin;
@@ -3033,7 +3212,7 @@ void BaseScene::calculateTourTime()
 		} else if (rawtime >= tourInfo.RegTimeBegin + timeDiff
 			&& rawtime < tourInfo.RegTimeEnd + timeDiff) {
 			setTourTimeState(1);
-			tourTimeRemain = tourInfo.CanRegister ? (tourInfo.RegTimeEnd + timeDiff - rawtime + 3) : -1;
+			tourTimeRemain = tourInfo.RegTimeEnd + timeDiff - rawtime + 3;
 		} else if (rawtime >= tourInfo.RegTimeEnd + timeDiff
 			&& rawtime < tourInfo.Race1TimeBegin + timeDiff) {
 			setTourTimeState(2);
@@ -3041,7 +3220,7 @@ void BaseScene::calculateTourTime()
 		} else if (rawtime >= tourInfo.Race1TimeBegin + timeDiff
 			&& rawtime < tourInfo.Race2TimeEnd + timeDiff) {
 			setTourTimeState(3);
-			tourTimeRemain = tourInfo.CanRegister ? -1 : tourInfo.Race2TimeEnd + timeDiff - rawtime + 3;
+			tourTimeRemain = tourInfo.Race2TimeEnd + timeDiff - rawtime + 3;
 		} else if (rawtime >= tourInfo.Race2TimeEnd + timeDiff) {
 			setTourTimeState(4);
 			tourTimeRemain = -1;
@@ -3061,14 +3240,15 @@ void BaseScene::calculateTourTime()
 	}
 
 	if (tourTimeRemain >= 0) {
-		showTourCountDown([=]() {
-			calculateTourTime();
+		showTourCountDown(lbCountDown, [=]() {
+			calculateTourTimeOnLabel(lbCountDown);
 		});
 	}
 }
 
 void BaseScene::setTourTimeState(int state)
 {
+	if (!popupTour) return;
 	TourInfo tourInfo = Utils::getSingleton().tourInfo;
 	ui::Button *btnJoin = (ui::Button*)popupTour->getChildByName("btnjoin");
 	ui::Button *btnRegister = (ui::Button*)popupTour->getChildByName("btnregister");
@@ -3121,18 +3301,20 @@ void BaseScene::setTourTimeState(int state)
 	}
 }
 
-void BaseScene::showTourCountDown(std::function<void()> callback)
+void BaseScene::showTourCountDown(Label* lbCountDown, std::function<void()> callback)
 {
-	Label *lbCountDown = (Label*)popupTour->getChildByName("lbcountdown");
 	string timeRemainString = Utils::getSingleton().getCountTimeStringBySecs(tourTimeRemain, "%H:%M:%S");
 	lbCountDown->setString(timeRemainString);
+	lbCountDown->getChildByTag(0)->setName(to_string((long)tourTimeRemain));
 
 	DelayTime *delayTime = DelayTime::create(1);
 	CallFunc *func = CallFunc::create([=]() {
-		if (tourTimeRemain > 1) {
-			tourTimeRemain -= 1;
-			string str = Utils::getSingleton().getCountTimeStringBySecs(tourTimeRemain, "%H:%M:%S");
+		long timeRemain = atol(lbCountDown->getChildByTag(0)->getName().c_str());
+		if (timeRemain > 1) {
+			timeRemain -= 1;
+			string str = Utils::getSingleton().getCountTimeStringBySecs(timeRemain, "%H:%M:%S");
 			lbCountDown->setString(str);
+			lbCountDown->getChildByTag(0)->setName(to_string(timeRemain));
 		} else {
 			lbCountDown->stopActionByTag(3);
 			lbCountDown->setString("");

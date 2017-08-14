@@ -225,39 +225,55 @@ void MainScene::onInit()
 	mLayer->addChild(btnLoiDai);
 	autoScaleNode(btnLoiDai);
 
-	double curTourId = Utils::getSingleton().tourInfo.RegTimeBegin;
-	double tourRemindId = Utils::getSingleton().tourRemindId;
-	if (tourRemindId != curTourId && isTourCanRegOrJoin()) {
-		Vec2 scaleM1 = getScaleSmoothly(1.05f);
-		Vec2 scaleM2 = getScaleSmoothly(.95f);
-		ScaleTo* scaleTo1 = ScaleTo::create(.2f, scaleM1.x, scaleM1.y);
-		ScaleTo* scaleTo2 = ScaleTo::create(.2f, scaleM2.x, scaleM2.y);
-		DelayTime* delayScale = DelayTime::create(2);
-		Sequence* action = Sequence::create(scaleTo1, scaleTo2, delayScale, nullptr);
-		btnLoiDai->runAction(RepeatForever::create(action));
+	if (isTourCanRegOrJoin()) {
+		lbTourCountDown = Label::createWithTTF("", "fonts/arialbd.ttf", 35);
+		lbTourCountDown->setPosition(btnLoiDai->getContentSize().width / 2, btnLoiDai->getContentSize().height - 45);
+		lbTourCountDown->setColor(Color3B(250, 0, 0));
+		lbTourCountDown->enableOutline(Color4B(160, 0, 0, 255), 1);
+		lbTourCountDown->setTag(0);
+		btnLoiDai->addChild(lbTourCountDown);
 
-		/*FadeOut* fadeOut = FadeOut::create(1);
-		CallFunc* fadeFunc = CallFunc::create([=]() {
-		spLoiDai->setOpacity(255);
-		});
-		Sequence* action1 = Sequence::createWithTwoActions(fadeOut, fadeFunc);
+		Node* nodelbtime = Node::create();
+		nodelbtime->setName("0");
+		nodelbtime->setTag(0);
+		lbTourCountDown->addChild(nodelbtime);
 
-		Vec2 scaleM = getScaleSmoothly(1.1f);
-		ScaleTo* scaleTo = ScaleTo::create(1, scaleM.x, scaleM.y);
-		CallFunc* scaleFunc = CallFunc::create([=]() {
-		Vec2 scaleO = getScaleSmoothly(.95f);
-		spLoiDai->setScale(scaleO.x, scaleO.y);
-		});
-		Sequence* action2 = Sequence::createWithTwoActions(scaleTo, scaleFunc);
-
-		spLoiDai->runAction(RepeatForever::create(action1));
-		spLoiDai->runAction(RepeatForever::create(action2));*/
-
-		/*TintTo* tin1 = TintTo::create(1, Color3B::ORANGE);
-		TintTo* tin2 = TintTo::create(1, Color3B::WHITE);
-		Sequence* action = Sequence::createWithTwoActions(tin1, tin2);
-		btnLoiDai->runAction(RepeatForever::create(action));*/
+		calculateTourTimeOnLabel(lbTourCountDown);
 	}
+
+	//double curTourId = Utils::getSingleton().tourInfo.RegTimeBegin;
+	//double tourRemindId = Utils::getSingleton().tourRemindId;
+	//if (tourRemindId != curTourId && isTourCanRegOrJoin()) {
+	//	/*Vec2 scaleM1 = getScaleSmoothly(1.05f);
+	//	Vec2 scaleM2 = getScaleSmoothly(.95f);
+	//	ScaleTo* scaleTo1 = ScaleTo::create(.2f, scaleM1.x, scaleM1.y);
+	//	ScaleTo* scaleTo2 = ScaleTo::create(.2f, scaleM2.x, scaleM2.y);
+	//	DelayTime* delayScale = DelayTime::create(2);
+	//	Sequence* action = Sequence::create(scaleTo1, scaleTo2, delayScale, nullptr);
+	//	btnLoiDai->runAction(RepeatForever::create(action));*/
+
+	//	/*FadeOut* fadeOut = FadeOut::create(1);
+	//	CallFunc* fadeFunc = CallFunc::create([=]() {
+	//	spLoiDai->setOpacity(255);
+	//	});
+	//	Sequence* action1 = Sequence::createWithTwoActions(fadeOut, fadeFunc);
+
+	//	Vec2 scaleM = getScaleSmoothly(1.1f);
+	//	ScaleTo* scaleTo = ScaleTo::create(1, scaleM.x, scaleM.y);
+	//	CallFunc* scaleFunc = CallFunc::create([=]() {
+	//	Vec2 scaleO = getScaleSmoothly(.95f);
+	//	spLoiDai->setScale(scaleO.x, scaleO.y);
+	//	});
+	//	Sequence* action2 = Sequence::createWithTwoActions(scaleTo, scaleFunc);
+
+	//	spLoiDai->runAction(RepeatForever::create(action1));
+	//	spLoiDai->runAction(RepeatForever::create(action2));*/
+
+	//	/*TintTo* tin1 = TintTo::create(1, Color3B::ORANGE);
+	//	TintTo* tin2 = TintTo::create(1, Color3B::WHITE);
+	//	Sequence* action = Sequence::createWithTwoActions(tin1, tin2);
+	//	btnLoiDai->runAction(RepeatForever::create(action));*/
+	//}
 
 	/*initPopupCharge();
 	initPopupGuide();

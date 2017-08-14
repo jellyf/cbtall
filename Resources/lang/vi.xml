@@ -96,7 +96,7 @@
 	<key>tien_van</key><string>Tiền ván</string>
 	<key>nguoi_gui</key><string>Người gửi</string>
 	<key>huong_dan</key><string>Hướng dẫn</string>
-	<key>tham_gia</key><string>Tham gia</string>
+	<key>tham_gia</key><string>Tham Gia</string>
 	<key>tu_den</key><string>Từ %s đến %s</string>
 	<key>nguoi_choi_caps</key><string>NGƯỜI CHƠI</string>
 	<key>van_danh_caps</key><string>VÁN ĐÁNH</string>
@@ -119,6 +119,8 @@
 	<key>kieu_choi</key><string>Kiểu chơi</string>
 	<key>van</key><string>Ván</string>
 	<key>con</key><string>Còn</string>
+	<key>dang_ky</key><string>Đăng Ký</string>
+	<key>bo_qua</key><string>Bỏ Qua</string>
 	<key>hay_nhap_tai_khoan</key><string>Vui lòng nhập tài khoản</string>
 	<key>hay_nhap_mat_khau</key><string>Vui lòng nhập mật khẩu</string>
 	<key>bi_day_khoi_ban</key><string>Bạn đã bị đẩy ra khỏi phòng</string>

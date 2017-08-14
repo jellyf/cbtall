@@ -439,8 +439,8 @@ struct TourPlayer
 {
 	long Id;
 	double Money;
-	unsigned char Matches;
-	unsigned char TotalCuoc;
+	long Matches;
+	long TotalCuoc;
 	std::string Name;
 	std::string Room;
 };

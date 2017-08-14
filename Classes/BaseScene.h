@@ -71,6 +71,8 @@ protected:
 	void setMoneyType(int type);
 	void showPopupNotice(std::string msg, std::function<void()> func, bool showBtnClose = true, int timeToHide = -1);
 	void showPopupNoticeMini(std::string msg, std::function<void()> func, cocos2d::Vec2 pos, bool showBtnClose = true, int timeToHide = -1);
+	void showPopupConfirm(std::string msg, std::string titleOK, std::string titleCancel, std::function<void()> func);
+	void showPopupConfirmMini(std::string msg, std::string titleOK, std::string titleCancel, cocos2d::Vec2 pos, std::function<void()> func);
 	void showPopupRank(int type);
 	void showPopupRankWin();
 	void showPopupUserInfo(UserData userData, bool showHistoryIfIsMe = true);
@@ -90,15 +92,17 @@ protected:
     void delayFunction(Node* node, float time, std::function<void()> func);
 	void switchMoneyType(int type);
 	void cropLabel(cocos2d::Label *label, int width, bool dots = true);
-	void calculateTourTime();
+	void calculateTourTimeOnLabel(cocos2d::Label *lbCountDown);
 	void setTourTimeState(int state);
-	void showTourCountDown(std::function<void()> callback);
+	void showTourCountDown(cocos2d::Label *lbCountDown, std::function<void()> callback);
 	void joinIntoLobby(int lobby);
 	void processCachedErrors();
 
 	cocos2d::Node* createPopup(std::string stitle, bool isBig, bool isHidden);
 	cocos2d::Node* createPopupNotice();
 	cocos2d::Node* createPopupNoticeMini();
+	cocos2d::Node* createPopupConfirm();
+	cocos2d::Node* createPopupConfirmMini();
 	cocos2d::Vec2 getScaleSmoothly(float scale);
 
 	std::string chargingProvider = "";
@@ -165,5 +169,7 @@ private:
 	std::vector<std::vector<RankData>> listRanks;
 	cocos2d::Vector<Node*> vecPopupNotices;
 	cocos2d::Vector<Node*> vecPopupNoticeMinis;
+	cocos2d::Vector<Node*> vecPopupConfirms;
+	cocos2d::Vector<Node*> vecPopupConfirmMinis;
 };
 

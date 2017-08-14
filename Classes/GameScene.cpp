@@ -1912,16 +1912,16 @@ bool GameScene::onErrorResponse(unsigned char code, std::string msg)
 		state = NONE;
 		isMatchTimeEnd = true;
 		//Utils::getSingleton().cachedErrors.push_back(pair<unsigned char, string>(code, msg));
-		//showPopupNotice(msg, [=]() {
+		showPopupNotice(msg, [=]() {
 			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 			Utils::getSingleton().goToLobbyScene();
-		//});
+		});
 		return true;
 	}
 	if (isTourGame && (code == 36 || code == 39)) {
 		state = NONE;
-		Utils::getSingleton().cachedErrors.push_back(pair<unsigned char, string>(code, msg));
-		//showPopupNotice(msg, [=]() {});
+		//Utils::getSingleton().cachedErrors.push_back(pair<unsigned char, string>(code, msg));
+		showPopupNotice(msg, [=]() {});
 		return true;
 	}
 	if (code == 42) {
@@ -3446,31 +3446,33 @@ void GameScene::onTourRoomMatch(long totalMatch)
 void GameScene::onTourTimeWaitPlayer(long timeWait)
 {
 	if (state != NONE && state != READY) return;
-	if (mLayer->getChildByName("lbtimewaitplayer")) return;
 	timeWaitPlayer = timeWait;
-	Label *lbTimeWaitPlayer = Label::createWithTTF("", "fonts/arialbd.ttf", 50);
-	lbTimeWaitPlayer->setPosition(winSize.width / 2, winSize.height / 2);
-	lbTimeWaitPlayer->setName("lbtimewaitplayer");
-	mLayer->addChild(lbTimeWaitPlayer, constant::GAME_ZORDER_BUTTON);
-	autoScaleNode(lbTimeWaitPlayer);
+	Label* lbTimeWaitPlayer = (Label*)mLayer->getChildByName("lbtimewaitplayer");
+	if (!lbTimeWaitPlayer) {
+		lbTimeWaitPlayer = Label::createWithTTF("", "fonts/arialbd.ttf", 50);
+		lbTimeWaitPlayer->setPosition(winSize.width / 2, winSize.height / 2);
+		lbTimeWaitPlayer->setName("lbtimewaitplayer");
+		mLayer->addChild(lbTimeWaitPlayer, constant::GAME_ZORDER_BUTTON);
+		autoScaleNode(lbTimeWaitPlayer);
 
-	string timeWaitString = Utils::getSingleton().getCountTimeStringBySecs(timeWaitPlayer, "%I:%M:%S");
+		DelayTime *delayTime = DelayTime::create(1);
+		CallFunc *func = CallFunc::create([=]() {
+			if (timeWaitPlayer > 1) {
+				timeWaitPlayer -= 1;
+				string str = Utils::getSingleton().getCountTimeStringBySecs(timeWaitPlayer, "%H:%M:%S");
+				lbTimeWaitPlayer->setString(str);
+			} else {
+				lbTimeWaitPlayer->stopAllActions();
+				lbTimeWaitPlayer->setString("");
+				lbTimeWaitPlayer->removeFromParent();
+			}
+		});
+		Action* actionCount = RepeatForever::create(Sequence::createWithTwoActions(delayTime, func));
+		lbTimeWaitPlayer->runAction(actionCount);
+	}
+
+	string timeWaitString = Utils::getSingleton().getCountTimeStringBySecs(timeWaitPlayer, "%H:%M:%S");
 	lbTimeWaitPlayer->setString(timeWaitString);
-
-	DelayTime *delayTime = DelayTime::create(1);
-	CallFunc *func = CallFunc::create([=]() {
-		if (timeWaitPlayer > 1) {
-			timeWaitPlayer -= 1;
-			string str = Utils::getSingleton().getCountTimeStringBySecs(timeWaitPlayer, "%I:%M:%S");
-			lbTimeWaitPlayer->setString(str);
-		} else {
-			lbTimeWaitPlayer->stopAllActions();
-			lbTimeWaitPlayer->setString("");
-			lbTimeWaitPlayer->removeFromParent();
-		}
-	});
-	Action* actionCount = RepeatForever::create(Sequence::createWithTwoActions(delayTime, func));
-	lbTimeWaitPlayer->runAction(actionCount);
 }
 
 bool GameScene::onKeyBack()
@@ -4056,7 +4058,7 @@ void GameScene::initTableInfo()
 		if (tourTimeRemain <= 0) {
 			tourTimeRemain = tour.Race2TimeEnd - rawtime + Utils::getSingleton().serverTimeDiff;
 		}
-		string timestr = Utils::getSingleton().getStringForKey("con") + ": " + Utils::getSingleton().getCountTimeStringBySecs(tourTimeRemain, "%I:%M:%S");
+		string timestr = Utils::getSingleton().getStringForKey("con") + ": " + Utils::getSingleton().getCountTimeStringBySecs(tourTimeRemain, "%H:%M:%S");
 
 		Label* lbTourTime = Label::create(timestr, "fonts/arialbd.ttf", 18);
 		lbTourTime->setPosition(-90, -25);
@@ -4070,7 +4072,7 @@ void GameScene::initTableInfo()
 		CallFunc *func = CallFunc::create([=]() {
 			if (tourTimeRemain > 1) {
 				tourTimeRemain -= 1;
-				string str = Utils::getSingleton().getStringForKey("con") + ": " + Utils::getSingleton().getCountTimeStringBySecs(tourTimeRemain, "%I:%M:%S");
+				string str = Utils::getSingleton().getStringForKey("con") + ": " + Utils::getSingleton().getCountTimeStringBySecs(tourTimeRemain, "%H:%M:%S");
 				lbTourTime->setString(str);
 			} else {
 				lbTourTime->stopActionByTag(3);
