@@ -2798,14 +2798,14 @@ void BaseScene::onTourInfoResponse(TourInfo tourInfo)
 	if (isTourExist) {
 		std::vector<string> playModes = { "win_free", "win_free", "win_411" };
 		string stimeFormat = Utils::getSingleton().getStringForKey("tu_den");
-		string regTimeBegin = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.RegTimeBegin, "%I:%M:%S");
-		string regTimeEnd = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.RegTimeEnd, "%I:%M:%S");
-		string race1TimeBegin = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.Race1TimeBegin, "%I:%M:%S");
-		string race1TimeEnd = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.Race1TimeEnd, "%I:%M:%S");
-		string race2TimeBegin = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.Race2TimeBegin, "%I:%M:%S");
-		string race2TimeEnd = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.Race2TimeEnd, "%I:%M:%S");
-		string race3TimeBegin = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.Race3TimeBegin, "%I:%M:%S");
-		string race3TimeEnd = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.Race3TimeEnd, "%I:%M:%S");
+		string regTimeBegin = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.RegTimeBegin, "%H:%M:%S");
+		string regTimeEnd = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.RegTimeEnd, "%H:%M:%S");
+		string race1TimeBegin = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.Race1TimeBegin, "%H:%M:%S");
+		string race1TimeEnd = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.Race1TimeEnd, "%H:%M:%S");
+		string race2TimeBegin = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.Race2TimeBegin, "%H:%M:%S");
+		string race2TimeEnd = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.Race2TimeEnd, "%H:%M:%S");
+		string race3TimeBegin = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.Race3TimeBegin, "%H:%M:%S");
+		string race3TimeEnd = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.Race3TimeEnd, "%H:%M:%S");
 		string regTime(String::createWithFormat(stimeFormat.c_str(), regTimeBegin.c_str(), regTimeEnd.c_str())->getCString());
 		string race1Time(String::createWithFormat(stimeFormat.c_str(), race1TimeBegin.c_str(), race1TimeEnd.c_str())->getCString());
 		string race2Time(String::createWithFormat(stimeFormat.c_str(), race2TimeBegin.c_str(), race2TimeEnd.c_str())->getCString());
@@ -3124,14 +3124,14 @@ void BaseScene::setTourTimeState(int state)
 void BaseScene::showTourCountDown(std::function<void()> callback)
 {
 	Label *lbCountDown = (Label*)popupTour->getChildByName("lbcountdown");
-	string timeRemainString = Utils::getSingleton().getCountTimeStringBySecs(tourTimeRemain, "%I:%M:%S");
+	string timeRemainString = Utils::getSingleton().getCountTimeStringBySecs(tourTimeRemain, "%H:%M:%S");
 	lbCountDown->setString(timeRemainString);
 
 	DelayTime *delayTime = DelayTime::create(1);
 	CallFunc *func = CallFunc::create([=]() {
 		if (tourTimeRemain > 1) {
 			tourTimeRemain -= 1;
-			string str = Utils::getSingleton().getCountTimeStringBySecs(tourTimeRemain, "%I:%M:%S");
+			string str = Utils::getSingleton().getCountTimeStringBySecs(tourTimeRemain, "%H:%M:%S");
 			lbCountDown->setString(str);
 		} else {
 			lbCountDown->stopActionByTag(3);
