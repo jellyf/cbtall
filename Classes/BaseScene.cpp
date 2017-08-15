@@ -2931,10 +2931,10 @@ void BaseScene::onTourRoomToJoin(std::string room)
 		Utils::getSingleton().currentLobbyName = "cho3";
 		prepareTourRoom = tourGroup + "1";
 
-		if (Utils::getSingleton().tourRoom.length() > 0) {
+		/*if (Utils::getSingleton().tourRoom.length() > 0) {
 			SFSRequest::getSingleton().RequestJoinRoom(room);
 			Utils::getSingleton().tourRoom = "";
-		}
+		}*/
 	}
 }
 
@@ -3221,6 +3221,11 @@ void BaseScene::calculateTourTimeOnLabel(cocos2d::Label *lbCountDown)
 		if (rawtime < tourInfo.RegTimeBegin + timeDiff) {
 			setTourTimeState(0);
 			tourTimeRemain = -1;// tourInfo.RegTimeBegin + timeDiff - rawtime + 3;
+			double timeDelay = tourInfo.RegTimeBegin + timeDiff - rawtime + 3;
+			delayFunction(lbCountDown, timeDelay, [=]() {
+				lbCountDown->setTag(1);
+				calculateTourTimeOnLabel(lbCountDown);
+			});
 		} else if (rawtime >= tourInfo.RegTimeBegin + timeDiff
 			&& rawtime < tourInfo.RegTimeEnd + timeDiff) {
 			setTourTimeState(1);
@@ -3229,6 +3234,11 @@ void BaseScene::calculateTourTimeOnLabel(cocos2d::Label *lbCountDown)
 			&& rawtime < tourInfo.Race1TimeBegin + timeDiff) {
 			setTourTimeState(2);
 			tourTimeRemain = -1;// tourInfo.Race1TimeBegin + timeDiff - rawtime + 3;
+			double timeDelay = tourInfo.Race1TimeBegin + timeDiff - rawtime + 3;
+			delayFunction(lbCountDown, timeDelay, [=]() {
+				lbCountDown->setTag(3);
+				calculateTourTimeOnLabel(lbCountDown);
+			});
 		} else if (rawtime >= tourInfo.Race1TimeBegin + timeDiff
 			&& rawtime < tourInfo.Race2TimeEnd + timeDiff) {
 			setTourTimeState(3);
@@ -3335,7 +3345,7 @@ void BaseScene::showTourCountDown(Label* lbCountDown, std::function<void()> call
 	});
 	Action* actionCount = RepeatForever::create(Sequence::createWithTwoActions(delayTime, func));
 	actionCount->setTag(3);
-	lbCountDown->stopAllActions();
+	lbCountDown->stopActionByTag(3);
 	lbCountDown->runAction(actionCount);
 }
 
