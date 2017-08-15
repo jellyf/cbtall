@@ -807,6 +807,12 @@ bool BaseScene::onErrorResponse(unsigned char code, std::string msg)
 				btnReg->setTouchEnabled(true);
 			});
 		}
+		if (popupTour) {
+			ui::Button* btnReg = (ui::Button*)popupTour->getChildByName("btnregister");
+			btnReg->setVisible(true);
+			btnReg->setColor(Color3B::WHITE);
+			btnReg->setTouchEnabled(true);
+		}
 		return true;
 	}
 	if (code == 37) {
@@ -820,6 +826,12 @@ bool BaseScene::onErrorResponse(unsigned char code, std::string msg)
 			showPopupNotice(msg, [=]() {
 				joinIntoTour();
 			});
+		}
+		if (popupTour) {
+			ui::Button* btnJoin = (ui::Button*)popupTour->getChildByName("btnjoin");
+			btnJoin->setVisible(true);
+			btnJoin->setColor(Color3B::WHITE);
+			btnJoin->setTouchEnabled(true);
 		}
 		return true;
 	}
