@@ -777,8 +777,8 @@ void LobbyScene::onTopTourPlayersResponse(std::vector<TourRoom> rooms)
 			vector<string> strs;
 			strs.push_back(to_string(i));
 			strs.push_back(p.Name);
-			strs.push_back(to_string((int)p.Matches));
-			strs.push_back(Utils::getSingleton().formatMoneyWithComma(p.Money));
+			strs.push_back(to_string(p.Matches));
+			strs.push_back(to_string(p.TotalCuoc));
 			texts.push_back(strs);
 			i++;
 		}

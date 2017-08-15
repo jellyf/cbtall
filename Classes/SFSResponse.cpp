@@ -1315,7 +1315,7 @@ void SFSResponse::onTourInfoResponse(boost::shared_ptr<ISFSObject> isfsObject)
 
 	/*time_t rawtime;
 	time(&rawtime);
-	double dt = 600;
+	double dt = 240;
 	tour.RegTimeBegin += dt;
 	tour.RegTimeEnd += dt;
 	tour.Race1TimeBegin += dt;
@@ -1324,8 +1324,8 @@ void SFSResponse::onTourInfoResponse(boost::shared_ptr<ISFSObject> isfsObject)
 	tour.Race2TimeEnd += dt;
 	tour.Race3TimeBegin += dt;
 	tour.Race3TimeEnd += dt;
-	tour.CanRegister = tour.RegTimeBegin < rawtime && rawtime < tour.RegTimeEnd;
-	tour.IsTouring = tour.Race1TimeBegin < rawtime && rawtime < tour.Race2TimeEnd;*/
+	tour.CanRegister = true;
+	tour.IsTouring = false;*/
 
 	Utils::getSingleton().setServerTime(serverTime);
 	Utils::getSingleton().tourInfo = tour;
@@ -1361,7 +1361,7 @@ void SFSResponse::onTopTourPlayersResponse(boost::shared_ptr<ISFSObject> isfsObj
 			boost::shared_ptr<ByteArray> byteArray2 = boost::shared_ptr<ByteArray>(new ByteArray(boost::shared_ptr<vector<unsigned char>>(new vector<unsigned char>(tmp2))));
 			byteArray2->ReadInt(player.Id);
 			byteArray2->ReadUTF(player.Name);
-			byteArray2->ReadDouble(player.Money);
+			byteArray2->ReadInt(player.TotalCuoc);
 			byteArray2->ReadInt(player.Matches);
 
 			room.Players.push_back(player);
