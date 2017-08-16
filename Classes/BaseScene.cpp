@@ -313,6 +313,10 @@ void BaseScene::showPopupConfirm(std::string msg, std::string titleOK, std::stri
 	showPopup(popupConfirm);
 	Label* lbcontent = (Label*)popupConfirm->getChildByName("lbcontent");
 	lbcontent->setString(msg);
+	Label* lbBtnOk = (Label*)popupConfirm->getChildByName("btnsubmit")->getChildByName("btnoktitle");
+	lbBtnOk->setString(titleOK);
+	Label* lbBtnCancel = (Label*)popupConfirm->getChildByName("btnclose")->getChildByName("btncanceltitle");
+	lbBtnCancel->setString(titleCancel);
 	ui::Button* btnSubmit = (ui::Button*)popupConfirm->getChildByName("btnsubmit");
 	addTouchEventListener(btnSubmit, [=]() {
 		popupConfirm->stopAllActions();
@@ -330,6 +334,10 @@ void BaseScene::showPopupConfirmMini(std::string msg, std::string titleOK, std::
 
 	Label* lbcontent = (Label*)popupConfirm->getChildByName("lbcontent");
 	lbcontent->setString(msg);
+	Label* lbBtnOk = (Label*)popupConfirm->getChildByName("btnsubmit")->getChildByName("btnoktitle");
+	lbBtnOk->setString(titleOK);
+	Label* lbBtnCancel = (Label*)popupConfirm->getChildByName("btnclose")->getChildByName("btncanceltitle");
+	lbBtnCancel->setString(titleCancel);
 	ui::Button* btnSubmit = (ui::Button*)popupConfirm->getChildByName("btnsubmit");
 	addTouchEventListener(btnSubmit, [=]() {
 		popupConfirm->stopAllActions();
@@ -784,19 +792,22 @@ bool BaseScene::onErrorResponse(unsigned char code, std::string msg)
 	if (code == 34) {
 		//Bat dau dang ky giai dau
 		if (getTag() == constant::SCENE_GAME) {
-			showPopupConfirmMini(msg, Utils::getSingleton().getStringForKey("dang_ky")
-				, Utils::getSingleton().getStringForKey("bo_qua"), Vec2(200, 150), [=]() {
-				if (popupTour == NULL) {
+			showPopupConfirmMini(msg, Utils::getSingleton().getStringForKey("dang_ky"), 
+				Utils::getSingleton().getStringForKey("bo_qua"), Vec2(200, 200), [=]() {
+				/*if (popupTour == NULL) {
 					initPopupTour();
 				}
 				showPopup(popupTour);
 				ui::Button* btnReg = (ui::Button*)popupTour->getChildByName("btnregister");
 				btnReg->setVisible(true);
 				btnReg->setColor(Color3B::WHITE);
-				btnReg->setTouchEnabled(true);
+				btnReg->setTouchEnabled(true);*/
+				Utils::getSingleton().tourInfo.CanRegister = false;
+				SFSRequest::getSingleton().RequestRegisterTour();
 			});
 		} else {
-			showPopupNotice(msg, [=]() {
+			showPopupConfirm(msg, Utils::getSingleton().getStringForKey("dang_ky"), 
+				Utils::getSingleton().getStringForKey("bo_qua"), [=]() {
 				if (popupTour == NULL) {
 					initPopupTour();
 				}
@@ -818,12 +829,13 @@ bool BaseScene::onErrorResponse(unsigned char code, std::string msg)
 	if (code == 37) {
 		//Bat dau tham gia giai dau
 		if (getTag() == constant::SCENE_GAME) {
-			showPopupConfirmMini(msg, Utils::getSingleton().getStringForKey("tham_gia")
-				, Utils::getSingleton().getStringForKey("bo_qua"), Vec2(200, 150), [=]() {
+			showPopupConfirmMini(msg, Utils::getSingleton().getStringForKey("tham_gia"), 
+				Utils::getSingleton().getStringForKey("bo_qua"), Vec2(200, 200), [=]() {
 				joinIntoTour();
 			});
 		} else {
-			showPopupNotice(msg, [=]() {
+			showPopupConfirm(msg, Utils::getSingleton().getStringForKey("tham_gia"),
+				Utils::getSingleton().getStringForKey("bo_qua"), [=]() {
 				joinIntoTour();
 			});
 		}
@@ -1490,12 +1502,14 @@ cocos2d::Node * BaseScene::createPopupConfirm()
 	okTitle->setPosition(btnok->getContentSize().width / 2, btnok->getContentSize().height / 2 + 5);
 	okTitle->setColor(Color3B(255, 255, 80));
 	okTitle->enableOutline(Color4B(51, 0, 0, 255), 2);
+	okTitle->setName("btnoktitle");
 	btnok->addChild(okTitle);
 
 	Label* cancelTitle = Label::createWithTTF(Utils::getSingleton().getStringForKey("bo_qua"), "fonts/staccato.ttf", 30);
 	cancelTitle->setPosition(btndong->getContentSize().width / 2, btndong->getContentSize().height / 2 + 5);
 	cancelTitle->setColor(Color3B(255, 255, 80));
 	cancelTitle->enableOutline(Color4B(51, 0, 0, 255), 2);
+	cancelTitle->setName("btncanceltitle");
 	btndong->addChild(cancelTitle);
 
 	return popupConfirm;
@@ -1558,12 +1572,14 @@ cocos2d::Node * BaseScene::createPopupConfirmMini()
 	okTitle->setPosition(btnok->getContentSize().width / 2, btnok->getContentSize().height / 2 + 5);
 	okTitle->setColor(Color3B(255, 255, 80));
 	okTitle->enableOutline(Color4B(51, 0, 0, 255), 2);
+	okTitle->setName("btnoktitle");
 	btnok->addChild(okTitle);
 
 	Label* cancelTitle = Label::createWithTTF(Utils::getSingleton().getStringForKey("bo_qua"), "fonts/staccato.ttf", 30);
 	cancelTitle->setPosition(btndong->getContentSize().width / 2, btndong->getContentSize().height / 2 + 5);
 	cancelTitle->setColor(Color3B(255, 255, 80));
 	cancelTitle->enableOutline(Color4B(51, 0, 0, 255), 2);
+	cancelTitle->setName("btncanceltitle");
 	btndong->addChild(cancelTitle);
 
 	return popupConfirm;
@@ -2496,6 +2512,7 @@ void BaseScene::initPopupTour()
 		//lbCountDown->stopAllActions();
 		//lbCountDown->setString("");
 		//tourTimeRemain = -1;
+		Utils::getSingleton().tourInfo.CanRegister = false;
 		SFSRequest::getSingleton().RequestRegisterTour();
 	});
 
@@ -2520,7 +2537,8 @@ void BaseScene::initCofferView(Vec2 pos, int zorder, float scale)
 		//onErrorResponse(37, "Bat dau tham gia giai dau");
 		//onErrorResponse(36, "Ban da vao vong trong");
 		//onErrorResponse(80, "Giai dau ket thuc");
-		//showPopupNoticeMini("Da co the dang ky giai dau", [=]() {}, Vec2(200, 150), true, 5);
+		//showPopupConfirm("Da co the dang ky giai dau", "stormus", "phantom", [=]() {});
+		//showPopupConfirmMini("Da co the dang ky giai dau", "stormus", "phantom", Vec2(200, 200), [=]() {});
 	});
 	mLayer->addChild(btnCoffer, zorder);
 	autoScaleNode(btnCoffer);
@@ -3220,44 +3238,55 @@ void BaseScene::calculateTourTimeOnLabel(cocos2d::Label *lbCountDown)
 	if (state == 0) {
 		if (rawtime < tourInfo.RegTimeBegin + timeDiff) {
 			setTourTimeState(0);
+			lbCountDown->setTag(1);
 			tourTimeRemain = -1;// tourInfo.RegTimeBegin + timeDiff - rawtime + 3;
 			double timeDelay = tourInfo.RegTimeBegin + timeDiff - rawtime + 3;
 			delayFunction(lbCountDown, timeDelay, [=]() {
-				lbCountDown->setTag(1);
 				calculateTourTimeOnLabel(lbCountDown);
 			});
 		} else if (rawtime >= tourInfo.RegTimeBegin + timeDiff
 			&& rawtime < tourInfo.RegTimeEnd + timeDiff) {
 			setTourTimeState(1);
+			lbCountDown->setTag(2);
 			tourTimeRemain = tourInfo.RegTimeEnd + timeDiff - rawtime + 3;
 		} else if (rawtime >= tourInfo.RegTimeEnd + timeDiff
 			&& rawtime < tourInfo.Race1TimeBegin + timeDiff) {
 			setTourTimeState(2);
+			lbCountDown->setTag(3);
 			tourTimeRemain = -1;// tourInfo.Race1TimeBegin + timeDiff - rawtime + 3;
 			double timeDelay = tourInfo.Race1TimeBegin + timeDiff - rawtime + 3;
 			delayFunction(lbCountDown, timeDelay, [=]() {
-				lbCountDown->setTag(3);
 				calculateTourTimeOnLabel(lbCountDown);
 			});
 		} else if (rawtime >= tourInfo.Race1TimeBegin + timeDiff
 			&& rawtime < tourInfo.Race2TimeEnd + timeDiff) {
 			setTourTimeState(3);
+			lbCountDown->setTag(4);
 			tourTimeRemain = tourInfo.Race2TimeEnd + timeDiff - rawtime + 3;
 		} else if (rawtime >= tourInfo.Race2TimeEnd + timeDiff) {
 			setTourTimeState(4);
+			lbCountDown->setTag(5);
 			tourTimeRemain = -1;
 		}
 	} else if (state == 1) {
 		setTourTimeState(1);
+		lbCountDown->setTag(2);
 		tourTimeRemain = tourInfo.RegTimeEnd - tourInfo.RegTimeBegin;
 	} else if (state == 2) {
 		setTourTimeState(2);
+		lbCountDown->setTag(3);
 		tourTimeRemain = -1;// tourInfo.Race1TimeBegin - tourInfo.RegTimeEnd;
+		double timeDelay = tourInfo.Race1TimeBegin + timeDiff - rawtime + 3;
+		delayFunction(lbCountDown, timeDelay, [=]() {
+			calculateTourTimeOnLabel(lbCountDown);
+		});
 	} else if (state == 3) {
 		setTourTimeState(3);
+		lbCountDown->setTag(4);
 		tourTimeRemain = tourInfo.Race2TimeEnd - tourInfo.Race1TimeBegin;
 	} else if (state == 4) {
 		setTourTimeState(4);
+		lbCountDown->setTag(5);
 		tourTimeRemain = -1;
 	}
 

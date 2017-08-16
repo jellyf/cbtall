@@ -1315,7 +1315,7 @@ void SFSResponse::onTourInfoResponse(boost::shared_ptr<ISFSObject> isfsObject)
 
 	/*time_t rawtime;
 	time(&rawtime);
-	double dt = 240;
+	double dt = 1500;
 	tour.RegTimeBegin += dt;
 	tour.RegTimeEnd += dt;
 	tour.Race1TimeBegin += dt;

@@ -107,7 +107,7 @@ void LobbyScene::onInit()
 	}
 
 	if (isTour) {
-		string room = Utils::getSingleton().tourRoom;
+		/*string room = Utils::getSingleton().tourRoom;
 		if (room.length() > 0) {
 			onTourRoomToJoin(room);
 		} else {
@@ -115,7 +115,9 @@ void LobbyScene::onInit()
 				SFSRequest::getSingleton().RequestListTourPlayers();
 				SFSRequest::getSingleton().RequestTopTourPlayers();
 			});
-		}
+		}*/
+		SFSRequest::getSingleton().RequestListTourPlayers();
+		SFSRequest::getSingleton().RequestTopTourPlayers();
 	}
 
 	/*vector<TourPlayer> players;

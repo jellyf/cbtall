@@ -120,6 +120,7 @@
 	<key>van</key><string>Ván</string>
 	<key>con</key><string>Còn</string>
 	<key>dang_ky</key><string>Đăng Ký</string>
+	<key>dong_y</key><string>Đồng Ý</string>
 	<key>bo_qua</key><string>Bỏ Qua</string>
 	<key>hay_nhap_tai_khoan</key><string>Vui lòng nhập tài khoản</string>
 	<key>hay_nhap_mat_khau</key><string>Vui lòng nhập mật khẩu</string>

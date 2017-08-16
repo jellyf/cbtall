@@ -1908,17 +1908,17 @@ bool GameScene::onErrorResponse(unsigned char code, std::string msg)
 		}, false);
 		return true;
 	}
-	if (isTourGame && code == 80) {
+	if (isTourGame && (code == 80 || code == 39)) {
 		state = NONE;
 		isMatchTimeEnd = true;
 		//Utils::getSingleton().cachedErrors.push_back(pair<unsigned char, string>(code, msg));
 		showPopupNotice(msg, [=]() {
 			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 			Utils::getSingleton().goToLobbyScene();
-		});
+		}, false);
 		return true;
 	}
-	if (isTourGame && (code == 36 || code == 39)) {
+	if (isTourGame && (code == 36 || code == 35)) {
 		state = NONE;
 		//Utils::getSingleton().cachedErrors.push_back(pair<unsigned char, string>(code, msg));
 		showPopupNotice(msg, [=]() {});
@@ -1947,7 +1947,7 @@ bool GameScene::onErrorResponse(unsigned char code, std::string msg)
 
 void GameScene::joinIntoTour()
 {
-	if (isPrepareToTour || state == NONE || state == READY) {
+	if (isPrepareToTour || state == NONE || state == READY || myServerSlot < 0) {
 		BaseScene::joinIntoTour();
 	} else {
 		isPrepareToTour = true;
