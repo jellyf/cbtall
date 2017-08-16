@@ -120,6 +120,8 @@ void LobbyScene::onInit()
 		SFSRequest::getSingleton().RequestTopTourPlayers();
 	}
 
+	//runConnectionKeeper();
+
 	/*vector<TourPlayer> players;
 	for (int i = 0; i < 16; i++) {
 		TourPlayer p;

@@ -58,6 +58,7 @@ public:
 	void RequestTopTourPlayers();
 	void RequestListTourPlayers();
 	void RequestTourWinners();
+	void RequestTourLeaveTable();
 
 	void RequestGameReady();
 	void RequestGameChooseStilt(int stilt);

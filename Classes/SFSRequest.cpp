@@ -301,6 +301,12 @@ void SFSRequest::RequestTourWinners()
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::TOUR_WINNERS, parameters);
 }
 
+void SFSRequest::RequestTourLeaveTable()
+{
+	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+	SFSConnector::getSingleton().SendExtensionRequest(cmd::TOUR_LEAVE_TABLE, parameters);
+}
+
 void SFSRequest::RequestRegister(std::string username, std::string password, std::string email)
 {
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());

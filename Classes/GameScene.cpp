@@ -3498,6 +3498,9 @@ void GameScene::onBackScene()
 	} else {
 		hasRegisterOut = !hasRegisterOut;
 		showSystemNotice(Utils::getSingleton().getStringForKey((hasRegisterOut ? "" : "huy_") + string("dang_ky_roi_ban_khi_het_van")));
+		if (isTourGame) {
+			SFSRequest::getSingleton().RequestTourLeaveTable();
+		}
 	}
 }
 

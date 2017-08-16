@@ -97,6 +97,7 @@ protected:
 	void showTourCountDown(cocos2d::Label *lbCountDown, std::function<void()> callback);
 	void joinIntoLobby(int lobby);
 	void processCachedErrors();
+	void runConnectionKeeper();
 
 	cocos2d::Node* createPopup(std::string stitle, bool isBig, bool isHidden);
 	cocos2d::Node* createPopupNotice();
@@ -150,6 +151,7 @@ protected:
 	cocos2d::Node* popupIAP;
 	cocos2d::Node* popupTour;
 	cocos2d::Node* eventView;
+	cocos2d::Node* connectionKeeper;
 
 	std::vector<cocos2d::ui::Button*> buttons;
 	std::vector<cocos2d::ui::Button*> blockedButtons;

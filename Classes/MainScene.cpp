@@ -304,6 +304,7 @@ void MainScene::onInit()
 	}
     Utils::getSingleton().solveCachedPurchases();
 	onDynamicConfigReceived();
+	//runConnectionKeeper();
 
 	//for (int i = 1; i <= 4; i++) {
 	//	string name1 = "provider" + to_string(i);

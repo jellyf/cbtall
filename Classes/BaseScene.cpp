@@ -248,12 +248,14 @@ void BaseScene::onApplicationDidEnterBackground()
 {
 	spNetwork->pause();
 	lbNetwork->pause();
+	if (connectionKeeper) connectionKeeper->pause();
 }
 
 void BaseScene::onApplicationWillEnterForeground()
 {
 	spNetwork->resume();
 	lbNetwork->resume();
+	if (connectionKeeper) connectionKeeper->resume();
 }
 
 void BaseScene::showPopupNotice(std::string msg, std::function<void()> func, bool showBtnClose, int timeToHide)
@@ -3242,6 +3244,7 @@ void BaseScene::calculateTourTimeOnLabel(cocos2d::Label *lbCountDown)
 			tourTimeRemain = -1;// tourInfo.RegTimeBegin + timeDiff - rawtime + 3;
 			double timeDelay = tourInfo.RegTimeBegin + timeDiff - rawtime + 3;
 			delayFunction(lbCountDown, timeDelay, [=]() {
+				Utils::getSingleton().tourInfo.CanRegister = true;
 				calculateTourTimeOnLabel(lbCountDown);
 			});
 		} else if (rawtime >= tourInfo.RegTimeBegin + timeDiff
@@ -3256,6 +3259,7 @@ void BaseScene::calculateTourTimeOnLabel(cocos2d::Label *lbCountDown)
 			tourTimeRemain = -1;// tourInfo.Race1TimeBegin + timeDiff - rawtime + 3;
 			double timeDelay = tourInfo.Race1TimeBegin + timeDiff - rawtime + 3;
 			delayFunction(lbCountDown, timeDelay, [=]() {
+				Utils::getSingleton().tourInfo.IsTouring = true;
 				calculateTourTimeOnLabel(lbCountDown);
 			});
 		} else if (rawtime >= tourInfo.Race1TimeBegin + timeDiff
@@ -3278,6 +3282,7 @@ void BaseScene::calculateTourTimeOnLabel(cocos2d::Label *lbCountDown)
 		tourTimeRemain = -1;// tourInfo.Race1TimeBegin - tourInfo.RegTimeEnd;
 		double timeDelay = tourInfo.Race1TimeBegin + timeDiff - rawtime + 3;
 		delayFunction(lbCountDown, timeDelay, [=]() {
+			Utils::getSingleton().tourInfo.IsTouring = true;
 			calculateTourTimeOnLabel(lbCountDown);
 		});
 	} else if (state == 3) {
@@ -3393,6 +3398,23 @@ void BaseScene::processCachedErrors()
 		showPopupNotice(p.second, [=]() {});
 	}
 	Utils::getSingleton().cachedErrors.clear();
+}
+
+void BaseScene::runConnectionKeeper()
+{
+	if (connectionKeeper) {
+		connectionKeeper->resume();
+		return;
+	}
+
+	connectionKeeper = Node::create();
+	mLayer->addChild(connectionKeeper);
+	DelayTime* delayCK = DelayTime::create(120);
+	CallFunc* funcCK = CallFunc::create([=]() {
+		SFSRequest::getSingleton().Ping();
+	});
+	Sequence* actionCK = Sequence::createWithTwoActions(delayCK, funcCK);
+	connectionKeeper->runAction(RepeatForever::create(actionCK));
 }
 
 void BaseScene::joinIntoTour()
