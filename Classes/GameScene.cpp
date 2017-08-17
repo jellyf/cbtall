@@ -2196,8 +2196,9 @@ void GameScene::onStartGameDataResponse(StartGameData data)
 
 	Node* lbTimeWaitPlayer = mLayer->getChildByName("lbtimewaitplayer");
 	if (lbTimeWaitPlayer) {
-		lbTimeWaitPlayer->stopAllActions();
-		lbTimeWaitPlayer->removeFromParent();
+		lbTimeWaitPlayer->pause();
+		lbTimeWaitPlayer->setVisible(false);
+		mLayer->getChildByName("lbTitleWaitPlayer")->setVisible(false);
 	}
 }
 
@@ -3447,9 +3448,17 @@ void GameScene::onTourTimeWaitPlayer(long timeWait)
 {
 	if (state != NONE && state != READY) return;
 	timeWaitPlayer = timeWait;
+	Label* lbTitleWaitPlayer = (Label*)mLayer->getChildByName("lbTitleWaitPlayer");
 	Label* lbTimeWaitPlayer = (Label*)mLayer->getChildByName("lbtimewaitplayer");
+	string timeWaitString = Utils::getSingleton().getCountTimeStringBySecs(timeWaitPlayer, "%H:%M:%S");
 	if (!lbTimeWaitPlayer) {
-		lbTimeWaitPlayer = Label::createWithTTF("", "fonts/arialbd.ttf", 50);
+		lbTitleWaitPlayer = Label::createWithTTF(Utils::getSingleton().getStringForKey("giai_dau_se_bat_dau_sau"), "fonts/arial.ttf", 40);
+		lbTitleWaitPlayer->setPosition(winSize.width / 2, winSize.height / 2 + 50);
+		lbTitleWaitPlayer->setName("lbTitleWaitPlayer");
+		mLayer->addChild(lbTitleWaitPlayer, constant::GAME_ZORDER_BUTTON);
+		autoScaleNode(lbTitleWaitPlayer);
+
+		lbTimeWaitPlayer = Label::createWithTTF(timeWaitString, "fonts/arialbd.ttf", 50);
 		lbTimeWaitPlayer->setPosition(winSize.width / 2, winSize.height / 2);
 		lbTimeWaitPlayer->setName("lbtimewaitplayer");
 		mLayer->addChild(lbTimeWaitPlayer, constant::GAME_ZORDER_BUTTON);
@@ -3462,17 +3471,20 @@ void GameScene::onTourTimeWaitPlayer(long timeWait)
 				string str = Utils::getSingleton().getCountTimeStringBySecs(timeWaitPlayer, "%H:%M:%S");
 				lbTimeWaitPlayer->setString(str);
 			} else {
-				lbTimeWaitPlayer->stopAllActions();
+				lbTitleWaitPlayer->setVisible(false);
+				lbTimeWaitPlayer->setVisible(false);
 				lbTimeWaitPlayer->setString("");
-				lbTimeWaitPlayer->removeFromParent();
+				lbTimeWaitPlayer->pause();
 			}
 		});
 		Action* actionCount = RepeatForever::create(Sequence::createWithTwoActions(delayTime, func));
 		lbTimeWaitPlayer->runAction(actionCount);
+	} else {
+		lbTimeWaitPlayer->setString(timeWaitString);
+		lbTimeWaitPlayer->setVisible(true);
+		lbTimeWaitPlayer->resume();
+		lbTitleWaitPlayer->setVisible(true);
 	}
-
-	string timeWaitString = Utils::getSingleton().getCountTimeStringBySecs(timeWaitPlayer, "%H:%M:%S");
-	lbTimeWaitPlayer->setString(timeWaitString);
 }
 
 bool GameScene::onKeyBack()

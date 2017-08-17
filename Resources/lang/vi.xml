@@ -122,6 +122,7 @@
 	<key>dang_ky</key><string>Đăng Ký</string>
 	<key>dong_y</key><string>Đồng Ý</string>
 	<key>bo_qua</key><string>Bỏ Qua</string>
+	<key>giai_dau_se_bat_dau_sau</key><string>Giải đấu sẽ bắt đầu sau:</string>
 	<key>hay_nhap_tai_khoan</key><string>Vui lòng nhập tài khoản</string>
 	<key>hay_nhap_mat_khau</key><string>Vui lòng nhập mật khẩu</string>
 	<key>bi_day_khoi_ban</key><string>Bạn đã bị đẩy ra khỏi phòng</string>
