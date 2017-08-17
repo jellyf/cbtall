@@ -1908,7 +1908,7 @@ bool GameScene::onErrorResponse(unsigned char code, std::string msg)
 		}, false);
 		return true;
 	}
-	if (isTourGame && (code == 80 || code == 39)) {
+	if (isTourGame && (code == 80 || code == 39 || code == 36 || code == 35)) {
 		state = NONE;
 		isMatchTimeEnd = true;
 		//Utils::getSingleton().cachedErrors.push_back(pair<unsigned char, string>(code, msg));
@@ -1916,12 +1916,6 @@ bool GameScene::onErrorResponse(unsigned char code, std::string msg)
 			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 			Utils::getSingleton().goToLobbyScene();
 		}, false);
-		return true;
-	}
-	if (isTourGame && (code == 36 || code == 35)) {
-		state = NONE;
-		//Utils::getSingleton().cachedErrors.push_back(pair<unsigned char, string>(code, msg));
-		showPopupNotice(msg, [=]() {});
 		return true;
 	}
 	if (code == 42) {
