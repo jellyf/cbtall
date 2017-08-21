@@ -3241,7 +3241,7 @@ void BaseScene::calculateTourTimeOnLabel(cocos2d::Label *lbCountDown)
 		if (rawtime < tourInfo.RegTimeBegin + timeDiff) {
 			setTourTimeState(0);
 			lbCountDown->setTag(1);
-			tourTimeRemain = -1;// tourInfo.RegTimeBegin + timeDiff - rawtime + 3;
+			tourTimeRemain = -1;
 			double timeDelay = tourInfo.RegTimeBegin + timeDiff - rawtime + 3;
 			delayFunction(lbCountDown, timeDelay, [=]() {
 				Utils::getSingleton().tourInfo.CanRegister = true;
@@ -3256,7 +3256,7 @@ void BaseScene::calculateTourTimeOnLabel(cocos2d::Label *lbCountDown)
 			&& rawtime < tourInfo.Race1TimeBegin + timeDiff) {
 			setTourTimeState(2);
 			lbCountDown->setTag(3);
-			tourTimeRemain = -1;// tourInfo.Race1TimeBegin + timeDiff - rawtime + 3;
+			tourTimeRemain = -1;
 			double timeDelay = tourInfo.Race1TimeBegin + timeDiff - rawtime + 3;
 			delayFunction(lbCountDown, timeDelay, [=]() {
 				Utils::getSingleton().tourInfo.IsTouring = true;
