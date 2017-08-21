@@ -4055,7 +4055,7 @@ void GameScene::initTableInfo()
 	lbType->setName("lbtype");
 	tableInfo->addChild(lbType);
 
-	Label* lbMatch = Label::create(Utils::getSingleton().getStringForKey("van") + ": 0/ 12", "fonts/arialbd.ttf", 18);
+	Label* lbMatch = Label::create(Utils::getSingleton().getStringForKey("van") + ": 0/ 0", "fonts/arialbd.ttf", 18);
 	lbMatch->setPosition(-30, 25);
 	lbMatch->setAnchorPoint(Vec2(0, .5f));
 	lbMatch->setColor(Color3B(255, 200, 0));
