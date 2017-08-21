@@ -3313,9 +3313,9 @@ void BaseScene::setTourTimeState(int state)
 	if (state == 0) {
 		lbCountDown->setTag(1);
 		btnJoin->setVisible(false);
-		btnRegister->setVisible(false);
-		//btnRegister->setColor(Color3B::GRAY);
-		//btnRegister->setTouchEnabled(false);
+		btnRegister->setVisible(true);
+		btnRegister->setColor(Color3B::GRAY);
+		btnRegister->setTouchEnabled(false);
 	} else if (state == 1) {
 		lbCountDown->setTag(2);
 		if (tourInfo.CanRegister) {
@@ -3325,23 +3325,23 @@ void BaseScene::setTourTimeState(int state)
 			btnRegister->setTouchEnabled(true);
 		} else {
 			btnRegister->setVisible(false);
-			btnJoin->setVisible(false);
-			//btnJoin->setColor(Color3B::GRAY);
-			//btnJoin->setTouchEnabled(false);
+			btnJoin->setVisible(true);
+			btnJoin->setColor(Color3B::GRAY);
+			btnJoin->setTouchEnabled(false);
 		}
 	} else if (state == 2) {
 		lbCountDown->setTag(3);
 		btnRegister->setVisible(false);
-		btnJoin->setVisible(false);
-		//btnJoin->setColor(Color3B::GRAY);
-		//btnJoin->setTouchEnabled(false);
+		btnJoin->setVisible(true);
+		btnJoin->setColor(Color3B::GRAY);
+		btnJoin->setTouchEnabled(false);
 	} else if (state == 3) {
 		lbCountDown->setTag(4);
 		if (tourInfo.CanRegister) {
 			btnJoin->setVisible(false);
-			btnRegister->setVisible(false);
-			//btnRegister->setColor(Color3B::GRAY);
-			//btnRegister->setTouchEnabled(false);
+			btnRegister->setVisible(true);
+			btnRegister->setColor(Color3B::GRAY);
+			btnRegister->setTouchEnabled(false);
 		} else {
 			btnRegister->setVisible(false);
 			btnJoin->setVisible(true);
@@ -3351,9 +3351,9 @@ void BaseScene::setTourTimeState(int state)
 	} else if (state == 4) {
 		lbCountDown->setTag(5);
 		btnJoin->setVisible(false);
-		btnRegister->setVisible(false);
-		//btnRegister->setColor(Color3B::GRAY);
-		//btnRegister->setTouchEnabled(false);
+		btnRegister->setVisible(true);
+		btnRegister->setColor(Color3B::GRAY);
+		btnRegister->setTouchEnabled(false);
 	}
 }
 

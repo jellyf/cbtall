@@ -37,10 +37,11 @@ Utils::Utils()
 	dynamicConfig.Popup = false;
 	hasShowEventPopup = false;
 	currentEventPosX = constant::EVENT_START_POSX;
-	textureHost = "http://115.84.179.242/main_kinhtuchi/";
+	textureHost = "http://kinhtuchi.com/main_kinhtuchi/";
 	cofferGuide = "";
 	viLang = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/vi.xml");
 	SFSRequest::getSingleton().onLoadTextureResponse = std::bind(&Utils::onLoadTextureResponse, this, std::placeholders::_1, std::placeholders::_2);
+	SFSRequest::getSingleton().onHttpResponse = std::bind(&Utils::onHttpResponse, this, std::placeholders::_1, std::placeholders::_2);
 
 	createAppellations();
     
@@ -676,37 +677,9 @@ void Utils::downloadPlistTextures()
 {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 	if (downloadedPlistTexture == 0) {
-		string str1 = FileUtils::getInstance()->getStringFromFile("menu1.plist");
-		Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA8888);
-		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu3.png", [=](Texture2D* texture1) {
-			SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str1, texture1);
-			downloadedPlistTexture = 1;
-			if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
-				EventHandler::getSingleton().onDownloadedPlistTexture(downloadedPlistTexture);
-			}
-			Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
-			string str2 = FileUtils::getInstance()->getStringFromFile("menu2.plist");
-			Utils::getSingleton().LoadTextureFromURL(textureHost + "menu4.png", [=](Texture2D* texture2) {
-				SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str2, texture2);
-				downloadedPlistTexture = 2;
-				if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
-					EventHandler::getSingleton().onDownloadedPlistTexture(downloadedPlistTexture);
-				}
-
-				Utils::getSingleton().LoadTextureFromURL(textureHost + "hu.png", [=](Texture2D* texture3) {
-					Utils::getSingleton().LoadTextureFromURL(textureHost + "as.png", [=](Texture2D* texture4) {});
-				});
-			});
-		});
+		SFSRequest::getSingleton().RequestHttpGet(Utils::getSingleton().textureHost + "menu1.plist", constant::TAG_HTTP_MENU1);
 	} else if (downloadedPlistTexture == 1) {
-		string str2 = FileUtils::getInstance()->getStringFromFile("menu2.plist");
-		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu4.png", [=](Texture2D* texture) {
-			SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str2, texture);
-			downloadedPlistTexture = 2;
-			if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
-				EventHandler::getSingleton().onDownloadedPlistTexture(downloadedPlistTexture);
-			}
-		});
+		SFSRequest::getSingleton().RequestHttpGet(Utils::getSingleton().textureHost + "menu2.plist", constant::TAG_HTTP_MENU2);
 	} else {
 		if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
 			EventHandler::getSingleton().onDownloadedPlistTexture(downloadedPlistTexture);
@@ -796,4 +769,36 @@ void Utils::setServerTime(double svTime)
 	time(&rawtime);
 	serverTime = svTime;
 	serverTimeDiff = rawtime - svTime;
+}
+
+void Utils::onHttpResponse(int tag, std::string content)
+{
+	if (tag == constant::TAG_HTTP_MENU1) {
+		Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA8888);
+		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu3.png", [=](Texture2D* texture1) {
+			SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(content, texture1);
+			downloadedPlistTexture = 1;
+			if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
+				EventHandler::getSingleton().onDownloadedPlistTexture(downloadedPlistTexture);
+			}
+
+			SFSRequest::getSingleton().RequestHttpGet(Utils::getSingleton().textureHost + "menu2.plist", constant::TAG_HTTP_MENU2);
+		});
+	} else if (tag == constant::TAG_HTTP_MENU2) {
+		Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
+		string str2 = FileUtils::getInstance()->getStringFromFile("menu2.plist");
+		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu4.png", [=](Texture2D* texture2) {
+			SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str2, texture2);
+			downloadedPlistTexture = 2;
+			if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
+				EventHandler::getSingleton().onDownloadedPlistTexture(downloadedPlistTexture);
+			}
+
+			Utils::getSingleton().LoadTextureFromURL(textureHost + "text_loidaichien.png", [=](Texture2D* texture5) {
+				Utils::getSingleton().LoadTextureFromURL(textureHost + "hu.png", [=](Texture2D* texture3) {
+					Utils::getSingleton().LoadTextureFromURL(textureHost + "as.png", [=](Texture2D* texture4) {});
+				});
+			});
+		});
+	}
 }

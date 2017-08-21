@@ -385,10 +385,6 @@ bool LoginScene::onErrorResponse(unsigned char code, std::string msg)
 
 void LoginScene::onHttpResponse(int tag, std::string content)
 {
-	if (tag == constant::TAG_HTTP_MENU1) {
-		
-		return;
-	}
 	if (tag == constant::TAG_HTTP_VILANG) {
 		Utils::getSingleton().addViLangFromData(content);
 		return;
@@ -431,7 +427,7 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	config.canUpdate = d["updatenow"].GetBool();
 	config.inapp = d["inapp"].GetString();
     config.invite = d["invite"].GetBool();
-    //config.versionIOS71ktc = d["versionIOS71ktc"].GetBool();
+    config.versionIOS71ktc = d["versionIOS71ktc"].GetBool();
 
 	string verstr = Application::sharedApplication()->getVersion();
 	int i = verstr.find_last_of('.') + 1;

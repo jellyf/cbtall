@@ -2,6 +2,29 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>tham_gia</key><string>Tham Gia</string>
+	<key>tu_den</key><string>Từ %s đến %s</string>
+	<key>nguoi_choi_caps</key><string>NGƯỜI CHƠI</string>
+	<key>van_danh_caps</key><string>VÁN ĐÁNH</string>
+	<key>diem_caps</key><string>ĐIỂM</string>
+	<key>ban_choi_caps</key><string>BÀN</string>
+	<key>vinh_danh</key><string>Vinh danh</string>
+	<key>giai_dau</key><string>Giải đấu</string>
+	<key>tour_info_0</key><string>Tên giải đấu:</string>
+	<key>tour_info_1</key><string>Số người chơi tối đa:</string>
+	<key>tour_info_2</key><string>Số tiền đặt cọc:</string>
+	<key>tour_info_3</key><string>Tài khoản tối thiểu:</string>
+	<key>tour_info_4</key><string>Cấp độ tối thiểu:</string>
+	<key>tour_info_5</key><string>Tiền cược mỗi ván:</string>
+	<key>tour_info_6</key><string>Kiểu chơi:</string>
+	<key>tour_info_7</key><string>Thời gian đăng ký:</string>
+	<key>tour_info_8</key><string>Thời gian chơi vòng 1:</string>
+	<key>tour_info_9</key><string>Thời gian chơi vòng 2:</string>
+	<key>tour_info_10</key><string>Thời gian chơi vòng 3:</string>
+	<key>tour_info_11</key><string>Số ván đánh mỗi vòng:</string>
+	<key>giai_dau_se_bat_dau_sau</key><string>Giải đấu sẽ bắt đầu sau:</string>
+	<key>vong_tiep_theo_da_bat_dau</key><string>Vòng tiếp theo đã bắt đầu. Vào bàn chơi ngay?</string>
+	<key>ban_se_vao_giai_dau_sau_khi_het_van</key><string>Bạn sẽ vào giải đấu sau khi hết ván</string>
 	<key>nap_iap</key><string>In-App</string>
 	<key>nap_the</key><string>Nạp thẻ</string>
 	<key>nap_sms</key><string>Nạp SMS</string>

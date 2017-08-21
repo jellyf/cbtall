@@ -74,6 +74,7 @@ public:
 	void createAppellations();
 	void addViLangFromData(std::string data);
 	void setServerTime(double svTime);
+	void onHttpResponse(int tag, std::string content);
 public:
 	cocos2d::Scene* currentScene;
 	UserData userDataMe;

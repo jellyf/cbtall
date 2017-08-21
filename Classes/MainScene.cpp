@@ -215,12 +215,16 @@ void MainScene::onInit()
 	btnLoiDai->setPosition(vecPos[11]);
 	btnLoiDai->setScale(.95f);
 	addTouchEventListener(btnLoiDai, [=]() {
-		if (popupTour == NULL) {
-			initPopupTour();
+		if (Utils::getSingleton().ispmE()) {
+			if (popupTour == NULL) {
+				initPopupTour();
+			}
+			showPopup(popupTour);
+			//spLoiDai->stopAllActions();
+			//btnLoiDai->stopAllActions();
+		} else {
+			joinIntoLobby(3);
 		}
-		showPopup(popupTour);
-		//spLoiDai->stopAllActions();
-		btnLoiDai->stopAllActions();
 	});
 	mLayer->addChild(btnLoiDai);
 	autoScaleNode(btnLoiDai);
