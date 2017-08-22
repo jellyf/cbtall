@@ -216,10 +216,7 @@ void MainScene::onInit()
 	btnLoiDai->setScale(.95f);
 	addTouchEventListener(btnLoiDai, [=]() {
 		if (Utils::getSingleton().ispmE()) {
-			if (popupTour == NULL) {
-				initPopupTour();
-			}
-			showPopup(popupTour);
+			showPopupTour();
 			//spLoiDai->stopAllActions();
 			//btnLoiDai->stopAllActions();
 		} else {

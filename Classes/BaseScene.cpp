@@ -796,10 +796,7 @@ bool BaseScene::onErrorResponse(unsigned char code, std::string msg)
 		if (getTag() == constant::SCENE_GAME) {
 			showPopupConfirmMini(msg, Utils::getSingleton().getStringForKey("dang_ky"), 
 				Utils::getSingleton().getStringForKey("bo_qua"), Vec2(200, 200), [=]() {
-				/*if (popupTour == NULL) {
-					initPopupTour();
-				}
-				showPopup(popupTour);
+				/*showPopupTour();
 				ui::Button* btnReg = (ui::Button*)popupTour->getChildByName("btnregister");
 				btnReg->setVisible(true);
 				btnReg->setColor(Color3B::WHITE);
@@ -810,10 +807,7 @@ bool BaseScene::onErrorResponse(unsigned char code, std::string msg)
 		} else {
 			showPopupConfirm(msg, Utils::getSingleton().getStringForKey("dang_ky"), 
 				Utils::getSingleton().getStringForKey("bo_qua"), [=]() {
-				if (popupTour == NULL) {
-					initPopupTour();
-				}
-				showPopup(popupTour);
+				showPopupTour();
 				ui::Button* btnReg = (ui::Button*)popupTour->getChildByName("btnregister");
 				btnReg->setVisible(true);
 				btnReg->setColor(Color3B::WHITE);
@@ -2494,6 +2488,7 @@ void BaseScene::initPopupTour()
 	titleJoin->setPosition(btnJoin->getContentSize().width / 2, btnJoin->getContentSize().height / 2 + 5);
 	titleJoin->setColor(Color3B(255, 255, 80));
 	titleJoin->enableOutline(Color4B(51, 0, 0, 255), 2);
+	titleJoin->setTag(0);
 	btnJoin->addChild(titleJoin);
 
 	Label* lbCountDown = Label::createWithTTF("", "fonts/arialbd.ttf", 40);
@@ -3328,6 +3323,7 @@ void BaseScene::setTourTimeState(int state)
 			btnJoin->setVisible(true);
 			btnJoin->setColor(Color3B::GRAY);
 			btnJoin->setTouchEnabled(false);
+			btnJoin->getChildByTag(0)->setColor(Color3B(130, 130, 80));
 		}
 	} else if (state == 2) {
 		lbCountDown->setTag(3);
@@ -3335,6 +3331,7 @@ void BaseScene::setTourTimeState(int state)
 		btnJoin->setVisible(true);
 		btnJoin->setColor(Color3B::GRAY);
 		btnJoin->setTouchEnabled(false);
+		btnJoin->getChildByTag(0)->setColor(Color3B(130, 130, 80));
 	} else if (state == 3) {
 		lbCountDown->setTag(4);
 		if (tourInfo.CanRegister) {
@@ -3347,6 +3344,7 @@ void BaseScene::setTourTimeState(int state)
 			btnJoin->setVisible(true);
 			btnJoin->setColor(Color3B::WHITE);
 			btnJoin->setTouchEnabled(true);
+			btnJoin->getChildByTag(0)->setColor(Color3B(255, 255, 80));
 		}
 	} else if (state == 4) {
 		lbCountDown->setTag(5);
@@ -3409,12 +3407,24 @@ void BaseScene::runConnectionKeeper()
 
 	connectionKeeper = Node::create();
 	mLayer->addChild(connectionKeeper);
-	DelayTime* delayCK = DelayTime::create(120);
+	DelayTime* delayCK = DelayTime::create(100);
 	CallFunc* funcCK = CallFunc::create([=]() {
 		SFSRequest::getSingleton().Ping();
+		//SFSRequest::getSingleton().RequestKeepConnection();
 	});
 	Sequence* actionCK = Sequence::createWithTwoActions(delayCK, funcCK);
 	connectionKeeper->runAction(RepeatForever::create(actionCK));
+}
+
+void BaseScene::showPopupTour()
+{
+	if (popupTour == NULL) {
+		initPopupTour();
+	}
+	showPopup(popupTour);
+	if (this->getTag() == constant::SCENE_MAIN) {
+		runConnectionKeeper();
+	}
 }
 
 void BaseScene::joinIntoTour()

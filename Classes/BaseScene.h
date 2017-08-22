@@ -98,6 +98,7 @@ protected:
 	void joinIntoLobby(int lobby);
 	void processCachedErrors();
 	void runConnectionKeeper();
+	void showPopupTour();
 
 	cocos2d::Node* createPopup(std::string stitle, bool isBig, bool isHidden);
 	cocos2d::Node* createPopupNotice();

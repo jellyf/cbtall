@@ -307,6 +307,12 @@ void SFSRequest::RequestTourLeaveTable()
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::TOUR_LEAVE_TABLE, parameters);
 }
 
+void SFSRequest::RequestKeepConnection()
+{
+	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+	SFSConnector::getSingleton().SendExtensionRequest(cmd::KEEP_CONNECTION, parameters);
+}
+
 void SFSRequest::RequestRegister(std::string username, std::string password, std::string email)
 {
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
