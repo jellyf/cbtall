@@ -840,6 +840,7 @@ bool BaseScene::onErrorResponse(unsigned char code, std::string msg)
 			btnJoin->setVisible(true);
 			btnJoin->setColor(Color3B::WHITE);
 			btnJoin->setTouchEnabled(true);
+			btnJoin->getChildByTag(0)->setColor(Color3B(255, 255, 80));
 		}
 		return true;
 	}
