@@ -17,7 +17,7 @@ public:
 	virtual void unregisterEventListenner();
 	virtual void onDownloadedPlistTexture(int numb);
 	virtual void onHttpResponse(int tag, std::string content);
-	virtual void onHttpResponseFailed();
+	virtual void onHttpResponseFailed(int tag);
 
 	CC_SYNTHESIZE(bool, mIsTouch, IsTouch);
 	virtual bool onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* _event);

@@ -12,7 +12,7 @@ public:
 	static SFSRequest& getSingleton(void);
 	static SFSRequest* getSingletonPtr(void);
 
-	std::function<void()> onHttpResponseFailed = NULL;
+	std::function<void(int)> onHttpResponseFailed = NULL;
 	std::function<void(int, std::string)> onHttpResponse = NULL;
 	std::function<void(int, cocos2d::Texture2D*)> onLoadImageResponse = NULL;
 	std::function<void(std::string url, cocos2d::Texture2D*)> onLoadTextureResponse = NULL;

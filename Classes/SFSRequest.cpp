@@ -572,8 +572,9 @@ void SFSRequest::onHttpRequest(cocos2d::network::HttpClient * client, cocos2d::n
 	{
 		CCLOG("SFSRequest::onHttpRequest: Failed");
 		//CCLOG("error buffer: %s", response->getErrorBuffer());
+		int tag = atoi(response->getHttpRequest()->getTag());
 		if (SFSRequest::getSingleton().onHttpResponseFailed != NULL) {
-			SFSRequest::getSingleton().onHttpResponseFailed();
+			SFSRequest::getSingleton().onHttpResponseFailed(tag);
 		}
 		return;
 	}

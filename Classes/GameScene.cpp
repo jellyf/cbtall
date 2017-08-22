@@ -855,7 +855,7 @@ void GameScene::registerEventListenner()
 	EventHandler::getSingleton().onTourRoomToJoinSFSResponse = bind(&GameScene::onTourRoomToJoin, this, placeholders::_1);
 	EventHandler::getSingleton().onTourTimeWaitPlayerSFSResponse = bind(&GameScene::onTourTimeWaitPlayer, this, placeholders::_1);
 
-	SFSRequest::getSingleton().onHttpResponseFailed = std::bind(&GameScene::onHttpResponseFailed, this);
+	SFSRequest::getSingleton().onHttpResponseFailed = std::bind(&GameScene::onHttpResponseFailed, this, std::placeholders::_1);
 	SFSRequest::getSingleton().onHttpResponse = std::bind(&GameScene::onHttpResponse, this, std::placeholders::_1, std::placeholders::_2);
 }
 

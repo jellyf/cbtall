@@ -180,7 +180,7 @@ void BaseScene::registerEventListenner()
 	EventHandler::getSingleton().onTourRoomToJoinSFSResponse = bind(&BaseScene::onTourRoomToJoin, this, placeholders::_1);
 	EventHandler::getSingleton().onTourInfoSFSResponse = bind(&BaseScene::onTourInfoResponse, this, placeholders::_1);
 
-	SFSRequest::getSingleton().onHttpResponseFailed = std::bind(&BaseScene::onHttpResponseFailed, this);
+	SFSRequest::getSingleton().onHttpResponseFailed = std::bind(&BaseScene::onHttpResponseFailed, this, std::placeholders::_1);
 	SFSRequest::getSingleton().onHttpResponse = std::bind(&BaseScene::onHttpResponse, this, std::placeholders::_1, std::placeholders::_2);
 }
 
@@ -3061,7 +3061,7 @@ void BaseScene::onHttpResponse(int tag, std::string content)
 	}
 }
 
-void BaseScene::onHttpResponseFailed()
+void BaseScene::onHttpResponseFailed(int tag)
 {
 	CCLOG("falied");
 }

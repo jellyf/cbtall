@@ -385,15 +385,16 @@ bool LoginScene::onErrorResponse(unsigned char code, std::string msg)
 
 void LoginScene::onHttpResponse(int tag, std::string content)
 {
+	if (content.length() == 0) {
+		onHttpResponseFailed(tag);
+		return;
+	}
 	if (tag == constant::TAG_HTTP_VILANG) {
 		Utils::getSingleton().addViLangFromData(content);
 		return;
 	}
 	if (tag != constant::TAG_HTTP_GAME_CONFIG) return;
-	if (content.length() == 0) {
-		onHttpResponseFailed();
-		return;
-	}
+
 	rapidjson::Document d;
 	GameConfig config;
 	d.Parse<0>(content.c_str());
@@ -402,7 +403,7 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 		"smsVT", "smsVNPVMS", "smsKH", "smsMK", "fb", "a", "i", "updatenow", "inapp", "invite" };
 	for (string k : keys) {
 		if (d.FindMember(k.c_str()) == d.MemberEnd()) {
-			onHttpResponseFailed();
+			onHttpResponseFailed(tag);
 			return;
 		}
 	}
@@ -485,8 +486,9 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	//hideWaiting();
 }
 
-void LoginScene::onHttpResponseFailed()
+void LoginScene::onHttpResponseFailed(int tag)
 {
+	if (tag != constant::TAG_HTTP_GAME_CONFIG) return;
 	if (currentConfigLink == 0) {
 		currentConfigLink = 1;
 		hideWaiting();

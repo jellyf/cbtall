@@ -11,7 +11,7 @@ public:
 	virtual void editBoxReturn(cocos2d::ui::EditBox* editBox);
 	virtual void onDownloadedPlistTexture(int numb);
 	virtual void onHttpResponse(int tag, std::string content);
-	virtual void onHttpResponseFailed();
+	virtual void onHttpResponseFailed(int tag);
 
 	void onConnected();
 	void onLoginZone();
