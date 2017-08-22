@@ -855,8 +855,8 @@ void GameScene::registerEventListenner()
 	EventHandler::getSingleton().onTourRoomToJoinSFSResponse = bind(&GameScene::onTourRoomToJoin, this, placeholders::_1);
 	EventHandler::getSingleton().onTourTimeWaitPlayerSFSResponse = bind(&GameScene::onTourTimeWaitPlayer, this, placeholders::_1);
 
-	SFSRequest::getSingleton().onHttpResponseFailed = std::bind(&GameScene::onHttpResponseFailed, this, std::placeholders::_1);
-	SFSRequest::getSingleton().onHttpResponse = std::bind(&GameScene::onHttpResponse, this, std::placeholders::_1, std::placeholders::_2);
+	SFSRequest::getSingleton().mapHttpResponseFailedCallbacks["scene"] = std::bind(&GameScene::onHttpResponseFailed, this, std::placeholders::_1);
+	SFSRequest::getSingleton().mapHttpResponseCallbacks["scene"] = std::bind(&GameScene::onHttpResponse, this, std::placeholders::_1, std::placeholders::_2);
 }
 
 void GameScene::unregisterEventListenner()
@@ -903,8 +903,8 @@ void GameScene::unregisterEventListenner()
 	EventHandler::getSingleton().onTourWinnersSFSResponse = NULL;
 	EventHandler::getSingleton().onTourRoomToJoinSFSResponse = NULL;
 
-	SFSRequest::getSingleton().onHttpResponse = NULL;
-	SFSRequest::getSingleton().onHttpResponseFailed = NULL;
+	SFSRequest::getSingleton().mapHttpResponseFailedCallbacks.erase("scene");
+	SFSRequest::getSingleton().mapHttpResponseCallbacks.erase("scene");
 }
 
 void GameScene::editBoxReturn(cocos2d::ui::EditBox * editBox)

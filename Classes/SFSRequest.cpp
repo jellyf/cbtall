@@ -532,7 +532,7 @@ void SFSRequest::LoadImageFromURL(std::string url, int tag)
 {
 	cocos2d::network::HttpRequest* request = new (std::nothrow) cocos2d::network::HttpRequest();
 	request->setUrl(url);
-	request->setRequestType(cocos2d::network::HttpRequest::Type::POST);
+	request->setRequestType(cocos2d::network::HttpRequest::Type::GET);
 	request->setResponseCallback(this, httpresponse_selector(SFSRequest::onRequestImgCompleted));
 	request->setTag(to_string(tag));
 	cocos2d::network::HttpClient::getInstance()->send(request);
@@ -544,10 +544,24 @@ void SFSRequest::LoadTextureFromURL(std::string url, std::string tag)
 	cocos2d::network::HttpRequest* request = new (std::nothrow) cocos2d::network::HttpRequest();
 	request->setUrl(url);
 	request->setTag(tag);
-	request->setRequestType(cocos2d::network::HttpRequest::Type::POST);
+	request->setRequestType(cocos2d::network::HttpRequest::Type::GET);
 	request->setResponseCallback(this, httpresponse_selector(SFSRequest::onRequestTextureCompleted));
 	cocos2d::network::HttpClient::getInstance()->send(request);
 	request->release();
+}
+
+void SFSRequest::OnHttpResponse(int tag, std::string content)
+{
+	for (auto iter = mapHttpResponseCallbacks.begin(); iter != mapHttpResponseCallbacks.end(); iter++) {
+		iter->second(tag, content);
+	}
+}
+
+void SFSRequest::OnHttpResponseFailed(int tag)
+{
+	for (auto iter = mapHttpResponseFailedCallbacks.begin(); iter != mapHttpResponseFailedCallbacks.end(); iter++) {
+		iter->second(tag);
+	}
 }
 
 void SFSRequest::onHttpRequest(cocos2d::network::HttpClient * client, cocos2d::network::HttpResponse * response)
@@ -564,6 +578,7 @@ void SFSRequest::onHttpRequest(cocos2d::network::HttpClient * client, cocos2d::n
 	// Check the HTTP Status Code
 	int statusCode = response->getResponseCode();
 	/*char statusString[64] = {};
+	CCLOG("%s", response->getHttpRequest()->getUrl());
 	sprintf(statusString, "HTTP Status Code: %d, tag = %s", statusCode, response->getHttpRequest()->getTag());
 	CCLOG("SFSRequest::onHttpRequest: %s", statusString);*/
 
@@ -573,9 +588,7 @@ void SFSRequest::onHttpRequest(cocos2d::network::HttpClient * client, cocos2d::n
 		CCLOG("SFSRequest::onHttpRequest: Failed");
 		//CCLOG("error buffer: %s", response->getErrorBuffer());
 		int tag = atoi(response->getHttpRequest()->getTag());
-		if (SFSRequest::getSingleton().onHttpResponseFailed != NULL) {
-			SFSRequest::getSingleton().onHttpResponseFailed(tag);
-		}
+		SFSRequest::getSingleton().OnHttpResponseFailed(tag);
 		return;
 	}
 
@@ -585,10 +598,8 @@ void SFSRequest::onHttpRequest(cocos2d::network::HttpClient * client, cocos2d::n
 	std::string s2(buffer->begin(), buffer->end());
 	strcpy(concatenated, s2.c_str());
 
-	if (SFSRequest::getSingleton().onHttpResponse != NULL) {
-		int tag = atoi(response->getHttpRequest()->getTag());
-		SFSRequest::getSingleton().onHttpResponse(tag, concatenated);
-	}
+	int tag = atoi(response->getHttpRequest()->getTag());
+	SFSRequest::getSingleton().OnHttpResponse(tag, concatenated);
 }
 
 void SFSRequest::onRequestImgCompleted(cocos2d::network::HttpClient * client, cocos2d::network::HttpResponse * response)
@@ -600,15 +611,15 @@ void SFSRequest::onRequestImgCompleted(cocos2d::network::HttpClient * client, co
 		return;
 	}
 
-	//CCLOG("onHttpRequestCompleted - Response code: %lu", response->getResponseCode());
+	CCLOG("onRequestImgCompleted: %d", response->getResponseCode());
 
 	if (!response->isSucceed())
 	{
-		//CCLOG("onHttpRequestCompleted - Response failed");
+		CCLOG("onRequestImgCompleted - Response failed");
 		//CCLOG("onHttpRequestCompleted - Error buffer: %s", response->getErrorBuffer());
-		string tag = response->getHttpRequest()->getTag();
-		string url = response->getHttpRequest()->getUrl();
-		SFSRequest::getSingleton().LoadImageFromURL(url, atoi(tag.c_str()));
+		//string tag = response->getHttpRequest()->getTag();
+		//string url = response->getHttpRequest()->getUrl();
+		//SFSRequest::getSingleton().LoadImageFromURL(url, atoi(tag.c_str()));
 		return;
 	}
 	//CCLOG("onHttpRequestCompleted - Response code: %s", response->getResponseDataString());
@@ -641,18 +652,19 @@ void SFSRequest::onRequestTextureCompleted(cocos2d::network::HttpClient * client
 	}
 
     long responseCode = response->getResponseCode();
-	//CCLOG("onHttpRequestCompleted - Response code: %lu", responseCode);
-
 	string tag = response->getHttpRequest()->getTag();
 	string url = response->getHttpRequest()->getUrl();
+	//CCLOG("%s", url.c_str());
+	//CCLOG("onRequestTextureCompleted: %d", responseCode);
+
 	if (!response->isSucceed())
 	{
-		//CCLOG("onHttpRequestCompleted - Response failed");
+		CCLOG("onRequestTextureCompleted - Response failed");
 		//CCLOG("onHttpRequestCompleted - Error buffer: %s", response->getErrorBuffer());
-		SFSRequest::getSingleton().LoadTextureFromURL(url, tag);
+		//SFSRequest::getSingleton().LoadTextureFromURL(url, tag);
 		return;
 	}
-	//CCLOG("onHttpRequestCompleted - Response data: %s", response->getResponseDataString());
+	//CCLOG("onHttpRequestTextureCompleted - Response data: %s", response->getResponseDataString());
     if(responseCode != 200) return;
     
 	try {

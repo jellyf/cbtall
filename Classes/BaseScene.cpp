@@ -180,8 +180,8 @@ void BaseScene::registerEventListenner()
 	EventHandler::getSingleton().onTourRoomToJoinSFSResponse = bind(&BaseScene::onTourRoomToJoin, this, placeholders::_1);
 	EventHandler::getSingleton().onTourInfoSFSResponse = bind(&BaseScene::onTourInfoResponse, this, placeholders::_1);
 
-	SFSRequest::getSingleton().onHttpResponseFailed = std::bind(&BaseScene::onHttpResponseFailed, this, std::placeholders::_1);
-	SFSRequest::getSingleton().onHttpResponse = std::bind(&BaseScene::onHttpResponse, this, std::placeholders::_1, std::placeholders::_2);
+	SFSRequest::getSingleton().mapHttpResponseFailedCallbacks["scene"] = std::bind(&BaseScene::onHttpResponseFailed, this, std::placeholders::_1);
+	SFSRequest::getSingleton().mapHttpResponseCallbacks["scene"] = std::bind(&BaseScene::onHttpResponse, this, std::placeholders::_1, std::placeholders::_2);
 }
 
 void BaseScene::unregisterEventListenner()
@@ -208,8 +208,8 @@ void BaseScene::unregisterEventListenner()
 	EventHandler::getSingleton().onTourRoomToJoinSFSResponse = NULL;
 	EventHandler::getSingleton().onTourInfoSFSResponse = NULL;
 
-	SFSRequest::getSingleton().onHttpResponse = NULL;
-	SFSRequest::getSingleton().onHttpResponseFailed = NULL;
+	SFSRequest::getSingleton().mapHttpResponseFailedCallbacks.erase("scene");
+	SFSRequest::getSingleton().mapHttpResponseCallbacks.erase("scene");
 }
 
 bool BaseScene::onTouchBegan(Touch * touch, Event * _event)

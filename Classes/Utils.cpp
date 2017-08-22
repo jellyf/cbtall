@@ -37,11 +37,11 @@ Utils::Utils()
 	dynamicConfig.Popup = false;
 	hasShowEventPopup = false;
 	currentEventPosX = constant::EVENT_START_POSX;
-	textureHost = "http://115.84.179.242/main_kinhtuchi/";
+	textureHost = "http://kinhtuchi.com/main_kinhtuchi/";
 	cofferGuide = "";
 	viLang = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/vi.xml");
 	SFSRequest::getSingleton().onLoadTextureResponse = std::bind(&Utils::onLoadTextureResponse, this, std::placeholders::_1, std::placeholders::_2);
-	SFSRequest::getSingleton().onHttpResponse = std::bind(&Utils::onHttpResponse, this, std::placeholders::_1, std::placeholders::_2);
+	SFSRequest::getSingleton().mapHttpResponseCallbacks["utils"] = std::bind(&Utils::onHttpResponse, this, std::placeholders::_1, std::placeholders::_2);
 
 	createAppellations();
     
