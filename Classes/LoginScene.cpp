@@ -26,7 +26,7 @@ void LoginScene::onInit()
 	bool ispmE = Utils::getSingleton().ispmE();
 
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB565);
-	Texture2D* bgTexture = TextureCache::getInstance()->addImage("login_bg.jpg");
+	Texture2D* bgTexture = TextureCache::getInstance()->addImage("imgs/login_bg.jpg");
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
 
 	Sprite* bg = Sprite::createWithTexture(bgTexture);
@@ -687,11 +687,11 @@ void LoginScene::requestGameConfig(bool realConfig)
 
 void LoginScene::loadTextureCache()
 {
-	TextureCache::sharedTextureCache()->addImageAsync("game.png", [=](Texture2D* texture) {
-		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("game.plist");
+	TextureCache::sharedTextureCache()->addImageAsync("imgs/game.png", [=](Texture2D* texture) {
+		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("imgs/game.plist");
 	});
-	TextureCache::sharedTextureCache()->addImageAsync("buttons.png", [=](Texture2D* texture) {
-		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("buttons.plist");
+	TextureCache::sharedTextureCache()->addImageAsync("imgs/buttons.png", [=](Texture2D* texture) {
+		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("imgs/buttons.plist");
 	});
 }
 

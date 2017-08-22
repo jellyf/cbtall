@@ -40,7 +40,7 @@ void MainScene::onInit()
 	initHeaderWithInfos();
 
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB565);
-	Texture2D* bgTexture = TextureCache::getInstance()->addImage("main_bg.jpg");
+	Texture2D* bgTexture = TextureCache::getInstance()->addImage("imgs/main_bg.jpg");
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
 
 	Sprite* bg = Sprite::createWithTexture(bgTexture);
@@ -1102,7 +1102,7 @@ void MainScene::initPopupCharge()
 	bg->setContentSize(Size(1000, 700));
 	popupCharge->addChild(bg);*/
 
-	/*Sprite* bg = Sprite::create("popup_bg1.png");
+	/*Sprite* bg = Sprite::create("imgs/popup_bg1.png");
 	popupCharge->addChild(bg);*/
 
 	Size size = Size(810, 466);
@@ -1790,7 +1790,7 @@ void MainScene::initPopupMail()
 	bg->setContentSize(Size(1000, 700));
 	popupMail->addChild(bg);*/
 
-	/*Sprite* bg = Sprite::create("popup_bg1.png");
+	/*Sprite* bg = Sprite::create("imgs/popup_bg1.png");
 	popupMail->addChild(bg);*/
 
 	ui::Scale9Sprite* bgContent = ui::Scale9Sprite::createWithSpriteFrameName("empty.png");
@@ -1901,7 +1901,7 @@ void MainScene::initPopupNews()
 	bg->setContentSize(Size(1000, 700));
 	popupNews->addChild(bg);*/
 
-	/*Sprite* bg = Sprite::create("popup_bg1.png");
+	/*Sprite* bg = Sprite::create("imgs/popup_bg1.png");
 	popupNews->addChild(bg);*/
 
 	Size size = Size(780, 436);
@@ -1983,7 +1983,7 @@ void MainScene::initPopupShop()
 	bg->setContentSize(Size(1000, 700));
 	popupShop->addChild(bg);*/
 
-	/*Sprite* bg = Sprite::create("popup_bg1.png");
+	/*Sprite* bg = Sprite::create("imgs/popup_bg1.png");
 	popupShop->addChild(bg);*/
 
 	ui::Scale9Sprite* bgContent = ui::Scale9Sprite::createWithSpriteFrameName("empty.png");
@@ -2133,7 +2133,7 @@ void MainScene::initWebView()
 	webSplash->setOpacity(150);
 	nodeWebview->addChild(webSplash);
 
-	Sprite* bg = Sprite::create("popup_bg1.png");
+	Sprite* bg = Sprite::create("imgs/popup_bg1.png");
 	bg->setName("spbg");
 	nodeWebview->addChild(bg);
 

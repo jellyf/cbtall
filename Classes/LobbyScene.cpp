@@ -26,7 +26,7 @@ void LobbyScene::onInit()
 	initPopupHistory();
 
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB565);
-	Texture2D* bgTexture = TextureCache::getInstance()->addImage("lobby_bg.jpg");
+	Texture2D* bgTexture = TextureCache::getInstance()->addImage("imgs/lobby_bg.jpg");
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
 
 	Sprite* bg = Sprite::createWithTexture(bgTexture);
@@ -309,7 +309,7 @@ void LobbyScene::initTourView()
 	mLayer->addChild(nodeTour);
 	autoScaleNode(nodeTour);
 
-	Sprite *bg = Sprite::create("khung.png");
+	Sprite *bg = Sprite::create("imgs/khung.png");
 	nodeTour->addChild(bg);
 	Size bgsize = bg->getContentSize();
 

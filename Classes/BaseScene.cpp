@@ -1315,7 +1315,7 @@ cocos2d::Node * BaseScene::createPopup(std::string stitle, bool isBig, bool isHi
 	mLayer->addChild(popup, constant::ZORDER_POPUP);
 	//autoScaleNode(popup);
 
-	Sprite* bg = isBig ? Sprite::create("popup_bg1.png") : Sprite::createWithSpriteFrameName("popup_bg.png");
+	Sprite* bg = isBig ? Sprite::create("imgs/popup_bg1.png") : Sprite::createWithSpriteFrameName("popup_bg.png");
 	bg->setName("spbg");
 	popup->addChild(bg);
 
@@ -1608,7 +1608,7 @@ void BaseScene::initPopupRank()
 	bg->setContentSize(Size(1000, 700));
 	popupRank->addChild(bg);*/
 
-	/*Sprite* bg = Sprite::create("popup_bg1.png");
+	/*Sprite* bg = Sprite::create("imgs/popup_bg1.png");
 	popupRank->addChild(bg);*/
 
 	Size size = Size(860, 466);
@@ -1973,7 +1973,7 @@ void BaseScene::initPopupHistory()
 	mLayer->addChild(popupHistory, constant::ZORDER_POPUP);
 	autoScaleNode(popupHistory);
 
-	Sprite* bg = Sprite::create("popup_bg1.png");
+	Sprite* bg = Sprite::create("imgs/popup_bg1.png");
 	popupHistory->addChild(bg);
 
 	Sprite* title = Sprite::createWithSpriteFrameName("title_lichsu.png");
@@ -2140,7 +2140,7 @@ void BaseScene::initPopupCoffer()
 	bg->setContentSize(Size(1000, 700));
 	popupCoffer->addChild(bg);*/
 
-	/*Sprite* bg = Sprite::create("popup_bg1.png");
+	/*Sprite* bg = Sprite::create("imgs/popup_bg1.png");
 	popupCoffer->addChild(bg);*/
 
 	Size size = Size(780, 466);
@@ -2259,7 +2259,7 @@ void BaseScene::initPopupIAP()
 	//mLayer->addChild(popupIAP, constant::ZORDER_POPUP);
 	////autoScaleNode(popupCharge);
 
-	//Sprite* bg = Sprite::create("popup_bg1.png");
+	//Sprite* bg = Sprite::create("imgs/popup_bg1.png");
 	//popupIAP->addChild(bg);
 
 	//Sprite* title = Sprite::createWithSpriteFrameName("title_naptien.png");

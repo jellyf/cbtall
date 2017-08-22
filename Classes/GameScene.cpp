@@ -122,7 +122,7 @@ void GameScene::onInit()
 	}
 	if (isTourGame) zone = "VuongPhu";
 
-	string bgName = isSolo ? "bgVuongPhu.jpg" : "bg" + zone + ".jpg";
+	string bgName = "imgs/" + (isSolo ? "bgVuongPhu.jpg" : "bg" + zone + ".jpg");
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB565);
 	Texture2D* bgTexture = TextureCache::getInstance()->addImage(bgName);
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
@@ -139,12 +139,12 @@ void GameScene::onInit()
 	autoScaleNode(centerBg);
 
 	if (isSolo) {
-		Sprite* dragon1 = Sprite::create("dragon.png");
+		Sprite* dragon1 = Sprite::create("imgs/dragon.png");
 		dragon1->setPosition(310, 350);
 		mLayer->addChild(dragon1);
 		autoScaleNode(dragon1);
 
-		Sprite* dragon2 = Sprite::create("dragon.png");
+		Sprite* dragon2 = Sprite::create("imgs/dragon.png");
 		dragon2->setPosition(810, 350);
 		dragon2->setFlippedX(true);
 		mLayer->addChild(dragon2);
