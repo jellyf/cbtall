@@ -786,9 +786,8 @@ void Utils::onHttpResponse(int tag, std::string content)
 		});
 	} else if (tag == constant::TAG_HTTP_MENU2) {
 		Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
-		string str2 = FileUtils::getInstance()->getStringFromFile("menu2.plist");
 		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu4.png", [=](Texture2D* texture2) {
-			SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str2, texture2);
+			SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(content, texture2);
 			downloadedPlistTexture = 2;
 			if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
 				EventHandler::getSingleton().onDownloadedPlistTexture(downloadedPlistTexture);
