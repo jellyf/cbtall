@@ -196,14 +196,23 @@ void MainScene::onInit()
 	mLayer->addChild(btnDinhLang);
 	autoScaleNode(btnDinhLang);
 
-	ui::Button* btnPhuChua = ui::Button::create("phuchua.png", "phuchua.png", "", ui::Widget::TextureResType::PLIST);
+	/*ui::Button* btnPhuChua = ui::Button::create("phuchua.png", "phuchua.png", "", ui::Widget::TextureResType::PLIST);
 	btnPhuChua->setPosition(vecPos[10]);
 	btnPhuChua->setScale(.95f);
 	addTouchEventListener(btnPhuChua, [=]() {
 		joinIntoLobby(2);
 	});
 	mLayer->addChild(btnPhuChua);
-	autoScaleNode(btnPhuChua);
+	autoScaleNode(btnPhuChua);*/
+
+	ui::Button* btnSolo = ui::Button::create("dtd.png", "dtd.png", "", ui::Widget::TextureResType::PLIST);
+	btnSolo->setPosition(vecPos[10]);
+	btnSolo->setScale(.95f);
+	addTouchEventListener(btnSolo, [=]() {
+		joinIntoLobby(3);
+	});
+	mLayer->addChild(btnSolo);
+	autoScaleNode(btnSolo);
 
 	/*Sprite* spLoiDai = Sprite::createWithSpriteFrameName("loidai.png");
 	spLoiDai->setScale(.95f);
