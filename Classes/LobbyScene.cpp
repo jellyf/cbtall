@@ -47,11 +47,24 @@ void LobbyScene::onInit()
 	if (isTour || zone.compare("Authen") == 0) zone = "VuongPhu";
 
 	if (isTour) {
-		Sprite* spName = Sprite::create("text_loidaichien.png");
-		spName->setAnchorPoint(Vec2(0, 1));
-		spName->setPosition(0, 605);
-		spName->setScale(.9f);
-		mLayer->addChild(spName);
+		if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS) {
+			string host = Utils::getSingleton().textureHost;
+			Utils::getSingleton().LoadTextureFromURL(host + "text_loidaichien.png", [=](Texture2D* texture) {
+				Sprite* spName = Sprite::createWithTexture(texture);
+				spName->setAnchorPoint(Vec2(0, 1));
+				spName->setPosition(0, 605);
+				spName->setScale(.9f);
+				mLayer->addChild(spName);
+				autoScaleNode(spName);
+			});
+		} else {
+			Sprite* spName = Sprite::create("text_loidaichien.png");
+			spName->setAnchorPoint(Vec2(0, 1));
+			spName->setPosition(0, 605);
+			spName->setScale(.9f);
+			mLayer->addChild(spName);
+			autoScaleNode(spName);
+		}
 
 		initTourView();
 	} else {
