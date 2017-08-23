@@ -808,6 +808,7 @@ bool BaseScene::onErrorResponse(unsigned char code, std::string msg)
 			showPopupConfirm(msg, Utils::getSingleton().getStringForKey("dang_ky"), 
 				Utils::getSingleton().getStringForKey("bo_qua"), [=]() {
 				showPopupTour();
+				popupTour->getChildByName("btnjoin")->setVisible(false);
 				ui::Button* btnReg = (ui::Button*)popupTour->getChildByName("btnregister");
 				btnReg->setVisible(true);
 				btnReg->setColor(Color3B::WHITE);
@@ -815,6 +816,7 @@ bool BaseScene::onErrorResponse(unsigned char code, std::string msg)
 			});
 		}
 		if (popupTour) {
+			popupTour->getChildByName("btnjoin")->setVisible(false);
 			ui::Button* btnReg = (ui::Button*)popupTour->getChildByName("btnregister");
 			btnReg->setVisible(true);
 			btnReg->setColor(Color3B::WHITE);
