@@ -793,6 +793,7 @@ bool BaseScene::onErrorResponse(unsigned char code, std::string msg)
 	CCLOG("%d %s", (int)code, msg.c_str());
 	if (code == 34) {
 		//Bat dau dang ky giai dau
+		Utils::getSingleton().tourInfo.CanRegister = true;
 		if (getTag() == constant::SCENE_GAME) {
 			showPopupConfirmMini(msg, Utils::getSingleton().getStringForKey("dang_ky"), 
 				Utils::getSingleton().getStringForKey("bo_qua"), Vec2(200, 200), [=]() {
@@ -852,6 +853,11 @@ bool BaseScene::onErrorResponse(unsigned char code, std::string msg)
 	}
 	if (code == 38) {
 		isOverlapLogin = true;
+	}
+	if (isJoiningTour && code == 72) {
+		//Da thi dau du so van quy dinh, cho vao lobby
+		Utils::getSingleton().goToLobbyScene();
+		return true;
 	}
 	return false;
 }
@@ -1188,8 +1194,12 @@ void BaseScene::onJoinRoom(long roomId, std::string roomName)
 
 void BaseScene::onJoinRoomError(std::string msg)
 {
-	hideWaiting();
-	showPopupNotice(msg, [=]() {}, false);
+	if (isJoiningTour) {
+		Utils::getSingleton().goToLobbyScene();
+	} else {
+		hideWaiting();
+		showPopupNotice(msg, [=]() {}, false);
+	}
 }
 
 void BaseScene::hideSplash()
