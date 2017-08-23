@@ -807,12 +807,16 @@ bool BaseScene::onErrorResponse(unsigned char code, std::string msg)
 		} else {
 			showPopupConfirm(msg, Utils::getSingleton().getStringForKey("dang_ky"), 
 				Utils::getSingleton().getStringForKey("bo_qua"), [=]() {
-				showPopupTour();
-				popupTour->getChildByName("btnjoin")->setVisible(false);
-				ui::Button* btnReg = (ui::Button*)popupTour->getChildByName("btnregister");
-				btnReg->setVisible(true);
-				btnReg->setColor(Color3B::WHITE);
-				btnReg->setTouchEnabled(true);
+				if (popupTour && popupTour->isVisible()) {
+					registerTour();
+				} else {
+					showPopupTour();
+					popupTour->getChildByName("btnjoin")->setVisible(false);
+					ui::Button* btnReg = (ui::Button*)popupTour->getChildByName("btnregister");
+					btnReg->setVisible(true);
+					btnReg->setColor(Color3B::WHITE);
+					btnReg->setTouchEnabled(true);
+				}
 			});
 		}
 		if (popupTour) {
@@ -2507,13 +2511,7 @@ void BaseScene::initPopupTour()
 	lbCountDown->addChild(nodelbtime);
 
 	addTouchEventListener(btnRegister, [=]() {
-		btnRegister->setVisible(false);
-		btnJoin->setVisible(false);
-		//lbCountDown->stopAllActions();
-		//lbCountDown->setString("");
-		//tourTimeRemain = -1;
-		Utils::getSingleton().tourInfo.CanRegister = false;
-		SFSRequest::getSingleton().RequestRegisterTour();
+		registerTour();
 	});
 
 	addTouchEventListener(btnJoin, [=]() {
@@ -3428,6 +3426,22 @@ void BaseScene::showPopupTour()
 	if (this->getTag() == constant::SCENE_MAIN) {
 		runConnectionKeeper();
 	}
+}
+
+void BaseScene::registerTour()
+{
+	ui::Button *btnRegister = (ui::Button*)popupTour->getChildByName("btnregister");
+	ui::Button *btnJoin = (ui::Button*)popupTour->getChildByName("btnjoin");
+	btnRegister->setVisible(false);
+	btnJoin->setVisible(true);
+	btnJoin->setColor(Color3B::GRAY);
+	btnJoin->setTouchEnabled(false);
+	btnJoin->getChildByTag(0)->setColor(Color3B(130, 130, 80));
+	//lbCountDown->stopAllActions();
+	//lbCountDown->setString("");
+	//tourTimeRemain = -1;
+	Utils::getSingleton().tourInfo.CanRegister = false;
+	SFSRequest::getSingleton().RequestRegisterTour();
 }
 
 void BaseScene::joinIntoTour()

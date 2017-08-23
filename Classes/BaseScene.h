@@ -99,6 +99,7 @@ protected:
 	void processCachedErrors();
 	void runConnectionKeeper();
 	void showPopupTour();
+	void registerTour();
 
 	cocos2d::Node* createPopup(std::string stitle, bool isBig, bool isHidden);
 	cocos2d::Node* createPopupNotice();
