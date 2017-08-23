@@ -3410,8 +3410,8 @@ void BaseScene::runConnectionKeeper()
 	mLayer->addChild(connectionKeeper);
 	DelayTime* delayCK = DelayTime::create(100);
 	CallFunc* funcCK = CallFunc::create([=]() {
-		SFSRequest::getSingleton().Ping();
-		//SFSRequest::getSingleton().RequestKeepConnection();
+		//SFSRequest::getSingleton().Ping();
+		SFSRequest::getSingleton().RequestKeepConnection();
 	});
 	Sequence* actionCK = Sequence::createWithTwoActions(delayCK, funcCK);
 	connectionKeeper->runAction(RepeatForever::create(actionCK));
