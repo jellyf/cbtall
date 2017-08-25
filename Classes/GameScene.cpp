@@ -1039,7 +1039,7 @@ bool GameScene::onTouchBegan(Touch * touch, Event * _event)
 						SFSRequest::getSingleton().RequestUserInfo(vecUsers[i]->getName());
 					//}
 					break;
-				} else {
+				} else if(spInvites[i]->isVisible()){
 					hasClickInvite = true;
 					SFSRequest::getSingleton().RequestGameLobbyUser();
 				}
