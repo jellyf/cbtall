@@ -429,6 +429,7 @@ void Utils::logoutGame()
 	logoutZone();
 	hasShowEventPopup = false;
 	tourInfo.Name = "";
+	dynamicConfig.Ads = false;
 }
 
 void Utils::logoutZone()

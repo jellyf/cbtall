@@ -1290,6 +1290,7 @@ void SFSResponse::onPopupEventResponse(boost::shared_ptr<ISFSObject> isfsObject)
 	if (config.LogHost.length() == 0) {
 		config.LogHost = "http://125.212.192.96:8899/ktc/client-log?data=";
 	}
+	config.Ready = true;
 	Utils::getSingleton().dynamicConfig = config;
 	if (EventHandler::getSingleton().onDynamicConfigReceived != NULL) {
 		EventHandler::getSingleton().onDynamicConfigReceived();

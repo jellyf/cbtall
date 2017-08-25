@@ -394,6 +394,7 @@ struct CofferWinnerData
 
 struct DynamicConfig
 {
+	bool Ready = false;
 	bool Kick = false;
 	bool Popup = false;
 	bool Log = false;

@@ -2307,7 +2307,7 @@ void MainScene::initAdsense()
 {
 	nodeAds = Node::create();
 	nodeAds->setPosition(930, 70);
-	nodeAds->setTag(0);
+	nodeAds->setTag(-1);
 	mLayer->addChild(nodeAds);
 	autoScaleNode(nodeAds);
 
@@ -2336,17 +2336,17 @@ void MainScene::initAdsense()
 	spIcon->setTag(1);
 	nodeIcon->addChild(spIcon);
 
-	ScaleTo* scale1 = ScaleTo::create(.3f, .5f);
+	/*ScaleTo* scale1 = ScaleTo::create(.3f, .5f);
 	ScaleTo* scale2 = ScaleTo::create(1, 1);
-	EaseElasticOut* eeo = EaseElasticOut::create(scale2);
-	DelayTime* delay1 = DelayTime::create(1);
+	EaseElasticOut* eeo = EaseElasticOut::create(scale2);*/
+	DelayTime* delay1 = DelayTime::create(10);
 	CallFunc* func = CallFunc::create([=]() {
 		Node* nodeIcon = nodeAds->getChildByName("nodeicon");
-		int count = nodeIcon->getTag();
-		if (count % 2 == 0) {
-			int index = nodeAds->getTag();
+		//int count = nodeIcon->getTag();
+		//if (count % 2 == 0) {
 			vector<string> icons = Utils::getSingleton().dynamicConfig.AdsIcons;
-			index = (index + 1) % icons.size();
+			int index = nodeAds->getTag();
+			index = (index == -1 ? rand() : (index + 1)) % icons.size();
 			Utils::getSingleton().LoadTextureFromURL(icons[index], [=](Texture2D* texture) {
 				Sprite* spIcon = (Sprite*)nodeAds->getChildByName("nodeicon")->getChildByName("spicon");
 				spIcon->initWithTexture(texture);
@@ -2354,11 +2354,12 @@ void MainScene::initAdsense()
 				spIcon->setScale(100.0f / width);
 			});
 			nodeAds->setTag(index);
-		}
-		count++;
-		nodeIcon->setTag(count);
+		//}
+		//count++;
+		//nodeIcon->setTag(count);
 	});
-	Sequence* action = Sequence::create(scale1, func, eeo, delay1, nullptr);
+	//Sequence* action = Sequence::create(scale1, func, eeo, delay1, nullptr);
+	Sequence* action = Sequence::create(func, delay1, nullptr);
 	nodeAds->runAction(RepeatForever::create(action));
 }
 
