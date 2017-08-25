@@ -1044,6 +1044,13 @@ void MainScene::onDynamicConfigReceived()
 		//showWebView(Utils::getSingleton().dynamicConfig.PopupUrl);
 		btnEvent->setVisible(true);
 	}
+	if (Utils::getSingleton().dynamicConfig.Ads) {
+		if (nodeAds) {
+			nodeAds->removeFromParent();
+		} else {
+			initAdsense();
+		}
+	}
 	GameLogger::getSingleton().setEnabled(Utils::getSingleton().dynamicConfig.Log);
 	GameLogger::getSingleton().setHost(Utils::getSingleton().dynamicConfig.LogHost);
 	GameLogger::getSingleton().setUser(Utils::getSingleton().userDataMe);
@@ -2294,6 +2301,65 @@ void MainScene::initPopupDisplayName()
 		}
 	});
 	popupDisplayName->addChild(btnSubmit);
+}
+
+void MainScene::initAdsense()
+{
+	nodeAds = Node::create();
+	nodeAds->setPosition(930, 70);
+	nodeAds->setTag(0);
+	mLayer->addChild(nodeAds);
+	autoScaleNode(nodeAds);
+
+	ui::Button* btn = ui::Button::create("empty.png", "empty.png", "", ui::Widget::TextureResType::PLIST);
+	btn->setScale9Enabled(true);
+	btn->setContentSize(Size(110, 110));
+	addTouchEventListener(btn, [=]() {
+		int index = nodeAds->getTag();
+		if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS) {
+			string url = Utils::getSingleton().dynamicConfig.AdsIOSUrls[index];
+			Application::getInstance()->openURL(constant::STORE_APPLE + url);
+		} else {
+			string url = Utils::getSingleton().dynamicConfig.AdsUrls[index];
+			Application::getInstance()->openURL(constant::STORE_GOOGLE + url);
+		}
+	});
+	nodeAds->addChild(btn);
+
+	Node* nodeIcon = Node::create();
+	nodeIcon->setName("nodeicon");
+	nodeIcon->setTag(1);
+	nodeAds->addChild(nodeIcon);
+
+	Sprite* spIcon = Sprite::create();
+	spIcon->setName("spicon");
+	spIcon->setTag(1);
+	nodeIcon->addChild(spIcon);
+
+	ScaleTo* scale1 = ScaleTo::create(.3f, .5f);
+	ScaleTo* scale2 = ScaleTo::create(1, 1);
+	EaseElasticOut* eeo = EaseElasticOut::create(scale2);
+	DelayTime* delay1 = DelayTime::create(1);
+	CallFunc* func = CallFunc::create([=]() {
+		Node* nodeIcon = nodeAds->getChildByName("nodeicon");
+		int count = nodeIcon->getTag();
+		if (count % 2 == 0) {
+			int index = nodeAds->getTag();
+			vector<string> icons = Utils::getSingleton().dynamicConfig.AdsIcons;
+			index = (index + 1) % icons.size();
+			Utils::getSingleton().LoadTextureFromURL(icons[index], [=](Texture2D* texture) {
+				Sprite* spIcon = (Sprite*)nodeAds->getChildByName("nodeicon")->getChildByName("spicon");
+				spIcon->initWithTexture(texture);
+				float width = spIcon->getContentSize().width;
+				spIcon->setScale(100.0f / width);
+			});
+			nodeAds->setTag(index);
+		}
+		count++;
+		nodeIcon->setTag(count);
+	});
+	Sequence* action = Sequence::create(scale1, func, eeo, delay1, nullptr);
+	nodeAds->runAction(RepeatForever::create(action));
 }
 
 void MainScene::showPopupMail()

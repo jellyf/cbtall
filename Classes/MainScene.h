@@ -42,6 +42,7 @@ private:
 	void initWebView();
 	void initPopupGiftcode();
 	void initPopupDisplayName();
+	void initAdsense();
 
 	void showPopupMail();
 	void showPopupNews();
@@ -59,6 +60,7 @@ private:
 	cocos2d::Node* popupGiftcode;
 	cocos2d::Node* popupDisplayName;
 	cocos2d::Node* nodeWebview;
+	cocos2d::Node* nodeAds;
 
 	cocos2d::Label* lbNewMail;
 	cocos2d::Label* lbTourCountDown;

@@ -394,12 +394,16 @@ struct CofferWinnerData
 
 struct DynamicConfig
 {
-	bool Kick;
-	bool Popup;
-	bool Log;
+	bool Kick = false;
+	bool Popup = false;
+	bool Log = false;
+	bool Ads = false;
 	std::string LogHost;
 	std::string PopupUrl;
 	std::vector<std::string> CashValue;
+	std::vector<std::string> AdsIcons;
+	std::vector<std::string> AdsUrls;
+	std::vector<std::string> AdsIOSUrls;
 };
 
 struct AppellationData

@@ -1270,6 +1270,22 @@ void SFSResponse::onPopupEventResponse(boost::shared_ptr<ISFSObject> isfsObject)
 		if (d.FindMember("CLIENT_LOG_VALUE") != d.MemberEnd()) {
 			config.LogHost = d["CLIENT_LOG_VALUE"].GetString();
 		} else config.LogHost = "";
+		if (d.FindMember("ADS") != d.MemberEnd()) {
+			std::string str = d["ADS"].GetString();
+			config.Ads = str.compare("1") == 0;
+		} else config.Ads = false;
+		if (d.FindMember("ADS_VALUE") != d.MemberEnd()) {
+			string strD1 = "{\"vals\":" + string(d["ADS_VALUE"].GetString()) + "}";
+			rapidjson::Document d1;
+			d1.Parse<0>(strD1.c_str());
+			const rapidjson::Value& vals = d1["vals"];
+			assert(vals.IsArray());
+			for (rapidjson::SizeType i = 0; i < vals.Size(); i++) {
+				config.AdsUrls.push_back(vals[i]["url"].GetString());
+				config.AdsIOSUrls.push_back(vals[i]["urlIOS"].GetString());
+				config.AdsIcons.push_back(vals[i]["img"].GetString());
+			}
+		}
 	}
 	if (config.LogHost.length() == 0) {
 		config.LogHost = "http://125.212.192.96:8899/ktc/client-log?data=";
