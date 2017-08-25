@@ -849,8 +849,7 @@ bool BaseScene::onErrorResponse(unsigned char code, std::string msg)
 	if (code == 38) {
 		isOverlapLogin = true;
 	}
-	if (isJoiningTour && code == 72) {
-		//Da thi dau du so van quy dinh, cho vao lobby
+	if (isJoiningTour) {
 		Utils::getSingleton().goToLobbyScene();
 		return true;
 	}
