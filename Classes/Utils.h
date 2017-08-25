@@ -98,6 +98,7 @@ public:
 	std::string currentZoneIp;
 	std::string textureHost;
 	std::string cofferGuide;
+	std::string tourGuide;
 	std::string tourRoom;
 	double serverTime;
 	double serverTimeDiff;

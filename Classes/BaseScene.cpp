@@ -3016,8 +3016,12 @@ void BaseScene::onTourInfoResponse(TourInfo tourInfo)
 		n1height = -n1height + 26;
 	}
 
-	cocos2d::ValueMap plist = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/tutorials.xml");
-	std::string info2 = plist["loi_dai_2"].asString();
+	string info2 = Utils::getSingleton().tourGuide;
+	if (info2.length() == 0) {
+		SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/main_kinhtuchi/giaidau.txt", constant::TAG_HTTP_TOUR_GUIDE);
+		cocos2d::ValueMap plist = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/tutorials.xml");
+		info2 = plist["loi_dai_2"].asString();
+	}
 	string requiredMatchStr = isTourExist ? to_string(tourInfo.RequiredMatch) : "85";
 	info2 = Utils::getSingleton().replaceString(info2, "[p1]", requiredMatchStr + "%");
 
@@ -3091,6 +3095,26 @@ void BaseScene::onHttpResponse(int tag, std::string content)
 			lb->setPosition(0, height);
 			scrollGuide->setInnerContainerSize(Size(scrollGuide->getContentSize().width, height));
 		}
+	} else if (tag == constant::TAG_HTTP_TOUR_GUIDE) {
+		Utils::getSingleton().tourGuide = content;
+		if (!popupTour) return;
+		TourInfo tourInfo = Utils::getSingleton().tourInfo;
+		bool isTourExist = tourInfo.Name.length() > 0;
+		Node* nodeInfo = popupTour->getChildByName("nodeinfo");
+		ui::ScrollView* scroll = (ui::ScrollView*)nodeInfo->getChildByName("scrollinfo");
+		Node* nodeContent = scroll->getChildByName("nodecontent");
+		Label* lb2 = (Label*)nodeContent->getChildByName("lbcontent2");
+
+		string requiredMatchStr = isTourExist ? to_string(tourInfo.RequiredMatch) : "85";
+		string info2 = Utils::getSingleton().replaceString(content, "[p1]", requiredMatchStr + "%");
+		lb2->setString(info2);
+
+		int height = -lb2->getPositionY() + lb2->getContentSize().height;
+		if (height < scroll->getContentSize().height) {
+			height = scroll->getContentSize().height;
+		}
+		nodeContent->setPosition(0, height);
+		scroll->setInnerContainerSize(Size(scroll->getContentSize().width, height));
 	}
 }
 
