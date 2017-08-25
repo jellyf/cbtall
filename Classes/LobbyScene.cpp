@@ -287,7 +287,7 @@ bool LobbyScene::onErrorResponse(unsigned char code, std::string msg)
 	if(BaseScene::onErrorResponse(code, msg)) return true;
 	if (isTour && code == 36) {
 		showPopupNotice(msg, [=]() {
-			SFSRequest::getSingleton().RequestJoinRoom(prepareTourRoom);
+			//SFSRequest::getSingleton().RequestJoinRoom(prepareTourRoom);
 		});
 		return true;
 	}
