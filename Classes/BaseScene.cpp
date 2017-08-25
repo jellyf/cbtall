@@ -797,11 +797,6 @@ bool BaseScene::onErrorResponse(unsigned char code, std::string msg)
 		if (getTag() == constant::SCENE_GAME) {
 			showPopupConfirmMini(msg, Utils::getSingleton().getStringForKey("dang_ky"), 
 				Utils::getSingleton().getStringForKey("bo_qua"), Vec2(200, 200), [=]() {
-				/*showPopupTour();
-				ui::Button* btnReg = (ui::Button*)popupTour->getChildByName("btnregister");
-				btnReg->setVisible(true);
-				btnReg->setColor(Color3B::WHITE);
-				btnReg->setTouchEnabled(true);*/
 				Utils::getSingleton().tourInfo.CanRegister = false;
 				SFSRequest::getSingleton().RequestRegisterTour();
 			});

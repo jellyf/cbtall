@@ -229,13 +229,13 @@ void MainScene::onInit()
 			//spLoiDai->stopAllActions();
 			//btnLoiDai->stopAllActions();
 		} else {
-			joinIntoLobby(3);
+			joinIntoLobby(2);
 		}
 	});
 	mLayer->addChild(btnLoiDai);
 	autoScaleNode(btnLoiDai);
 
-	if (isTourCanRegOrJoin()) {
+	if (Utils::getSingleton().ispmE() && isTourCanRegOrJoin()) {
 		lbTourCountDown = Label::createWithTTF("", "fonts/arialbd.ttf", 35);
 		lbTourCountDown->setPosition(btnLoiDai->getContentSize().width / 2, btnLoiDai->getContentSize().height - 45);
 		lbTourCountDown->setColor(Color3B(250, 0, 0));
