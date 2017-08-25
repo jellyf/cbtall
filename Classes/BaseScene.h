@@ -3,6 +3,16 @@
 #include "ui/CocosGUI.h"
 #include "Data.h"
 
+class CoverLayer : public cocos2d::LayerColor
+{
+public:
+	virtual bool init();
+	virtual bool onTouch(cocos2d::Touch*, cocos2d::Event*);
+	CREATE_FUNC(CoverLayer);
+protected:
+	bool _covered = true;
+};
+
 class BaseScene : public cocos2d::Scene
 {
 public:
@@ -129,7 +139,8 @@ protected:
 	cocos2d::Vec2 scaleScene;
 	cocos2d::Size winSize;
 
-	cocos2d::ui::Scale9Sprite* splash;
+	CoverLayer* splash;
+	//cocos2d::ui::Scale9Sprite* splash;
 	cocos2d::ui::Button* moneyBg0;
 	cocos2d::ui::Button* moneyBg1;
 	cocos2d::Sprite* chosenBg;
@@ -155,8 +166,8 @@ protected:
 	cocos2d::Node* eventView;
 	cocos2d::Node* connectionKeeper;
 
-	std::vector<cocos2d::ui::Button*> buttons;
-	std::vector<cocos2d::ui::Button*> blockedButtons;
+	//std::vector<cocos2d::ui::Button*> buttons;
+	//std::vector<cocos2d::ui::Button*> blockedButtons;
 	std::vector<cocos2d::Node*> popups;
 
 	//cocos2d::Color3B pageColor1 = cocos2d::Color3B(201, 191, 119);

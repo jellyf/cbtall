@@ -11,6 +11,30 @@
 using namespace cocos2d;
 using namespace std;
 
+bool CoverLayer::init() {
+	if (!cocos2d::LayerColor::initWithColor(cocos2d::Color4B(0, 0, 0, 0)))
+	{
+		return false;
+	}
+
+	auto director = cocos2d::Director::getInstance();
+	cocos2d::Size size = director->getWinSize();
+
+	this->setContentSize(size);
+	this->setOpacity(128);
+
+	auto touchListener = cocos2d::EventListenerTouchOneByOne::create();
+	touchListener->setSwallowTouches(true);
+	touchListener->onTouchBegan = CC_CALLBACK_2(CoverLayer::onTouch, this);
+	director->getEventDispatcher()->addEventListenerWithSceneGraphPriority(touchListener, this);
+	return true;
+}
+
+bool CoverLayer::onTouch(cocos2d::Touch* touch, cocos2d::Event* event)
+{
+	return this->isVisible();
+}
+
 BaseScene::BaseScene()
 {
 }
@@ -78,11 +102,15 @@ void BaseScene::onEnter()
 		mLayer->setScaleY(scaleScene.y);
 	}
 
-	splash = ui::Scale9Sprite::createWithSpriteFrameName("white.png");
+	/*splash = ui::Scale9Sprite::createWithSpriteFrameName("white.png");
 	splash->setContentSize(Size(1500, 1000));
 	splash->setPosition(560, 350);
 	splash->setColor(Color3B::BLACK);
 	splash->setOpacity(150);
+	splash->setVisible(false);
+	mLayer->addChild(splash);*/
+
+	splash = CoverLayer::create();
 	splash->setVisible(false);
 	mLayer->addChild(splash);
 
@@ -768,9 +796,9 @@ void BaseScene::handleClientDisconnectionReason(std::string reason)
 
 void BaseScene::addTouchEventListener(ui::Button* btn, std::function<void()> func, bool isNew)
 {
-	if (isNew) {
+	/*if (isNew) {
 		buttons.push_back(btn);
-	}
+	}*/
 	btn->addTouchEventListener([=](Ref* ref, ui::Widget::TouchEventType type) {
 		switch (type)
 		{
@@ -1199,10 +1227,10 @@ void BaseScene::onJoinRoomError(std::string msg)
 void BaseScene::hideSplash()
 {
 	if (isWaiting) return;
-	for (ui::Button* btn : blockedButtons) {
+	/*for (ui::Button* btn : blockedButtons) {
 		btn->setTouchEnabled(true);
 	}
-	blockedButtons.clear();
+	blockedButtons.clear();*/
 	splash->setVisible(false);
 	splash->setLocalZOrder(0);
 }
@@ -3155,35 +3183,7 @@ void BaseScene::addBtnChoosePage(int x, int y, cocos2d::Node * node, std::functi
 void BaseScene::setSplashZOrder(int zorder)
 {
 	if (zorder == splash->getLocalZOrder() || !splash->isVisible()) return;
-	bool increase = zorder > splash->getLocalZOrder();
 	splash->setLocalZOrder(zorder);
-	if (increase) {
-		for (ui::Button* btn : buttons) {
-			if (!btn->isTouchEnabled()) continue;
-			Node* n = btn;
-			while (n->getParent() != mLayer) {
-				n = n->getParent();
-			}
-			if (n->isVisible() && n->getLocalZOrder() < splash->getLocalZOrder()) {
-				btn->setTouchEnabled(false);
-				blockedButtons.push_back(btn);
-			}
-		}
-	} else {
-		int i = blockedButtons.size() - 1;
-		while (i >= 0) {
-			Node* n = blockedButtons[i];
-			while (n->getParent() != mLayer) {
-				n = n->getParent();
-			}
-			if (n->getLocalZOrder() >= splash->getLocalZOrder()) {
-				blockedButtons[i]->setTouchEnabled(true);
-				//blockedButtons.erase(blockedButtons.begin() + i);
-				blockedButtons.pop_back();
-			}
-			i--;
-		}
-	}
 }
 
 void BaseScene::autoScaleNode(cocos2d::Node * node)
