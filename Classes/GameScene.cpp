@@ -1974,7 +1974,7 @@ void GameScene::onPublicMessage(long uid, std::string msg)
 
 void GameScene::onRoomDataResponse(RoomData roomData)
 {
-	if (noaction >= 3 || hasRegisterOut) {
+	if (state == ENDING && tableEndMatch->isVisible() && (noaction >= 3 || hasRegisterOut)) {
 		gameSplash->setVisible(false);
 		tableEndMatch->setVisible(false);
 		if (hasRegisterOut) {
