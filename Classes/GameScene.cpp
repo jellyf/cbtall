@@ -694,7 +694,7 @@ void GameScene::onInit()
 
 	DelayTime* delay = DelayTime::create(1);
 	CallFunc* func = CallFunc::create([=]() {
-		if (state != ENDING && (btnXemNoc->isVisible() || btnDongNoc->isVisible())) {
+		if (state != CREST && state != ENDING && (btnXemNoc->isVisible() || btnDongNoc->isVisible())) {
 			btnXemNoc->setVisible(false);
 			btnDongNoc->setVisible(false);
 			endLayer->removeAllChildren();
@@ -1974,7 +1974,7 @@ void GameScene::onPublicMessage(long uid, std::string msg)
 
 void GameScene::onRoomDataResponse(RoomData roomData)
 {
-	if (state == ENDING && tableEndMatch->isVisible() && (noaction >= 3 || hasRegisterOut)) {
+	if (state == ENDING && (noaction >= 3 || hasRegisterOut)) {
 		gameSplash->setVisible(false);
 		tableEndMatch->setVisible(false);
 		if (hasRegisterOut) {
@@ -2888,8 +2888,8 @@ void GameScene::onUserWin(long uId, unsigned char sound)
 
 void GameScene::onCrestResponse(CrestResponseData data)
 {
+	state = ENDING;
 	if (!btnXemNoc->isVisible() && !btnDongNoc->isVisible()) {
-		state == ENDING;
 		gameSplash->setVisible(true);
 		for (Sprite* sp : spCards) {
 			if (sp->isVisible()) {
@@ -2965,7 +2965,7 @@ void GameScene::onEndMatch(EndMatchData data)
 {
 	GameLogger::getSingleton().logEndMatch(data);
 	if (state == NONE || state == READY) return;
-	state = ENDING;
+	state = CREST;
 	this->endMatchData = data;
 	gameSplash->setVisible(true);
 	lbCrestTime->setVisible(true);

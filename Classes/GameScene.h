@@ -11,6 +11,7 @@ enum GameState {
 	CHOOSE_STILT,
 	CHOOSE_HOST,
 	PLAY,
+	CREST,
 	ENDING
 };
 class GameScene : public BaseScene, public cocos2d::ui::EditBoxDelegate
