@@ -1870,7 +1870,7 @@ void GameScene::onUserExitRoom(long sfsUId)
 			//DO nothing
 		} else {
 			//showPopupNotice(Utils::getSingleton().getStringForKey("bi_day_khoi_ban"), [=]() {
-				SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentRoomName);
+				//SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentRoomName);
 				//Utils::getSingleton().goToLobbyScene();
 			//}, false);
 		}
@@ -1977,7 +1977,8 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 	if (isPrepareToTour) {
 		joinIntoTour();
 		return;
-	}else if (state == ENDING && (noaction >= 3 || hasRegisterOut)) {
+	}
+	if (state == ENDING && (noaction >= 3 || hasRegisterOut)) {
 		gameSplash->setVisible(false);
 		tableEndMatch->setVisible(false);
 		if (hasRegisterOut) {
