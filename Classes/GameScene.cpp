@@ -1974,7 +1974,10 @@ void GameScene::onPublicMessage(long uid, std::string msg)
 
 void GameScene::onRoomDataResponse(RoomData roomData)
 {
-	if (state == ENDING && (noaction >= 3 || hasRegisterOut)) {
+	if (isPrepareToTour) {
+		joinIntoTour();
+		return;
+	}else if (state == ENDING && (noaction >= 3 || hasRegisterOut)) {
 		gameSplash->setVisible(false);
 		tableEndMatch->setVisible(false);
 		if (hasRegisterOut) {
@@ -1989,9 +1992,6 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 				experimental::AudioEngine::stopAll();
 			}, false);
 		}
-		return;
-	} else if (isPrepareToTour) {
-		joinIntoTour();
 		return;
 	}
 	vecPlayers = roomData.Players;
