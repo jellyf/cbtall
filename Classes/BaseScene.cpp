@@ -3254,6 +3254,9 @@ void BaseScene::cropLabel(cocos2d::Label *label, int width, bool dots)
 
 void BaseScene::calculateTourTimeOnLabel(cocos2d::Label *lbCountDown)
 {
+    if(Utils::getSingleton().tourInfo.Name.length() == 0){
+        return;
+    }
 	time_t rawtime;
 	time(&rawtime);
 	double timeDiff = Utils::getSingleton().serverTimeDiff;
