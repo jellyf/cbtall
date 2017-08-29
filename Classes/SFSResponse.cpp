@@ -263,7 +263,9 @@ void SFSResponse::onRoomDataResponse(boost::shared_ptr<ISFSObject> isfsObject)
 		byteArray->ReadDouble(player.TMoney);
 		byteArray->ReadUTF(player.Info.GroupAvatar);
 		byteArray->ReadByte(player.Info.Device);
-		byteArray->ReadUTF(player.Info.AvatarUrl);
+		if (Utils::getSingleton().gameConfig.versionIOS > 8) {
+			byteArray->ReadUTF(player.Info.AvatarUrl);
+		}
 
 		player.TPoint = (short)player.TMoney;
 		player.TMatch = 0;
@@ -802,7 +804,9 @@ void SFSResponse::onGamePlayingTableResponse(boost::shared_ptr<ISFSObject> isfsO
 		if (vnumb.size() > 0) {
 			player.SingleCards = vnumb[0];
 		}
-
+		if (Utils::getSingleton().gameConfig.versionIOS > 8) {
+			byteArray->ReadUTF(player.Info.AvatarUrl);
+		}
 		player.TPoint = (short)player.TMoney;
 		player.TMatch = 0;
 		data.Players.push_back(player);
@@ -870,6 +874,9 @@ void SFSResponse::onGameSpectatorResponse(boost::shared_ptr<ISFSObject> isfsObje
 		byteArray->ReadDouble(player.TMoney);
 		byteArray->ReadUTF(player.Info.GroupAvatar);
 		byteArray->ReadByte(player.Info.Device);
+		if (Utils::getSingleton().gameConfig.versionIOS > 8) {
+			byteArray->ReadUTF(player.Info.AvatarUrl);
+		}
 		player.TPoint = (short)player.TMoney;
 		player.TMatch = 0;
 
