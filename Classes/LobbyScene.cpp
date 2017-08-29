@@ -309,9 +309,20 @@ void LobbyScene::initTourView()
 	mLayer->addChild(nodeTour);
 	autoScaleNode(nodeTour);
 
-	Sprite *bg = Sprite::create("imgs/khung.png");
+	Sprite *bg = Sprite::create();
+	bg->setName("spbg");
 	nodeTour->addChild(bg);
-	Size bgsize = bg->getContentSize();
+	Size bgsize = Size(448, 457);
+
+	if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS) {
+		string host = Utils::getSingleton().textureHost;
+		Utils::getSingleton().LoadTextureFromURL(host + "khung.png", [=](Texture2D* texture) {
+			Sprite* bg = (Sprite*)nodeTour->getChildByName("spbg");
+			bg->initWithTexture(texture);
+		});
+	} else {
+		bg->initWithFile("khung.png");
+	}
 
 	ui::ScrollView *scroll = ui::ScrollView::create();
 	scroll->setDirection(ui::ScrollView::Direction::VERTICAL);
