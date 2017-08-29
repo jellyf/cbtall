@@ -2723,7 +2723,7 @@ void BaseScene::onPlayLogDataResponse(std::vector<PlayLogData> logs)
 		}
 		lbs[0]->setString(to_string((popupHistory->getChildByName("nodepage")->getTag() - 1) * 10 + i + 1));
 		lbs[1]->setString(logs[i].Date);
-		lbs[2]->setString(logs[i].Info);
+		lbs[2]->setString(Utils::getSingleton().trim(logs[i].Info));
 		lbs[3]->setString(Utils::getSingleton().formatMoneyWithComma(logs[i].Money));
 		lbs[4]->setString(Utils::getSingleton().formatMoneyWithComma(logs[i].Balance));
 		lbs[5]->setString(to_string(logs[i].GameId));

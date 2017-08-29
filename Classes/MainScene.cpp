@@ -913,9 +913,9 @@ void MainScene::onListMailDataResponse(std::vector<MailData> list)
 		}
 		btn->setName(to_string((int)list[i].Id));
 		lbs[0]->setString(to_string((popupMail->getChildByName("nodepage")->getTag() - 1) * 10 + i + 1));
-		lbs[1]->setString(list[i].Date);
-		lbs[2]->setString(list[i].Title);
-		lbs[3]->setString(list[i].Sender);
+		lbs[1]->setString(Utils::getSingleton().trim(list[i].Date));
+		lbs[2]->setString(Utils::getSingleton().trim(list[i].Title));
+		lbs[3]->setString(Utils::getSingleton().trim(list[i].Sender));
 	}
 
 	int count = scroll->getChildrenCount();
