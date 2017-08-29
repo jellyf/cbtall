@@ -82,8 +82,9 @@ void BaseScene::onEnter()
 {
 	Scene::onEnter();
 	bool ispmE = Utils::getSingleton().ispmE();
-	isPopupReady = Utils::getSingleton().downloadedPlistTexture >= 2 || !Utils::getSingleton().ispmE();
-	myRealMoney = Utils::getSingleton().userDataMe.MoneyReal;
+    myRealMoney = Utils::getSingleton().userDataMe.MoneyReal;
+    isPopupReady = Utils::getSingleton().downloadedPlistTexture >= 2
+    || (!ispmE && Utils::getSingleton().gameConfig.host.length() > 0);
 
 	mLayer = Layer::create();
 	addChild(mLayer, 10);
