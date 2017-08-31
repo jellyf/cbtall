@@ -683,7 +683,7 @@ void MainScene::onShopItemsDataResponse(std::vector<ShopItemData> list)
 		for (int j = 0; j < cards[i].size(); j++) {
 			count++;
 			string str = Utils::getSingleton().getStringForKey("xac_nhan_mua_vat_pham");
-			string strMoney = Utils::getSingleton().formatMoneyWithComma(cards[i][j].PriceChange);
+			string strMoney = Utils::getSingleton().formatMoneyWithComma(cards[i][j].Price);
 			string msg = String::createWithFormat(str.c_str(), cards[i][j].Name.c_str(), strMoney.c_str())->getCString();
 
 			ui::Button* btn = ui::Button::create("box_shop.png", "", "", ui::Widget::TextureResType::PLIST);
