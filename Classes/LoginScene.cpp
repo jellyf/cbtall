@@ -387,14 +387,14 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	GameConfig config;
 	d.Parse<0>(content.c_str());
 
-//	vector<string> keys = { "payment", "paymentIOS", "name", "host", "port", "websocket", "version", "versionIOS", "ip_rs", "phone",
-//		"smsVT", "smsVNPVMS", "smsKH", "smsMK", "fb", "a", "i", "updatenow", "inapp", "invite" };
-//	for (string k : keys) {
-//		if (d.FindMember(k.c_str()) == d.MemberEnd()) {
-//			onHttpResponseFailed();
-//			return;
-//		}
-//	}
+	vector<string> keys = { "payment", "paymentIOS", "name", "host", "port", "websocket", "version", "versionIOS", "ip_rs", "phone",
+		"smsVT", "smsVNPVMS", "smsKH", "smsMK", "fb", "a", "i", "updatenow", "inapp", "invite" };
+	for (string k : keys) {
+		if (d.FindMember(k.c_str()) == d.MemberEnd()) {
+			onHttpResponseFailed();
+			return;
+		}
+	}
 
 	config.zone = d["name"].GetString();
 	config.host = d["host"].GetString();
@@ -403,19 +403,19 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	config.versionIOS = d["versionIOS"].GetInt();
 	config.ip_rs = d["ip_rs"].GetString();
 	config.phone = d["phone"].GetString();
-	//config.pmE = d["payment"].GetBool();
-	//config.pmEIOS = d["paymentIOS"].GetBool();
+	config.pmE = d["payment"].GetBool();
+	config.pmEIOS = d["paymentIOS"].GetBool();
 	config.websocket = d["websocket"].GetInt();
 	config.smsVT = d["smsVT"].GetString();
 	config.smsVNPVMS = d["smsVNPVMS"].GetString();
 	config.smsKH = d["smsKH"].GetString();
 	config.smsMK = d["smsMK"].GetString();
-	//config.linkFb = d["fb"].GetString();
-	//config.linkAndroid = d["a"].GetString();
-	//config.linkIOS = d["i"].GetString();
-	//config.canUpdate = d["updatenow"].GetBool();
-	//config.inapp = d["inapp"].GetString();
-    //config.invite = d["invite"].GetBool();
+	config.linkFb = d["fb"].GetString();
+	config.linkAndroid = d["a"].GetString();
+	config.linkIOS = d["i"].GetString();
+	config.canUpdate = d["updatenow"].GetBool();
+	config.inapp = d["inapp"].GetString();
+    config.invite = d["invite"].GetBool();
 
 	config.linkAndroid = "https://play.google.com/store/apps/details?id=" + config.linkAndroid;
 
@@ -425,9 +425,6 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	int nver = atoi(verstr.c_str());
 	config.pmE &= config.version > nver;
 	config.pmEIOS &= config.versionIOS > nver;
-    
-    config.ip_rs = "125.212.226.40";
-    config.port = 843;
 
 	Utils::getSingleton().gameConfig = config;
     Utils::getSingleton().queryIAPProduct();
@@ -687,10 +684,10 @@ void LoginScene::initRegisterNode()
 void LoginScene::requestGameConfig(bool realConfig)
 {
 	showWaiting(60);
-	//SFSRequest::getSingleton().RequestHttpGet("http://ip171.api1chan.info/configcv2.txt", constant::TAG_HTTP_GAME_CONFIG);
+	SFSRequest::getSingleton().RequestHttpGet("http://ip171.api1chan.info/configcv2.txt", constant::TAG_HTTP_GAME_CONFIG);
 	//SFSRequest::getSingleton().RequestHttpGet("http://chanvuong1.info/config/configchan.txt", constant::TAG_HTTP_GAME_CONFIG);
 	//SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
-	SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", constant::TAG_HTTP_GAME_CONFIG);
+	//SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", constant::TAG_HTTP_GAME_CONFIG);
 }
 
 void LoginScene::loadTextureCache()
