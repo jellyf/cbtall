@@ -3496,7 +3496,7 @@ void GameScene::onTourTimeWaitPlayer(long timeWait)
 	Label* lbTimeWaitPlayer = (Label*)mLayer->getChildByName("lbtimewaitplayer");
 	string timeWaitString = Utils::getSingleton().getCountTimeStringBySecs(timeWaitPlayer, "%H:%M:%S");
 	if (!lbTimeWaitPlayer) {
-		lbTitleWaitPlayer = Label::createWithTTF(Utils::getSingleton().getStringForKey("giai_dau_se_bat_dau_sau"), "fonts/arial.ttf", 40);
+		lbTitleWaitPlayer = Label::createWithTTF(Utils::getSingleton().getStringForKey("giai_dau_se_bat_dau_sau"), "fonts/myriad.ttf", 40);
 		lbTitleWaitPlayer->setPosition(winSize.width / 2, winSize.height / 2 + 50);
 		lbTitleWaitPlayer->setName("lbTitleWaitPlayer");
 		mLayer->addChild(lbTitleWaitPlayer, constant::GAME_ZORDER_BUTTON);
@@ -4104,6 +4104,7 @@ void GameScene::initTableInfo()
 	icMoney->setPosition(lbTableBet->getPosition() - Vec2(20, -3));
 	icMoney->setScale(.5f);
 	icMoney->setName("icmoney");
+	icMoney->setVisible(!isTourGame);
 	tableInfo->addChild(icMoney);
 
 	Label* lbType = Label::createWithTTF("", "fonts/myriad.ttf", 25);
@@ -4113,10 +4114,9 @@ void GameScene::initTableInfo()
 	tableInfo->addChild(lbType);
 
 	long maxMatch = Utils::getSingleton().tourInfo.MaxMatch;
-	Label* lbMatch = Label::create(Utils::getSingleton().getStringForKey("van") + ": 0/ " + to_string(maxMatch), "fonts/myriadb.ttf", 18);
-	lbMatch->setPosition(-30, 25);
+	Label* lbMatch = Label::create(Utils::getSingleton().getStringForKey("van") + ": 0/ " + to_string(maxMatch), "fonts/myriad.ttf", 25);
+	lbMatch->setPosition(-25, 25);
 	lbMatch->setAnchorPoint(Vec2(0, .5f));
-	lbMatch->setColor(Color3B(255, 200, 0));
 	lbMatch->setName("lbmatch");
 	lbMatch->setVisible(isTourGame);
 	tableInfo->addChild(lbMatch);
@@ -4131,10 +4131,9 @@ void GameScene::initTableInfo()
 		}
 		string timestr = Utils::getSingleton().getStringForKey("con") + ": " + Utils::getSingleton().getCountTimeStringBySecs(tourTimeRemain, "%H:%M:%S");
 
-		Label* lbTourTime = Label::create(timestr, "fonts/myriadb.ttf", 18);
+		Label* lbTourTime = Label::create(timestr, "fonts/myriad.ttf", 25);
 		lbTourTime->setPosition(-90, -25);
 		lbTourTime->setAnchorPoint(Vec2(0, .5f));
-		lbTourTime->setColor(Color3B(255, 200, 0));
 		lbTourTime->setName("lbtourtime");
 		lbTourTime->setVisible(isTourGame);
 		tableInfo->addChild(lbTourTime);
