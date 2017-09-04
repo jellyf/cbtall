@@ -1028,7 +1028,7 @@ void BaseScene::initHeaderWithInfos()
 	bool isTour = Utils::getSingleton().isTourGame();
 	int posY = winSize.height - 55;
 
-	Sprite* spHeader = Sprite::create("bg_header_bar.png");
+	Sprite* spHeader = Sprite::create("imgs/bg_header_bar.png");
 	spHeader->setAnchorPoint(Vec2(0, 1));
 	spHeader->setPosition(0, winSize.height);
 	mLayer->addChild(spHeader, constant::MAIN_ZORDER_HEADER);
@@ -1120,6 +1120,7 @@ void BaseScene::initHeaderWithInfos()
 	btnRank->setPosition(btnSettings->getPosition() - Vec2(105, 0));
 	addTouchEventListener(btnRank, [=]() {
 		if (listRanks.size() == 0) {
+			showWaiting();
 			SFSRequest::getSingleton().RequestRank();
 			SFSRequest::getSingleton().RequestRankWin();
 		} else {
@@ -1430,7 +1431,7 @@ cocos2d::Node * BaseScene::createPopup(std::string stitle, bool isBig, bool isHi
 	mLayer->addChild(popup, constant::ZORDER_POPUP);
 
 	if (isBig) {
-		Sprite* bg = Sprite::create("popup_bg1.png");
+		Sprite* bg = Sprite::create("imgs/popup_bg1.png");
 		bg->setName("spbg");
 		popup->addChild(bg);
 		bgsize = bg->getContentSize();
@@ -2919,6 +2920,7 @@ void BaseScene::onUserDataMeResponse()
 
 void BaseScene::onRankDataResponse(std::vector<std::vector<RankData>> list)
 {
+	hideWaiting();
 	bool ispmE = Utils::getSingleton().ispmE();
 	this->listRanks = list;
 	showPopupRank(ispmE ? 0 : 1);

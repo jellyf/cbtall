@@ -38,7 +38,7 @@ void MainScene::onInit()
 	initHeaderWithInfos();
 
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB565);
-	Texture2D* bgTexture = Director::getInstance()->getTextureCache()->addImage("bg.jpg");
+	Texture2D* bgTexture = Director::getInstance()->getTextureCache()->addImage("imgs/bg.jpg");
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
 
 	Sprite* bg = Sprite::createWithTexture(bgTexture);
@@ -125,6 +125,7 @@ void MainScene::onInit()
 		}
 		showPopup(popupShop);
 		if (popupShop->getChildByTag(10)->getChildByName("scrollcard")->getChildrenCount() == 0) {
+			showWaiting();
 			SFSRequest::getSingleton().RequestShopItems();
 		}
 	});
@@ -256,9 +257,11 @@ void MainScene::onInit()
 
 	if (Utils::getSingleton().ispmE() && isTourCanRegOrJoin()) {
 		lbTourCountDown = Label::createWithTTF("", "fonts/myriadb.ttf", 35);
-		lbTourCountDown->setPosition(btnLoiDai->getContentSize().width / 2, btnLoiDai->getContentSize().height - 45);
-		lbTourCountDown->setColor(Color3B(250, 0, 0));
-		lbTourCountDown->enableOutline(Color4B(160, 0, 0, 255), 1);
+		lbTourCountDown->setPosition(btnLoiDai->getContentSize().width / 2 + 2, btnLoiDai->getContentSize().height - 100);
+		/*lbTourCountDown->setColor(Color3B(250, 0, 0));
+		lbTourCountDown->enableOutline(Color4B(160, 0, 0, 255), 1);*/
+		lbTourCountDown->setColor(Color3B::WHITE);
+		lbTourCountDown->enableOutline(Color4B(0, 0, 0, 255), 1);
 		lbTourCountDown->setTag(0);
 		btnLoiDai->addChild(lbTourCountDown);
 
@@ -642,6 +645,7 @@ void MainScene::onShopHistoryDataResponse(std::vector<ShopHistoryData> list)
 
 void MainScene::onShopItemsDataResponse(std::vector<ShopItemData> list)
 {
+	hideWaiting();
 	ui::ScrollView* scrollCard = (ui::ScrollView*)(popupShop->getChildByTag(10)->getChildByName("scrollcard"));
 	vector<vector<ShopItemData>> cards;
 	for (int i = 0; i < 4; i++) {

@@ -35,7 +35,7 @@ void LobbyScene::onInit()
 	if (zone.compare("SoLoXu") == 0) zone = "SoLo";
 
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB565);
-	Texture2D* bgTexture = TextureCache::getInstance()->addImage("bg" + zone + ".jpg");
+	Texture2D* bgTexture = TextureCache::getInstance()->addImage("imgs/bg" + zone + ".jpg");
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
 
 	Sprite* bg = Sprite::createWithTexture(bgTexture);

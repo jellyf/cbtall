@@ -122,7 +122,7 @@ void GameScene::onInit()
 	}
 	if (isTourGame) zone = "VuongPhu";
 
-	string bgName = "" + (isSolo ? "bgVuongPhu.jpg" : "bg" + zone + ".jpg");
+	string bgName = "imgs/" + (isSolo ? "bgVuongPhu.jpg" : "bg" + zone + ".jpg");
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB565);
 	Texture2D* bgTexture = TextureCache::getInstance()->addImage(bgName);
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
@@ -3711,7 +3711,7 @@ void GameScene::initCrestTable()
 	bg->setInsetBottom(320);
 	tableCrest->addChild(bg);*/
 
-	Sprite* bg = Sprite::create("popup_bg1.png");
+	Sprite* bg = Sprite::create("imgs/popup_bg1.png");
 	bg->setPosition(0, 35);
 	bg->setScale(.9f);
 	tableCrest->addChild(bg);
