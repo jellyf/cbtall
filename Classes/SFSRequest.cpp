@@ -284,6 +284,45 @@ void SFSRequest::RequestChangePassword(std::string password, std::string passwor
 	SFSConnector::getSingleton().SendExtensionRequest(cmd::CHANGE_PASSWORD, parameters);
 }
 
+void SFSRequest::RequestRegisterTour()
+{
+	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+	//parameters->PutUtfString("1", Utils::getSingleton().userDataMe.Name);
+	parameters->PutInt("1", 1);
+	parameters->PutUtfString("2", "01666823669");
+	SFSConnector::getSingleton().SendExtensionRequest(cmd::REGISTER_TOUR, parameters);
+}
+
+void SFSRequest::RequestTopTourPlayers()
+{
+	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+	SFSConnector::getSingleton().SendExtensionRequest(cmd::TOP_TOUR_PLAYER, parameters);
+}
+
+void SFSRequest::RequestListTourPlayers()
+{
+	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+	SFSConnector::getSingleton().SendExtensionRequest(cmd::LIST_TOUR_PLAYER, parameters);
+}
+
+void SFSRequest::RequestTourWinners()
+{
+	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+	SFSConnector::getSingleton().SendExtensionRequest(cmd::TOUR_WINNERS, parameters);
+}
+
+void SFSRequest::RequestTourLeaveTable()
+{
+	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+	SFSConnector::getSingleton().SendExtensionRequest(cmd::TOUR_LEAVE_TABLE, parameters);
+}
+
+void SFSRequest::RequestKeepConnection()
+{
+	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
+	SFSConnector::getSingleton().SendExtensionRequest(cmd::KEEP_CONNECTION, parameters);
+}
+
 void SFSRequest::RequestRegister(std::string username, std::string password, std::string email)
 {
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
@@ -319,6 +358,7 @@ void SFSRequest::RequestLoginFacebook(std::string token)
 
 void SFSRequest::RequestJoinRoom(std::string roomId, bool isReconnect)
 {
+	CCLOG("%s", roomId.c_str());
 	boost::shared_ptr<ISFSObject> parameters(new SFSObject());
 	parameters->PutBool("p", true);
 	parameters->PutUtfString("1", roomId);
@@ -520,6 +560,20 @@ void SFSRequest::LoadTextureFromURL(std::string url, std::string tag)
 	request->release();
 }
 
+void SFSRequest::OnHttpResponse(int tag, std::string content)
+{
+	for (auto iter = mapHttpResponseCallbacks.begin(); iter != mapHttpResponseCallbacks.end(); iter++) {
+		iter->second(tag, content);
+	}
+}
+
+void SFSRequest::OnHttpResponseFailed(int tag)
+{
+	for (auto iter = mapHttpResponseFailedCallbacks.begin(); iter != mapHttpResponseFailedCallbacks.end(); iter++) {
+		iter->second(tag);
+	}
+}
+
 void SFSRequest::onHttpRequest(cocos2d::network::HttpClient * client, cocos2d::network::HttpResponse * response)
 {
 	if (!response)
@@ -534,6 +588,7 @@ void SFSRequest::onHttpRequest(cocos2d::network::HttpClient * client, cocos2d::n
 	// Check the HTTP Status Code
 	int statusCode = response->getResponseCode();
 	/*char statusString[64] = {};
+	CCLOG("%s", response->getHttpRequest()->getUrl());
 	sprintf(statusString, "HTTP Status Code: %d, tag = %s", statusCode, response->getHttpRequest()->getTag());
 	CCLOG("SFSRequest::onHttpRequest: %s", statusString);*/
 
@@ -542,9 +597,8 @@ void SFSRequest::onHttpRequest(cocos2d::network::HttpClient * client, cocos2d::n
 	{
 		CCLOG("SFSRequest::onHttpRequest: Failed");
 		//CCLOG("error buffer: %s", response->getErrorBuffer());
-		if (SFSRequest::getSingleton().onHttpResponseFailed != NULL) {
-			SFSRequest::getSingleton().onHttpResponseFailed();
-		}
+		int tag = atoi(response->getHttpRequest()->getTag());
+		SFSRequest::getSingleton().OnHttpResponseFailed(tag);
 		return;
 	}
 
@@ -554,10 +608,8 @@ void SFSRequest::onHttpRequest(cocos2d::network::HttpClient * client, cocos2d::n
 	std::string s2(buffer->begin(), buffer->end());
 	strcpy(concatenated, s2.c_str());
 
-	if (SFSRequest::getSingleton().onHttpResponse != NULL) {
-		int tag = atoi(response->getHttpRequest()->getTag());
-		SFSRequest::getSingleton().onHttpResponse(tag, concatenated);
-	}
+	int tag = atoi(response->getHttpRequest()->getTag());
+	SFSRequest::getSingleton().OnHttpResponse(tag, concatenated);
 }
 
 void SFSRequest::onRequestImgCompleted(cocos2d::network::HttpClient * client, cocos2d::network::HttpResponse * response)
@@ -569,15 +621,15 @@ void SFSRequest::onRequestImgCompleted(cocos2d::network::HttpClient * client, co
 		return;
 	}
 
-	//CCLOG("onHttpRequestCompleted - Response code: %lu", response->getResponseCode());
+	CCLOG("onRequestImgCompleted: %d", response->getResponseCode());
 
 	if (!response->isSucceed())
 	{
-		//CCLOG("onHttpRequestCompleted - Response failed");
+		CCLOG("onRequestImgCompleted - Response failed");
 		//CCLOG("onHttpRequestCompleted - Error buffer: %s", response->getErrorBuffer());
-		string tag = response->getHttpRequest()->getTag();
-		string url = response->getHttpRequest()->getUrl();
-		SFSRequest::getSingleton().LoadImageFromURL(url, atoi(tag.c_str()));
+		//string tag = response->getHttpRequest()->getTag();
+		//string url = response->getHttpRequest()->getUrl();
+		//SFSRequest::getSingleton().LoadImageFromURL(url, atoi(tag.c_str()));
 		return;
 	}
 	//CCLOG("onHttpRequestCompleted - Response code: %s", response->getResponseDataString());
@@ -610,18 +662,19 @@ void SFSRequest::onRequestTextureCompleted(cocos2d::network::HttpClient * client
 	}
 
     long responseCode = response->getResponseCode();
-	//CCLOG("onHttpRequestCompleted - Response code: %lu", responseCode);
-
 	string tag = response->getHttpRequest()->getTag();
 	string url = response->getHttpRequest()->getUrl();
+	//CCLOG("%s", url.c_str());
+	//CCLOG("onRequestTextureCompleted: %d", responseCode);
+
 	if (!response->isSucceed())
 	{
-		//CCLOG("onHttpRequestCompleted - Response failed");
+		CCLOG("onRequestTextureCompleted - Response failed");
 		//CCLOG("onHttpRequestCompleted - Error buffer: %s", response->getErrorBuffer());
 		//SFSRequest::getSingleton().LoadTextureFromURL(url, tag);
 		return;
 	}
-	//CCLOG("onHttpRequestCompleted - Response data: %s", response->getResponseDataString());
+	//CCLOG("onHttpRequestTextureCompleted - Response data: %s", response->getResponseDataString());
     if(responseCode != 200) return;
     
 	try {

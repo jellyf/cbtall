@@ -77,6 +77,7 @@ public class AppActivity extends Cocos2dxActivity {
     private IInAppBillingService mService;
     private ServiceConnection mServiceConn;
     private String lastDeveloperPayload = "";
+    private int currentApiVersion;
 
     public static native void callbackLoginFacebook(String token);
     public static native void callbackPurchaseSuccess(String token);
@@ -137,39 +138,6 @@ public class AppActivity extends Cocos2dxActivity {
                 }
         );
 
-//        appInviteDialog = new AppInviteDialog(this);
-//        appInviteDialog.registerCallback(callbackManager, new FacebookCallback<AppInviteDialog.Result>()
-//        {
-//            @Override
-//            public void onSuccess(AppInviteDialog.Result result)
-//            {
-//                try {
-//                    Bundle data = result.getData();
-//                    JSONObject jo = new JSONObject();
-//                    jo.put("request", data.getString("request"));
-//                    jo.put("to", new JSONArray(new ArrayList<>(Arrays.asList(data.getStringArray("to")))));
-//                    //Log.d("KinhTuChi::", "AppInviteDialog: " + jo.toString());
-//                    callbackFacebookInvite(jo.toString());
-//                }catch (Exception e){
-//                    e.printStackTrace();
-//                    callbackFacebookInvite("");
-//                }
-//            }
-//
-//            @Override
-//            public void onCancel()
-//            {
-//                callbackFacebookInvite("");
-//            }
-//
-//            @Override
-//            public void onError(FacebookException e)
-//            {
-//                callbackFacebookInvite("");
-//                e.printStackTrace();
-//            }
-//        });
-
         Uri targetUrl = AppLinks.getTargetUrlFromInboundIntent(this, getIntent());
         if (targetUrl != null) {
             Log.i("Activity", "App Link Target URL: " + targetUrl.toString());
@@ -198,17 +166,46 @@ public class AppActivity extends Cocos2dxActivity {
         Intent serviceIntent = new Intent("com.android.vending.billing.InAppBillingService.BIND");
         serviceIntent.setPackage("com.android.vending");
         bindService(serviceIntent, mServiceConn, Context.BIND_AUTO_CREATE);
-		
-		getWindow().getDecorView().setSystemUiVisibility(
-          View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-        | View.SYSTEM_UI_FLAG_FULLSCREEN
-        | View.SYSTEM_UI_FLAG_IMMERSIVE);
+
+        currentApiVersion = android.os.Build.VERSION.SDK_INT;
+        final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+
+        if(currentApiVersion >= Build.VERSION_CODES.KITKAT){
+            getWindow().getDecorView().setSystemUiVisibility(flags);
+            final View decorView = getWindow().getDecorView();
+            decorView.setOnSystemUiVisibilityChangeListener(
+                    new View.OnSystemUiVisibilityChangeListener(){
+                        @Override
+                        public void onSystemUiVisibilityChange(int visibility){
+                            if((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0){
+                                decorView.setSystemUiVisibility(flags);
+                            }
+                        }
+                    });
+        }
 
         setKeepScreenOn(true);
         _activity = this;
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus)
+    {
+        super.onWindowFocusChanged(hasFocus);
+        if(currentApiVersion >= Build.VERSION_CODES.KITKAT && hasFocus){
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
     }
 
     @Override
@@ -352,27 +349,6 @@ public class AppActivity extends Cocos2dxActivity {
                 .setMessage("Vào chơi 8 Đỏ 2 Lèo nào!")
                 .build();
         requestDialog.show(content);
-
-//        //Log.d("KinhTuChi::", "invite friends");
-//        String appLinkUrl = "https://fb.me/1017406505057207";
-//        //String appLinkUrl = "https://kinhtuchi.com";
-//        String previewImageUrl = "http://kinhtuchi.com/img/256.png";
-//
-//        AppInviteContent content = new AppInviteContent.Builder()
-//                .setApplinkUrl(appLinkUrl)
-//                .setPreviewImageUrl(previewImageUrl)
-//                .build();
-//        if (appInviteDialog.canShow(content)) {
-//            appInviteDialog.show(content);
-//        }
-
-//        try {
-//            String download_link = "https://m.facebook.com/connect/dialog/MPlatformAppInvitesJSDialog?android_key_hash=lPwZFQsHrK2Am1jxclj-ZybtDy0%0A&display=touch&app_id=992430550888136&method_args=%7B%22app_link_url%22%3A%22https%3A%5C%2F%5C%2Ffb.me%5C%2F1017442851720239%22%2C%22preview_image_url%22%3A%22http%3A%5C%2F%5C%2Fkinhtuchi.com%5C%2Fimg%5C%2F256.png%22%2C%22destination%22%3A%22facebook%22%7D&bridge_args=%7B%22action_id%22%3A%22f89d20d8-a802-466b-bb30-bde267292f27%22%7D";
-//            Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(download_link));
-//            startActivity(myIntent);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
     }
 
     public static void purchaseProduct(String sku){

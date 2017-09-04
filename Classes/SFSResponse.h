@@ -66,6 +66,15 @@ private:
 	void onCofferHistoryResponse(boost::shared_ptr<ISFSObject> isfsObject);
 	void onPaymentEnableResponse(boost::shared_ptr<ISFSObject> isfsObject);
 	void onPopupEventResponse(boost::shared_ptr<ISFSObject> isfsObject);
+	void onTourInfoResponse(boost::shared_ptr<ISFSObject> isfsObject);
+	void onTopTourPlayersResponse(boost::shared_ptr<ISFSObject> isfsObject);
+	void onListTourPlayersResponse(boost::shared_ptr<ISFSObject> isfsObject);
+	void onTourRoomToJoinResponse(boost::shared_ptr<ISFSObject> isfsObject);
+	void onRegisterTourInfoResponse(boost::shared_ptr<ISFSObject> isfsObject);
+	void onTourNewRoundResponse(boost::shared_ptr<ISFSObject> isfsObject);
+	void onTourWinnersResponse(boost::shared_ptr<ISFSObject> isfsObject);
+	void onTourRoomMatchResponse(boost::shared_ptr<ISFSObject> isfsObject);
+	void onTourTimeWaitPlayerResponse(boost::shared_ptr<ISFSObject> isfsObject);
 
 	map<string, function<void(boost::shared_ptr<ISFSObject>)>> mapFunctions;
 	vector<pair<boost::shared_ptr<string>, boost::shared_ptr<ISFSObject>>> cachedResponses;

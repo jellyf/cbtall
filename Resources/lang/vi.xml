@@ -119,12 +119,17 @@
 	<key>su_kien</key><string>Sự kiện</string>
 	<key>hoan_tra</key><string>Hoàn trả</string>
 	<key>nguoi_gui</key><string>Người gửi</string>
-	<key>cua_hang</key><string>Cửa hàng</string>
 	<key>huong_dan</key><string>Hướng dẫn</string>
 	<key>top_money</key><string>Top đại gia</string>
 	<key>top_u</key><string>Top cao thủ</string>
 	<key>doi_mat_khau</key><string>Đổi mật khẩu</string>
 	<key>doi_ten</key><string>Đổi tên</string>
+	<key>kieu_choi</key><string>Kiểu chơi</string>
+	<key>van</key><string>Ván</string>
+	<key>con</key><string>Còn</string>
+	<key>dang_ky</key><string>Đăng Ký</string>
+	<key>dong_y</key><string>Đồng Ý</string>
+	<key>bo_qua</key><string>Bỏ Qua</string>
 	<key>hay_nhap_tai_khoan</key><string>Vui lòng nhập tài khoản</string>
 	<key>hay_nhap_mat_khau</key><string>Vui lòng nhập mật khẩu</string>
 	<key>bi_day_khoi_ban</key><string>Bạn đã bị đẩy ra khỏi phòng</string>
@@ -142,7 +147,6 @@
 	<key>mat_ket_noi_dang_nhap_lai</key><string>Mất kết nối đến máy chủ, vui lòng đăng nhập lại</string>
 	<key>error_password_must_6_char</key><string>Tài khoản và mật khẩu phải có tối thiểu 6 ký tự, tối đa 16 ký tự, chỉ bao gồm chữ cái và chữ số</string>
 	<key>error_displayname_format</key><string>Tên hiển thị phải có tối thiểu 6 ký tự, tối đa 16 ký tự, chỉ bao gồm chữ cái và chữ số</string>
-	<key>error_email_format</key><string>Email không đúng. Vui lòng nhập lại</string>
 	<key>error_connection</key><string>Không thể kết nối đến máy chủ. Vui lòng thử lại sau ít phút</string>
 	<key>error_retype_password</key><string>Nhập lại mật khẩu không đúng</string>
 	<key>error_unknown</key><string>Có lỗi xảy ra, vui lòng thử lại</string>
@@ -153,7 +157,6 @@
 	<key>disconnection_manual</key><string>Mất kết nối đến máy chủ, vui lòng đăng nhập lại</string>
 	<key>disconnection_overlap_login</key><string>Mất kết nối đến máy chủ, vui lòng đăng nhập lại</string>
 	<key>connection_failed</key><string>Kết nối đến máy chủ thất bại, vui lòng kiểm tra kết nối mạng và thử lại</string>
-	<key>feature_coming_soon</key><string>Tính năng đang được hoàn thiện và sẽ mở trong thời gian sắp tới</string>
 	<key>notice_update_new_version</key><string>Xin vui lòng cập nhật phiên bản mới nhất</string>
 	<key>khong_hien_lai</key><string>Không hiển thị</string>
 	<key>thang_lon_nhat</key><string>Tiền thắng lớn nhất</string>
@@ -163,6 +166,8 @@
 	<key>ban_muon_thoat_game</key><string>Bạn muốn thoát game?</string>
 	<key>ask_to_kick_player</key><string>Bạn muốn đá người này ra khỏi bàn?</string>
 	<key>khong_nhan_duoc_phan_hoi_tu_server</key><string>Không nhận được phản hồi từ server. Bạn muốn đăng nhập lại?</string>
+	<key>ban_muon_thoat_game</key><string>Bạn muốn thoát Kính Tứ Chi?</string>
+	<key>ban_muon_da_nguoi_nay_ra</key><string>Bạn muốn đá người này ra khỏi bàn chơi?</string>
 	<key>tai_khoan_khong_dung</key><string>Tài khoản hoặc mật khẩu không đúng</string>
 </dict>
 </plist>

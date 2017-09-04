@@ -12,9 +12,6 @@ public:
 	virtual void onDownloadedPlistTexture(int numb);
 
 	void onConfigZoneReceived();
-	void onConnectionLost(std::string reason);
-	void onJoinRoom(long roomId, std::string roomName);
-	void onJoinRoomError(std::string msg);
 	void onTableDataResponse(LobbyListTable data);
 	void onShopHistoryDataResponse(std::vector<ShopHistoryData> list);
 	void onShopItemsDataResponse(std::vector<ShopItemData> list);
@@ -26,13 +23,15 @@ public:
 	void onPurchaseSuccess(std::string token);
 	void onFacebookInvite(std::string token);
 	void onDynamicConfigReceived();
+	void onRegisterTour(bool isRegistered);
 protected:
 	virtual bool onKeyBack();
 	virtual void onConnected();
+	virtual bool onConnectionLost(std::string reason);
 	virtual void onLoginZoneError(short int code, std::string msg);
 	virtual void onBackScene();
 	virtual void onChangeMoneyType(int type);
-	virtual void onErrorResponse(unsigned char code, std::string msg);
+	virtual bool onErrorResponse(unsigned char code, std::string msg);
 private:
 	void initPopupCharge();
 	void initPopupGuide();
@@ -41,6 +40,7 @@ private:
 	void initPopupShop();
 	void initPopupGiftcode();
 	void initPopupDisplayName();
+	void initAdsense();
 
 	void showPopupMail();
 	void showPopupNews();
@@ -49,6 +49,7 @@ private:
 	void updateSmsInfo(bool isQuan);
 	void onChooseProviderCard(std::string provider);
 	void onChooseProviderSms(std::string provider);
+	bool isTourCanRegOrJoin();
 
 	cocos2d::Node* popupShop;
 	cocos2d::Node* popupMail;
@@ -58,14 +59,16 @@ private:
 	cocos2d::Node* popupGiftcode;
 	cocos2d::Node* popupChooseSms;
 	cocos2d::Node* popupChooseCard;
+	cocos2d::Node* popupDisplayName;
+	cocos2d::Node* nodeWebview;
+	cocos2d::Node* nodeAds;
 
 	cocos2d::Label* lbNewMail;
+	cocos2d::Label* lbTourCountDown;
 	cocos2d::ui::Button* btnEvent;
 
 	int currentMoneyType = 0;
-	int tmpZoneId = -1;
 	bool isBackToLogin = false;
-	bool isGoToLobby = false;
 	bool isWaitPopupNews = false;
 	bool isWaitPopupMail = false;
 	bool isChargeQuan = true;

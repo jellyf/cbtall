@@ -11,6 +11,7 @@ using namespace std;
 
 void MainScene::onInit()
 {
+	setTag(constant::SCENE_MAIN);
 	BaseScene::onInit();
 	isChargeQuan = Utils::getSingleton().ispmE();
 	bool pmE = Utils::getSingleton().ispmE();
@@ -24,7 +25,7 @@ void MainScene::onInit()
 	for (int i = 0; i < numbOfMenuBtns; i++) {
 		vecMenuPos.push_back(Vec2(dx / 2 + i * dx, 100));
 	}
-
+	
 	std::vector<Vec2> vecZonePos;
 	int numbOfZoneBtns = 4;
 	int padding = 200 * pow(scaleScene.x, 5);
@@ -68,6 +69,7 @@ void MainScene::onInit()
 	btnFBFriends->setVisible(pmE && canInvite);
 	addTouchEventListener(btnFBFriends, [=]() {
 		Utils::getSingleton().inviteFacebookFriends();
+		//SFSRequest::getSingleton().RequestRegisterTour();
 	});
 	mLayer->addChild(btnFBFriends);
 	autoScaleNode(btnFBFriends);
@@ -205,11 +207,7 @@ void MainScene::onInit()
 	btnNhaTranh->setPosition(vecZonePos[0]);
 	btnNhaTranh->setScale(scaleZone);
 	addTouchEventListener(btnNhaTranh, [=]() {
-		if (isWaiting) return;
-		showWaiting();
-		tmpZoneId = 0;
-		isGoToLobby = true;
-		SFSRequest::getSingleton().Disconnect();
+		joinIntoLobby(0);
 	});
 	mLayer->addChild(btnNhaTranh);
 	autoScaleNode(btnNhaTranh);
@@ -218,55 +216,60 @@ void MainScene::onInit()
 	btnDinhLang->setPosition(vecZonePos[1]);
 	btnDinhLang->setScale(scaleZone);
 	addTouchEventListener(btnDinhLang, [=]() {
-		if (isWaiting) return;
-		showWaiting();
-		tmpZoneId = 1;
-		isGoToLobby = true;
-		SFSRequest::getSingleton().Disconnect();
+		joinIntoLobby(1);
 	});
 	mLayer->addChild(btnDinhLang);
 	autoScaleNode(btnDinhLang);
 
-	ui::Button* btnPhuChua = ui::Button::create("phuchua.png", "", "", ui::Widget::TextureResType::PLIST);
+	/*ui::Button* btnPhuChua = ui::Button::create("phuchua.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnPhuChua->setPosition(vecZonePos[2]);
 	btnPhuChua->setScale(scaleZone);
 	addTouchEventListener(btnPhuChua, [=]() {
-		if (isWaiting) return;
-		showWaiting();
-		tmpZoneId = 2;
-		isGoToLobby = true;
-		SFSRequest::getSingleton().Disconnect();
+		joinIntoLobby(2);
 	});
 	mLayer->addChild(btnPhuChua);
-	autoScaleNode(btnPhuChua);
+	autoScaleNode(btnPhuChua);*/
 
-	ui::Button* btnLoiDai = ui::Button::create("dtd.png", "", "", ui::Widget::TextureResType::PLIST);
+	ui::Button* btnSolo = ui::Button::create("dtd.png", "dtd.png", "", ui::Widget::TextureResType::PLIST);
+	btnSolo->setPosition(vecZonePos[2]);
+	btnSolo->setScale(scaleZone);
+	addTouchEventListener(btnSolo, [=]() {
+		joinIntoLobby(3);
+	});
+	mLayer->addChild(btnSolo);
+	autoScaleNode(btnSolo);
+
+	ui::Button* btnLoiDai = ui::Button::create("giaidau.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnLoiDai->setPosition(vecZonePos[3]);
 	btnLoiDai->setScale(scaleZone);
 	addTouchEventListener(btnLoiDai, [=]() {
-		if (isWaiting) return;
-		showWaiting();
-		tmpZoneId = 3;
-		isGoToLobby = true;
-		SFSRequest::getSingleton().Disconnect();
+		if (Utils::getSingleton().ispmE()) {
+			showPopupTour();
+			//spLoiDai->stopAllActions();
+			//btnLoiDai->stopAllActions();
+		} else {
+			joinIntoLobby(2);
+		}
 	});
 	mLayer->addChild(btnLoiDai);
 	autoScaleNode(btnLoiDai);
 
-	//ui::Button* btnGiaiDau = ui::Button::create("giaidau.png", "", "", ui::Widget::TextureResType::PLIST);
-	//btnGiaiDau->setPosition(vecZonePos[4]);
-	////btnGiaiDau->setScale(.95f);
-	//addTouchEventListener(btnGiaiDau, [=]() {
-	//	/*if (isWaiting) return;
-	//	showWaiting();
-	//	tmpZoneId = 4;
-	//	isGoToLobby = true;
-	//	SFSRequest::getSingleton().Disconnect();*/
-	//	showPopupNotice(Utils::getSingleton().getStringForKey("feature_coming_soon"), [=] {});
-	//});
-	//mLayer->addChild(btnGiaiDau);
-	//autoScaleNode(btnGiaiDau);
+	if (Utils::getSingleton().ispmE() && isTourCanRegOrJoin()) {
+		lbTourCountDown = Label::createWithTTF("", "fonts/myriadb.ttf", 35);
+		lbTourCountDown->setPosition(btnLoiDai->getContentSize().width / 2, btnLoiDai->getContentSize().height - 45);
+		lbTourCountDown->setColor(Color3B(250, 0, 0));
+		lbTourCountDown->enableOutline(Color4B(160, 0, 0, 255), 1);
+		lbTourCountDown->setTag(0);
+		btnLoiDai->addChild(lbTourCountDown);
 
+		Node* nodelbtime = Node::create();
+		nodelbtime->setName("0");
+		nodelbtime->setTag(0);
+		lbTourCountDown->addChild(nodelbtime);
+
+		calculateTourTimeOnLabel(lbTourCountDown);
+	}
+	
 	initEventView(Vec2(0, winSize.height - 125), Size(winSize.width, 40));
 
 	if (Utils::getSingleton().userDataMe.Name.length() > 0 && Utils::getSingleton().userDataMe.DisplayName.length() == 0) {
@@ -292,9 +295,6 @@ void MainScene::registerEventListenner()
 	BaseScene::registerEventListenner();
 	EventHandler::getSingleton().onConfigZoneReceived = std::bind(&MainScene::onConfigZoneReceived, this);
 	EventHandler::getSingleton().onDynamicConfigReceived = std::bind(&MainScene::onDynamicConfigReceived, this);
-	EventHandler::getSingleton().onConnectionLost = std::bind(&MainScene::onConnectionLost, this, std::placeholders::_1);
-	EventHandler::getSingleton().onJoinRoom = std::bind(&MainScene::onJoinRoom, this, std::placeholders::_1, std::placeholders::_2);
-	EventHandler::getSingleton().onJoinRoomError = std::bind(&MainScene::onJoinRoomError, this, std::placeholders::_1);
 	EventHandler::getSingleton().onLobbyTableSFSResponse = bind(&MainScene::onTableDataResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onShopHistoryDataSFSResponse = bind(&MainScene::onShopHistoryDataResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onShopItemsDataSFSResponse = bind(&MainScene::onShopItemsDataResponse, this, placeholders::_1);
@@ -305,16 +305,14 @@ void MainScene::registerEventListenner()
 	EventHandler::getSingleton().onExchangeItemSFSResponse = bind(&MainScene::onExchangeItemResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onPurchaseSuccess = bind(&MainScene::onPurchaseSuccess, this, placeholders::_1);
 	EventHandler::getSingleton().onFacebookInvite = bind(&MainScene::onFacebookInvite, this, placeholders::_1);
+	EventHandler::getSingleton().onRegisterTourSFSResponse = bind(&MainScene::onRegisterTour, this, placeholders::_1);
 }
 
 void MainScene::unregisterEventListenner()
 {
 	BaseScene::unregisterEventListenner();
-	EventHandler::getSingleton().onConnectionLost = NULL;
 	EventHandler::getSingleton().onConfigZoneReceived = NULL;
 	EventHandler::getSingleton().onDynamicConfigReceived = NULL;
-	EventHandler::getSingleton().onJoinRoom = NULL;
-	EventHandler::getSingleton().onJoinRoomError = NULL;
 	EventHandler::getSingleton().onLobbyTableSFSResponse = NULL;
 	EventHandler::getSingleton().onShopHistoryDataSFSResponse = NULL;
 	EventHandler::getSingleton().onShopItemsDataSFSResponse = NULL;
@@ -325,6 +323,8 @@ void MainScene::unregisterEventListenner()
 	EventHandler::getSingleton().onExchangeItemSFSResponse = NULL;
 	EventHandler::getSingleton().onPurchaseSuccess = NULL;
 	EventHandler::getSingleton().onFacebookInvite = NULL;
+	EventHandler::getSingleton().onRegisterTourSFSResponse = NULL;
+	EventHandler::getSingleton().onTourInfoSFSResponse = NULL;
 }
 
 bool MainScene::onKeyBack()
@@ -356,13 +356,14 @@ void MainScene::onConnected()
 	}
 }
 
-void MainScene::onConnectionLost(std::string reason)
+bool MainScene::onConnectionLost(std::string reason)
 {
+	if (BaseScene::onConnectionLost(reason)) return true;
 	Utils::getSingleton().chosenProviderCard = chosenProviderCard;
 	Utils::getSingleton().chosenProviderSms = chosenProviderSms;
 	if (isBackToLogin) {
 		Utils::getSingleton().goToLoginScene();
-		return;
+		return true;
 	}
 	if (isGoToLobby && tmpZoneId >= 0) {
 		showWaiting();
@@ -370,6 +371,7 @@ void MainScene::onConnectionLost(std::string reason)
 	} else {
 		handleClientDisconnectionReason(reason);
 	}
+	return true;
 }
 
 void MainScene::onConfigZoneReceived()
@@ -382,16 +384,19 @@ void MainScene::onLoginZoneError(short int code, std::string msg)
 	BaseScene::onLoginZoneError(code, msg);
 	if (isGoToLobby) {
 		isGoToLobby = false;
-		hideWaiting();
+		showWaiting();
+		isPauseApp = true;
+		Utils::getSingleton().currentZoneName = "Authen";
+		SFSRequest::getSingleton().Disconnect();
 		showPopupNotice(msg, [=]() {});
 	}
 }
 
-void MainScene::onErrorResponse(unsigned char code, std::string msg)
+bool MainScene::onErrorResponse(unsigned char code, std::string msg)
 {
-	BaseScene::onErrorResponse(code, msg);
+	if(BaseScene::onErrorResponse(code, msg)) return true;
 	hideWaiting();
-	if (code == 0 && popupShop->isVisible()) {
+	if (code == 0 && popupShop != NULL && popupShop->isVisible()) {
 		showPopupNotice(msg, [=]() {
 			string str = Utils::getSingleton().gameConfig.smsKH;
 			int index = str.find_last_of(' ');
@@ -400,7 +405,12 @@ void MainScene::onErrorResponse(unsigned char code, std::string msg)
 			content = Utils::getSingleton().replaceString(content, "uid", to_string(Utils::getSingleton().userDataMe.UserID));
 			Utils::getSingleton().openSMS(number, content);
 		}, false);
-		return;
+		return true;
+	}
+	if (code == 51 && popupDisplayName->isVisible()) {
+		hidePopup(popupDisplayName);
+		setDisplayName(tmpDisplayName);
+		return true;
 	}
 	if (code == 32) {
 		if (popupShop != NULL && popupShop->isVisible()) {
@@ -411,20 +421,9 @@ void MainScene::onErrorResponse(unsigned char code, std::string msg)
 			chargingProvider = "";
 		}
 	}
-	if (msg.length() == 0) return;
+	if (msg.length() == 0) return false;
 	showPopupNotice(msg, [=]() {});
-}
-
-void MainScene::onJoinRoom(long roomId, std::string roomName)
-{
-	if (roomName.at(0) == 'g' && roomName.at(2) == 'b') {
-		Utils::getSingleton().goToGameScene();
-	}
-}
-
-void MainScene::onJoinRoomError(std::string msg)
-{
-	showPopupNotice(msg, [=]() {}, false);
+	return true;
 }
 
 void MainScene::onTableDataResponse(LobbyListTable data)
@@ -684,7 +683,7 @@ void MainScene::onShopItemsDataResponse(std::vector<ShopItemData> list)
 		for (int j = 0; j < cards[i].size(); j++) {
 			count++;
 			string str = Utils::getSingleton().getStringForKey("xac_nhan_mua_vat_pham");
-			string strMoney = Utils::getSingleton().formatMoneyWithComma(cards[i][j].PriceChange);
+			string strMoney = Utils::getSingleton().formatMoneyWithComma(cards[i][j].Price);
 			string msg = String::createWithFormat(str.c_str(), cards[i][j].Name.c_str(), strMoney.c_str())->getCString();
 
 			ui::Button* btn = ui::Button::create("box_shop.png", "", "", ui::Widget::TextureResType::PLIST);
@@ -952,9 +951,9 @@ void MainScene::onListMailDataResponse(std::vector<MailData> list)
 		btn->setName(to_string((int)list[i].Id));
 		btn->setPosition(Vec2(scroll->getContentSize().width / 2, height - 40 - i * 70));
 		lbs[0]->setString(to_string((popupMail->getChildByName("nodepage")->getTag() - 1) * 10 + i + 1));
-		lbs[1]->setString(list[i].Date);
-		lbs[2]->setString(list[i].Title);
-		lbs[3]->setString(list[i].Sender);
+		lbs[1]->setString(Utils::getSingleton().trim(list[i].Date));
+		lbs[2]->setString(Utils::getSingleton().trim(list[i].Title));
+		lbs[3]->setString(Utils::getSingleton().trim(list[i].Sender));
 		for (int j = 0; j < 4; j++) {
 			lbs[j]->setColor(Color3B::BLACK);
 			lbs[j]->setPosition(posX[j] + scroll->getContentSize().width / 2, btn->getPositionY());
@@ -1092,9 +1091,23 @@ void MainScene::onDynamicConfigReceived()
 		//showWebView(Utils::getSingleton().dynamicConfig.PopupUrl);
 		isEventReady = true;
 	}
+	if (Utils::getSingleton().dynamicConfig.Ads) {
+		if (nodeAds) {
+			nodeAds->removeFromParent();
+		} else {
+			initAdsense();
+		}
+	}
 	GameLogger::getSingleton().setEnabled(Utils::getSingleton().dynamicConfig.Log);
 	GameLogger::getSingleton().setHost(Utils::getSingleton().dynamicConfig.LogHost);
 	GameLogger::getSingleton().setUser(Utils::getSingleton().userDataMe);
+}
+
+void MainScene::onRegisterTour(bool isRegistered)
+{
+	if (popupTour) {
+		popupTour->getChildByName("btnregister")->setVisible(!isRegistered);
+	}
 }
 
 void MainScene::onDownloadedPlistTexture(int numb)
@@ -1988,6 +2001,66 @@ void MainScene::initPopupDisplayName()
 	popupDisplayName->addChild(btnSubmit);
 }
 
+void MainScene::initAdsense()
+{
+	nodeAds = Node::create();
+	nodeAds->setPosition(1210, 220);
+	nodeAds->setTag(-1);
+	mLayer->addChild(nodeAds);
+	autoScaleNode(nodeAds);
+
+	ui::Button* btn = ui::Button::create("empty.png", "empty.png", "", ui::Widget::TextureResType::PLIST);
+	btn->setScale9Enabled(true);
+	btn->setContentSize(Size(110, 110));
+	addTouchEventListener(btn, [=]() {
+		int index = nodeAds->getTag();
+		if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS) {
+			string url = Utils::getSingleton().dynamicConfig.AdsIOSUrls[index];
+			Application::getInstance()->openURL(constant::STORE_APPLE + url);
+		} else {
+			string url = Utils::getSingleton().dynamicConfig.AdsUrls[index];
+			Application::getInstance()->openURL(constant::STORE_GOOGLE + url);
+		}
+	});
+	nodeAds->addChild(btn);
+
+	Node* nodeIcon = Node::create();
+	nodeIcon->setName("nodeicon");
+	nodeIcon->setTag(1);
+	nodeAds->addChild(nodeIcon);
+
+	Sprite* spIcon = Sprite::create();
+	spIcon->setName("spicon");
+	spIcon->setTag(1);
+	nodeIcon->addChild(spIcon);
+
+	/*ScaleTo* scale1 = ScaleTo::create(.3f, .5f);
+	ScaleTo* scale2 = ScaleTo::create(1, 1);
+	EaseElasticOut* eeo = EaseElasticOut::create(scale2);*/
+	DelayTime* delay1 = DelayTime::create(10);
+	CallFunc* func = CallFunc::create([=]() {
+		Node* nodeIcon = nodeAds->getChildByName("nodeicon");
+		//int count = nodeIcon->getTag();
+		//if (count % 2 == 0) {
+			vector<string> icons = Utils::getSingleton().dynamicConfig.AdsIcons;
+			int index = nodeAds->getTag();
+			index = (index == -1 ? rand() : (index + 1)) % icons.size();
+			Utils::getSingleton().LoadTextureFromURL(icons[index], [=](Texture2D* texture) {
+				Sprite* spIcon = (Sprite*)nodeAds->getChildByName("nodeicon")->getChildByName("spicon");
+				spIcon->initWithTexture(texture);
+				float width = spIcon->getContentSize().width;
+				spIcon->setScale(100.0f / width);
+			});
+			nodeAds->setTag(index);
+		//}
+		//count++;
+		//nodeIcon->setTag(count);
+	});
+	//Sequence* action = Sequence::create(scale1, func, eeo, delay1, nullptr);
+	Sequence* action = Sequence::create(func, delay1, nullptr);
+	nodeAds->runAction(RepeatForever::create(action));
+}
+
 void MainScene::showPopupMail()
 {
 	if (popupMail == nullptr) {
@@ -2155,4 +2228,16 @@ void MainScene::onChooseProviderSms(std::string provider)
 		ui::CheckBox* cbQuan = (ui::CheckBox*)nodeMoneyType->getChildByTag(0);
 		updateSmsInfo(cbQuan->isSelected());
 	}
+}
+
+bool MainScene::isTourCanRegOrJoin()
+{
+	TourInfo tourInfo = Utils::getSingleton().tourInfo;
+	if (tourInfo.Name.length() == 0) return false;
+
+	time_t rawtime;
+	time(&rawtime);
+	double timeDiff = Utils::getSingleton().serverTimeDiff;
+	return (tourInfo.CanRegister && rawtime >= tourInfo.RegTimeBegin + timeDiff && rawtime < tourInfo.RegTimeEnd + timeDiff);
+		//|| (!tourInfo.CanRegister && rawtime >= tourInfo.Race1TimeBegin + timeDiff && rawtime < tourInfo.Race2TimeEnd + timeDiff);
 }

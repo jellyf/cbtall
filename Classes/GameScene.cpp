@@ -14,10 +14,12 @@ using namespace cocos2d;
 
 void GameScene::onInit()
 {
+	setTag(constant::SCENE_GAME);
 	BaseScene::onInit();
 
 	bool pmE = Utils::getSingleton().ispmE();
 	isSolo = Utils::getSingleton().isSoloGame();
+	isTourGame = Utils::getSingleton().isTourGame();
 
 	state = NONE;
 	myServerSlot = -1;
@@ -110,31 +112,45 @@ void GameScene::onInit()
 		"bonthienkhai", "cobon", "haibon", "babon", "bonbon", "cochiu", "haichiu", "bachiu", "bonchiu", "hoaroicuaphat", "xuong", 
 		"caloisandinh", "canhaydauthuyen", "nhalauxehoihoaroicuaphat", "thienu", "chuadonathoa", "nguongbatca" };
 	
-	bool isSolo = Utils::getSingleton().isSoloGame();
-	bool isTour = Utils::getSingleton().isTourGame();
 	string zone = Utils::getSingleton().getCurrentZoneName();
-	if (zone.length() > 0) {
-		auto index = zone.find_last_of("Q");
-		if (index >= 0 && index < zone.length()) {
-			zone = zone.substr(0, index);
-		}
-	} else {
+	int index = zone.find_last_of("Q");
+	if (index >= 0 && index < zone.length()) {
+		zone = zone.substr(0, index);
+	}
+	if (zone.length() == 0) {
 		zone = "VuongPhu";
 	}
-	if (isSolo) {
-		zone = "SoLo";
-	} else if (isTour) {
-		zone = "Tour";
-	}
+	if (isTourGame) zone = "VuongPhu";
 
-	Sprite* bg = Sprite::create("bg" + zone + ".jpg");
+	string bgName = "" + (isSolo ? "bgVuongPhu.jpg" : "bg" + zone + ".jpg");
+	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB565);
+	Texture2D* bgTexture = TextureCache::getInstance()->addImage(bgName);
+	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
+
+	Sprite* bg = Sprite::createWithTexture(bgTexture);
 	bg->setPosition(winSize.width / 2, winSize.height / 2);
 	mLayer->addChild(bg);
 
-	Sprite* center = Sprite::createWithSpriteFrameName("center.png");
-	center->setPosition(bg->getPosition());
-	mLayer->addChild(center);
-	autoScaleNode(center);
+	Sprite* centerBg = Sprite::createWithSpriteFrameName("center.png");
+	centerBg->setPosition(bg->getPosition());
+	//centerBg->setVisible(!isSolo);
+	mLayer->addChild(centerBg);
+	autoScaleNode(centerBg);
+
+	if (isSolo) {
+		Sprite* dragon1 = Sprite::create("dragon.png");
+		dragon1->setPosition(bg->getPosition() - Vec2(350, 0));
+		dragon1->setScale(1.4f);
+		mLayer->addChild(dragon1);
+		autoScaleNode(dragon1);
+
+		Sprite* dragon2 = Sprite::create("dragon.png");
+		dragon2->setPosition(bg->getPosition() + Vec2(350, 0));
+		dragon2->setScale(1.4f);
+		dragon2->setFlippedX(true);
+		mLayer->addChild(dragon2);
+		autoScaleNode(dragon2);
+	}
 
 	playLayer = Layer::create();
 	mLayer->addChild(playLayer, 10);
@@ -245,6 +261,7 @@ void GameScene::onInit()
 
 	iconGa = Sprite::createWithSpriteFrameName("ga_off.png");
 	iconGa->setPosition(topRight + getScaleSceneDistance(Vec2(Utils::getSingleton().ispmE() ? -240 : -150, -45)));
+	iconGa->setVisible(!isTourGame);
 	mLayer->addChild(iconGa, constant::GAME_ZORDER_BUTTON);
 	autoScaleNode(iconGa);
 
@@ -646,6 +663,18 @@ void GameScene::onInit()
 		lbWinMoneys.push_back(lb1);
 		autoScaleNode(lb1);
 
+		Sprite* spPointBg = Sprite::createWithSpriteFrameName("circle_red.png");
+		spPointBg->setPosition(vecUserPos[i] + Vec2(40, -35));
+		spPointBg->setVisible(false);
+		spPointBg->setScale(.9f);
+		mLayer->addChild(spPointBg, constant::GAME_ZORDER_USER + 12);
+		autoScaleNode(spPointBg);
+
+		Label *lbPoint = Label::createWithTTF("100", "fonts/aurora.ttf", 25);
+		lbPoint->setPosition(spPointBg->getContentSize().width/2, spPointBg->getContentSize().height/2 + 2);
+		spPointBg->addChild(lbPoint);
+		lbTourPoints.push_back(lbPoint);
+
 		ui::Button* btnKick = ui::Button::create("empty.png", "empty.png", "", ui::Widget::TextureResType::PLIST);
 		mLayer->addChild(btnKick, constant::GAME_ZORDER_USER + 12);
 		btnKick->setPosition(vecUserPos[i] + getScaleSceneDistance(Vec2(40, 35)));
@@ -711,7 +740,7 @@ void GameScene::onInit()
 
 	DelayTime* delay = DelayTime::create(1);
 	CallFunc* func = CallFunc::create([=]() {
-		if (state != ENDING && (btnXemNoc->isVisible() || btnDongNoc->isVisible())) {
+		if (state != CREST && state != ENDING && (btnXemNoc->isVisible() || btnDongNoc->isVisible())) {
 			btnXemNoc->setVisible(false);
 			btnDongNoc->setVisible(false);
 			endLayer->removeAllChildren();
@@ -820,7 +849,7 @@ void GameScene::onInit()
 
 	//dealCards();
 
-	showWaiting();
+	//showWaiting();
 }
 
 void GameScene::registerEventListenner()
@@ -834,6 +863,7 @@ void GameScene::registerEventListenner()
 	EventHandler::getSingleton().onLoginZone = bind(&GameScene::onLoginZone, this);
 	EventHandler::getSingleton().onLoginZoneError = bind(&GameScene::onLoginZoneError, this, placeholders::_1, placeholders::_2);
 	EventHandler::getSingleton().onJoinRoom = bind(&GameScene::onJoinRoom, this, placeholders::_1, placeholders::_2);
+	EventHandler::getSingleton().onJoinRoomError = bind(&GameScene::onJoinRoomError, this, placeholders::_1);
 	EventHandler::getSingleton().onUserDataSFSResponse = std::bind(&GameScene::onUserDataResponse, this, std::placeholders::_1);
 	EventHandler::getSingleton().onUserExitRoom = std::bind(&GameScene::onUserExitRoom, this, std::placeholders::_1);
 	EventHandler::getSingleton().onErrorSFSResponse = std::bind(&GameScene::onErrorResponse, this, std::placeholders::_1, std::placeholders::_2);
@@ -866,9 +896,13 @@ void GameScene::registerEventListenner()
 	EventHandler::getSingleton().onCofferMoneySFSResponse = bind(&GameScene::onCofferMoneyResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onCofferHistorySFSResponse = bind(&GameScene::onCofferHistoryResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onTableReconnectDataSFSResponse = bind(&GameScene::onTableReconnectDataResponse, this, placeholders::_1);
+	EventHandler::getSingleton().onTourRoomMatchSFSResponse = bind(&GameScene::onTourRoomMatch, this, placeholders::_1);
+	EventHandler::getSingleton().onTourWinnersSFSResponse = bind(&GameScene::onTourWinnersResponse, this, placeholders::_1);
+	EventHandler::getSingleton().onTourRoomToJoinSFSResponse = bind(&GameScene::onTourRoomToJoin, this, placeholders::_1);
+	EventHandler::getSingleton().onTourTimeWaitPlayerSFSResponse = bind(&GameScene::onTourTimeWaitPlayer, this, placeholders::_1);
 
-	SFSRequest::getSingleton().onHttpResponseFailed = std::bind(&GameScene::onHttpResponseFailed, this);
-	SFSRequest::getSingleton().onHttpResponse = std::bind(&GameScene::onHttpResponse, this, std::placeholders::_1, std::placeholders::_2);
+	SFSRequest::getSingleton().mapHttpResponseFailedCallbacks["scene"] = std::bind(&GameScene::onHttpResponseFailed, this, std::placeholders::_1);
+	SFSRequest::getSingleton().mapHttpResponseCallbacks["scene"] = std::bind(&GameScene::onHttpResponse, this, std::placeholders::_1, std::placeholders::_2);
 }
 
 void GameScene::unregisterEventListenner()
@@ -878,6 +912,7 @@ void GameScene::unregisterEventListenner()
 	EventHandler::getSingleton().onConnectionFailed = NULL;
 	EventHandler::getSingleton().onConnectionLost = NULL;
 	EventHandler::getSingleton().onJoinRoom = NULL;
+	EventHandler::getSingleton().onJoinRoomError = NULL;
 	EventHandler::getSingleton().onUserDataSFSResponse = NULL;
 	EventHandler::getSingleton().onUserExitRoom = NULL;
 	EventHandler::getSingleton().onErrorSFSResponse = NULL;
@@ -910,9 +945,12 @@ void GameScene::unregisterEventListenner()
 	EventHandler::getSingleton().onCofferMoneySFSResponse = NULL;
 	EventHandler::getSingleton().onCofferHistorySFSResponse = NULL;
 	EventHandler::getSingleton().onTableReconnectDataSFSResponse = NULL;
+	EventHandler::getSingleton().onTourRoomMatchSFSResponse = NULL;
+	EventHandler::getSingleton().onTourWinnersSFSResponse = NULL;
+	EventHandler::getSingleton().onTourRoomToJoinSFSResponse = NULL;
 
-	SFSRequest::getSingleton().onHttpResponse = NULL;
-	SFSRequest::getSingleton().onHttpResponseFailed = NULL;
+	SFSRequest::getSingleton().mapHttpResponseFailedCallbacks.erase("scene");
+	SFSRequest::getSingleton().mapHttpResponseCallbacks.erase("scene");
 }
 
 bool GameScene::onTouchBegan(Touch * touch, Event * _event)
@@ -981,7 +1019,7 @@ bool GameScene::onTouchBegan(Touch * touch, Event * _event)
 						SFSRequest::getSingleton().RequestUserInfo(vecUsers[i]->getName());
 					//}
 					break;
-				} else {
+				} else if(spInvites[i]->isVisible()){
 					hasClickInvite = true;
 					SFSRequest::getSingleton().RequestGameLobbyUser();
 				}
@@ -1023,13 +1061,6 @@ void GameScene::onApplicationDidEnterBackground()
 	// Do NOT call BaseScene::onApplicationDidEnterBackground();
     spNetwork->pause();
     lbNetwork->pause();
-    pauseTimeInSecs = Utils::getSingleton().getCurrentSystemTimeInSecs();
-	if (state != NONE && state != READY && myServerSlot >= 0) {
-		string username = Utils::getSingleton().userDataMe.Name;
-		double timeSecs = Utils::getSingleton().getCurrentSystemTimeInSecs();
-		UserDefault::getInstance()->setDoubleForKey((constant::KEY_RECONNECT_TIME + username).c_str(), timeSecs + 300);
-		UserDefault::getInstance()->setIntegerForKey((constant::KEY_RECONNECT_ZONE_INDEX + username).c_str(), Utils::getSingleton().getCurrentZoneIndex());
-	}
 }
 
 void GameScene::onApplicationWillEnterForeground()
@@ -1037,18 +1068,33 @@ void GameScene::onApplicationWillEnterForeground()
     // Do NOT call BaseScene::onApplicationWillEnterForeground();
     spNetwork->resume();
     lbNetwork->resume();
-    double curTime = Utils::getSingleton().getCurrentSystemTimeInSecs();
-    float pauseTime = curTime - pauseTimeInSecs;
-    if(pauseTime > 120){
-        float timeWait = pauseTime / 40;
-		if (timeWait > 20) timeWait = 20;
-        showWaiting(timeWait + 10);
-        SFSGEvent::getSingleton().DoWork(false);
-        this->delayFunction(this, timeWait, [=](){
-            SFSGEvent::getSingleton().DoWork(true);
-            this->disconnectToSync();
-        });
-    }
+	if (isPauseApp) {
+		isPauseApp = false;
+		double curTime = Utils::getSingleton().getCurrentSystemTimeInSecs();
+		float pauseTime = curTime - pauseTimeInSecs;
+		if (pauseTime > 120) {
+			float timeWait = pauseTime / 40;
+			if (timeWait > 20) timeWait = 20;
+			showWaiting(timeWait + 10);
+			SFSGEvent::getSingleton().DoWork(false);
+			this->delayFunction(this, timeWait, [=]() {
+				SFSGEvent::getSingleton().DoWork(true);
+				this->disconnectToSync();
+			});
+		}
+	}
+}
+
+void GameScene::onKeyHome()
+{
+	isPauseApp = true;
+	pauseTimeInSecs = Utils::getSingleton().getCurrentSystemTimeInSecs();
+	if (state != NONE && state != READY && myServerSlot >= 0) {
+		string username = Utils::getSingleton().userDataMe.Name;
+		double timeSecs = Utils::getSingleton().getCurrentSystemTimeInSecs();
+		UserDefault::getInstance()->setDoubleForKey((constant::KEY_RECONNECT_TIME + username).c_str(), timeSecs + 300);
+		UserDefault::getInstance()->setIntegerForKey((constant::KEY_RECONNECT_ZONE_INDEX + username).c_str(), Utils::getSingleton().getCurrentZoneIndex());
+	}
 }
 
 void GameScene::dealCards()
@@ -1553,8 +1599,11 @@ void GameScene::showSettings()
 		//cb->setEnabled(myServerSlot == 0 && (state == NONE || state == READY));
 		cb->setOpacity(opacity);
 	}
-	auto btnNo = (ui::Button*)popupSettings->getChildByName("btnno");
-	btnNo->setVisible(!(myServerSlot == 0 && (state == NONE || state == READY)));
+
+	Node* btnNo = popupSettings->getChildByName("btnno");
+	Node* btnNoAutoReady = popupSettings->getChildByName("btnnoautoready");
+	btnNo->setVisible(isTourGame || !(myServerSlot == 0 && (state == NONE || state == READY)));
+	btnNoAutoReady->setVisible(isTourGame);
 }
 
 void GameScene::showError(std::string msg)
@@ -1637,6 +1686,15 @@ void GameScene::hideMenuButtons()
 		MoveTo* move = MoveTo::create(.2f, pos);
 		n->runAction(move);
 	}
+}
+
+void GameScene::updateTourMatch()
+{
+	playerMe.TMatch++;
+	TourInfo tour = Utils::getSingleton().tourInfo;
+	int tourMatch = tour.MaxMatch * tour.RequiredMatch / 100;
+	Label* lbMatch = (Label*)tableInfo->getChildByName("lbmatch");
+	lbMatch->setString(Utils::getSingleton().getStringForKey("van") + ": " + to_string(playerMe.TMatch) + "/ " + to_string(tourMatch));
 }
 
 void GameScene::playSoundAction(unsigned char soundId)
@@ -1763,8 +1821,9 @@ void GameScene::onConnectionFailed()
 	experimental::AudioEngine::stopAll();
 }
 
-void GameScene::onConnectionLost(std::string reason)
+bool GameScene::onConnectionLost(std::string reason)
 {
+	if(BaseScene::onConnectionLost(reason)) return true;
 	experimental::AudioEngine::stopAll();
 	mustGoToLobby = myServerSlot < 0 || state == NONE || state == READY;
 	/*btnUp->setLocalZOrder(constant::GAME_ZORDER_BUTTON);
@@ -1780,12 +1839,21 @@ void GameScene::onConnectionLost(std::string reason)
 	} else {
 		handleClientDisconnectionReason(reason);
 	}
+	return true;
 }
 
 void GameScene::onJoinRoom(long roomId, std::string roomName)
 {
 	if (roomName.at(0) == 'g' && roomName.at(2) == 'b') {
-		reset();
+		if (isJoiningTour) {
+			Utils::getSingleton().goToGameScene();
+		} else {
+			reset();
+		}
+	} else {
+		if (isPrepareToTour && Utils::getSingleton().currentZoneName.compare("AutoTourKTC") != 0) {
+			Utils::getSingleton().goToLobbyScene();
+		}
 	}
 }
 
@@ -1808,12 +1876,14 @@ void GameScene::onUserExitRoom(long sfsUId)
 				SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 				Utils::getSingleton().goToLobbyScene();
 			}, false);*/
-		}else if (isReconnecting) {
+		} else if (isReconnecting) {
 			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 			Utils::getSingleton().goToLobbyScene();
+		} else if(isMatchTimeEnd){
+			//DO nothing
 		} else {
 			//showPopupNotice(Utils::getSingleton().getStringForKey("bi_day_khoi_ban"), [=]() {
-				SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentRoomName);
+				//SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentRoomName);
 				//Utils::getSingleton().goToLobbyScene();
 			//}, false);
 		}
@@ -1828,6 +1898,7 @@ void GameScene::onUserExitRoom(long sfsUId)
 		spSanSangs[index]->setVisible(false);
 		lbSanSangs[index]->setVisible(false);
 		vecBtnKicks[index]->setVisible(false);
+		lbTourPoints[index]->getParent()->setVisible(false);
 	}
 	if (progressTimer->getTag() == index) {
 		progressTimer->stopAllActions();
@@ -1835,17 +1906,21 @@ void GameScene::onUserExitRoom(long sfsUId)
 	}
 }
 
-void GameScene::onErrorResponse(unsigned char code, std::string msg)
+bool GameScene::onErrorResponse(unsigned char code, std::string msg)
 {
-	//error = 4: co nguoi doi u
-	//		  3: Bạn chưa tới lượt bốc
-	//		  4: Bạn chưa tới lượt dưới
-	//		  2: Bạn chưa tới lượt ăn
-	//CCLOG("onErrorResponse: %d %s", (int)code, msg.c_str());
-	BaseScene::onErrorResponse(code, msg);
+	//error =	4: co nguoi doi u
+	//			3: Bạn chưa tới lượt bốc
+	//			4: Bạn chưa tới lượt dưới
+	//			2: Bạn chưa tới lượt ăn
+	//			20: Hết ván đấu Tour
+	//			36: Bị loại khỏi Tour || vào vòng trong
+	//			39: Giải thưởng tour
+	//			40: Đăng ký Tour thành công
+	//			80: Tour kết thúc
+	if(BaseScene::onErrorResponse(code, msg)) return true;
 	if (code == 31 || code == 30 || code == 29) {
 		showSystemNotice(msg);
-		return;
+		return true;
 	}
 	if (code == 19) {
 		isKickForNotReady = true;
@@ -1853,7 +1928,17 @@ void GameScene::onErrorResponse(unsigned char code, std::string msg)
 			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 			Utils::getSingleton().goToLobbyScene();
 		}, false);
-		return;
+		return true;
+	}
+	if (isTourGame && (code == 80 || code == 39 || code == 36 || code == 35)) {
+		state = NONE;
+		isMatchTimeEnd = true;
+		//Utils::getSingleton().cachedErrors.push_back(pair<unsigned char, string>(code, msg));
+		showPopupNotice(msg, [=]() {
+			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
+			Utils::getSingleton().goToLobbyScene();
+		}, false);
+		return true;
 	}
 	if (code == 42) {
 		isKickForNotEnoughMoney = true;
@@ -1862,13 +1947,28 @@ void GameScene::onErrorResponse(unsigned char code, std::string msg)
 			SFSRequest::getSingleton().RequestJoinRoom(Utils::getSingleton().currentLobbyName);
 			Utils::getSingleton().goToLobbyScene();
 		}, false);
-		return;
+		return true;
 	}
 	if (code == 52) {
 		showCofferEffects(msg);
-		return;
+		return true;
+	}
+	if (code == 40) {
+		showPopupNotice(msg, [=]() {});
+		return true;
 	}
 	showError(msg);
+	return true;
+}
+
+void GameScene::joinIntoTour()
+{
+	if (isPrepareToTour || state == NONE || state == READY || myServerSlot < 0) {
+		BaseScene::joinIntoTour();
+	} else {
+		isPrepareToTour = true;
+		showSystemNotice(Utils::getSingleton().getStringForKey("ban_se_vao_giai_dau_sau_khi_het_van"));
+	}
 }
 
 void GameScene::onPublicMessage(long uid, std::string msg)
@@ -1888,7 +1988,11 @@ void GameScene::onPublicMessage(long uid, std::string msg)
 
 void GameScene::onRoomDataResponse(RoomData roomData)
 {
-	if (noaction >= 3 || hasRegisterOut) {
+	if (isPrepareToTour) {
+		joinIntoTour();
+		return;
+	}
+	if (state == ENDING && (noaction >= 3 || hasRegisterOut)) {
 		gameSplash->setVisible(false);
 		tableEndMatch->setVisible(false);
 		if (hasRegisterOut) {
@@ -1930,6 +2034,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 		spSanSangs[i]->setVisible(false);
 		lbSanSangs[i]->setVisible(false);
 		vecBtnKicks[i]->setVisible(false);
+		lbTourPoints[i]->getParent()->setVisible(false);
 	}
 	spInvites[0]->setVisible(true);
 	spInvites[2]->setVisible(true);
@@ -1957,9 +2062,11 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 				vecUsers[index]->setAvatarUrl(player.Info.AvatarUrl);
 				spSanSangs[index]->setVisible(player.Ready);
 				lbSanSangs[index]->setVisible(player.Ready);
+				lbTourPoints[index]->setString(to_string(player.TPoint));
+				lbTourPoints[index]->getParent()->setVisible(isTourGame);
 				if (player.Index == 0) {
 					spChuPhong->setVisible(true);
-					spChuPhong->setPosition(vecUserPos[index] + getScaleSceneDistance(Vec2(-38, 35)));
+					spChuPhong->setPosition(vecUserPos[index] + Vec2(50 * scaleScene.y, 0));
 					spChuPhong->setTag(player.Info.SfsUserId == sfsIdMe ? 1 : 0);
 				}
 				if (player.Info.SfsUserId == sfsIdMe) {
@@ -1967,7 +2074,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 						state = READY;
 						btnCancelReady->setVisible(true);
 						SFSRequest::getSingleton().RequestGameReady();
-					} else {
+					} else if(!isTourGame){
 						btnReady->setVisible(!player.Ready);
 						btnCancelReady->setVisible(player.Ready);
 					}
@@ -1994,7 +2101,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 			lbCrestTime->resume();
 			lbCrestTime->getParent()->setPosition(btnReady->getPosition() + getScaleSceneDistance(Vec2(0, 80)));
 		}
-		if (isMeHost) {
+		if (isMeHost && !isTourGame) {
 			for (int i = 1; i < 4; i++) {
 				vecBtnKicks[i]->setVisible(vecUsers[i]->isVisible() && Utils::getSingleton().dynamicConfig.Kick);
 			}
@@ -2116,6 +2223,13 @@ void GameScene::onStartGameDataResponse(StartGameData data)
 	}
 	dealCards();
 	noaction = 0;
+
+	Node* lbTimeWaitPlayer = mLayer->getChildByName("lbtimewaitplayer");
+	if (lbTimeWaitPlayer) {
+		lbTimeWaitPlayer->pause();
+		lbTimeWaitPlayer->setVisible(false);
+		mLayer->getChildByName("lbTitleWaitPlayer")->setVisible(false);
+	}
 }
 
 void GameScene::onChooseStilt(unsigned char stilt)
@@ -2811,8 +2925,8 @@ void GameScene::onUserWin(long uId, unsigned char sound)
 
 void GameScene::onCrestResponse(CrestResponseData data)
 {
+	state = ENDING;
 	if (!btnXemNoc->isVisible() && !btnDongNoc->isVisible()) {
-		state = ENDING;
 		gameSplash->setVisible(true);
 		for (Sprite* sp : spCards) {
 			if (sp->isVisible()) {
@@ -2893,7 +3007,7 @@ void GameScene::onEndMatch(EndMatchData data)
 {
 	GameLogger::getSingleton().logEndMatch(data);
 	if (state == NONE || state == READY) return;
-	state = ENDING;
+	state = CREST;
 	this->endMatchData = data;
 	gameSplash->setVisible(true);
 	lbCrestTime->getParent()->setVisible(true);
@@ -3005,7 +3119,7 @@ void GameScene::onUserReadyResponse(long UiD, bool isReady)
 {
 	spSanSangs[userIndexs2[UiD]]->setVisible(isReady);
 	lbSanSangs[userIndexs2[UiD]]->setVisible(isReady);
-	if (UiD == playIdMe) {
+	if (!isTourGame && UiD == playIdMe) {
 		btnReady->setVisible(!isReady);
 		btnCancelReady->setVisible(isReady);
 	}
@@ -3191,6 +3305,8 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 				vecUsers[index]->setPlayerName(player.Info.DisplayName);
 				vecUsers[index]->setPlayerMoney(player.PMoney);
 				vecUsers[index]->setName(player.Info.Name);
+				lbTourPoints[index]->setString(to_string(player.TPoint));
+				lbTourPoints[index]->getParent()->setVisible(isTourGame);
 				if (player.Index == 0) {
 					spChuPhong->setVisible(true);
 					spChuPhong->setPosition(vecUserPos[index] + getScaleSceneDistance(Vec2(-40, 35)));
@@ -3365,6 +3481,56 @@ void GameScene::onTableReconnectDataResponse(TableReconnectData data)
 	showWaiting();
 }
 
+void GameScene::onTourRoomMatch(long totalMatch)
+{
+	TourInfo tour = Utils::getSingleton().tourInfo;
+	Label* lbMatch = (Label*)tableInfo->getChildByName("lbmatch");
+	lbMatch->setString(Utils::getSingleton().getStringForKey("van") + ": " + to_string(totalMatch) + "/ " + to_string(tour.MaxMatch));
+}
+
+void GameScene::onTourTimeWaitPlayer(long timeWait)
+{
+	if (state != NONE && state != READY) return;
+	timeWaitPlayer = timeWait;
+	Label* lbTitleWaitPlayer = (Label*)mLayer->getChildByName("lbTitleWaitPlayer");
+	Label* lbTimeWaitPlayer = (Label*)mLayer->getChildByName("lbtimewaitplayer");
+	string timeWaitString = Utils::getSingleton().getCountTimeStringBySecs(timeWaitPlayer, "%H:%M:%S");
+	if (!lbTimeWaitPlayer) {
+		lbTitleWaitPlayer = Label::createWithTTF(Utils::getSingleton().getStringForKey("giai_dau_se_bat_dau_sau"), "fonts/arial.ttf", 40);
+		lbTitleWaitPlayer->setPosition(winSize.width / 2, winSize.height / 2 + 50);
+		lbTitleWaitPlayer->setName("lbTitleWaitPlayer");
+		mLayer->addChild(lbTitleWaitPlayer, constant::GAME_ZORDER_BUTTON);
+		autoScaleNode(lbTitleWaitPlayer);
+
+		lbTimeWaitPlayer = Label::createWithTTF(timeWaitString, "fonts/myriadb.ttf", 50);
+		lbTimeWaitPlayer->setPosition(winSize.width / 2, winSize.height / 2);
+		lbTimeWaitPlayer->setName("lbtimewaitplayer");
+		mLayer->addChild(lbTimeWaitPlayer, constant::GAME_ZORDER_BUTTON);
+		autoScaleNode(lbTimeWaitPlayer);
+
+		DelayTime *delayTime = DelayTime::create(1);
+		CallFunc *func = CallFunc::create([=]() {
+			if (timeWaitPlayer > 1) {
+				timeWaitPlayer -= 1;
+				string str = Utils::getSingleton().getCountTimeStringBySecs(timeWaitPlayer, "%H:%M:%S");
+				lbTimeWaitPlayer->setString(str);
+			} else {
+				lbTitleWaitPlayer->setVisible(false);
+				lbTimeWaitPlayer->setVisible(false);
+				lbTimeWaitPlayer->setString("");
+				lbTimeWaitPlayer->pause();
+			}
+		});
+		Action* actionCount = RepeatForever::create(Sequence::createWithTwoActions(delayTime, func));
+		lbTimeWaitPlayer->runAction(actionCount);
+	} else {
+		lbTimeWaitPlayer->setString(timeWaitString);
+		lbTimeWaitPlayer->setVisible(true);
+		lbTimeWaitPlayer->resume();
+		lbTitleWaitPlayer->setVisible(true);
+	}
+}
+
 bool GameScene::onKeyBack()
 {
 	bool canBack = BaseScene::onKeyBack();
@@ -3373,11 +3539,6 @@ bool GameScene::onKeyBack()
 		return false;
 	}
 	return canBack;
-}
-
-void GameScene::onKeyHome()
-{
-	//Need to do NOthing
 }
 
 void GameScene::onBackScene()
@@ -3389,6 +3550,9 @@ void GameScene::onBackScene()
 	} else {
 		hasRegisterOut = !hasRegisterOut;
 		showSystemNotice(Utils::getSingleton().getStringForKey((hasRegisterOut ? "" : "huy_") + string("dang_ky_roi_ban_khi_het_van")));
+		if (isTourGame) {
+			SFSRequest::getSingleton().RequestTourLeaveTable();
+		}
 	}
 }
 
@@ -3900,6 +4064,14 @@ void GameScene::initSettingsPopup()
 	btnNo->setOpacity(0);
 	btnNo->setName("btnno");
 	popupSettings->addChild(btnNo);
+
+	ui::Button* btnNoAutoReady = ui::Button::create("white.png", "white.png", "", ui::Widget::TextureResType::PLIST);
+	btnNoAutoReady->setContentSize(Size(500, 50));
+	btnNoAutoReady->setPosition(cbs[3]->getPosition());
+	btnNoAutoReady->setScale9Enabled(true);
+	btnNoAutoReady->setOpacity(0);
+	btnNoAutoReady->setName("btnnoautoready");
+	popupSettings->addChild(btnNoAutoReady);
 }
 
 void GameScene::initTableInfo()
@@ -3915,7 +4087,7 @@ void GameScene::initTableInfo()
 	tableInfo->addChild(bg);*/
 
 	Label* lbTableName = Label::createWithTTF("", "fonts/myriad.ttf", 25);
-	lbTableName->setPosition(-90, 15);
+	lbTableName->setPosition(-90, isTourGame ? 25 : 15);
 	lbTableName->setAnchorPoint(Vec2(0, .5f));
 	lbTableName->setName("lbname");
 	tableInfo->addChild(lbTableName);
@@ -3925,6 +4097,7 @@ void GameScene::initTableInfo()
 	lbTableBet->setAnchorPoint(Vec2(0, .5f));
 	lbTableBet->setColor(Color3B::YELLOW);
 	lbTableBet->setName("lbbet");
+	lbTableBet->setVisible(!isTourGame);
 	tableInfo->addChild(lbTableBet);
 
 	Sprite* icMoney = Sprite::createWithSpriteFrameName("icon_gold.png");
@@ -3934,10 +4107,53 @@ void GameScene::initTableInfo()
 	tableInfo->addChild(icMoney);
 
 	Label* lbType = Label::createWithTTF("", "fonts/myriad.ttf", 25);
-	lbType->setPosition(lbTableName->getPosition() + Vec2(0, -30));
+	lbType->setPosition(lbTableName->getPosition() + Vec2(0, isTourGame ? -25 : -30));
 	lbType->setAnchorPoint(Vec2(0, .5f));
 	lbType->setName("lbtype");
 	tableInfo->addChild(lbType);
+
+	long maxMatch = Utils::getSingleton().tourInfo.MaxMatch;
+	Label* lbMatch = Label::create(Utils::getSingleton().getStringForKey("van") + ": 0/ " + to_string(maxMatch), "fonts/myriadb.ttf", 18);
+	lbMatch->setPosition(-30, 25);
+	lbMatch->setAnchorPoint(Vec2(0, .5f));
+	lbMatch->setColor(Color3B(255, 200, 0));
+	lbMatch->setName("lbmatch");
+	lbMatch->setVisible(isTourGame);
+	tableInfo->addChild(lbMatch);
+
+	if (isTourGame) {
+		time_t rawtime;
+		time(&rawtime);
+		TourInfo tour = Utils::getSingleton().tourInfo;
+		tourTimeRemain = tour.Race1TimeEnd - rawtime + Utils::getSingleton().serverTimeDiff;
+		if (tourTimeRemain <= 0) {
+			tourTimeRemain = tour.Race2TimeEnd - rawtime + Utils::getSingleton().serverTimeDiff;
+		}
+		string timestr = Utils::getSingleton().getStringForKey("con") + ": " + Utils::getSingleton().getCountTimeStringBySecs(tourTimeRemain, "%H:%M:%S");
+
+		Label* lbTourTime = Label::create(timestr, "fonts/myriadb.ttf", 18);
+		lbTourTime->setPosition(-90, -25);
+		lbTourTime->setAnchorPoint(Vec2(0, .5f));
+		lbTourTime->setColor(Color3B(255, 200, 0));
+		lbTourTime->setName("lbtourtime");
+		lbTourTime->setVisible(isTourGame);
+		tableInfo->addChild(lbTourTime);
+
+		DelayTime *delayTime = DelayTime::create(1);
+		CallFunc *func = CallFunc::create([=]() {
+			if (tourTimeRemain > 1) {
+				tourTimeRemain -= 1;
+				string str = Utils::getSingleton().getStringForKey("con") + ": " + Utils::getSingleton().getCountTimeStringBySecs(tourTimeRemain, "%H:%M:%S");
+				lbTourTime->setString(str);
+			} else {
+				lbTourTime->stopActionByTag(3);
+				lbTourTime->setString(Utils::getSingleton().getStringForKey("con") + ": 00:00:00");
+			}
+		});
+		Action* actionCount = RepeatForever::create(Sequence::createWithTwoActions(delayTime, func));
+		actionCount->setTag(3);
+		lbTourTime->runAction(actionCount);
+	}
 }
 
 void GameScene::initCofferEffects()

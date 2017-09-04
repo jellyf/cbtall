@@ -14,6 +14,7 @@ using namespace cocos2d;
 
 void LoginScene::onInit()
 {
+	setTag(constant::SCENE_LOGIN);
 	BaseScene::onInit();
 	Utils::getSingleton().loginType = -1;
 	Utils::getSingleton().SoundEnabled = UserDefault::getInstance()->getBoolForKey(constant::KEY_SOUND.c_str(), true);
@@ -206,9 +207,8 @@ void LoginScene::registerEventListenner()
 {
 	BaseScene::registerEventListenner();
 	EventHandler::getSingleton().onConnected = std::bind(&LoginScene::onConnected, this);
-    EventHandler::getSingleton().onLoginZone = std::bind(&LoginScene::onLoginZone, this);
+	EventHandler::getSingleton().onLoginZone = std::bind(&LoginScene::onLoginZone, this);
     EventHandler::getSingleton().onConnectionException = std::bind(&LoginScene::onConnectionException, this);
-	EventHandler::getSingleton().onConnectionLost = std::bind(&LoginScene::onConnectionLost, this, std::placeholders::_1);
 	EventHandler::getSingleton().onConfigZoneReceived = std::bind(&LoginScene::onConfigZoneReceived, this);
 	EventHandler::getSingleton().onErrorSFSResponse = std::bind(&LoginScene::onErrorResponse, this, std::placeholders::_1, std::placeholders::_2);
 	EventHandler::getSingleton().onUserDataMeSFSResponse = std::bind(&LoginScene::onUserDataMeResponse, this);
@@ -221,7 +221,6 @@ void LoginScene::unregisterEventListenner()
 	BaseScene::unregisterEventListenner();
 	EventHandler::getSingleton().onConnected = NULL;
 	EventHandler::getSingleton().onLoginZone = NULL;
-	EventHandler::getSingleton().onConnectionLost = NULL;
 	EventHandler::getSingleton().onConfigZoneReceived = NULL;
 	EventHandler::getSingleton().onErrorSFSResponse = NULL;
 	EventHandler::getSingleton().onUserDataMeSFSResponse = NULL;
@@ -274,8 +273,9 @@ void LoginScene::onConnectionException()
     }
 }
 
-void LoginScene::onConnectionLost(std::string reason)
+bool LoginScene::onConnectionLost(std::string reason)
 {
+	if(BaseScene::onConnectionLost(reason)) return true;
 	isLogedInZone = false;
 	if (isReconnecting) {
 		Utils::getSingleton().connectZoneByIndex(tmpZoneIndex / 10, tmpZoneIndex % 10);
@@ -283,6 +283,7 @@ void LoginScene::onConnectionLost(std::string reason)
         hideWaiting();
         showPopupNotice(Utils::getSingleton().getStringForKey("connection_failed"), [=]() {});
     }
+	return true;
 }
 
 void LoginScene::onConnectionFailed()
@@ -356,9 +357,9 @@ void LoginScene::onLoginFacebook(std::string token)
 	}
 }
 
-void LoginScene::onErrorResponse(unsigned char code, std::string msg)
+bool LoginScene::onErrorResponse(unsigned char code, std::string msg)
 {
-	if (code == 49) return;
+	if (code == 49) return false;
 	hideWaiting();
 	if (code == 48) {
 		loginNode->setVisible(true);
@@ -367,9 +368,10 @@ void LoginScene::onErrorResponse(unsigned char code, std::string msg)
 		tfPassword->setText(tfResPass->getText());
 		Utils::getSingleton().saveUsernameAndPassword(tfUsername->getText(), tfPassword->getText());
 	}
-	if (msg.length() == 0) return;
+	if (msg.length() == 0) return false;
 	showPopupNotice(msg, [=]() {});
 	fbToken = "";
+	return true;
 }
 
 void LoginScene::onHttpResponse(int tag, std::string content)
@@ -380,7 +382,7 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	}
 	if (tag != constant::TAG_HTTP_GAME_CONFIG) return;
 	if (content.length() == 0) {
-		onHttpResponseFailed();
+		onHttpResponseFailed(tag);
 		return;
 	}
 	rapidjson::Document d;
@@ -391,7 +393,7 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 		"smsVT", "smsVNPVMS", "smsKH", "smsMK", "fb", "a", "i", "updatenow", "inapp", "invite" };
 	for (string k : keys) {
 		if (d.FindMember(k.c_str()) == d.MemberEnd()) {
-			onHttpResponseFailed();
+			onHttpResponseFailed(tag);
 			return;
 		}
 	}
@@ -433,6 +435,12 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 		btnForgotPass->setVisible(true);
 		lbBtnForgotPass->setVisible(true);
 		Utils::getSingleton().downloadPlistTextures();
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+		SFSRequest::getSingleton().RequestHttpGet(Utils::getSingleton().textureHost + "vi2.xml", constant::TAG_HTTP_VILANG);
+#else
+		string strVi = FileUtils::getInstance()->getStringFromFile("vi2.xml");
+		onHttpResponse(constant::TAG_HTTP_VILANG, strVi);
+#endif
 	}
 	//string location = Utils::getSingleton().getUserCountry();
 	//Utils::getSingleton().gameConfig.pmE = config.pmE && location.compare("vn") == 0;
@@ -462,8 +470,9 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	//hideWaiting();
 }
 
-void LoginScene::onHttpResponseFailed()
+void LoginScene::onHttpResponseFailed(int tag)
 {
+	if (tag != constant::TAG_HTTP_GAME_CONFIG) return;
 	if (currentConfigLink == 0) {
 		currentConfigLink = 1;
 		hideWaiting();
@@ -684,18 +693,14 @@ void LoginScene::initRegisterNode()
 void LoginScene::requestGameConfig(bool realConfig)
 {
 	showWaiting(60);
-	SFSRequest::getSingleton().RequestHttpGet("http://ip171.api1chan.info/configcv2.txt", constant::TAG_HTTP_GAME_CONFIG);
+	//SFSRequest::getSingleton().RequestHttpGet("http://ip171.api1chan.info/configcv2.txt", constant::TAG_HTTP_GAME_CONFIG);
 	//SFSRequest::getSingleton().RequestHttpGet("http://chanvuong1.info/config/configchan.txt", constant::TAG_HTTP_GAME_CONFIG);
-	//SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
+	SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
 	//SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", constant::TAG_HTTP_GAME_CONFIG);
 }
 
 void LoginScene::loadTextureCache()
 {
-	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA8888);
-	Director::getInstance()->getTextureCache()->addImageAsync("main.png", [=](Texture2D* texture) {
-		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("main.plist");
-	});
 	Director::getInstance()->getTextureCache()->addImageAsync("game.png", [=](Texture2D* texture) {
 		SpriteFrameCache::getInstance()->addSpriteFramesWithFile("game.plist");
 	});

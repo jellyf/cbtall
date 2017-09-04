@@ -19,6 +19,8 @@ public:
     
 	cocos2d::SpriteFrame* getDownloadedTextureAsSpriteFrame(std::string key);
 	AppellationData& getAppellationByLevel(int level);
+	ZoneData& getZoneByIndex(int moneyType, int index);
+	ZoneData& getCurrentZone();
     std::string formatMoneyWithComma(double money);
 	std::string getStringForKey(std::string key);
 	std::string replaceString(std::string str, std::string strSearch, std::string strReplace);
@@ -29,6 +31,8 @@ public:
 	std::string getDeviceId();
 	std::string getCurrentZoneName();
 	std::string getFeedbackUrl();
+	std::string getSystemTimeStringBySecs(double secs, char *fm);
+	std::string getCountTimeStringBySecs(double secs, char *fm);
 	double getCurrentSystemTimeInSecs();
 	int getCurrentZoneIndex();
 	bool isEmailValid(std::string email);
@@ -38,7 +42,6 @@ public:
 	bool ispmE();
 	bool isSoloGame();
 	bool isTourGame();
-	void onHttpResponse(int tag, std::string content);
 	void setPmEByLogin(bool pme);
 	void split(const std::string &s, char delim, std::vector<std::string> &elems);
 	void replaceScene(cocos2d::Scene* scene);
@@ -72,6 +75,8 @@ public:
 	void createAppellations();
 	void addViLangFromData(std::string data);
 	void requestViLangData();
+	void setServerTime(double svTime);
+	void onHttpResponse(int tag, std::string content);
 public:
 	cocos2d::Scene* currentScene;
 	UserData userDataMe;
@@ -80,6 +85,9 @@ public:
 	LobbyListTable lobbyListTable;
 	LobbyListRoomType lobbyListRoomType;
 	TableReconnectData tableReconnectData;
+	TourInfo tourInfo;
+	ZoneData currentZone;
+	std::vector<std::pair<unsigned char, std::string>> cachedErrors;
     std::vector<std::vector<ZoneData>> zones;
     std::vector<ProductData> products;
 	std::vector<EventData> events;
@@ -95,11 +103,15 @@ public:
 	std::string feedbackUrl;
 	std::string chosenProviderCard = "";
 	std::string chosenProviderSms = "";
+	std::string tourGuide;
+	std::string tourRoom;
+	double serverTime;
+	double serverTimeDiff;
 	double timeStartReconnect;
+	double tourRemindId = 0;
 	long cofferMoney;
 	long currentZonePort;
 	int currentRoomId;
-	int currentLobbyId;
 	int loginType;
 	int currentEventPosX;
 	int moneyType;
@@ -111,6 +123,7 @@ public:
 	bool allowEventPopup;
 	bool hasShowEventPopup;
 	bool isViLangReady;
+	bool isRegisterTour;
 private:
 	cocos2d::ValueMap viLang;
 	std::vector<AppellationData> appellations;

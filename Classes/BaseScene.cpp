@@ -12,6 +12,30 @@
 using namespace std;
 using namespace cocos2d;
 
+bool CoverLayer::init() {
+	if (!cocos2d::LayerColor::initWithColor(cocos2d::Color4B(0, 0, 0, 0)))
+	{
+		return false;
+	}
+
+	auto director = cocos2d::Director::getInstance();
+	cocos2d::Size size = director->getWinSize();
+
+	this->setContentSize(size);
+	this->setOpacity(128);
+
+	auto touchListener = cocos2d::EventListenerTouchOneByOne::create();
+	touchListener->setSwallowTouches(true);
+	touchListener->onTouchBegan = CC_CALLBACK_2(CoverLayer::onTouch, this);
+	director->getEventDispatcher()->addEventListenerWithSceneGraphPriority(touchListener, this);
+	return true;
+}
+
+bool CoverLayer::onTouch(cocos2d::Touch* touch, cocos2d::Event* event)
+{
+	return this->isVisible();
+}
+
 BaseScene::BaseScene()
 {
 }
@@ -59,8 +83,9 @@ void BaseScene::onEnter()
 {
 	Scene::onEnter();
 	bool ispmE = Utils::getSingleton().ispmE();
-	isPopupReady = Utils::getSingleton().downloadedPlistTexture >= 2 || !Utils::getSingleton().ispmE();
-	myRealMoney = Utils::getSingleton().userDataMe.MoneyReal;
+    myRealMoney = Utils::getSingleton().userDataMe.MoneyReal;
+    isPopupReady = Utils::getSingleton().downloadedPlistTexture >= 2
+    || (!ispmE && Utils::getSingleton().gameConfig.host.length() > 0);
 
 	mLayer = Layer::create();
 	addChild(mLayer, 10);
@@ -79,11 +104,15 @@ void BaseScene::onEnter()
 		mLayer->setScaleY(scaleScene.y);
 	}
 
-	splash = ui::Scale9Sprite::createWithSpriteFrameName("white.png");
+	/*splash = ui::Scale9Sprite::createWithSpriteFrameName("white.png");
 	splash->setContentSize(Size(1500, 1000));
 	splash->setPosition(winSize.width / 2, winSize.height / 2);
 	splash->setColor(Color3B::BLACK);
 	splash->setOpacity(150);
+	splash->setVisible(false);
+	mLayer->addChild(splash);*/
+
+	splash = CoverLayer::create();
 	splash->setVisible(false);
 	mLayer->addChild(splash);
 
@@ -135,6 +164,7 @@ void BaseScene::onEnter()
 	registerEventListenner();
 	Utils::getSingleton().onInitSceneCompleted();
 	SFSResponse::getSingleton().RunCachedResponses();
+	processCachedErrors();
 	scheduleUpdate();
 }
 
@@ -159,8 +189,11 @@ void BaseScene::registerEventListenner()
 	EventHandler::getSingleton().onPingPong = std::bind(&BaseScene::onPingPong, this, std::placeholders::_1);
 	EventHandler::getSingleton().onConnected = bind(&BaseScene::onConnected, this);
 	EventHandler::getSingleton().onConnectionFailed = std::bind(&BaseScene::onConnectionFailed, this);
+	EventHandler::getSingleton().onConnectionLost = std::bind(&BaseScene::onConnectionLost, this, std::placeholders::_1);
 	EventHandler::getSingleton().onLoginZone = bind(&BaseScene::onLoginZone, this);
 	EventHandler::getSingleton().onLoginZoneError = bind(&BaseScene::onLoginZoneError, this, placeholders::_1, placeholders::_2);
+	EventHandler::getSingleton().onJoinRoom = bind(&BaseScene::onJoinRoom, this, placeholders::_1, placeholders::_2);
+	EventHandler::getSingleton().onJoinRoomError = bind(&BaseScene::onJoinRoomError, this, placeholders::_1);
 	EventHandler::getSingleton().onUserDataMeSFSResponse = std::bind(&BaseScene::onUserDataMeResponse, this);
 	EventHandler::getSingleton().onRankDataSFSResponse = std::bind(&BaseScene::onRankDataResponse, this, std::placeholders::_1);
 	EventHandler::getSingleton().onRankWinDataSFSResponse = std::bind(&BaseScene::onRankWinDataResponse, this, std::placeholders::_1);
@@ -170,9 +203,12 @@ void BaseScene::registerEventListenner()
 	EventHandler::getSingleton().onCofferMoneySFSResponse = bind(&BaseScene::onCofferMoneyResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onCofferHistorySFSResponse = bind(&BaseScene::onCofferHistoryResponse, this, placeholders::_1);
 	EventHandler::getSingleton().onDownloadedPlistTexture = bind(&BaseScene::onDownloadedPlistTexture, this, placeholders::_1);
+	EventHandler::getSingleton().onTourWinnersSFSResponse = bind(&BaseScene::onTourWinnersResponse, this, placeholders::_1);
+	EventHandler::getSingleton().onTourRoomToJoinSFSResponse = bind(&BaseScene::onTourRoomToJoin, this, placeholders::_1);
+	EventHandler::getSingleton().onTourInfoSFSResponse = bind(&BaseScene::onTourInfoResponse, this, placeholders::_1);
 
-	SFSRequest::getSingleton().onHttpResponseFailed = std::bind(&BaseScene::onHttpResponseFailed, this);
-	SFSRequest::getSingleton().onHttpResponse = std::bind(&BaseScene::onHttpResponse, this, std::placeholders::_1, std::placeholders::_2);
+	SFSRequest::getSingleton().mapHttpResponseFailedCallbacks["scene"] = std::bind(&BaseScene::onHttpResponseFailed, this, std::placeholders::_1);
+	SFSRequest::getSingleton().mapHttpResponseCallbacks["scene"] = std::bind(&BaseScene::onHttpResponse, this, std::placeholders::_1, std::placeholders::_2);
 }
 
 void BaseScene::unregisterEventListenner()
@@ -181,6 +217,11 @@ void BaseScene::unregisterEventListenner()
 	EventHandler::getSingleton().onApplicationWillEnterForeground = NULL;
 	EventHandler::getSingleton().onPingPong = NULL;
 	EventHandler::getSingleton().onConnectionFailed = NULL;
+	EventHandler::getSingleton().onConnectionLost = NULL;
+	EventHandler::getSingleton().onLoginZone = NULL;
+	EventHandler::getSingleton().onLoginZoneError = NULL;
+	EventHandler::getSingleton().onJoinRoom = NULL;
+	EventHandler::getSingleton().onJoinRoomError = NULL;
 	EventHandler::getSingleton().onUserDataMeSFSResponse = NULL;
 	EventHandler::getSingleton().onRankDataSFSResponse = NULL;
 	EventHandler::getSingleton().onRankWinDataSFSResponse = NULL;
@@ -190,9 +231,12 @@ void BaseScene::unregisterEventListenner()
 	EventHandler::getSingleton().onCofferMoneySFSResponse = NULL;
 	EventHandler::getSingleton().onCofferHistorySFSResponse = NULL;
 	EventHandler::getSingleton().onDownloadedPlistTexture = NULL;
+	EventHandler::getSingleton().onTourWinnersSFSResponse = NULL;
+	EventHandler::getSingleton().onTourRoomToJoinSFSResponse = NULL;
+	EventHandler::getSingleton().onTourInfoSFSResponse = NULL;
 
-	SFSRequest::getSingleton().onHttpResponse = NULL;
-	SFSRequest::getSingleton().onHttpResponseFailed = NULL;
+	SFSRequest::getSingleton().mapHttpResponseFailedCallbacks.erase("scene");
+	SFSRequest::getSingleton().mapHttpResponseCallbacks.erase("scene");
 }
 
 bool BaseScene::onTouchBegan(Touch * touch, Event * _event)
@@ -231,12 +275,14 @@ void BaseScene::onApplicationDidEnterBackground()
 {
 	spNetwork->pause();
 	lbNetwork->pause();
+	if (connectionKeeper) connectionKeeper->pause();
 }
 
 void BaseScene::onApplicationWillEnterForeground()
 {
 	spNetwork->resume();
 	lbNetwork->resume();
+	if (connectionKeeper) connectionKeeper->resume();
 }
 
 void BaseScene::showPopupNotice(std::string msg, std::function<void()> func, bool showBtnClose, int timeToHide)
@@ -255,12 +301,76 @@ void BaseScene::showPopupNotice(std::string msg, std::function<void()> func, boo
 	}, false);
 
 	if (timeToHide > 0) {
-		DelayTime* delay = DelayTime::create(15);
+		DelayTime* delay = DelayTime::create(timeToHide);
 		CallFunc* funcHide = CallFunc::create([=]() {
 			hidePopup(popupNotice);
 		});
 		popupNotice->runAction(Sequence::createWithTwoActions(delay, funcHide));
 	}
+}
+
+void BaseScene::showPopupNoticeMini(std::string msg, std::function<void()> func, Vec2 pos, bool showBtnClose, int timeToHide)
+{
+	Node* popupNotice = createPopupNoticeMini();
+	popupNotice->setPosition(pos);
+	runEffectShowPopup(popupNotice);
+	popupNotice->setVisible(true);
+
+	Label* lbcontent = (Label*)popupNotice->getChildByName("lbcontent");
+	lbcontent->setString(msg);
+	ui::Button* btnClose = (ui::Button*)popupNotice->getChildByName("btnclose");
+	btnClose->setVisible(showBtnClose);
+	ui::Button* btnSubmit = (ui::Button*)popupNotice->getChildByName("btnsubmit");
+	addTouchEventListener(btnSubmit, [=]() {
+		popupNotice->stopAllActions();
+		func();
+		runEffectHidePopup(popupNotice);
+	}, false);
+
+	if (timeToHide > 0) {
+		DelayTime* delay = DelayTime::create(timeToHide);
+		CallFunc* funcHide = CallFunc::create([=]() {
+			runEffectHidePopup(popupNotice);
+		});
+		popupNotice->runAction(Sequence::createWithTwoActions(delay, funcHide));
+	}
+}
+
+void BaseScene::showPopupConfirm(std::string msg, std::string titleOK, std::string titleCancel, std::function<void()> func)
+{
+	Node* popupConfirm = createPopupConfirm();
+	showPopup(popupConfirm);
+	Label* lbcontent = (Label*)popupConfirm->getChildByName("lbcontent");
+	lbcontent->setString(msg);
+	ui::Button* btnCancel = (ui::Button*)popupConfirm->getChildByName("btnclose");
+	btnCancel->setTitleText(titleCancel);
+	ui::Button* btnSubmit = (ui::Button*)popupConfirm->getChildByName("btnsubmit");
+	btnSubmit->setTitleText(titleOK);
+	addTouchEventListener(btnSubmit, [=]() {
+		popupConfirm->stopAllActions();
+		func();
+		hidePopup(popupConfirm);
+	}, false);
+}
+
+void BaseScene::showPopupConfirmMini(std::string msg, std::string titleOK, std::string titleCancel, cocos2d::Vec2 pos, std::function<void()> func)
+{
+	Node* popupConfirm = createPopupConfirmMini();
+	popupConfirm->setPosition(pos);
+	runEffectShowPopup(popupConfirm);
+	popupConfirm->setVisible(true);
+
+	Label* lbcontent = (Label*)popupConfirm->getChildByName("lbcontent");
+	lbcontent->setString(msg);
+	ui::Button* btnCancel = (ui::Button*)popupConfirm->getChildByName("btnclose");
+	btnCancel->setTitleText(titleCancel);
+	ui::Button* btnSubmit = (ui::Button*)popupConfirm->getChildByName("btnsubmit");
+	btnSubmit->setTitleText(titleOK);
+	addTouchEventListener(btnSubmit, [=]() {
+		popupConfirm->stopAllActions();
+		func();
+		hidePopup(popupConfirm);
+	}, false);
 }
 
 void BaseScene::showSplash()
@@ -300,7 +410,7 @@ void BaseScene::showWaiting(int time)
 				} else {
 					Utils::getSingleton().goToLoginScene();
 				}
-			}, true);
+			});
 		}
 	});
 	spWaiting->getParent()->runAction(Sequence::create(delay, func, nullptr));
@@ -748,9 +858,9 @@ void BaseScene::handleClientDisconnectionReason(std::string reason)
 
 void BaseScene::addTouchEventListener(ui::Button* btn, std::function<void()> func, bool isNew)
 {
-	if (isNew) {
+	/*if (isNew) {
 		buttons.push_back(btn);
-	}
+	}*/
 	btn->addTouchEventListener([=](Ref* ref, ui::Widget::TouchEventType type) {
 		switch (type)
 		{
@@ -768,30 +878,95 @@ void BaseScene::addTouchEventListener(ui::Button* btn, std::function<void()> fun
 	});
 }
 
-void BaseScene::onErrorResponse(unsigned char code, std::string msg)
+bool BaseScene::onErrorResponse(unsigned char code, std::string msg)
 {
+	CCLOG("%d %s", (int)code, msg.c_str());
 	if (code == 51 && isChangingDisplayName) {
 		if (popupDisplayName != NULL) {
 			hidePopup(popupDisplayName);
 		}
 		setDisplayName(tmpDisplayName);
 		isChangingDisplayName = false;
-		return;
+		return true;
 	}
-	else if (code == 38) {
+	if (code == 34) {
+		//Bat dau dang ky giai dau
+		Utils::getSingleton().tourInfo.CanRegister = true;
+		if (getTag() == constant::SCENE_GAME) {
+			showPopupConfirmMini(msg, Utils::getSingleton().getStringForKey("dang_ky"), 
+				Utils::getSingleton().getStringForKey("bo_qua"), Vec2(200, 200), [=]() {
+				Utils::getSingleton().tourInfo.CanRegister = false;
+				SFSRequest::getSingleton().RequestRegisterTour();
+			});
+		} else {
+			showPopupConfirm(msg, Utils::getSingleton().getStringForKey("dang_ky"), 
+				Utils::getSingleton().getStringForKey("bo_qua"), [=]() {
+				if (popupTour && popupTour->isVisible()) {
+					registerTour();
+				} else {
+					showPopupTour();
+					popupTour->getChildByName("btnjoin")->setVisible(false);
+					ui::Button* btnReg = (ui::Button*)popupTour->getChildByName("btnregister");
+					btnReg->setVisible(true);
+					//btnReg->setColor(Color3B::WHITE);
+					btnReg->setOpacity(255);
+					btnReg->setTouchEnabled(true);
+				}
+			});
+		}
+		if (popupTour) {
+			popupTour->getChildByName("btnjoin")->setVisible(false);
+			ui::Button* btnReg = (ui::Button*)popupTour->getChildByName("btnregister");
+			btnReg->setVisible(true);
+			//btnReg->setColor(Color3B::WHITE);
+			btnReg->setOpacity(255);
+			btnReg->setTouchEnabled(true);
+		}
+		return true;
+	}
+	if (code == 37) {
+		//Bat dau tham gia giai dau
+		if (getTag() == constant::SCENE_GAME) {
+			showPopupConfirmMini(msg, Utils::getSingleton().getStringForKey("tham_gia"), 
+				Utils::getSingleton().getStringForKey("bo_qua"), Vec2(200, 200), [=]() {
+				joinIntoTour();
+			});
+		} else {
+			showPopupConfirm(msg, Utils::getSingleton().getStringForKey("tham_gia"),
+				Utils::getSingleton().getStringForKey("bo_qua"), [=]() {
+				joinIntoTour();
+			});
+		}
+		if (popupTour) {
+			ui::Button* btnJoin = (ui::Button*)popupTour->getChildByName("btnjoin");
+			btnJoin->setVisible(true);
+			//btnJoin->setColor(Color3B::WHITE);
+			btnJoin->setOpacity(255);
+			btnJoin->setTouchEnabled(true);
+		}
+		return true;
+	}
+	if (code == 38) {
 		isOverlapLogin = true;
-		return;
 	}
 	else if (code == 33 && isChangingPassword) {
 		isChangingPassword = false;
 		UserDefault::getInstance()->setStringForKey(constant::KEY_PASSWORD.c_str(), newPassword);
 	}
+	if (isJoiningTour) {
+		Utils::getSingleton().goToLobbyScene();
+		return true;
+	}
+	return false;
 }
 
 void BaseScene::onConnected()
 {
 	if (isReconnecting) {
 		Utils::getSingleton().reloginZone();
+	} else if (isJoiningTour) {
+		Utils::getSingleton().loginZoneByIndex(1, tmpZoneId);
+		tmpZoneId = -1;
 	}
 }
 
@@ -811,6 +986,15 @@ void BaseScene::onConnectionFailed()
 	this->runAction(Sequence::createWithTwoActions(delay, func));
 }
 
+bool BaseScene::onConnectionLost(std::string reason)
+{
+	if (isJoiningTour) {
+		Utils::getSingleton().connectZoneByIndex(1, tmpZoneId);
+		return true;
+	}
+	return false;
+}
+
 void BaseScene::onLoginZone()
 {
 	if (isReconnecting) {
@@ -824,6 +1008,15 @@ void BaseScene::onLoginZoneError(short int code, std::string msg)
 		isReconnecting = false;
 		isBackToLogin = true;
 		SFSRequest::getSingleton().Disconnect();
+	} else if (isJoiningTour) {
+		isJoiningTour = false;
+		showWaiting();
+		isPauseApp = true;
+		Utils::getSingleton().currentZoneName = zoneBeforeTour;
+		SFSRequest::getSingleton().Disconnect();
+		showPopupNotice(msg, [=]() {});
+	} else {
+
 	}
 }
 
@@ -832,12 +1025,13 @@ void BaseScene::initHeaderWithInfos()
 	hasHeader = true;
 	bool isRealMoney = Utils::getSingleton().moneyType == 1;
 	bool ispmE = Utils::getSingleton().ispmE();
+	bool isTour = Utils::getSingleton().isTourGame();
 	int posY = winSize.height - 55;
 
 	Sprite* spHeader = Sprite::create("bg_header_bar.png");
 	spHeader->setAnchorPoint(Vec2(0, 1));
 	spHeader->setPosition(0, winSize.height);
-	mLayer->addChild(spHeader);
+	mLayer->addChild(spHeader, constant::MAIN_ZORDER_HEADER);
 
 	ui::Button* btnBack = ui::Button::create("btn_back.png", "", "", ui::Widget::TextureResType::PLIST);
 	btnBack->setPosition(Vec2(60, posY));
@@ -879,6 +1073,17 @@ void BaseScene::initHeaderWithInfos()
 	avarCircle->setScale(.84f);
 	mLayer->addChild(avarCircle, constant::MAIN_ZORDER_HEADER);
 	autoScaleNode(avarCircle);
+
+	bgNoted = Sprite::createWithSpriteFrameName("circle_red.png");
+	bgNoted->setPosition(btnAvar->getPositionX() + 27, btnAvar->getPositionY() + 30);
+	bgNoted->setScale(.5);
+	mLayer->addChild(bgNoted, constant::MAIN_ZORDER_HEADER);
+	autoScaleNode(bgNoted);
+
+	Label* lbNoted = Label::createWithTTF("!", "fonts/myriadb.ttf", 35);
+	lbNoted->setColor(Color3B::WHITE);
+	lbNoted->setPosition(bgNoted->getContentSize().width / 2 - 2, bgNoted->getContentSize().height / 2);
+	bgNoted->addChild(lbNoted, 1);
 
 	lbName = Label::createWithTTF("Name", "fonts/myriadb.ttf", 27);
 	lbName->setAnchorPoint(Vec2(0, .5f));
@@ -958,22 +1163,10 @@ void BaseScene::initHeaderWithInfos()
 	moneyNode->addChild(chosenBg, 1);
 	
 	addTouchEventListener(moneyBg0, [=]() {
-		if (moneyBg0->getTag() == 1) {
-			moneyBg0->setTag(0);
-			moneyBg1->setTag(0);
-			chosenBg->setPosition(spMoneyBg->getPosition() + Vec2(123, 0));
-			onChangeMoneyType(0);
-			//UserDefault::getInstance()->setBoolForKey(constant::KEY_MONEY_TYPE.c_str(), false);
-		}
+		switchMoneyType(0);
 	});
 	addTouchEventListener(moneyBg1, [=]() {
-		if (moneyBg0->getTag() == 0) {
-			moneyBg0->setTag(1);
-			moneyBg1->setTag(1);
-			chosenBg->setPosition(spMoneyBg->getPosition() + Vec2(-123, 0));
-			onChangeMoneyType(1);
-			//UserDefault::getInstance()->setBoolForKey(constant::KEY_MONEY_TYPE.c_str(), true);
-		}
+		switchMoneyType(1);
 	});
 
 	Sprite* iconGold = Sprite::createWithSpriteFrameName("icon_gold.png");
@@ -1013,6 +1206,16 @@ void BaseScene::initHeaderWithInfos()
 		iconGold->setVisible(false);
 		lbGold->setVisible(false);
 		lbCoffer->setVisible(false);
+	}
+	//btnIAP->setVisible(!ispmE);
+	if (isTour) {
+		chosenBg->setOpacity(0);
+		moneyNode->setPosition(posMoney + 130, posY);
+		spMoneyBg->setContentSize(Size(250, 76));
+		spMoneyBg->setPositionX(-125);
+		moneyBg0->setVisible(false);
+		iconSilver->setVisible(false);
+		lbSilver->setVisible(false);
 	}
 }
 
@@ -1084,13 +1287,30 @@ void BaseScene::onKeyHome()
 	pauseApplication();
 }
 
+void BaseScene::onJoinRoom(long roomId, std::string roomName)
+{
+	if (roomName.at(0) == 'g' && roomName.at(2) == 'b') {
+		Utils::getSingleton().goToGameScene();
+	}
+}
+
+void BaseScene::onJoinRoomError(std::string msg)
+{
+	if (isJoiningTour) {
+		Utils::getSingleton().goToLobbyScene();
+	} else {
+		hideWaiting();
+		showPopupNotice(msg, [=]() {}, false);
+	}
+}
+
 void BaseScene::hideSplash()
 {
 	if (isWaiting) return;
-	for (ui::Button* btn : blockedButtons) {
+	/*for (ui::Button* btn : blockedButtons) {
 		btn->setTouchEnabled(true);
 	}
-	blockedButtons.clear();
+	blockedButtons.clear();*/
 	splash->setVisible(false);
 	splash->setLocalZOrder(0);
 }
@@ -1428,6 +1648,172 @@ cocos2d::Node * BaseScene::getPopupNotice()
 	Node* popupNotice = createPopupNotice();
 	vecPopupNotices.pushBack(popupNotice);
 	return popupNotice;
+}
+
+cocos2d::Node * BaseScene::createPopupNoticeMini()
+{
+	Node* popupNotice = nullptr;
+	for (Node* n : vecPopupNoticeMinis) {
+		if (!n->isVisible()) {
+			popupNotice = n;
+			break;
+		}
+	}
+	if (popupNotice == nullptr) {
+		popupNotice = Node::create();
+	}
+
+	popupNotice->setPosition(560, 350);
+	popupNotice->setVisible(false);
+	mLayer->addChild(popupNotice, constant::ZORDER_POPUP_NOTICE);
+	autoScaleNode(popupNotice);
+
+	float bgScale = .6f;
+	Sprite* bg = Sprite::createWithSpriteFrameName("popup_bg.png");
+	bg->setScale(bgScale);
+	popupNotice->addChild(bg);
+
+	Label* lb = Label::createWithTTF("", "fonts/arial.ttf", 25);
+	lb->setAlignment(TextHAlignment::CENTER);
+	lb->setColor(Color3B::WHITE);
+	lb->setWidth(550 * bgScale);
+	lb->setName("lbcontent");
+	popupNotice->addChild(lb);
+
+	ui::Button* btnok = ui::Button::create("btn_submit.png", "btn_submit_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnok->setPosition(Vec2(0, -200 * bgScale));
+	btnok->setName("btnsubmit");
+	btnok->setScale(.8f);
+	addTouchEventListener(btnok, [=]() {});
+	popupNotice->addChild(btnok);
+
+	ui::Button* btndong = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btndong->setPosition(Vec2(310 * bgScale, 170 * bgScale));
+	btndong->setScale(.6f);
+	btndong->setName("btnclose");
+	addTouchEventListener(btndong, [=]() {
+		runEffectHidePopup(popupNotice);
+	});
+	popupNotice->addChild(btndong);
+
+	return popupNotice;
+}
+
+cocos2d::Node * BaseScene::createPopupConfirm()
+{
+	Node* popupConfirm = nullptr;
+	for (Node* n : vecPopupConfirms) {
+		if (!n->isVisible()) {
+			popupConfirm = n;
+			break;
+		}
+	}
+	if (popupConfirm == nullptr) {
+		popupConfirm = Node::create();
+	}
+
+	popupConfirm->setPosition(560, 350);
+	popupConfirm->setVisible(false);
+	mLayer->addChild(popupConfirm, constant::ZORDER_POPUP_NOTICE);
+	autoScaleNode(popupConfirm);
+
+	Sprite* bg = Sprite::createWithSpriteFrameName("popup_bg.png");
+	popupConfirm->addChild(bg);
+
+	Sprite* title = Sprite::createWithSpriteFrameName("title_thongbao.png");
+	title->setPosition(0, 170);
+	//title->setScale(.8f);
+	popupConfirm->addChild(title);
+
+	Label* lb = Label::create();
+	lb->setColor(Color3B::BLACK);
+	lb->setSystemFontSize(30);
+	lb->setWidth(550);
+	lb->setName("lbcontent");
+	lb->setAlignment(TextHAlignment::CENTER);
+	popupConfirm->addChild(lb);
+
+	ui::Button* btnok = ui::Button::create("btn.png", "btn_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnok->setTitleText(Utils::getSingleton().getStringForKey("dang_ky"));
+	btnok->setTitleFontName("fonts/myriad.ttf");
+	btnok->setTitleFontSize(25);
+	btnok->setTitleDeviation(Vec2(0, -5));
+	btnok->setPosition(Vec2(-130, -170));
+	btnok->setName("btnsubmit");
+	addTouchEventListener(btnok, [=]() {});
+	popupConfirm->addChild(btnok);
+
+	ui::Button* btndong = ui::Button::create("btn.png", "btn_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btndong->setTitleText(Utils::getSingleton().getStringForKey("bo_qua"));
+	btndong->setTitleFontName("fonts/myriad.ttf");
+	btndong->setTitleFontSize(25);
+	btndong->setTitleDeviation(Vec2(0, -5));
+	btndong->setPosition(Vec2(130, -170));
+	btndong->setName("btnclose");
+	addTouchEventListener(btndong, [=]() {
+		hidePopup(popupConfirm);
+	});
+	popupConfirm->addChild(btndong);
+
+	return popupConfirm;
+}
+
+cocos2d::Node * BaseScene::createPopupConfirmMini()
+{
+	Node* popupConfirm = nullptr;
+	for (Node* n : vecPopupConfirmMinis) {
+		if (!n->isVisible()) {
+			popupConfirm = n;
+			break;
+		}
+	}
+	if (popupConfirm == nullptr) {
+		popupConfirm = Node::create();
+	}
+
+	popupConfirm->setPosition(560, 350);
+	popupConfirm->setVisible(false);
+	mLayer->addChild(popupConfirm, constant::ZORDER_POPUP_NOTICE);
+	autoScaleNode(popupConfirm);
+
+	float bgScale = .6f;
+	Sprite* bg = Sprite::createWithSpriteFrameName("popup_bg.png");
+	bg->setScale(bgScale);
+	popupConfirm->addChild(bg);
+
+	Label* lb = Label::create();
+	lb->setColor(Color3B::BLACK);
+	lb->setSystemFontSize(25);
+	lb->setWidth(550 * bgScale);
+	lb->setName("lbcontent");
+	lb->setAlignment(TextHAlignment::CENTER);
+	popupConfirm->addChild(lb);
+
+	ui::Button* btnok = ui::Button::create("btn.png", "btn_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btnok->setTitleText(Utils::getSingleton().getStringForKey("dang_ky"));
+	btnok->setTitleFontName("fonts/myriad.ttf");
+	btnok->setTitleFontSize(25);
+	btnok->setTitleDeviation(Vec2(0, -5));
+	btnok->setPosition(Vec2(-130 * .7f, -200 * bgScale));
+	btnok->setName("btnsubmit");
+	btnok->setScale(.8f);
+	addTouchEventListener(btnok, [=]() {});
+	popupConfirm->addChild(btnok);
+
+	ui::Button* btndong = ui::Button::create("btn.png", "btn_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	btndong->setTitleText(Utils::getSingleton().getStringForKey("bo_qua"));
+	btndong->setTitleFontName("fonts/myriad.ttf");
+	btndong->setTitleFontSize(25);
+	btndong->setTitleDeviation(Vec2(0, -5));
+	btndong->setPosition(Vec2(130 * .7f, -200 * bgScale));
+	btndong->setName("btnclose");
+	btndong->setScale(.8f);
+	addTouchEventListener(btndong, [=]() {
+		runEffectHidePopup(popupConfirm);
+	});
+	popupConfirm->addChild(btndong);
+
+	return popupConfirm;
 }
 
 cocos2d::Vec2 BaseScene::getScaleSmoothly(float scale)
@@ -1811,6 +2197,16 @@ void BaseScene::initPopupUserInfo()
         Utils::getSingleton().logoutFacebook();
     });
     popupUserInfo->addChild(btnLogoutFb);
+
+	Sprite* bgNoted = Sprite::createWithSpriteFrameName("circle_red.png");
+	bgNoted->setPosition(btnActive->getContentSize().width - 15, btnActive->getContentSize().height - 15);
+	bgNoted->setScale(.6);
+	btnActive->addChild(bgNoted);
+
+	Label* lbNoted = Label::createWithTTF("!", "fonts/myriadb.ttf", 35);
+	lbNoted->setColor(Color3B::WHITE);
+	lbNoted->setPosition(bgNoted->getContentSize().width / 2, bgNoted->getContentSize().height / 2);
+	bgNoted->addChild(lbNoted, 1);
 
 	int x = 45;
 	Label* lbDName = Label::createWithTTF("Stormus", "fonts/myriadb.ttf", 40);
@@ -2267,16 +2663,193 @@ void BaseScene::initWebView()
 	});
 	nodeWebview->addChild(btnClose);
 }
+	
+void BaseScene::initPopupTour()
+{
+	popupTour = createPopup("title_giaidau.png", true, true);
+	if (!popupTour) return;
+	popupTour->setTag(0);
+
+	Size size = Size(980, 440);
+	Size scrollSize = size - Size(80, 20);
+	Size scrollSize2 = size - Size(270, 20);
+
+	Node* nodeInfo = Node::create();
+	nodeInfo->setPosition(0, -50);
+	nodeInfo->setName("nodeinfo");
+	nodeInfo->setTag(0);
+	popupTour->addChild(nodeInfo);
+
+	Node* nodeHonor = Node::create();
+	nodeHonor->setPosition(0, -50);
+	nodeHonor->setName("nodehonor");
+	nodeHonor->setTag(1);
+	nodeHonor->setVisible(false);
+	popupTour->addChild(nodeHonor);
+
+	Sprite* bgMenu = Sprite::createWithSpriteFrameName("bg_tabs.png");
+	bgMenu->setPosition(0, 200);
+	popupTour->addChild(bgMenu);
+
+	vector<string> texts = { "thong_tin" , "vinh_danh" };
+	int x = -343;
+	int y = bgMenu->getPositionY();
+	for (int i = 0; i < texts.size(); i++) {
+		ui::Button* btn = ui::Button::create(i == 0 ? "box12.png" : "empty.png", "", "", ui::Widget::TextureResType::PLIST);
+		btn->setTitleText(Utils::getSingleton().getStringForKey(texts[i]));
+		btn->setTitleFontName("fonts/myriadb.ttf");
+		btn->setTitleFontSize(35);
+		btn->setTitleColor(i == 0 ? Color3B::YELLOW : Color3B::WHITE);
+		btn->setTitleDeviation(Vec2(0, -5));
+		btn->setContentSize(Size(255, 60));
+		btn->setPosition(Vec2(x, y));
+		btn->setScale9Enabled(true);
+		//btn->setCapInsets(Rect(25, 25, 0, 0));
+		btn->setTag(10 + i);
+		addTouchEventListener(btn, [=]() {
+			if (popupTour->getTag() == i) return;
+			popupTour->getChildByTag(i)->setVisible(true);
+			popupTour->getChildByTag(1 - i)->setVisible(false);
+			ui::Button* btn1 = (ui::Button*)popupTour->getChildByTag(10 + popupTour->getTag());
+			btn1->loadTextureNormal("empty.png", ui::Widget::TextureResType::PLIST);
+			btn->loadTextureNormal("box12.png", ui::Widget::TextureResType::PLIST);
+			btn1->setTitleColor(Color3B::WHITE);
+			btn->setTitleColor(Color3B::YELLOW);
+			popupTour->setTag(i);
+
+			if (i == 1) {
+				SFSRequest::getSingleton().RequestTourWinners();
+				onTourWinnersResponse(vector<TourAward>());
+			}
+		});
+		popupTour->addChild(btn);
+		x += 250;
+	}
+
+	//Node info
+	ui::ScrollView* scrollInfo = ui::ScrollView::create();
+	scrollInfo->setDirection(ui::ScrollView::Direction::VERTICAL);
+	scrollInfo->setBounceEnabled(true);
+	scrollInfo->setPosition(Vec2(-scrollSize.width/2 + 10, -scrollSize.height / 2));
+	scrollInfo->setContentSize(scrollSize);
+	scrollInfo->setScrollBarEnabled(false);
+	scrollInfo->setName("scrollinfo");
+	nodeInfo->addChild(scrollInfo);
+
+	Node* nodeContent = Node::create();
+	nodeContent->setName("nodecontent");
+	scrollInfo->addChild(nodeContent);
+
+	Node* nodelb1 = Node::create();
+	nodelb1->setName("nodecontent1");
+	nodeContent->addChild(nodelb1);
+
+	float n1height = 0;
+	for (int i = 0; i < 12; i++) {
+		string str = Utils::getSingleton().getStringForKey("tour_info_" + to_string(i));
+		Label* lbn1 = Label::createWithTTF(str, "fonts/myriadb.ttf", 22);
+		lbn1->setPosition(0, n1height);
+		lbn1->setAnchorPoint(Vec2(0, 1));
+		lbn1->setColor(Color3B::BLACK);
+		lbn1->setTag(i);
+		nodelb1->addChild(lbn1);
+
+		n1height -= 25.7f;
+	}
+	n1height = -n1height + 26;
+
+	Label* lb2 = Label::create("", "fonts/myriadi.ttf", 25);
+	lb2->setAnchorPoint(Vec2(0, 1));
+	lb2->setColor(Color3B::BLACK);
+	lb2->setName("lbcontent2");
+	lb2->setPosition(0, -n1height);
+	nodeContent->addChild(lb2);
+
+	string info3 = "";
+	Label* lb3 = Label::create(info3, "fonts/myriadb.ttf", 22);
+	lb3->setAnchorPoint(Vec2(0, 1));
+	lb3->setColor(Color3B::BLACK);
+	lb3->setName("lbcontent3");
+	lb3->setWidth(scrollSize.width);
+	lb3->setPosition(350, 0);
+	nodeContent->addChild(lb3);
+
+	//Node history
+	ui::ScrollView* scrollHonor = ui::ScrollView::create();
+	scrollHonor->setDirection(ui::ScrollView::Direction::VERTICAL);
+	scrollHonor->setBounceEnabled(true);
+	scrollHonor->setPosition(Vec2(-450, -scrollSize2.height / 2));
+	scrollHonor->setContentSize(scrollSize2);
+	scrollHonor->setScrollBarEnabled(false);
+	scrollHonor->setName("scrollhonor");
+	nodeHonor->addChild(scrollHonor);
+
+	ui::Button* btnRegister = ui::Button::create("btn.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnRegister->setTitleText(Utils::getSingleton().getStringForKey("dang_ky"));
+	btnRegister->setTitleFontName("fonts/myriadb.ttf");
+	btnRegister->setTitleFontSize(40);
+	btnRegister->setTitleDeviation(Vec2(0, -5));
+	btnRegister->setPosition(Vec2(370, 120));
+	btnRegister->setScale(.9f);
+	btnRegister->setName("btnregister");
+	//btnRegister->setColor(Color3B::GRAY);
+	btnRegister->setOpacity(100);
+	btnRegister->setTouchEnabled(false);
+	popupTour->addChild(btnRegister);
+
+	ui::Button* btnJoin = ui::Button::create("btn.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnJoin->setTitleText(Utils::getSingleton().getStringForKey("tham_gia"));
+	btnJoin->setTitleFontName("fonts/myriadb.ttf");
+	btnJoin->setTitleFontSize(40);
+	btnJoin->setTitleDeviation(Vec2(0, -5));
+	btnJoin->setPosition(btnRegister->getPosition());
+	btnJoin->setScale(.9f);
+	btnJoin->setName("btnjoin");
+	//btnJoin->setColor(Color3B::GRAY);
+	btnJoin->setOpacity(100);
+	btnJoin->setTouchEnabled(false);
+	btnJoin->setVisible(false);
+	popupTour->addChild(btnJoin);
+
+	Label* lbCountDown = Label::createWithTTF("", "fonts/myriadb.ttf", 40);
+	lbCountDown->setPosition(btnRegister->getPositionX() - 60, bgMenu->getPositionY() - 5);
+	lbCountDown->setAnchorPoint(Vec2(0, .5f));
+	lbCountDown->setTag(0);
+	lbCountDown->setName("lbcountdown");
+	popupTour->addChild(lbCountDown);
+
+	Node* nodelbtime = Node::create();
+	nodelbtime->setName("0");
+	nodelbtime->setTag(0);
+	lbCountDown->addChild(nodelbtime);
+
+	addTouchEventListener(btnRegister, [=]() {
+		registerTour();
+	});
+
+	addTouchEventListener(btnJoin, [=]() {
+		joinIntoTour();
+	});
+
+	onTourInfoResponse(Utils::getSingleton().tourInfo);
+}
 
 void BaseScene::initCofferView(Vec2 pos, int zorder, float scale)
 {
 	bool ispmE = Utils::getSingleton().ispmE();
-	ui::Button* btnCoffer = ui::Button::create("coffer.png", "coffer.png", "", ui::Widget::TextureResType::PLIST);
+	string btnSprite = ispmE ? "coffer.png" : "empty.png";
+	ui::Button* btnCoffer = ui::Button::create(btnSprite, btnSprite, "", ui::Widget::TextureResType::PLIST);
 	btnCoffer->setPosition(pos);
 	btnCoffer->setScale(scale);
 	btnCoffer->setVisible(ispmE);
 	addTouchEventListener(btnCoffer, [=]() {
 		showPopupCoffer();
+		//onErrorResponse(34, "Bat dau dang ky giai dau");
+		//onErrorResponse(37, "Bat dau tham gia giai dau");
+		//onErrorResponse(36, "Ban da vao vong trong");
+		//onErrorResponse(80, "Giai dau ket thuc");
+		//showPopupConfirm("Da co the dang ky giai dau", "stormus", "phantom", [=]() {});
+		//showPopupConfirmMini("Da co the dang ky giai dau", "stormus", "phantom", Vec2(200, 200), [=]() {});
 	});
 	mLayer->addChild(btnCoffer, zorder);
 	autoScaleNode(btnCoffer);
@@ -2317,6 +2890,7 @@ void BaseScene::onPingPong(long timems)
 void BaseScene::onUserDataMeResponse()
 {
 	if (!hasHeader) return;
+	bool ispmE = Utils::getSingleton().ispmE();
 	UserData dataMe = Utils::getSingleton().userDataMe;
 	std::string strGold = Utils::getSingleton().formatMoneyWithComma(dataMe.MoneyReal);
 	std::string strSilver = Utils::getSingleton().formatMoneyWithComma(dataMe.MoneyFree);
@@ -2324,6 +2898,8 @@ void BaseScene::onUserDataMeResponse()
 	std::string strLevel = String::createWithFormat((Utils::getSingleton().getStringForKey("level") + ": %d").c_str(), dataMe.Level)->getCString();
 
 	lbName->setString(dataMe.DisplayName);
+	bgNoted->setVisible(ispmE && !dataMe.IsActived);
+	lbName->setString(Utils::getSingleton().userDataMe.DisplayName);
 	lbGold->setString(strGold);
 	lbSilver->setString(strSilver);
 	lbId->setString(strId);
@@ -2473,7 +3049,7 @@ void BaseScene::onPlayLogDataResponse(std::vector<PlayLogData> logs)
 		btn->setPosition(Vec2(scroll->getContentSize().width / 2, height - i * 90));
 		lbs[0]->setString(to_string((popupHistory->getChildByName("nodepage")->getTag() - 1) * 10 + i + 1));
 		lbs[1]->setString(logs[i].Date);
-		lbs[2]->setString(logs[i].Info);
+		lbs[2]->setString(Utils::getSingleton().trim(logs[i].Info));
 		lbs[3]->setString(Utils::getSingleton().formatMoneyWithComma(logs[i].Money));
 		lbs[4]->setString(Utils::getSingleton().formatMoneyWithComma(logs[i].Balance));
 		lbs[5]->setString(to_string(logs[i].GameId));
@@ -2621,6 +3197,253 @@ void BaseScene::onCofferHistoryResponse(std::vector<CofferWinnerData> list)
 	}
 }
 
+void BaseScene::onTourWinnersResponse(std::vector<TourAward> list)
+{
+	/*for (int i = 0; i < 10; i++) {
+		TourAward ta;
+		ta.Id = i;
+		ta.KeyDate = "2017-09-01 22:22:22";
+		int k = rand() % 4;
+		for (int j = 0; j < k; j++) {
+			TourWinner tw;
+			if (j == 0) {
+				tw.LevelTitle = "Giai nhat";
+			} else if (j == 1) {
+				tw.LevelTitle = "Giai nhi";
+			} else if (j == 2) {
+				tw.LevelTitle = "Giai ba";
+			} else if (j == 3) {
+				tw.LevelTitle = "Giai bon";
+			}
+			tw.Name = "Stormus_" + to_string(j);
+			tw.Money = 25000 * (5 - j);
+			ta.Winners.push_back(tw);
+		}
+		list.push_back(ta);
+	}*/
+
+	int nheight = 140;
+	int iheight = 30;
+	Node* nodeHonor = popupTour->getChildByName("nodehonor");
+	ui::ScrollView* scroll = (ui::ScrollView*)nodeHonor->getChildByName("scrollhonor");
+	int height = list.size() * nheight;
+	int width = scroll->getContentSize().width;
+	if (height < scroll->getContentSize().height) {
+		height = scroll->getContentSize().height;
+	}
+	scroll->setInnerContainerSize(Size(width, height));
+	for (int i = 0; i < list.size(); i++) {
+		ui::Scale9Sprite* nbg;
+		Label* lbDate;
+		vector<Node*> inodes;
+		vector<vector<Label*>> lbs;
+		Node* node = scroll->getChildByTag(i);
+		if (node == nullptr) {
+			node = Node::create();
+			node->setTag(i);
+			scroll->addChild(node);
+
+			nbg = ui::Scale9Sprite::createWithSpriteFrameName("box1.png");
+			nbg->setColor(Color3B::BLACK);
+			nbg->setTag(10);
+			node->addChild(nbg);
+
+			lbDate = Label::create("", "fonts/myriadb.ttf", 20);
+			lbDate->setHorizontalAlignment(TextHAlignment::CENTER);
+			lbDate->setPosition(-width / 2 + 90, nheight / 2 - 40);
+			lbDate->setColor(Color3B::BLACK);
+			lbDate->setTag(11);
+			lbDate->setWidth(150);
+			node->addChild(lbDate);
+
+			lbName = Label::create("", "fonts/myriadb.ttf", 20);
+			lbName->setHorizontalAlignment(TextHAlignment::CENTER);
+			lbName->setPosition(-width / 2 + 90, -nheight / 2 + 40);
+			lbName->setColor(Color3B::BLACK);
+			lbName->setTag(12);
+			lbName->setWidth(150);
+			node->addChild(lbName);
+
+			for (int j = 0; j < 4; j++) {
+				Node* inode = Node::create();
+				inode->setTag(j);
+				node->addChild(inode);
+				inodes.push_back(inode);
+
+				vector<Label*> ilbs;
+				Label *lb0 = Label::create("", "fonts/myriadb.ttf", 20);
+				lb0->setPosition(-width / 2 + 200, 0);
+				lb0->setAnchorPoint(Vec2(0, .5f));
+				lb0->setColor(Color3B::BLACK);
+				lb0->setTag(0);
+				inode->addChild(lb0);
+				ilbs.push_back(lb0);
+
+				Label *lb1 = Label::create("", "fonts/myriadb.ttf", 22);
+				lb1->setPosition(lb0->getPositionX() + 130, 0);
+				lb1->setAnchorPoint(Vec2(0, .5f));
+				lb1->setColor(Color3B::BLACK);
+				lb1->setTag(1);
+				inode->addChild(lb1);
+				ilbs.push_back(lb1);
+
+				Label *lb2 = Label::create("", "fonts/myriadb.ttf", 22);
+				lb2->setPosition(lb1->getPositionX() + 270, 0);
+				lb2->setAnchorPoint(Vec2(0, .5f));
+				lb2->setColor(Color3B::BLACK);
+				lb2->setTag(2);
+				inode->addChild(lb2);
+				ilbs.push_back(lb2);
+
+				lbs.push_back(ilbs);
+			}
+		} else {
+			node->setVisible(true);
+			nbg = (ui::Scale9Sprite*)node->getChildByTag(10);
+			lbDate = (Label*)node->getChildByTag(11);
+			lbName = (Label*)node->getChildByTag(12);
+			for (int j = 0; j < 4; j++) {
+				Node* inode = node->getChildByTag(j);
+				vector<Label*> ilbs;
+				int childCount = inode->getChildrenCount();
+				for (int k = 0; k < childCount; k++) {
+					ilbs.push_back((Label*)inode->getChildByTag(k));
+				}
+				inodes.push_back(inode);
+				lbs.push_back(ilbs);
+			}
+		}
+
+		node->setPosition(scroll->getContentSize().width / 2, height - nheight / 2 - i * nheight);
+		nbg->setContentSize(Size(width, nheight));
+		lbDate->setString(list[i].KeyDate);
+		lbName->setString(Utils::getSingleton().getStringForKey("giai_dau") + " " + to_string(list[i].Id));
+		int j = 0;
+		for (; j < list[i].Winners.size(); j++) {
+			inodes[j]->setVisible(true);
+			inodes[j]->setPosition(0, nheight / 2 - iheight / 2 - 10 - j * iheight);
+
+			lbs[j][0]->setString(list[i].Winners[j].LevelTitle);
+			lbs[j][1]->setString(list[i].Winners[j].Name);
+			lbs[j][2]->setString(Utils::getSingleton().formatMoneyWithComma(list[i].Winners[j].Money));
+			cropLabel(lbs[j][1], 200);
+		}
+		for (; j < 4; j++) {
+			inodes[j]->setVisible(false);
+		}
+	}
+	int i = list.size();
+	Node* n;
+	while ((n = scroll->getChildByTag(i++)) != nullptr) {
+		n->setVisible(false);
+	}
+}
+
+void BaseScene::onTourRoomToJoin(std::string room)
+{
+	if (isJoiningTour) {
+		Utils::getSingleton().currentLobbyName = Utils::getSingleton().currentRoomName;
+		SFSRequest::getSingleton().RequestJoinRoom(room);
+	} else {
+		tourGroup = room.substr(0, room.length() - 1);
+		Utils::getSingleton().currentLobbyName = "cho3";
+		prepareTourRoom = tourGroup + "1";
+
+		/*if (Utils::getSingleton().tourRoom.length() > 0) {
+			SFSRequest::getSingleton().RequestJoinRoom(room);
+			Utils::getSingleton().tourRoom = "";
+		}*/
+	}
+}
+
+void BaseScene::onTourInfoResponse(TourInfo tourInfo)
+{
+	if (!popupTour) return;
+	bool isTourExist = tourInfo.Name.length() > 0;
+	Node* nodeInfo = popupTour->getChildByName("nodeinfo");
+	ui::ScrollView* scroll = (ui::ScrollView*)nodeInfo->getChildByName("scrollinfo");
+	Node* nodeContent = scroll->getChildByName("nodecontent");
+	Node* nodeContent1 = nodeContent->getChildByName("nodecontent1");
+	Label* lb2 = (Label*)nodeContent->getChildByName("lbcontent2");
+	Label* lb3 = (Label*)nodeContent->getChildByName("lbcontent3");
+	Label* lbCountDown = (Label*)popupTour->getChildByName("lbcountdown");
+
+	float n1height = 0;
+	nodeContent1->setVisible(isTourExist);
+	if (isTourExist) {
+		vector<Node*> lbs;
+		for (int i = 0; i < 12; i++) {
+			if (i == 10) {
+				nodeContent1->getChildByTag(i)->setVisible(tourInfo.Race3Enabled);
+				if (!tourInfo.Race3Enabled) continue;
+			}
+			lbs.push_back(nodeContent1->getChildByTag(i));
+		}
+		for (Node* lb : lbs) {
+			lb->setPositionY(n1height);
+			n1height -= 25.7f;
+		}
+		n1height = -n1height + 26;
+	}
+
+	string info2 = Utils::getSingleton().tourGuide;
+	if (info2.length() == 0) {
+		SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/main_kinhtuchi/giaidau.txt", constant::TAG_HTTP_TOUR_GUIDE);
+		cocos2d::ValueMap plist = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/tutorials.xml");
+		info2 = plist["loi_dai_2"].asString();
+	}
+	string requiredMatchStr = isTourExist ? to_string(tourInfo.RequiredMatch) : "85";
+	info2 = Utils::getSingleton().replaceString(info2, "[p1]", requiredMatchStr + "%");
+
+	int scrollWidth = scroll->getContentSize().width;
+	lb2->initWithTTF("", isTourExist ? "fonts/myriadi.ttf" : "fonts/arial.ttf", 22);
+	lb2->setWidth(scrollWidth);
+	lb2->setString(info2);
+	lb2->setPosition(0, isTourExist ? -n1height : 0);
+
+	int height = (isTourExist ? n1height : 0) + lb2->getContentSize().height;
+	if (height < scroll->getContentSize().height) {
+		height = scroll->getContentSize().height;
+	}
+	nodeContent->setPosition(0, height);
+	scroll->setInnerContainerSize(Size(scroll->getContentSize().width, height));
+
+	string info3 = "";
+	if (isTourExist) {
+		std::vector<string> playModes = { "win_free", "win_free", "win_411" };
+		string stimeFormat = Utils::getSingleton().getStringForKey("tu_den");
+		string regTimeBegin = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.RegTimeBegin, "%H:%M:%S");
+		string regTimeEnd = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.RegTimeEnd, "%H:%M:%S");
+		string race1TimeBegin = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.Race1TimeBegin, "%H:%M:%S");
+		string race1TimeEnd = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.Race1TimeEnd, "%H:%M:%S");
+		string race2TimeBegin = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.Race2TimeBegin, "%H:%M:%S");
+		string race2TimeEnd = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.Race2TimeEnd, "%H:%M:%S");
+		string race3TimeBegin = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.Race3TimeBegin, "%H:%M:%S");
+		string race3TimeEnd = Utils::getSingleton().getSystemTimeStringBySecs(tourInfo.Race3TimeEnd, "%H:%M:%S");
+		string regTime(String::createWithFormat(stimeFormat.c_str(), regTimeBegin.c_str(), regTimeEnd.c_str())->getCString());
+		string race1Time(String::createWithFormat(stimeFormat.c_str(), race1TimeBegin.c_str(), race1TimeEnd.c_str())->getCString());
+		string race2Time(String::createWithFormat(stimeFormat.c_str(), race2TimeBegin.c_str(), race2TimeEnd.c_str())->getCString());
+		string race3Time(String::createWithFormat(stimeFormat.c_str(), race3TimeBegin.c_str(), race3TimeEnd.c_str())->getCString());
+		info3 += tourInfo.Name + "\n";
+		info3 += to_string((int)tourInfo.MaxUser) + "\n";
+		info3 += Utils::getSingleton().formatMoneyWithComma(tourInfo.MoneyCoc) + " Quan\n";
+		info3 += Utils::getSingleton().formatMoneyWithComma(tourInfo.RequiredMoney) + " Quan\n";
+		info3 += to_string(tourInfo.RequiredLevel) + "\n";
+		//info3 += to_string(tourInfo.RequiredVip) + "\n";
+		info3 += Utils::getSingleton().formatMoneyWithComma(tourInfo.MoneyCuoc) + " Quan\n";
+		//info3 += to_string(tourInfo.MoneyTime) + "s\n";
+		info3 += Utils::getSingleton().getStringForKey(playModes[(int)tourInfo.Mode]) + "\n";
+		info3 += regTime + "\n";
+		info3 += race1Time + "\n";
+		info3 += race2Time + "\n";
+		info3 += (tourInfo.Race3Enabled ? (race3Time + "\n") : "");
+		info3 += to_string(tourInfo.MaxMatch);
+	}
+
+	lb3->setString(info3);
+	calculateTourTimeOnLabel(lbCountDown);
+}
+
 void BaseScene::onDownloadedPlistTexture(int numb)
 {
 	isPopupReady = numb >= 2;
@@ -2642,10 +3465,30 @@ void BaseScene::onHttpResponse(int tag, std::string content)
 			lb->setPosition(0, height);
 			scrollGuide->setInnerContainerSize(Size(scrollGuide->getContentSize().width, height));
 		}
+	} else if (tag == constant::TAG_HTTP_TOUR_GUIDE) {
+		Utils::getSingleton().tourGuide = content;
+		if (!popupTour) return;
+		TourInfo tourInfo = Utils::getSingleton().tourInfo;
+		bool isTourExist = tourInfo.Name.length() > 0;
+		Node* nodeInfo = popupTour->getChildByName("nodeinfo");
+		ui::ScrollView* scroll = (ui::ScrollView*)nodeInfo->getChildByName("scrollinfo");
+		Node* nodeContent = scroll->getChildByName("nodecontent");
+		Label* lb2 = (Label*)nodeContent->getChildByName("lbcontent2");
+
+		string requiredMatchStr = isTourExist ? to_string(tourInfo.RequiredMatch) : "85";
+		string info2 = Utils::getSingleton().replaceString(content, "[p1]", requiredMatchStr + "%");
+		lb2->setString(info2);
+
+		int height = -lb2->getPositionY() + lb2->getContentSize().height;
+		if (height < scroll->getContentSize().height) {
+			height = scroll->getContentSize().height;
+		}
+		nodeContent->setPosition(0, height);
+		scroll->setInnerContainerSize(Size(scroll->getContentSize().width, height));
 	}
 }
 
-void BaseScene::onHttpResponseFailed()
+void BaseScene::onHttpResponseFailed(int tag)
 {
 	CCLOG("falied");
 }
@@ -2723,35 +3566,7 @@ void BaseScene::addBtnChoosePage(int x, int y, cocos2d::Node * node, std::functi
 void BaseScene::setSplashZOrder(int zorder)
 {
 	if (zorder == splash->getLocalZOrder() || !splash->isVisible()) return;
-	bool increase = zorder > splash->getLocalZOrder();
 	splash->setLocalZOrder(zorder);
-	if (increase) {
-		for (ui::Button* btn : buttons) {
-			if (!btn->isTouchEnabled()) continue;
-			Node* n = btn;
-			while (n->getParent() != mLayer) {
-				n = n->getParent();
-			}
-			if (n->isVisible() && n->getLocalZOrder() < splash->getLocalZOrder()) {
-				btn->setTouchEnabled(false);
-				blockedButtons.push_back(btn);
-			}
-		}
-	} else {
-		int i = blockedButtons.size() - 1;
-		while (i >= 0) {
-			Node* n = blockedButtons[i];
-			while (n->getParent() != mLayer) {
-				n = n->getParent();
-			}
-			if (n->getLocalZOrder() >= splash->getLocalZOrder()) {
-				blockedButtons[i]->setTouchEnabled(true);
-				//blockedButtons.erase(blockedButtons.begin() + i);
-				blockedButtons.pop_back();
-			}
-			i--;
-		}
-	}
 }
 
 void BaseScene::autoScaleNode(cocos2d::Node * node)
@@ -2784,4 +3599,268 @@ void BaseScene::loadOnlineAvatar()
 			spOnlineAvatar->setScale(scale.x, scale.y);
 		});
 	}
+}
+
+void BaseScene::switchMoneyType(int type)
+{
+	if (moneyBg0 != NULL && moneyBg0->getTag() != type) {
+		moneyBg0->setTag(type);
+		moneyBg1->setTag(type);
+		chosenBg->setPosition(type == 0 ? 123 : -123, 0);
+		onChangeMoneyType(type);
+		//UserDefault::getInstance()->setBoolForKey(constant::KEY_MONEY_TYPE.c_str(), type == 1);
+	}
+}
+
+void BaseScene::cropLabel(cocos2d::Label *label, int width, bool dots)
+{
+	bool isCut = false;
+	string str = label->getString();
+	while (label->getContentSize().width > width) {
+		str = str.substr(0, str.length() - 1);
+		label->setString(str);
+		isCut = true;
+	}
+	if (isCut && dots) {
+		str += "..";
+		label->setString(str);
+	}
+}
+
+void BaseScene::calculateTourTimeOnLabel(cocos2d::Label *lbCountDown)
+{
+    if(Utils::getSingleton().tourInfo.Name.length() == 0){
+        return;
+    }
+	time_t rawtime;
+	time(&rawtime);
+	double timeDiff = Utils::getSingleton().serverTimeDiff;
+	TourInfo tourInfo = Utils::getSingleton().tourInfo;
+	int state = lbCountDown->getTag();
+
+	Utils::getSingleton().tourRemindId = tourInfo.RegTimeBegin;
+	if (state == 0) {
+		if (rawtime < tourInfo.RegTimeBegin + timeDiff) {
+			setTourTimeState(0);
+			lbCountDown->setTag(1);
+			tourTimeRemain = -1;
+			double timeDelay = tourInfo.RegTimeBegin + timeDiff - rawtime + 3;
+			delayFunction(lbCountDown, timeDelay, [=]() {
+				Utils::getSingleton().tourInfo.CanRegister = true;
+				calculateTourTimeOnLabel(lbCountDown);
+			});
+		} else if (rawtime >= tourInfo.RegTimeBegin + timeDiff
+			&& rawtime < tourInfo.RegTimeEnd + timeDiff) {
+			setTourTimeState(1);
+			lbCountDown->setTag(2);
+			tourTimeRemain = tourInfo.RegTimeEnd + timeDiff - rawtime + 3;
+		} else if (rawtime >= tourInfo.RegTimeEnd + timeDiff
+			&& rawtime < tourInfo.Race1TimeBegin + timeDiff) {
+			setTourTimeState(2);
+			lbCountDown->setTag(3);
+			tourTimeRemain = -1;
+			double timeDelay = tourInfo.Race1TimeBegin + timeDiff - rawtime + 3;
+			delayFunction(lbCountDown, timeDelay, [=]() {
+				Utils::getSingleton().tourInfo.IsTouring = true;
+				calculateTourTimeOnLabel(lbCountDown);
+			});
+		} else if (rawtime >= tourInfo.Race1TimeBegin + timeDiff
+			&& rawtime < tourInfo.Race2TimeEnd + timeDiff) {
+			setTourTimeState(3);
+			lbCountDown->setTag(4);
+			tourTimeRemain = tourInfo.Race2TimeEnd + timeDiff - rawtime + 3;
+		} else if (rawtime >= tourInfo.Race2TimeEnd + timeDiff) {
+			setTourTimeState(4);
+			lbCountDown->setTag(5);
+			tourTimeRemain = -1;
+		}
+	} else if (state == 1) {
+		setTourTimeState(1);
+		lbCountDown->setTag(2);
+		tourTimeRemain = tourInfo.RegTimeEnd - tourInfo.RegTimeBegin;
+	} else if (state == 2) {
+		setTourTimeState(2);
+		lbCountDown->setTag(3);
+		tourTimeRemain = -1;// tourInfo.Race1TimeBegin - tourInfo.RegTimeEnd;
+		double timeDelay = tourInfo.Race1TimeBegin + timeDiff - rawtime + 3;
+		delayFunction(lbCountDown, timeDelay, [=]() {
+			Utils::getSingleton().tourInfo.IsTouring = true;
+			calculateTourTimeOnLabel(lbCountDown);
+		});
+	} else if (state == 3) {
+		setTourTimeState(3);
+		lbCountDown->setTag(4);
+		tourTimeRemain = tourInfo.Race2TimeEnd - tourInfo.Race1TimeBegin;
+	} else if (state == 4) {
+		setTourTimeState(4);
+		lbCountDown->setTag(5);
+		tourTimeRemain = -1;
+	}
+
+	if (tourTimeRemain >= 0) {
+		showTourCountDown(lbCountDown, [=]() {
+			calculateTourTimeOnLabel(lbCountDown);
+		});
+	}
+}
+
+void BaseScene::setTourTimeState(int state)
+{
+	if (!popupTour) return;
+	TourInfo tourInfo = Utils::getSingleton().tourInfo;
+	ui::Button *btnJoin = (ui::Button*)popupTour->getChildByName("btnjoin");
+	ui::Button *btnRegister = (ui::Button*)popupTour->getChildByName("btnregister");
+	Label* lbCountDown = (Label*)popupTour->getChildByName("lbcountdown");
+
+	if (state == 0) {
+		lbCountDown->setTag(1);
+		btnJoin->setVisible(false);
+		btnRegister->setVisible(true);
+		//btnRegister->setColor(Color3B::GRAY);
+		btnRegister->setOpacity(100);
+		btnRegister->setTouchEnabled(false);
+	} else if (state == 1) {
+		lbCountDown->setTag(2);
+		if (tourInfo.CanRegister) {
+			btnJoin->setVisible(false);
+			btnRegister->setVisible(true);
+			//btnRegister->setColor(Color3B::WHITE);
+			btnRegister->setOpacity(255);
+			btnRegister->setTouchEnabled(true);
+		} else {
+			btnRegister->setVisible(false);
+			btnJoin->setVisible(true);
+			//btnJoin->setColor(Color3B::GRAY);
+			btnJoin->setOpacity(100);
+			btnJoin->setTouchEnabled(false);
+		}
+	} else if (state == 2) {
+		lbCountDown->setTag(3);
+		btnRegister->setVisible(false);
+		btnJoin->setVisible(true);
+		//btnJoin->setColor(Color3B::GRAY);
+		btnJoin->setOpacity(100);
+		btnJoin->setTouchEnabled(false);
+	} else if (state == 3) {
+		lbCountDown->setTag(4);
+		if (tourInfo.CanRegister) {
+			btnJoin->setVisible(false);
+			btnRegister->setVisible(true);
+			//btnRegister->setColor(Color3B::GRAY);
+			btnRegister->setOpacity(100);
+			btnRegister->setTouchEnabled(false);
+		} else {
+			btnRegister->setVisible(false);
+			btnJoin->setVisible(true);
+			//btnJoin->setColor(Color3B::WHITE);
+			btnJoin->setOpacity(255);
+			btnJoin->setTouchEnabled(true);
+		}
+	} else if (state == 4) {
+		lbCountDown->setTag(5);
+		btnJoin->setVisible(false);
+		btnRegister->setVisible(true);
+		//btnRegister->setColor(Color3B::GRAY);
+		btnRegister->setOpacity(100);
+		btnRegister->setTouchEnabled(false);
+	}
+}
+
+void BaseScene::showTourCountDown(Label* lbCountDown, std::function<void()> callback)
+{
+	string timeRemainString = Utils::getSingleton().getCountTimeStringBySecs(tourTimeRemain, "%H:%M:%S");
+	lbCountDown->setString(timeRemainString);
+	lbCountDown->getChildByTag(0)->setName(to_string((long)tourTimeRemain));
+
+	DelayTime *delayTime = DelayTime::create(1);
+	CallFunc *func = CallFunc::create([=]() {
+		long timeRemain = atol(lbCountDown->getChildByTag(0)->getName().c_str());
+		if (timeRemain > 1) {
+			timeRemain -= 1;
+			string str = Utils::getSingleton().getCountTimeStringBySecs(timeRemain, "%H:%M:%S");
+			lbCountDown->setString(str);
+			lbCountDown->getChildByTag(0)->setName(to_string(timeRemain));
+		} else {
+			lbCountDown->stopActionByTag(3);
+			lbCountDown->setString("");
+			callback();
+		}
+	});
+	Action* actionCount = RepeatForever::create(Sequence::createWithTwoActions(delayTime, func));
+	actionCount->setTag(3);
+	lbCountDown->stopActionByTag(3);
+	lbCountDown->runAction(actionCount);
+}
+
+void BaseScene::joinIntoLobby(int lobby)
+{
+	if (isWaiting) return;
+	showWaiting();
+	tmpZoneId = lobby;
+	isGoToLobby = true;
+	SFSRequest::getSingleton().Disconnect();
+}
+
+void BaseScene::processCachedErrors()
+{
+	for (pair<unsigned char, string> p : Utils::getSingleton().cachedErrors) {
+		showPopupNotice(p.second, [=]() {});
+	}
+	Utils::getSingleton().cachedErrors.clear();
+}
+
+void BaseScene::runConnectionKeeper()
+{
+	if (connectionKeeper) {
+		connectionKeeper->resume();
+		return;
+	}
+
+	connectionKeeper = Node::create();
+	mLayer->addChild(connectionKeeper);
+	DelayTime* delayCK = DelayTime::create(100);
+	CallFunc* funcCK = CallFunc::create([=]() {
+		//SFSRequest::getSingleton().Ping();
+		SFSRequest::getSingleton().RequestKeepConnection();
+	});
+	Sequence* actionCK = Sequence::createWithTwoActions(delayCK, funcCK);
+	connectionKeeper->runAction(RepeatForever::create(actionCK));
+}
+
+void BaseScene::showPopupTour()
+{
+	if (popupTour == NULL) {
+		initPopupTour();
+	}
+	showPopup(popupTour);
+	if (this->getTag() == constant::SCENE_MAIN) {
+		runConnectionKeeper();
+	}
+}
+
+void BaseScene::registerTour()
+{
+	ui::Button *btnRegister = (ui::Button*)popupTour->getChildByName("btnregister");
+	ui::Button *btnJoin = (ui::Button*)popupTour->getChildByName("btnjoin");
+	btnRegister->setVisible(false);
+	btnJoin->setVisible(true);
+	//btnJoin->setColor(Color3B::GRAY);
+	btnJoin->setOpacity(100);
+	btnJoin->setTouchEnabled(false);
+	//lbCountDown->stopAllActions();
+	//lbCountDown->setString("");
+	//tourTimeRemain = -1;
+	Utils::getSingleton().tourInfo.CanRegister = false;
+	SFSRequest::getSingleton().RequestRegisterTour();
+}
+
+void BaseScene::joinIntoTour()
+{
+	if (isWaiting) return;
+	switchMoneyType(1);
+	isJoiningTour = true;
+	showWaiting();
+	tmpZoneId = 5;
+	zoneBeforeTour = Utils::getSingleton().currentZoneName;
+	SFSRequest::getSingleton().Disconnect();
 }

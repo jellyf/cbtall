@@ -12,8 +12,8 @@ public:
 	static SFSRequest& getSingleton(void);
 	static SFSRequest* getSingletonPtr(void);
 
-	std::function<void()> onHttpResponseFailed = NULL;
-	std::function<void(int, std::string)> onHttpResponse = NULL;
+	std::map<std::string, std::function<void(int)>> mapHttpResponseFailedCallbacks;
+	std::map<std::string, std::function<void(int, std::string)>> mapHttpResponseCallbacks;
 	std::function<void(int, cocos2d::Texture2D*)> onLoadImageResponse = NULL;
 	std::function<void(std::string url, cocos2d::Texture2D*)> onLoadTextureResponse = NULL;
 
@@ -58,6 +58,12 @@ public:
 	void RequestCancelItemShop(int itemId);
 	void RequestChangeDisplayname(std::string displayname);
 	void RequestChangePassword(std::string password, std::string passwordRetype);
+	void RequestRegisterTour();
+	void RequestTopTourPlayers();
+	void RequestListTourPlayers();
+	void RequestTourWinners();
+	void RequestTourLeaveTable();
+	void RequestKeepConnection();
 
 	void RequestGameReady();
 	void RequestGameChooseStilt(int stilt);
@@ -81,6 +87,9 @@ public:
 	void RequestHttpGet(std::string url, int tag);
 	void LoadImageFromURL(std::string url, int tag);
 	void LoadTextureFromURL(std::string url, std::string tag = "");
+
+	void OnHttpResponse(int tag, std::string content);
+	void OnHttpResponseFailed(int tag);
 private:
 	void onHttpRequest(cocos2d::network::HttpClient* client, cocos2d::network::HttpResponse* response);
 	void onRequestImgCompleted(cocos2d::network::HttpClient* client, cocos2d::network::HttpResponse* response);

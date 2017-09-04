@@ -37,20 +37,12 @@ Utils::Utils()
 	hasShowEventPopup = false;
 	isViLangReady = false;
 	currentEventPosX = constant::EVENT_START_POSX;
-    //textureHost = "http://115.84.179.242/main_kinhtuchi/";
     textureHost = "http://ip171.api1chan.info/tamdo2leo/";
 	feedbackUrl = "http://ip171.api1chan.info/feadback/add";
 	cofferGuide = "";
 	viLang = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/vi.xml");
 	SFSRequest::getSingleton().onLoadTextureResponse = std::bind(&Utils::onLoadTextureResponse, this, std::placeholders::_1, std::placeholders::_2);
-	SFSRequest::getSingleton().onHttpResponse = std::bind(&Utils::onHttpResponse, this, std::placeholders::_1, std::placeholders::_2);
-
-	Director::getInstance()->getTextureCache()->addImageAsync("emp.png", [=](Texture2D* texture) {
-		string str1 = FileUtils::getInstance()->getStringFromFile("menu1.plist");
-		SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str1, texture);
-		string str2 = FileUtils::getInstance()->getStringFromFile("menu2.plist");
-		SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str2, texture);
-	});
+	SFSRequest::getSingleton().mapHttpResponseCallbacks["utils"] = std::bind(&Utils::onHttpResponse, this, std::placeholders::_1, std::placeholders::_2);
 
 	createAppellations();
     
@@ -112,6 +104,28 @@ AppellationData& Utils::getAppellationByLevel(int level)
 	int i = 0;
 	while (i < appellations.size() && level >= appellations[i].Level) i++;
 	return appellations[level == 0 ? 0 : i - 1];
+}
+
+ZoneData & Utils::getZoneByIndex(int moneyType, int index)
+{
+	if (moneyType >= 0 && index >= 0 && moneyType < zones.size() && index < zones[moneyType].size()) {
+		return zones[moneyType][index];
+	}
+	ZoneData zone;
+	return zone;
+}
+
+ZoneData & Utils::getCurrentZone()
+{
+	for (int i = 0; i < zones.size(); i++) {
+		for (int j = 0; j < zones[i].size(); j++) {
+			if (zones[i][j].ZoneName.compare(currentZoneName) == 0) {
+				return zones[i][j];
+			}
+		}
+	}
+	ZoneData zone;
+	return zone;
 }
 
 string Utils::formatMoneyWithComma(double money) {
@@ -240,6 +254,33 @@ std::string Utils::getFeedbackUrl()
 	return url;
 }
 
+std::string Utils::getSystemTimeStringBySecs(double secs, char *fm)
+{
+	time_t rawtime = secs;
+	struct tm * timeinfo;
+	char buffer[80];
+
+	timeinfo = localtime(&rawtime);
+
+	strftime(buffer, sizeof(buffer), fm, timeinfo);
+	std::string str(buffer);
+
+	return str;
+}
+
+std::string Utils::getCountTimeStringBySecs(double secs, char * fm)
+{
+	if (secs <= 0) return "00:00:00";
+
+	long lsecs = secs;
+	int hour = lsecs / 3600;
+	lsecs %= 3600;
+	int min = lsecs / 60;
+	int sec = lsecs % 60;
+
+	return std::string(cocos2d::String::createWithFormat("%02d:%02d:%02d", hour, min, sec)->getCString());
+}
+
 double Utils::getCurrentSystemTimeInSecs()
 {
 	timeval time;
@@ -332,16 +373,7 @@ bool Utils::isSoloGame()
 
 bool Utils::isTourGame()
 {
-	return currentZoneName.substr(0, 4).compare("Tour") == 0;
-}
-
-void Utils::onHttpResponse(int tag, std::string content)
-{
-	if (tag == constant::TAG_HTTP_VILANG) {
-		isViLangReady = true;
-		addViLangFromData(content);
-		return;
-	}
+	return currentZoneName.compare("AutoTourKTC") == 0;
 }
 
 void Utils::setPmEByLogin(bool pme)
@@ -408,12 +440,13 @@ void Utils::logoutGame()
 	userDataMe.Name = "";
 	logoutZone();
 	hasShowEventPopup = false;
+	tourInfo.Name = "";
+	dynamicConfig.Ads = false;
 }
 
 void Utils::logoutZone()
 {
 	currentRoomId = 0;
-	currentLobbyId = 0;
 	currentZoneName = "";
 	currentRoomName = "";
 	currentLobbyName = "";
@@ -563,7 +596,7 @@ void Utils::connectZoneByIndex(int moneyType, int index)
 
 void Utils::loginZoneByIndex(int moneyType, int index)
 {
-	long zonePort =zones[moneyType][index].ZonePort;
+	long zonePort = zones[moneyType][index].ZonePort;
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 	std::string zoneIp = zones[moneyType][index].ZoneIpIos;
 #else
@@ -657,37 +690,9 @@ void Utils::downloadPlistTextures()
 {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 	if (downloadedPlistTexture == 0) {
-		string str1 = FileUtils::getInstance()->getStringFromFile("menu1.plist");
-		Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA8888);
-		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu5.png", [=](Texture2D* texture1) {
-			SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str1, texture1);
-			downloadedPlistTexture = 1;
-			if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
-				EventHandler::getSingleton().onDownloadedPlistTexture(downloadedPlistTexture);
-			}
-			Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
-			string str2 = FileUtils::getInstance()->getStringFromFile("menu2.plist");
-			Utils::getSingleton().LoadTextureFromURL(textureHost + "menu6.png", [=](Texture2D* texture2) {
-				SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str2, texture2);
-				downloadedPlistTexture = 2;
-				if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
-					EventHandler::getSingleton().onDownloadedPlistTexture(downloadedPlistTexture);
-				}
-
-				Utils::getSingleton().LoadTextureFromURL(textureHost + "hu.png", [=](Texture2D* texture3) {
-					Utils::getSingleton().LoadTextureFromURL(textureHost + "as.png", [=](Texture2D* texture4) {});
-				});
-			});
-		});
+		SFSRequest::getSingleton().RequestHttpGet(Utils::getSingleton().textureHost + "menu1.plist", constant::TAG_HTTP_MENU1);
 	} else if (downloadedPlistTexture == 1) {
-		string str2 = FileUtils::getInstance()->getStringFromFile("menu2.plist");
-		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu6.png", [=](Texture2D* texture) {
-			SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(str2, texture);
-			downloadedPlistTexture = 2;
-			if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
-				EventHandler::getSingleton().onDownloadedPlistTexture(downloadedPlistTexture);
-			}
-		});
+		SFSRequest::getSingleton().RequestHttpGet(Utils::getSingleton().textureHost + "menu2.plist", constant::TAG_HTTP_MENU2);
 	} else {
 		if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
 			EventHandler::getSingleton().onDownloadedPlistTexture(downloadedPlistTexture);
@@ -779,4 +784,43 @@ void Utils::requestViLangData()
 {
 	if (isViLangReady) return;
 	SFSRequest::getSingleton().RequestHttpGet(textureHost + "vi2.xml", constant::TAG_HTTP_VILANG);
+}
+
+void Utils::setServerTime(double svTime)
+{
+	time_t rawtime;
+	time(&rawtime);
+	serverTime = svTime;
+	serverTimeDiff = rawtime - svTime;
+}
+
+void Utils::onHttpResponse(int tag, std::string content)
+{
+	if (tag == constant::TAG_HTTP_MENU1) {
+		Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA8888);
+		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu3.png", [=](Texture2D* texture1) {
+			SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(content, texture1);
+			downloadedPlistTexture = 1;
+			if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
+				EventHandler::getSingleton().onDownloadedPlistTexture(downloadedPlistTexture);
+			}
+
+			SFSRequest::getSingleton().RequestHttpGet(Utils::getSingleton().textureHost + "menu2.plist", constant::TAG_HTTP_MENU2);
+		});
+	} else if (tag == constant::TAG_HTTP_MENU2) {
+		Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
+		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu4.png", [=](Texture2D* texture2) {
+			SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(content, texture2);
+			downloadedPlistTexture = 2;
+			if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
+				EventHandler::getSingleton().onDownloadedPlistTexture(downloadedPlistTexture);
+			}
+
+			Utils::getSingleton().LoadTextureFromURL(textureHost + "text_loidaichien.png", [=](Texture2D* texture5) {
+				Utils::getSingleton().LoadTextureFromURL(textureHost + "hu.png", [=](Texture2D* texture3) {
+					Utils::getSingleton().LoadTextureFromURL(textureHost + "as.png", [=](Texture2D* texture4) {});
+				});
+			});
+		});
+	}
 }
