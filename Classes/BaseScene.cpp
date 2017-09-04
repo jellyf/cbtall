@@ -1613,7 +1613,7 @@ Node* BaseScene::createPopupNotice()
 	lb->setAlignment(TextHAlignment::CENTER);
 	popupNotice->addChild(lb);
 
-	ui::Button* btnok = ui::Button::create("btn.png", "", "", ui::Widget::TextureResType::PLIST);
+	ui::Button* btnok = ui::Button::create("btn.png", "btn.png", "", ui::Widget::TextureResType::PLIST);
 	btnok->setTitleText(Utils::getSingleton().getStringForKey("xac_nhan"));
 	btnok->setTitleFontName("fonts/myriadb.ttf");
 	btnok->setTitleFontSize(40);
@@ -1624,7 +1624,7 @@ Node* BaseScene::createPopupNotice()
 	popupNotice->addChild(btnok);
 
 	Size bgSize = bg->getContentSize();
-	ui::Button* btndong = ui::Button::create("btn_dong.png", "", "", ui::Widget::TextureResType::PLIST);
+	ui::Button* btndong = ui::Button::create("btn_dong.png", "btn_dong.png", "", ui::Widget::TextureResType::PLIST);
 	btndong->setPosition(Vec2(bgSize.width/2 - 55, bgSize.height / 2 - 35));
 	//btndong->setScale(.8f);
 	btndong->setName("btnclose");
@@ -1674,22 +1674,27 @@ cocos2d::Node * BaseScene::createPopupNoticeMini()
 	bg->setScale(bgScale);
 	popupNotice->addChild(bg);
 
-	Label* lb = Label::createWithTTF("", "fonts/arial.ttf", 25);
+	Label* lb = Label::createWithTTF("", "fonts/myriad.ttf", 25);
 	lb->setAlignment(TextHAlignment::CENTER);
-	lb->setColor(Color3B::WHITE);
+	lb->setColor(Color3B::BLACK);
 	lb->setWidth(550 * bgScale);
 	lb->setName("lbcontent");
 	popupNotice->addChild(lb);
 
-	ui::Button* btnok = ui::Button::create("btn_submit.png", "btn_submit_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	ui::Button* btnok = ui::Button::create("btn.png", "btn.png", "", ui::Widget::TextureResType::PLIST);
+	btnok->setTitleText(Utils::getSingleton().getStringForKey("xac_nhan"));
+	btnok->setTitleFontName("fonts/myriadb.ttf");
+	btnok->setTitleFontSize(40);
+	btnok->setTitleDeviation(Vec2(0, -5));
 	btnok->setPosition(Vec2(0, -200 * bgScale));
 	btnok->setName("btnsubmit");
-	btnok->setScale(.8f);
+	btnok->setScale(.7f);
 	addTouchEventListener(btnok, [=]() {});
 	popupNotice->addChild(btnok);
 
-	ui::Button* btndong = ui::Button::create("btn_dong.png", "btn_dong_clicked.png", "", ui::Widget::TextureResType::PLIST);
-	btndong->setPosition(Vec2(310 * bgScale, 170 * bgScale));
+	Size bgSize = bg->getContentSize();
+	ui::Button* btndong = ui::Button::create("btn_dong.png", "btn_dong.png", "", ui::Widget::TextureResType::PLIST);
+	btndong->setPosition(Vec2((bgSize.width / 2 - 55) * bgScale, (bgSize.height / 2 - 35) * bgScale));
 	btndong->setScale(.6f);
 	btndong->setName("btnclose");
 	addTouchEventListener(btndong, [=]() {
@@ -1722,34 +1727,33 @@ cocos2d::Node * BaseScene::createPopupConfirm()
 	popupConfirm->addChild(bg);
 
 	Sprite* title = Sprite::createWithSpriteFrameName("title_thongbao.png");
-	title->setPosition(0, 170);
+	title->setPosition(0, 155);
 	//title->setScale(.8f);
 	popupConfirm->addChild(title);
 
-	Label* lb = Label::create();
+	Label* lb = Label::createWithTTF("", "fonts/myriad.ttf", 40);
+	lb->setAlignment(TextHAlignment::CENTER);
 	lb->setColor(Color3B::BLACK);
-	lb->setSystemFontSize(30);
 	lb->setWidth(550);
 	lb->setName("lbcontent");
-	lb->setAlignment(TextHAlignment::CENTER);
 	popupConfirm->addChild(lb);
 
-	ui::Button* btnok = ui::Button::create("btn.png", "btn_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	ui::Button* btnok = ui::Button::create("btn.png", "btn.png", "", ui::Widget::TextureResType::PLIST);
 	btnok->setTitleText(Utils::getSingleton().getStringForKey("dang_ky"));
-	btnok->setTitleFontName("fonts/myriad.ttf");
-	btnok->setTitleFontSize(25);
+	btnok->setTitleFontName("fonts/myriadb.ttf");
+	btnok->setTitleFontSize(40);
 	btnok->setTitleDeviation(Vec2(0, -5));
-	btnok->setPosition(Vec2(-130, -170));
+	btnok->setPosition(Vec2(-135, -170));
 	btnok->setName("btnsubmit");
 	addTouchEventListener(btnok, [=]() {});
 	popupConfirm->addChild(btnok);
 
-	ui::Button* btndong = ui::Button::create("btn.png", "btn_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	ui::Button* btndong = ui::Button::create("btn.png", "btn.png", "", ui::Widget::TextureResType::PLIST);
 	btndong->setTitleText(Utils::getSingleton().getStringForKey("bo_qua"));
-	btndong->setTitleFontName("fonts/myriad.ttf");
-	btndong->setTitleFontSize(25);
+	btndong->setTitleFontName("fonts/myriadb.ttf");
+	btndong->setTitleFontSize(40);
 	btndong->setTitleDeviation(Vec2(0, -5));
-	btndong->setPosition(Vec2(130, -170));
+	btndong->setPosition(Vec2(135, -170));
 	btndong->setName("btnclose");
 	addTouchEventListener(btndong, [=]() {
 		hidePopup(popupConfirm);
@@ -1782,33 +1786,32 @@ cocos2d::Node * BaseScene::createPopupConfirmMini()
 	bg->setScale(bgScale);
 	popupConfirm->addChild(bg);
 
-	Label* lb = Label::create();
+	Label* lb = Label::createWithTTF("", "fonts/myriad.ttf", 25);
+	lb->setAlignment(TextHAlignment::CENTER);
 	lb->setColor(Color3B::BLACK);
-	lb->setSystemFontSize(25);
 	lb->setWidth(550 * bgScale);
 	lb->setName("lbcontent");
-	lb->setAlignment(TextHAlignment::CENTER);
 	popupConfirm->addChild(lb);
 
-	ui::Button* btnok = ui::Button::create("btn.png", "btn_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	ui::Button* btnok = ui::Button::create("btn.png", "btn.png", "", ui::Widget::TextureResType::PLIST);
 	btnok->setTitleText(Utils::getSingleton().getStringForKey("dang_ky"));
 	btnok->setTitleFontName("fonts/myriad.ttf");
-	btnok->setTitleFontSize(25);
+	btnok->setTitleFontSize(40);
 	btnok->setTitleDeviation(Vec2(0, -5));
 	btnok->setPosition(Vec2(-130 * .7f, -200 * bgScale));
 	btnok->setName("btnsubmit");
-	btnok->setScale(.8f);
+	btnok->setScale(.7f);
 	addTouchEventListener(btnok, [=]() {});
 	popupConfirm->addChild(btnok);
 
-	ui::Button* btndong = ui::Button::create("btn.png", "btn_clicked.png", "", ui::Widget::TextureResType::PLIST);
+	ui::Button* btndong = ui::Button::create("btn.png", "btn.png", "", ui::Widget::TextureResType::PLIST);
 	btndong->setTitleText(Utils::getSingleton().getStringForKey("bo_qua"));
 	btndong->setTitleFontName("fonts/myriad.ttf");
-	btndong->setTitleFontSize(25);
+	btndong->setTitleFontSize(40);
 	btndong->setTitleDeviation(Vec2(0, -5));
 	btndong->setPosition(Vec2(130 * .7f, -200 * bgScale));
 	btndong->setName("btnclose");
-	btndong->setScale(.8f);
+	btndong->setScale(.7f);
 	addTouchEventListener(btndong, [=]() {
 		runEffectHidePopup(popupConfirm);
 	});
@@ -2851,6 +2854,7 @@ void BaseScene::initCofferView(Vec2 pos, int zorder, float scale)
 		//onErrorResponse(80, "Giai dau ket thuc");
 		//showPopupConfirm("Da co the dang ky giai dau", "stormus", "phantom", [=]() {});
 		//showPopupConfirmMini("Da co the dang ky giai dau", "stormus", "phantom", Vec2(200, 200), [=]() {});
+		//showPopupNoticeMini("Giai dau da bat dau", [=]() {}, Vec2(250, 150), true);
 	});
 	mLayer->addChild(btnCoffer, zorder);
 	autoScaleNode(btnCoffer);

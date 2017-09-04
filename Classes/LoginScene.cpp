@@ -132,6 +132,9 @@ void LoginScene::onInit()
 			return;
 		}
         loginNormal();
+		//showPopupConfirm("Da co the dang ky giai dau", "stormus", "phantom", [=]() {});
+		//showPopupConfirmMini("Da co the dang ky giai dau", "stormus", "phantom", Vec2(200, 200), [=]() {});
+		//showPopupNoticeMini("Giai dau da bat dau hay dang ky ngay", [=]() {}, Vec2(250, 150), true);
 	});
 	loginNode->addChild(btnLogin);
 

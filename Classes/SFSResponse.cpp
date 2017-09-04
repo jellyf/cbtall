@@ -1261,7 +1261,7 @@ void SFSResponse::onPopupEventResponse(boost::shared_ptr<ISFSObject> isfsObject)
 	std::string json;
 	boost::shared_ptr<ByteArray> byteArray = isfsObject->GetByteArray("d");
 	byteArray->ReadUTF(json);
-	CCLOG("%s", json.c_str());
+	//CCLOG("%s", json.c_str());
 	DynamicConfig config;
 	if (json.length() > 0) {
 		rapidjson::Document d;
@@ -1308,7 +1308,6 @@ void SFSResponse::onPopupEventResponse(boost::shared_ptr<ISFSObject> isfsObject)
 	if (config.LogHost.length() == 0) {
 		config.LogHost = "http://125.212.192.96:8899/ktc/client-log?data=";
 	}
-	config.Ads = true;
 	config.Ready = true;
 	Utils::getSingleton().dynamicConfig = config;
 	if (EventHandler::getSingleton().onDynamicConfigReceived != NULL) {
