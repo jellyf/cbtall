@@ -74,7 +74,6 @@ public:
 	void inviteFacebookFriends();
 	void createAppellations();
 	void addViLangFromData(std::string data);
-	void requestViLangData();
 	void setServerTime(double svTime);
 	void onHttpResponse(int tag, std::string content);
 public:

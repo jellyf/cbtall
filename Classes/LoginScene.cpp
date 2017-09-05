@@ -203,7 +203,6 @@ void LoginScene::onInit()
 
 	loadTextureCache();
 	if (isPopupReady) isReadyToMain = 2;
-	Utils::getSingleton().requestViLangData();
 }
 
 void LoginScene::registerEventListenner()

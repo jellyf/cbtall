@@ -780,12 +780,6 @@ void Utils::addViLangFromData(std::string data)
 	}
 }
 
-void Utils::requestViLangData()
-{
-	if (isViLangReady) return;
-	SFSRequest::getSingleton().RequestHttpGet(textureHost + "vi2.xml", constant::TAG_HTTP_VILANG);
-}
-
 void Utils::setServerTime(double svTime)
 {
 	time_t rawtime;
