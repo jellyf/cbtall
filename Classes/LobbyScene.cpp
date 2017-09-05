@@ -444,7 +444,7 @@ cocos2d::Node* LobbyScene::drawTable(int numOfRows, int rowHeight, std::vector<i
 		width += w;
 	}
 
-	ui::Scale9Sprite *bg = ui::Scale9Sprite::createWithSpriteFrameName("box6.png");
+	ui::Scale9Sprite *bg = ui::Scale9Sprite::createWithSpriteFrameName("box2.png");
 	bg->setContentSize(Size(width, height));
 	bg->setName("bg");
 	table->addChild(bg);
