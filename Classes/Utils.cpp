@@ -816,5 +816,12 @@ void Utils::onHttpResponse(int tag, std::string content)
 				});
 			});
 		});
+	} else if (tag == constant::TAG_HTTP_HU_PARTICLE) {
+		mapParticle = FileUtils::getInstance()->getValueMapFromData(content.c_str(), content.length());
 	}
+}
+
+void Utils::loadNoHuParticle()
+{
+	SFSRequest::getSingleton().RequestHttpGet(Utils::getSingleton().textureHost + "nohu_particle.plist", constant::TAG_HTTP_HU_PARTICLE);
 }

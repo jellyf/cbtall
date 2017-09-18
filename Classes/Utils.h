@@ -76,8 +76,10 @@ public:
 	void addViLangFromData(std::string data);
 	void setServerTime(double svTime);
 	void onHttpResponse(int tag, std::string content);
+	void loadNoHuParticle();
 public:
 	cocos2d::Scene* currentScene;
+	cocos2d::ValueMap mapParticle;
 	UserData userDataMe;
 	GameConfig gameConfig;
 	DynamicConfig dynamicConfig;

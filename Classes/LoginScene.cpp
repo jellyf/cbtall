@@ -437,6 +437,7 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 		btnForgotPass->setVisible(true);
 		lbBtnForgotPass->setVisible(true);
 		Utils::getSingleton().downloadPlistTextures();
+		Utils::getSingleton().loadNoHuParticle();
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 		SFSRequest::getSingleton().RequestHttpGet(Utils::getSingleton().textureHost + "vi2.xml", constant::TAG_HTTP_VILANG);
 #else
