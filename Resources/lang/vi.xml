@@ -105,19 +105,14 @@
 	<key>quay_lai</key><string>Quay lại</string>
 	<key>ngay</key><string>Ngày</string>
 	<key>thong_tin</key><string>Thông tin</string>
-	<key>trang_thai</key><string>Trạng thái</string>
-	<key>thanh_cong</key><string>Thành công</string>
 	<key>tien</key><string>Tiền</string>
 	<key>tien_van</key><string>Tiền ván</string>
-	<key>xac_nhan</key><string>Xác nhận</string>
-	<key>hoan_tat</key><string>Hoàn tất</string>
 	<key>huy</key><string>Hủy</string>
 	<key>hop_thu</key><string>Hộp thư</string>
 	<key>tin_tuc</key><string>Tin tức</string>
 	<key>moi</key><string>Mời</string>
 	<key>moi_ban</key><string>Mời bạn</string>
 	<key>su_kien</key><string>Sự kiện</string>
-	<key>hoan_tra</key><string>Hoàn trả</string>
 	<key>nguoi_gui</key><string>Người gửi</string>
 	<key>huong_dan</key><string>Hướng dẫn</string>
 	<key>top_money</key><string>Top đại gia</string>
@@ -166,7 +161,7 @@
 	<key>ban_muon_thoat_game</key><string>Bạn muốn thoát game?</string>
 	<key>ask_to_kick_player</key><string>Bạn muốn đá người này ra khỏi bàn?</string>
 	<key>khong_nhan_duoc_phan_hoi_tu_server</key><string>Không nhận được phản hồi từ server. Bạn muốn đăng nhập lại?</string>
-	<key>ban_muon_thoat_game</key><string>Bạn muốn thoát Kính Tứ Chi?</string>
+	<key>ban_muon_thoat_game</key><string>Bạn muốn thoát game?</string>
 	<key>ban_muon_da_nguoi_nay_ra</key><string>Bạn muốn đá người này ra khỏi bàn chơi?</string>
 	<key>tai_khoan_khong_dung</key><string>Tài khoản hoặc mật khẩu không đúng</string>
 </dict>
