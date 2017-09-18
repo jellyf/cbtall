@@ -792,7 +792,7 @@ void Utils::onHttpResponse(int tag, std::string content)
 {
 	if (tag == constant::TAG_HTTP_MENU1) {
 		Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA8888);
-		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu3.png", [=](Texture2D* texture1) {
+		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu1.png", [=](Texture2D* texture1) {
 			SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(content, texture1);
 			downloadedPlistTexture = 1;
 			if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
@@ -803,18 +803,18 @@ void Utils::onHttpResponse(int tag, std::string content)
 		});
 	} else if (tag == constant::TAG_HTTP_MENU2) {
 		Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
-		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu4.png", [=](Texture2D* texture2) {
+		Utils::getSingleton().LoadTextureFromURL(textureHost + "menu2.png", [=](Texture2D* texture2) {
 			SpriteFrameCache::getInstance()->addSpriteFramesWithFileContent(content, texture2);
 			downloadedPlistTexture = 2;
 			if (EventHandler::getSingleton().onDownloadedPlistTexture != NULL) {
 				EventHandler::getSingleton().onDownloadedPlistTexture(downloadedPlistTexture);
 			}
 
-			Utils::getSingleton().LoadTextureFromURL(textureHost + "text_loidaichien.png", [=](Texture2D* texture5) {
+			/*Utils::getSingleton().LoadTextureFromURL(textureHost + "text_loidaichien.png", [=](Texture2D* texture5) {
 				Utils::getSingleton().LoadTextureFromURL(textureHost + "hu.png", [=](Texture2D* texture3) {
 					Utils::getSingleton().LoadTextureFromURL(textureHost + "as.png", [=](Texture2D* texture4) {});
 				});
-			});
+			});*/
 		});
 	} else if (tag == constant::TAG_HTTP_HU_PARTICLE) {
 		mapParticle = FileUtils::getInstance()->getValueMapFromData(content.c_str(), content.length());
