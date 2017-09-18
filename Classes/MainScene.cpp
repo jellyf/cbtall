@@ -764,8 +764,8 @@ void MainScene::onShopItemsDataResponse(std::vector<ShopItemData> list)
 
 	int itemPerRow = 5;
 	int heightItem = ((items.size() - 1) / itemPerRow + 1) * 160;
-	if (heightItem < scrollItem->getContentSize().width) {
-		heightItem = scrollItem->getContentSize().width;
+	if (heightItem < scrollItem->getContentSize().height) {
+		heightItem = scrollItem->getContentSize().height;
 	}
 	scrollItem->setInnerContainerSize(Size(scrollItem->getContentSize().width, heightItem));
 	for (int i = 0; i < items.size(); i++) {

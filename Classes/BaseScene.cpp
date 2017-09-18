@@ -3094,7 +3094,7 @@ void BaseScene::onCofferHistoryResponse(std::vector<CofferWinnerData> list)
 	
 	Node* nodeHistory = popupCoffer->getChildByName("nodehistory");
 	ui::ScrollView* scroll = (ui::ScrollView*)nodeHistory->getChildByName("scrollhistory");
-	int height = list.size() * 80 + 40;
+	int height = list.size() * 80;
 	int width = scroll->getContentSize().width;
 	if (height < scroll->getContentSize().height) {
 		height = scroll->getContentSize().height;
