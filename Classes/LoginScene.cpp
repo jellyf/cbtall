@@ -133,7 +133,7 @@ void LoginScene::onInit()
 		}
         loginNormal();
 		//showPopupConfirm("Da co the dang ky giai dau", "stormus", "phantom", [=]() {});
-		//showPopupConfirmMini("Da co the dang ky giai dau", "stormus", "phantom", Vec2(200, 200), [=]() {});
+		//showPopupConfirmMini("Da co the dang ky giai dau", "stormus", "phantom", Vec2(200, 150), [=]() {});
 		//showPopupNoticeMini("Giai dau da bat dau hay dang ky ngay", [=]() {}, Vec2(250, 150), true);
 	});
 	loginNode->addChild(btnLogin);
@@ -421,8 +421,6 @@ void LoginScene::onHttpResponse(int tag, std::string content)
 	config.inapp = d["inapp"].GetString();
     config.invite = d["invite"].GetBool();
 
-	config.linkAndroid = "https://play.google.com/store/apps/details?id=" + config.linkAndroid;
-
 	string verstr = Application::getInstance()->getVersion();
 	int i = verstr.find_last_of('.') + 1;
 	verstr = verstr.substr(i, verstr.length() - i);
@@ -696,9 +694,8 @@ void LoginScene::initRegisterNode()
 void LoginScene::requestGameConfig(bool realConfig)
 {
 	showWaiting(60);
-	//SFSRequest::getSingleton().RequestHttpGet("http://ip171.api1chan.info/configcv2.txt", constant::TAG_HTTP_GAME_CONFIG);
-	//SFSRequest::getSingleton().RequestHttpGet("http://chanvuong1.info/config/configchan.txt", constant::TAG_HTTP_GAME_CONFIG);
-	SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
+	SFSRequest::getSingleton().RequestHttpGet("http://ip171.api1chan.info/configcv2.txt", constant::TAG_HTTP_GAME_CONFIG);
+	//SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/configchanktc.txt", constant::TAG_HTTP_GAME_CONFIG);
 	//SFSRequest::getSingleton().RequestHttpGet("http://125.212.207.71/config/configChan.txt", constant::TAG_HTTP_GAME_CONFIG);
 }
 

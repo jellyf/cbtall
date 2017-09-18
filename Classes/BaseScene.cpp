@@ -894,7 +894,7 @@ bool BaseScene::onErrorResponse(unsigned char code, std::string msg)
 		Utils::getSingleton().tourInfo.CanRegister = true;
 		if (getTag() == constant::SCENE_GAME) {
 			showPopupConfirmMini(msg, Utils::getSingleton().getStringForKey("dang_ky"), 
-				Utils::getSingleton().getStringForKey("bo_qua"), Vec2(200, 200), [=]() {
+				Utils::getSingleton().getStringForKey("bo_qua"), Vec2(200, 150), [=]() {
 				Utils::getSingleton().tourInfo.CanRegister = false;
 				SFSRequest::getSingleton().RequestRegisterTour();
 			});
@@ -928,7 +928,7 @@ bool BaseScene::onErrorResponse(unsigned char code, std::string msg)
 		//Bat dau tham gia giai dau
 		if (getTag() == constant::SCENE_GAME) {
 			showPopupConfirmMini(msg, Utils::getSingleton().getStringForKey("tham_gia"), 
-				Utils::getSingleton().getStringForKey("bo_qua"), Vec2(200, 200), [=]() {
+				Utils::getSingleton().getStringForKey("bo_qua"), Vec2(200, 150), [=]() {
 				joinIntoTour();
 			});
 		} else {
@@ -1664,7 +1664,7 @@ cocos2d::Node * BaseScene::createPopupNoticeMini()
 		popupNotice = Node::create();
 	}
 
-	popupNotice->setPosition(560, 350);
+	popupNotice->setPosition(winSize.width / 2, winSize.height / 2);
 	popupNotice->setVisible(false);
 	mLayer->addChild(popupNotice, constant::ZORDER_POPUP_NOTICE);
 	autoScaleNode(popupNotice);
@@ -1718,7 +1718,7 @@ cocos2d::Node * BaseScene::createPopupConfirm()
 		popupConfirm = Node::create();
 	}
 
-	popupConfirm->setPosition(560, 350);
+	popupConfirm->setPosition(winSize.width / 2, winSize.height / 2);
 	popupConfirm->setVisible(false);
 	mLayer->addChild(popupConfirm, constant::ZORDER_POPUP_NOTICE);
 	autoScaleNode(popupConfirm);
@@ -1776,7 +1776,7 @@ cocos2d::Node * BaseScene::createPopupConfirmMini()
 		popupConfirm = Node::create();
 	}
 
-	popupConfirm->setPosition(560, 350);
+	popupConfirm->setPosition(winSize.width / 2, winSize.height / 2);
 	popupConfirm->setVisible(false);
 	mLayer->addChild(popupConfirm, constant::ZORDER_POPUP_NOTICE);
 	autoScaleNode(popupConfirm);
@@ -2853,7 +2853,7 @@ void BaseScene::initCofferView(Vec2 pos, int zorder, float scale)
 		//onErrorResponse(36, "Ban da vao vong trong");
 		//onErrorResponse(80, "Giai dau ket thuc");
 		//showPopupConfirm("Da co the dang ky giai dau", "stormus", "phantom", [=]() {});
-		//showPopupConfirmMini("Da co the dang ky giai dau", "stormus", "phantom", Vec2(200, 200), [=]() {});
+		//showPopupConfirmMini("Da co the dang ky giai dau", "stormus", "phantom", Vec2(200, 150), [=]() {});
 		//showPopupNoticeMini("Giai dau da bat dau", [=]() {}, Vec2(250, 150), true);
 	});
 	mLayer->addChild(btnCoffer, zorder);
