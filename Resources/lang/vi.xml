@@ -107,7 +107,8 @@
 	<key>thong_tin</key><string>Thông tin</string>
 	<key>tien</key><string>Tiền</string>
 	<key>tien_van</key><string>Tiền ván</string>
-	<key>huy</key><string>Hủy</string>
+    <key>huy</key><string>Hủy</string>
+    <key>xac_nhan</key><string>Xác nhận</string>
 	<key>hop_thu</key><string>Hộp thư</string>
 	<key>tin_tuc</key><string>Tin tức</string>
 	<key>moi</key><string>Mời</string>

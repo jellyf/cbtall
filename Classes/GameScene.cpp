@@ -670,7 +670,7 @@ void GameScene::onInit()
 		mLayer->addChild(spPointBg, constant::GAME_ZORDER_USER + 12);
 		autoScaleNode(spPointBg);
 
-		Label *lbPoint = Label::createWithTTF("100", "fonts/aurora.ttf", 25);
+		Label *lbPoint = Label::createWithTTF("100", "fonts/myriadb.ttf", 25);
 		lbPoint->setPosition(spPointBg->getContentSize().width/2, spPointBg->getContentSize().height/2 + 2);
 		spPointBg->addChild(lbPoint);
 		lbTourPoints.push_back(lbPoint);
