@@ -45,7 +45,7 @@ void MainScene::onInit()
 	bg->setPosition(winSize.width / 2, winSize.height / 2);
 	addChild(bg);
 
-	btnEvent = ui::Button::create("icon_event.png", "", "", ui::Widget::TextureResType::PLIST);
+	btnEvent = ui::Button::create(pmE ? "icon_event.png" : "", "", "", ui::Widget::TextureResType::PLIST);
 	btnEvent->setPosition(vecMenuPos[0]);
 	btnEvent->setVisible(pmE);
 	addTouchEventListener(btnEvent, [=]() {
@@ -64,7 +64,7 @@ void MainScene::onInit()
 	btnEvent->addChild(lbEvent);
 
 	bool canInvite = Utils::getSingleton().gameConfig.invite;
-	ui::Button* btnFBFriends = ui::Button::create("fb_friends.png", "", "", ui::Widget::TextureResType::PLIST);
+	ui::Button* btnFBFriends = ui::Button::create(pmE ? "fb_friends.png" : "", "", "", ui::Widget::TextureResType::PLIST);
 	btnFBFriends->setPosition(vecMenuPos[1]);
 	btnFBFriends->setVisible(pmE && canInvite);
 	addTouchEventListener(btnFBFriends, [=]() {
@@ -94,7 +94,7 @@ void MainScene::onInit()
 	btnGuide->addChild(lbGuide);
 
 	ui::Button* btnCharge = ui::Button::create("icon_charge.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnCharge->setPosition(vecMenuPos[3]);
+	btnCharge->setPosition(vecMenuPos[3] + Vec2(pmE ? 0 : 40, 0));
 	addTouchEventListener(btnCharge, [=]() {
 		if (pmE) {
 			chosenProviderCard = "viettel";
@@ -116,7 +116,7 @@ void MainScene::onInit()
 	lbCharge->setPosition(btnCharge->getContentSize().width / 2, 0);
 	btnCharge->addChild(lbCharge);
 
-	ui::Button* btnShop = ui::Button::create("icon_shop.png", "", "", ui::Widget::TextureResType::PLIST);
+	ui::Button* btnShop = ui::Button::create(pmE ? "icon_shop.png" : "", "", "", ui::Widget::TextureResType::PLIST);
 	btnShop->setPosition(vecMenuPos[4]);
 	btnShop->setVisible(pmE);
 	addTouchEventListener(btnShop, [=]() {
@@ -137,7 +137,7 @@ void MainScene::onInit()
 	btnShop->addChild(lbShop);
 
 	ui::Button* btnNews = ui::Button::create("icon_news.png", "", "", ui::Widget::TextureResType::PLIST);
-	btnNews->setPosition(vecMenuPos[5]);
+	btnNews->setPosition(vecMenuPos[5] + Vec2(pmE ? 0 : -40, 0));
 	addTouchEventListener(btnNews, [=]() {
 		showPopupNews();
 		/*cocos2d::ValueMap plist = cocos2d::FileUtils::getInstance()->getValueMapFromFile("configs.xml");
@@ -174,7 +174,7 @@ void MainScene::onInit()
 	lbNewMail->setPosition(circleNewMail->getContentSize().width / 2, circleNewMail->getContentSize().height / 2 - 5);
 	circleNewMail->addChild(lbNewMail);
 
-	ui::Button* btnGiftcode = ui::Button::create("icon_giftcode.png", "", "", ui::Widget::TextureResType::PLIST);
+	ui::Button* btnGiftcode = ui::Button::create(pmE ? "icon_giftcode.png" : "", "", "", ui::Widget::TextureResType::PLIST);
 	btnGiftcode->setPosition(vecMenuPos[7]);
 	btnGiftcode->setVisible(pmE);
 	addTouchEventListener(btnGiftcode, [=]() {
@@ -191,7 +191,7 @@ void MainScene::onInit()
 	lbGiftcode->setPosition(btnGiftcode->getContentSize().width / 2, 0);
 	btnGiftcode->addChild(lbGiftcode);
 
-	ui::Button* btnFacebook = ui::Button::create("facebook.png", "", "", ui::Widget::TextureResType::PLIST);
+	ui::Button* btnFacebook = ui::Button::create(pmE ? "facebook.png" : "", "", "", ui::Widget::TextureResType::PLIST);
 	btnFacebook->setPosition(vecMenuPos[8]);
 	btnFacebook->setVisible(pmE);
 	addTouchEventListener(btnFacebook, [=]() {

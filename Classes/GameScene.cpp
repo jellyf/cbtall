@@ -4100,7 +4100,7 @@ void GameScene::initTableInfo()
 	lbTableBet->setVisible(!isTourGame);
 	tableInfo->addChild(lbTableBet);
 
-	Sprite* icMoney = Sprite::createWithSpriteFrameName("icon_gold.png");
+	Sprite* icMoney = Sprite::createWithSpriteFrameName("icon_silver.png");
 	icMoney->setPosition(lbTableBet->getPosition() - Vec2(20, -3));
 	icMoney->setScale(.5f);
 	icMoney->setName("icmoney");

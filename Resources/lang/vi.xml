@@ -96,6 +96,7 @@
 	<key>tinh_loi</key><string>Tính lỗi</string>
 	<key>tinh_diem</key><string>Tính điểm</string>
 	<key>van_dau</key><string>Ván đấu</string>
+	<key>nap_quan</key><string>Nạp quan</string>
 	<key>khac</key><string>Khác</string>
 	<key>reject_all_invitation</key><string>Không nhận lời mời</string>
 	<key>thang</key><string>Thắng</string>

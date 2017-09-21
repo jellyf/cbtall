@@ -1170,7 +1170,7 @@ void BaseScene::initHeaderWithInfos()
 		switchMoneyType(1);
 	});
 
-	Sprite* iconGold = Sprite::createWithSpriteFrameName("icon_gold.png");
+	Sprite* iconGold = Sprite::createWithSpriteFrameName(ispmE ? "icon_gold.png" : "empty.png");
 	iconGold->setPosition(spMoneyBg->getPosition() + Vec2(-200, 0));
 	iconGold->setScale(1);
 	moneyNode->addChild(iconGold, 2);
@@ -2268,7 +2268,7 @@ void BaseScene::initPopupUserInfo()
 	lbQuan1->setVisible(ispmE);
 	nodeInfo->addChild(lbQuan1);
 
-	Sprite* icGold = Sprite::createWithSpriteFrameName("icon_gold.png");
+	Sprite* icGold = Sprite::createWithSpriteFrameName(ispmE ? "icon_gold.png" : "empty.png");
 	icGold->setPosition(lbQuan1->getPosition() + Vec2(lbQuan1->getContentSize().width + 20, 5));
 	icGold->setScale(.5f);
 	icGold->setName("icongold");
