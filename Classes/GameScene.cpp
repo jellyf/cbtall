@@ -670,8 +670,8 @@ void GameScene::onInit()
 		mLayer->addChild(spPointBg, constant::GAME_ZORDER_USER + 12);
 		autoScaleNode(spPointBg);
 
-		Label *lbPoint = Label::createWithTTF("100", "fonts/myriadb.ttf", 25);
-		lbPoint->setPosition(spPointBg->getContentSize().width/2, spPointBg->getContentSize().height/2 + 2);
+		Label *lbPoint = Label::createWithTTF("100", "fonts/myriadb.ttf", 30);
+		lbPoint->setPosition(spPointBg->getContentSize().width/2, spPointBg->getContentSize().height/2 - 5);
 		spPointBg->addChild(lbPoint);
 		lbTourPoints.push_back(lbPoint);
 
@@ -2064,7 +2064,7 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 				lbSanSangs[index]->setVisible(player.Ready);
 				lbTourPoints[index]->setString(to_string(player.TPoint));
 				lbTourPoints[index]->getParent()->setVisible(isTourGame);
-				if (player.Index == 0) {
+				if (player.Index == 0 && !isTourGame) {
 					spChuPhong->setVisible(true);
 					spChuPhong->setPosition(vecUserPos[index] + Vec2(50 * scaleScene.y, 0));
 					spChuPhong->setTag(player.Info.SfsUserId == sfsIdMe ? 1 : 0);
@@ -3307,7 +3307,7 @@ void GameScene::onGamePlayingDataResponse(PlayingTableData data)
 				vecUsers[index]->setName(player.Info.Name);
 				lbTourPoints[index]->setString(to_string(player.TPoint));
 				lbTourPoints[index]->getParent()->setVisible(isTourGame);
-				if (player.Index == 0) {
+				if (player.Index == 0 && !isTourGame) {
 					spChuPhong->setVisible(true);
 					spChuPhong->setPosition(vecUserPos[index] + getScaleSceneDistance(Vec2(-40, 35)));
 				}

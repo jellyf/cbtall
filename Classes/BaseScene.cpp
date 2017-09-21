@@ -2751,18 +2751,18 @@ void BaseScene::initPopupTour()
 	float n1height = 0;
 	for (int i = 0; i < 12; i++) {
 		string str = Utils::getSingleton().getStringForKey("tour_info_" + to_string(i));
-		Label* lbn1 = Label::createWithTTF(str, "fonts/myriadb.ttf", 22);
+		Label* lbn1 = Label::createWithTTF(str, "fonts/myriadb.ttf", 30);
 		lbn1->setPosition(0, n1height);
 		lbn1->setAnchorPoint(Vec2(0, 1));
 		lbn1->setColor(Color3B::BLACK);
 		lbn1->setTag(i);
 		nodelb1->addChild(lbn1);
 
-		n1height -= 25.7f;
+		n1height -= 35.0f;
 	}
-	n1height = -n1height + 26;
+	n1height = -n1height + 35;
 
-	Label* lb2 = Label::create("", "fonts/myriadi.ttf", 25);
+	Label* lb2 = Label::create("", "fonts/myriadi.ttf", 30);
 	lb2->setAnchorPoint(Vec2(0, 1));
 	lb2->setColor(Color3B::BLACK);
 	lb2->setName("lbcontent2");
@@ -2770,7 +2770,7 @@ void BaseScene::initPopupTour()
 	nodeContent->addChild(lb2);
 
 	string info3 = "";
-	Label* lb3 = Label::create(info3, "fonts/myriadb.ttf", 22);
+	Label* lb3 = Label::create(info3, "fonts/myriadb.ttf", 30);
 	lb3->setAnchorPoint(Vec2(0, 1));
 	lb3->setColor(Color3B::BLACK);
 	lb3->setName("lbcontent3");
@@ -3254,7 +3254,7 @@ void BaseScene::onTourWinnersResponse(std::vector<TourAward> list)
 			nbg->setTag(10);
 			node->addChild(nbg);
 
-			lbDate = Label::create("", "fonts/myriadb.ttf", 20);
+			lbDate = Label::create("", "fonts/myriad.ttf", 30);
 			lbDate->setHorizontalAlignment(TextHAlignment::CENTER);
 			lbDate->setPosition(-width / 2 + 90, nheight / 2 - 40);
 			lbDate->setColor(Color3B::BLACK);
@@ -3262,7 +3262,7 @@ void BaseScene::onTourWinnersResponse(std::vector<TourAward> list)
 			lbDate->setWidth(150);
 			node->addChild(lbDate);
 
-			lbName = Label::create("", "fonts/myriadb.ttf", 20);
+			lbName = Label::create("", "fonts/myriad.ttf", 30);
 			lbName->setHorizontalAlignment(TextHAlignment::CENTER);
 			lbName->setPosition(-width / 2 + 90, -nheight / 2 + 40);
 			lbName->setColor(Color3B::BLACK);
@@ -3277,7 +3277,7 @@ void BaseScene::onTourWinnersResponse(std::vector<TourAward> list)
 				inodes.push_back(inode);
 
 				vector<Label*> ilbs;
-				Label *lb0 = Label::create("", "fonts/myriadb.ttf", 20);
+				Label *lb0 = Label::create("", "fonts/myriad.ttf", 30);
 				lb0->setPosition(-width / 2 + 200, 0);
 				lb0->setAnchorPoint(Vec2(0, .5f));
 				lb0->setColor(Color3B::BLACK);
@@ -3285,7 +3285,7 @@ void BaseScene::onTourWinnersResponse(std::vector<TourAward> list)
 				inode->addChild(lb0);
 				ilbs.push_back(lb0);
 
-				Label *lb1 = Label::create("", "fonts/myriadb.ttf", 22);
+				Label *lb1 = Label::create("", "fonts/myriad.ttf", 30);
 				lb1->setPosition(lb0->getPositionX() + 130, 0);
 				lb1->setAnchorPoint(Vec2(0, .5f));
 				lb1->setColor(Color3B::BLACK);
@@ -3293,7 +3293,7 @@ void BaseScene::onTourWinnersResponse(std::vector<TourAward> list)
 				inode->addChild(lb1);
 				ilbs.push_back(lb1);
 
-				Label *lb2 = Label::create("", "fonts/myriadb.ttf", 22);
+				Label *lb2 = Label::create("", "fonts/myriad.ttf", 30);
 				lb2->setPosition(lb1->getPositionX() + 270, 0);
 				lb2->setAnchorPoint(Vec2(0, .5f));
 				lb2->setColor(Color3B::BLACK);
@@ -3387,9 +3387,9 @@ void BaseScene::onTourInfoResponse(TourInfo tourInfo)
 		}
 		for (Node* lb : lbs) {
 			lb->setPositionY(n1height);
-			n1height -= 25.7f;
+			n1height -= 36.0f;
 		}
-		n1height = -n1height + 26;
+		n1height = -n1height + 36;
 	}
 
 	string info2 = Utils::getSingleton().tourGuide;
@@ -3402,7 +3402,7 @@ void BaseScene::onTourInfoResponse(TourInfo tourInfo)
 	info2 = Utils::getSingleton().replaceString(info2, "[p1]", requiredMatchStr + "%");
 
 	int scrollWidth = scroll->getContentSize().width;
-	lb2->initWithTTF("", isTourExist ? "fonts/myriadi.ttf" : "fonts/arial.ttf", 22);
+	lb2->initWithTTF("", isTourExist ? "fonts/myriadi.ttf" : "fonts/myriad.ttf", 30);
 	lb2->setWidth(scrollWidth);
 	lb2->setString(info2);
 	lb2->setPosition(0, isTourExist ? -n1height : 0);
