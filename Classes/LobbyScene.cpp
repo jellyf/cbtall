@@ -469,11 +469,11 @@ cocos2d::Node* LobbyScene::drawTable(int numOfRows, int rowHeight, std::vector<i
 	table->addChild(nodeTitle);
 
 	x = -width / 2;
-	y = height / 2 - rowHeight / 2;
+	y = height / 2 - rowHeight / 2 - 5;
 	for (int i = 0; i < titles.size();i++) {
 		x += widths[i] / 2;
-		Label* lb = Label::createWithTTF(titles[i], "fonts/arial.ttf", 20);
-		lb->setColor(Color3B(190, 109, 35));
+		Label* lb = Label::createWithTTF(titles[i], "fonts/myriad.ttf", 30);
+        lb->setColor(Color3B::WHITE);
 		lb->setPosition(x, y);
 		lb->setName("lbtitle" + to_string(i));
 		nodeTitle->addChild(lb);
@@ -483,14 +483,14 @@ cocos2d::Node* LobbyScene::drawTable(int numOfRows, int rowHeight, std::vector<i
 	Node *nodeText = Node::create();
 	nodeText->setName("nodetext");
 	table->addChild(nodeText);
-	y = height / 2 - rowHeight / 2;
+	y = height / 2 - rowHeight / 2 - 5;
 	for (int i = 0; i < texts.size(); i++) {
 		x = -width / 2;
 		y -= rowHeight;
 		for (int j = 0; j < texts[i].size(); j++) {
 			x += widths[j] / 2;
-			Label* lb = Label::createWithTTF(texts[i][j], "fonts/arial.ttf", 25);
-			lb->setColor(Color3B(190, 109, 35));
+			Label* lb = Label::createWithTTF(texts[i][j], "fonts/myriad.ttf", 30);
+            lb->setColor(Color3B::WHITE);
 			lb->setPosition(x, y);
 			lb->setName("lbtext" + to_string(i) + to_string(j));
 			nodeText->addChild(lb);
@@ -840,9 +840,9 @@ void LobbyScene::onTopTourPlayersResponse(std::vector<TourRoom> rooms)
 	titles.push_back(Utils::getSingleton().getStringForKey("van_danh_caps"));
 	titles.push_back(Utils::getSingleton().getStringForKey("diem_caps"));
 
-	int y = 0;
+	int y = -5;
 	for (TourRoom r : rooms) {
-		Label* lb = Label::createWithTTF(r.Name, "fonts/arial.ttf", 25);
+		Label* lb = Label::createWithTTF(r.Name, "fonts/myriad.ttf", 30);
 		lb->setPosition(0, y);
 		lb->setWidth(400);
 		nodeRank->addChild(lb);
