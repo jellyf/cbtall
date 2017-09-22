@@ -881,6 +881,7 @@ void BaseScene::addTouchEventListener(ui::Button* btn, std::function<void()> fun
 bool BaseScene::onErrorResponse(unsigned char code, std::string msg)
 {
 	CCLOG("%d %s", (int)code, msg.c_str());
+    bool ispmE = Utils::getSingleton().ispmE();
 	if (code == 51 && isChangingDisplayName) {
 		if (popupDisplayName != NULL) {
 			hidePopup(popupDisplayName);
@@ -889,7 +890,7 @@ bool BaseScene::onErrorResponse(unsigned char code, std::string msg)
 		isChangingDisplayName = false;
 		return true;
 	}
-	if (code == 34) {
+	if (code == 34 && ispmE) {
 		//Bat dau dang ky giai dau
 		Utils::getSingleton().tourInfo.CanRegister = true;
 		if (getTag() == constant::SCENE_GAME) {
@@ -924,7 +925,7 @@ bool BaseScene::onErrorResponse(unsigned char code, std::string msg)
 		}
 		return true;
 	}
-	if (code == 37) {
+	if (code == 37 && ispmE) {
 		//Bat dau tham gia giai dau
 		if (getTag() == constant::SCENE_GAME) {
 			showPopupConfirmMini(msg, Utils::getSingleton().getStringForKey("tham_gia"), 
