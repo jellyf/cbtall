@@ -138,13 +138,13 @@ void GameScene::onInit()
 	autoScaleNode(centerBg);
 
 	if (isSolo) {
-		Sprite* dragon1 = Sprite::create("dragon.png");
+		Sprite* dragon1 = Sprite::create("imgs/dragon.png");
 		dragon1->setPosition(bg->getPosition() - Vec2(350, 0));
 		dragon1->setScale(1.4f);
 		mLayer->addChild(dragon1);
 		autoScaleNode(dragon1);
 
-		Sprite* dragon2 = Sprite::create("dragon.png");
+		Sprite* dragon2 = Sprite::create("imgs/dragon.png");
 		dragon2->setPosition(bg->getPosition() + Vec2(350, 0));
 		dragon2->setScale(1.4f);
 		dragon2->setFlippedX(true);
