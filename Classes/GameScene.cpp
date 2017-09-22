@@ -1894,7 +1894,7 @@ void GameScene::onUserExitRoom(long sfsUId)
 	if (vecUsers[index]->isVisible() && vecUsers[index]->getAlpha() == 150) {
 		vecUsers[index]->setName("");
 		vecUsers[index]->setVisible(false);
-		spInvites[index]->setVisible(state == NONE || state == READY);
+		spInvites[index]->setVisible(!isTourGame && (state == NONE || state == READY));
 		spSanSangs[index]->setVisible(false);
 		lbSanSangs[index]->setVisible(false);
 		vecBtnKicks[index]->setVisible(false);
@@ -2036,10 +2036,12 @@ void GameScene::onRoomDataResponse(RoomData roomData)
 		vecBtnKicks[i]->setVisible(false);
 		lbTourPoints[i]->getParent()->setVisible(false);
 	}
-	spInvites[0]->setVisible(true);
-	spInvites[2]->setVisible(true);
-	spInvites[1]->setVisible(!isSolo);
-	spInvites[3]->setVisible(!isSolo);
+	if (!isTourGame) {
+		spInvites[0]->setVisible(true);
+		spInvites[2]->setVisible(true);
+		spInvites[1]->setVisible(!isSolo);
+		spInvites[3]->setVisible(!isSolo);
+	}
 	int num = 0;
 	bool isMeHost = false;
 	for (int i = 0; i < 4; i++) {
@@ -4179,8 +4181,10 @@ void GameScene::initCofferEffects()
 	Sprite* spCoffer = Sprite::create();
 	cofferEffect->addChild(spCoffer);
 
-	Label* lbMoney = Label::createWithBMFont("fonts/sonohu.fnt", "123.456");
-	lbMoney->setColor(Color3B::YELLOW);
+	//Label* lbMoney = Label::createWithBMFont("fonts/sonohu.fnt", "123.456");
+	Label* lbMoney = Label::createWithTTF("123.456", "fonts/myriadb.ttf", 86);
+	lbMoney->enableOutline(Color4B::BLACK, 3);
+	lbMoney->setColor(Color3B(255, 230, 0));
 	lbMoney->setPosition(0, -210);
 	lbMoney->setName("lbmoney");
 	cofferEffect->addChild(lbMoney);
