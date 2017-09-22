@@ -64,7 +64,11 @@ void LobbyScene::onInit()
 
 		initTourView();
 	} else {
-		Sprite* spName = Sprite::createWithSpriteFrameName(isSolo ? "SoLo.png" : zone + ".png");
+		string zone2 = zone;
+		if (zone2.compare("VuongPhu") == 0) {
+			zone2 = "Tour";
+		}
+		Sprite* spName = Sprite::createWithSpriteFrameName(isSolo ? "SoLo.png" : zone2 + ".png");
 		spName->setPosition(140, 560);
 		mLayer->addChild(spName);
 	}

@@ -2500,8 +2500,8 @@ void BaseScene::initPopupCoffer()
 	std::string guideContent = Utils::getSingleton().cofferGuide;
 	if (guideContent.length() == 0) {
 		SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/huvang.txt", constant::TAG_HTTP_COFFER_GUIDE);
-		cocos2d::ValueMap plist = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/tutorials.xml");
-		guideContent = plist["tutorial_5"].asString();
+		//cocos2d::ValueMap plist = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/tutorials.xml");
+		guideContent = "";// plist["tutorial_5"].asString();
 	}
 	Label* lb = Label::createWithTTF(guideContent, "fonts/myriad.ttf", 30);
 	lb->setAnchorPoint(Vec2(0, 1));
@@ -3396,11 +3396,11 @@ void BaseScene::onTourInfoResponse(TourInfo tourInfo)
 	string info2 = Utils::getSingleton().tourGuide;
 	if (info2.length() == 0) {
 		SFSRequest::getSingleton().RequestHttpGet("http://kinhtuchi.com/main_kinhtuchi/giaidau.txt", constant::TAG_HTTP_TOUR_GUIDE);
-		cocos2d::ValueMap plist = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/tutorials.xml");
-		info2 = plist["loi_dai_2"].asString();
+		//cocos2d::ValueMap plist = cocos2d::FileUtils::getInstance()->getValueMapFromFile("lang/tutorials.xml");
+		info2 = "";// plist["loi_dai_2"].asString();
 	}
-	string requiredMatchStr = isTourExist ? to_string(tourInfo.RequiredMatch) : "85";
-	info2 = Utils::getSingleton().replaceString(info2, "[p1]", requiredMatchStr + "%");
+	//string requiredMatchStr = isTourExist ? to_string(tourInfo.RequiredMatch) : "85";
+	//info2 = Utils::getSingleton().replaceString(info2, "[p1]", requiredMatchStr + "%");
 
 	int scrollWidth = scroll->getContentSize().width;
 	lb2->initWithTTF("", isTourExist ? "fonts/myriadi.ttf" : "fonts/myriad.ttf", 30);
