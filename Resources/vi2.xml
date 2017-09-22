@@ -51,6 +51,7 @@
 	<key>dat_hang</key><string>Đặt hàng</string>
 	<key>hoan_tat</key><string>Hoàn tất</string>
 	<key>huy</key><string>Hủy</string>
+	<key>con</key><string>Còn</string>
 	<key>hoan_tra</key><string>Hoàn trả</string>
 	<key>nap_quan</key><string>Nạp quan</string>
 	<key>top_quan</key><string>Top đại gia(Quan)</string>
