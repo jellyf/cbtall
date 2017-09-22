@@ -121,8 +121,9 @@ void GameScene::onInit()
 		zone = "VuongPhu";
 	}
 	if (isTourGame) zone = "VuongPhu";
+	if (isSolo) zone = "SoLo";
 
-	string bgName = "imgs/" + (isSolo ? "bgVuongPhu.jpg" : "bg" + zone + ".jpg");
+	string bgName = "imgs/bg" + zone + ".jpg";
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGB565);
 	Texture2D* bgTexture = TextureCache::getInstance()->addImage(bgName);
 	Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::RGBA4444);
